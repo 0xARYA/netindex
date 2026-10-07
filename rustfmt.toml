@@ -1,0 +1,4 @@
+# rustfmt configuration. Stable options only, matching the sandbox workspace so a file moved
+# between the two does not reformat.
+edition = "2021"
+use_field_init_shorthand = true

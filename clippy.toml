@@ -1,0 +1,14 @@
+# Clippy configuration (workspace root).
+#
+# Pins the MSRV so version-gated lints match the toolchain, and relaxes the restriction denies
+# (declared in [workspace.lints.clippy]) inside test code only — so "no unwrap/expect/panic in
+# library paths" holds for shipped code while tests stay ergonomic. A panic is acceptable ONLY
+# under `cfg(test)`.
+msrv = "1.95"
+
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
+allow-indexing-slicing-in-tests = true
+allow-dbg-in-tests = true
+allow-print-in-tests = true

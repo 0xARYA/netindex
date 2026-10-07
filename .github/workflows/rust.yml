@@ -1,0 +1,64 @@
+name: Rust checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Install supported toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Check formatting
+        run: cargo +1.95.0 fmt --all -- --check
+      - name: Check default features
+        run: cargo +1.95.0 clippy --locked --all-targets -- -D warnings
+      - name: Check all features
+        run: cargo +1.95.0 clippy --locked --all-targets --all-features -- -D warnings
+      - name: Test default features
+        run: cargo +1.95.0 test --locked -- --test-threads=1
+      - name: Test external builds and SIMD/scalar parity
+        run: cargo +1.95.0 test --locked --release --all-features -- --test-threads=1
+      - name: Run Tokio example
+        run: cargo +1.95.0 run --locked --example tokio
+      - name: Run compio example
+        run: cargo +1.95.0 run --locked --example compio
+      - name: Check documentation
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo +1.95.0 doc --locked --all-features --no-deps
+      - name: Verify package
+        run: cargo +1.95.0 package --locked --all-features
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Install fuzz toolchain
+        run: |
+          rustup toolchain install nightly-2026-09-01 --profile minimal --component rustfmt
+          cargo +nightly-2026-09-01 install cargo-fuzz --version 0.13.2 --locked
+      - name: Check fuzz target formatting
+        run: cargo +nightly-2026-09-01 fmt --manifest-path fuzz/Cargo.toml -- --check
+      - name: Seed fixed format corpus
+        run: |
+          mkdir -p fuzz/corpus/read
+          cp tests/fixtures/*.ipidx fuzz/corpus/read/
+      - name: Fuzz reading and lookup
+        run: cargo +nightly-2026-09-01 fuzz run read --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536
+      - name: Fuzz writing and roundtrip
+        run: cargo +nightly-2026-09-01 fuzz run encode --fuzz-dir fuzz -- -max_total_time=60 -max_len=4096

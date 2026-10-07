@@ -1,0 +1,82 @@
+[package]
+name = "netindex"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.95"
+description = "Immutable IP range and ASN indexes with opaque borrowed payloads"
+readme = "README.md"
+documentation = "https://docs.rs/netindex"
+repository = "https://github.com/0xARYA/netindex"
+publish = false
+license = "UNLICENSED"
+keywords = ["ip", "cidr", "asn", "index"]
+categories = ["data-structures", "network-programming"]
+
+[features]
+external-sort = ["dep:tempfile"]
+mmdb = ["dep:maxminddb"]
+simd = []
+
+[dependencies]
+hashbrown = { version = "0.17.1", default-features = false, features = ["inline-more"] }
+maxminddb = { version = "0.32", optional = true, default-features = false }
+tempfile = { version = "3", optional = true }
+thiserror = "2"
+
+[dev-dependencies]
+compio = { version = "0.19.2", default-features = false, features = ["runtime", "polling"] }
+criterion = { version = "0.8.2", default-features = false }
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", default-features = false, features = ["rt", "sync"] }
+
+[[bench]]
+name = "index"
+harness = false
+
+[lints]
+workspace = true
+
+[workspace]
+resolver = '3'
+members = ['.']
+exclude = ['fuzz']
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
+unreachable = "deny"
+indexing_slicing = "deny"
+# `indexing_slicing` does not cover `&s[a..b]` on a `str`: that panics on a non-char-boundary index,
+# and a byte offset computed against a vendor-controlled URL or header is not provably a boundary.
+string_slice = "deny"
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+dbg_macro = "deny"
+print_stdout = "deny"
+print_stderr = "deny"
+exit = "deny"
+allow_attributes_without_reason = "deny"
+unused_result_ok = "deny"
+undocumented_unsafe_blocks = "deny"
+
+[workspace.lints.rust]
+unreachable_pub = "warn"
+unused_qualifications = "warn"
+elided_lifetimes_in_paths = "warn"
+missing_debug_implementations = "warn"
+missing_docs = "warn"
+unused_must_use = "deny"
+unsafe_op_in_unsafe_fn = "deny"
+
+[workspace.lints.rustdoc]
+broken_intra_doc_links = "deny"
+private_intra_doc_links = "allow"
+
+
+[profile.release]
+codegen-units = 1
+
+

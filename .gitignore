@@ -1,0 +1,6 @@
+/target/
+/fuzz/target/
+/fuzz/corpus/
+/fuzz/artifacts/
+*.pdb
+*.rs.bk
