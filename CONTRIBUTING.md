@@ -1,15 +1,16 @@
 # Contributing to netindex
 
-Keep the library independent of provider schemas, payload codecs, runtimes, and
-release policy. Use rustfmt and idiomatic Rust; keep functions focused, visibility
-narrow, and comments limited to contracts and non-obvious constraints. Separate
-setup, validation, conversion, and output into readable paragraphs.
+Keep provider schemas, application codecs, runtimes, and release policy outside the
+library. Use rustfmt, focused functions, and narrow visibility. Comments explain
+contracts or non-obvious constraints; names and code should explain the rest.
 
 Group imports as standard library, dependencies, then local items, before module
-declarations. Keep types beside their implementations, constructors first, and
-entry points before helpers. Put private unit tests last. Apply the same paragraph
-grouping to test setup, operations, assertions, and helpers; review it manually
-because rustfmt does not choose these boundaries.
+declarations. Keep types beside their implementations, constructors first, entry
+points before helpers, and private unit tests last.
+
+Separate setup, validation, conversion, and output into readable paragraphs.
+Apply the same grouping to tests. Review these breaks manually: rustfmt handles
+wrapping and indentation, not paragraph structure.
 
 Preserve underlying error causes and return typed failures rather than panicking
 in library code. Bound external input and allocation. Document unsafe operations
@@ -21,24 +22,31 @@ independent expectations, including failure paths.
 Run from the crate directory:
 
 ```sh
-cargo fmt -- --check
-cargo clippy --all-targets --all-features -- -D warnings
-cargo test --all-features -- --test-threads=1
-cargo doc --all-features --no-deps
-cargo package --all-features
+cargo +1.95.0 fmt --all -- --check
+cargo +1.95.0 clippy --locked --all-targets -- -D warnings
+cargo +1.95.0 clippy --locked --all-targets --all-features -- -D warnings
+cargo +1.95.0 test --locked -- --test-threads=1
+cargo +1.95.0 test --locked --all-features -- --test-threads=1
+cargo +1.95.0 doc --locked --all-features --no-deps
+cargo +1.95.0 package --locked --all-features
 ```
 
-Documentation examples are tested with the crate. Use `?` for fallible operations
-and assertions for observable results. Put ownership and failure contracts on the
-relevant API; link related examples instead of repeating them on every method.
+Set `RUSTDOCFLAGS="-D warnings"` when checking documentation. Packaging requires
+a clean working tree; use `--allow-dirty` only for local verification.
 
-The tests cover overlaps, duplicates, original targets, borrowed payloads,
-validation, resource limits, failed I/O, and scalar/SIMD parity. Compare query
-results with independent original-input oracles. Preserve fixed fixtures for
-the encoded layout. The [fuzz package](fuzz/README.md) runs reader and writer
-campaigns under AddressSanitizer on Linux; it is excluded from the library package.
+Use `?` in documentation examples and assert observable results. Put ownership
+and failure contracts on the relevant API; link examples rather than repeating
+them on every method.
+
+Check overlaps, duplicates, original targets, borrowed payloads, resource limits,
+failed I/O, and scalar/SIMD parity. Compare queries with independent expectations
+from the original input. Keep fixed format fixtures independent of the writer.
+The [fuzz package](fuzz/README.md) runs on Linux with AddressSanitizer.
 
 ## Benchmarks
+
+See [comparative benchmarks](BENCHMARKS.md) for recorded workloads and results.
+The Criterion harness below tracks changes within netindex:
 
 ```sh
 cargo bench --bench index -- --save-baseline NAME
@@ -50,7 +58,7 @@ validation, and building, using 65,536 assertions per scenario and 1,024 queries
 per lookup batch. Run comparisons serially on a fixed CPU core with consistent
 build settings and machine load. Record input hashes, executable, toolchain,
 hardware, and measurement scope. Warm library timings do not establish HTTP
-capacity or storage-cold behavior.
+capacity or cold-file behavior.
 
 ## Format changes
 

@@ -3,15 +3,18 @@
 These synthetic artifacts were assembled directly from the format specification,
 using little-endian integer fields, independently of the Rust builder.
 
-- `interval.ipidx`: two IPv4 address assertions, `203.0.113.42` and
+- `interval.nidx`: two IPv4 address assertions, `203.0.113.42` and
   `203.0.113.43`, IDs 0 and 1, and their four-byte little-endian ID payloads.
   It uses interval rows and sixteen-byte payload slots, with no metadata.
-- `packed-ipv4.ipidx`: forty IPv4 addresses with numeric values 0, 2, …, 78,
+- `packed-ipv4.nidx`: forty IPv4 addresses with numeric values 0, 2, …, 78,
   IDs 0 through 39, and the shared payload `P`. One packed descriptor uses
   base 0, shift 1, one-byte deltas, and compact payload slots. Metadata is empty.
-- `packed-ipv6.ipidx`: the same forty IDs and shared payload, with IPv6 addresses
+- `packed-ipv6.nidx`: the same forty IDs and shared payload, with IPv6 addresses
   `id << 80`, shift 80, and full-length address prefixes.
-- `mixed.ipidx`: IPv4 and IPv6 `/0` networks, address assertions at IPv4
+- `consecutive-ids.nidx`: IPv4 addresses `10.0.0.1` and `10.0.0.2`,
+  implicit IDs 1 and 2, plus exact ASN 7 with ID 0. All share payload `x`.
+  The packed descriptor uses a one-byte delta and ID base 1.
+- `mixed.nidx`: IPv4 and IPv6 `/0` networks, address assertions at IPv4
   numeric value 42 and IPv6 maximum, and exact ASN 42. IDs are 0 through 4;
   all share payload `P`. Interval maxima include the covering networks.
 
@@ -23,3 +26,11 @@ by the implementation under test.
 redistributed under `maxmind-LICENSE-MIT.txt`. SHA-256:
 `d080856c8dfb306780a2c20cf1b32fd873bd6ac262fbe5cb5ea37e497348244d`.
 It contains IPv4 and IPv6 records, including IPv4-mapped and 6to4 aliases.
+
+- `fixed-payloads.nidx`: six ASN assertions with two-byte payloads `aa`, `bb`,
+  and `cc`, using independent one-byte references `[0, 1, 1, 0, 2, 1]`.
+- `uniform-kind.nidx`: two IPv4 `/24` networks with consecutive IDs, a uniform
+  network kind in the descriptor, and one shared one-byte payload.
+
+`values.bin` seeds shared-value fuzzing with two nonempty values.
+[values.rs](../values.rs) also checks a separately specified fixed-byte pool.

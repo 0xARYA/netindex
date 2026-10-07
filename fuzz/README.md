@@ -1,6 +1,6 @@
 # Index fuzz checks
 
-The isolated development package keeps libFuzzer out of the library dependency graph. Its lockfile pins the fuzz dependencies.
+This separate package pins fuzz dependencies and keeps libFuzzer out of the library.
 
 `read` validates bounded arbitrary file bytes, then compares IP and ASN searches
 against a linear scan of accepted assertions. It checks assertion endpoints,
@@ -18,12 +18,22 @@ Run on Linux, including WSL, with cargo-fuzz 0.13.2 and the pinned nightly toolc
 
 ```sh
 mkdir -p fuzz/corpus/read
-cp tests/fixtures/*.ipidx fuzz/corpus/read/
+cp tests/fixtures/*.nidx fuzz/corpus/read/
 cargo +nightly-2026-09-01 fuzz run read --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536
 cargo +nightly-2026-09-01 fuzz run encode --fuzz-dir fuzz -- -max_total_time=60 -max_len=4096
 ```
 
 These commands enable AddressSanitizer by default. Windows MSVC coverage linking
 failed with this toolchain; use Linux rather than disabling instrumentation.
-CI runs bounded smoke campaigns. Longer campaigns remain useful; a successful
-bounded run does not prove that every malformed file or memory error is absent.
+CI runs 60-second smoke campaigns. Use longer runs for deeper coverage.
+
+The `values` target checks shared-pool parsing, typed UTF-8 access, bounds, and
+writer deduplication. Seed and run it separately:
+
+```sh
+mkdir -p fuzz/corpus/values
+cp tests/fixtures/values.bin fuzz/corpus/values/
+cargo +nightly-2026-09-01 fuzz run values --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536
+```
+
+All three targets run in Linux CI.
