@@ -1,14 +1,5 @@
 //! Matched MMDB comparisons using public netindex APIs and a caller-owned codec.
 
-#![allow(
-    clippy::expect_used,
-    reason = "timed failures must fail the benchmark process"
-)]
-#![allow(
-    clippy::print_stdout,
-    reason = "report artifact sizes and correctness counts"
-)]
-
 use std::{
     env,
     fs::{self, File},
@@ -59,13 +50,22 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+#[expect(
+    clippy::expect_used,
+    reason = "timed failures fail the benchmark process"
+)]
+#[expect(
+    clippy::print_stdout,
+    reason = "report artifact sizes and parity counts"
+)]
 fn compare(criterion: &mut Criterion, source: &Path, kind: &str) -> Result<()> {
     let native = mmdb::Reader::from_source(mapped(source)?)?;
     let output = Path::new("target/mmdb-bench");
     fs::create_dir_all(output)?;
-    let artifact = output.join(format!("{kind}.nidx"));
+    let run = tempfile::Builder::new().prefix(kind).tempdir_in(output)?;
+    let artifact = run.path().join(format!("{kind}.nidx"));
 
-    // Rebuild from the cached input so a stale derived artifact cannot affect parity.
+    // A private directory prevents concurrent runs from replacing mapped files.
     let mut builder = Builder::new(limits());
     let mut encoder = dictionary::Pool::default();
     mmdb::visit_networks(
@@ -106,6 +106,10 @@ fn compare(criterion: &mut Criterion, source: &Path, kind: &str) -> Result<()> {
 
     for (_, queries) in &workloads {
         for &address in queries {
+            if native_target(&native, address)? != index_target(&index, address)? {
+                return Err(format!("{kind} lookup mismatch at {address}").into());
+            }
+
             let expected = native_response(&native, address, kind)?;
             let actual = index_response(&index, address, kind, pool)?;
             if actual != expected || serde_json::to_vec(&actual)? != serde_json::to_vec(&expected)?
@@ -139,11 +143,7 @@ fn compare(criterion: &mut Criterion, source: &Path, kind: &str) -> Result<()> {
                         for &address in &queries {
                             if operation == "lookup" {
                                 black_box(
-                                    native
-                                        .lookup(address)
-                                        .expect("MMDB lookup failed")
-                                        .network()
-                                        .expect("MMDB network failed"),
+                                    native_target(&native, address).expect("MMDB lookup failed"),
                                 );
                             } else {
                                 let response = native_response(&native, address, kind)
@@ -167,12 +167,9 @@ fn compare(criterion: &mut Criterion, source: &Path, kind: &str) -> Result<()> {
                     bench.iter(|| {
                         for &address in &queries {
                             if operation == "lookup" {
-                                index
-                                    .visit_ip(address, |row| {
-                                        black_box(row.target);
-                                        Ok::<_, netindex::Error>(())
-                                    })
-                                    .expect("netindex lookup failed");
+                                black_box(
+                                    index_target(&index, address).expect("netindex lookup failed"),
+                                );
                             } else {
                                 let response = index_response(&index, address, kind, pool)
                                     .expect("netindex decoding failed");
@@ -228,11 +225,39 @@ fn native_response<'a>(
     };
 
     let network = result.network()?;
+
     Ok(Some(Response {
         address: network.ip(),
         prefix: network.prefix(),
         fields,
     }))
+}
+
+fn native_target(native: &mmdb::Reader<Mmap>, address: IpAddr) -> Result<Option<Target>> {
+    let result = native.lookup(address)?;
+    if !result.has_data() {
+        return Ok(None);
+    }
+
+    let network = result.network()?;
+
+    Ok(Some(Target::Network {
+        address: network.ip(),
+        prefix: network.prefix(),
+    }))
+}
+
+fn index_target(index: &MappedReader, address: IpAddr) -> Result<Option<Target>> {
+    let mut target = None;
+    index.visit_ip(address, |row| {
+        if target.replace(row.target).is_some() {
+            return Err("multiple MMDB conversion matches".into());
+        }
+
+        Ok::<_, Box<dyn std::error::Error>>(())
+    })?;
+
+    Ok(target)
 }
 
 fn index_response<'a>(
@@ -274,8 +299,8 @@ fn mapped(path: &Path) -> Result<Mmap> {
 
 fn limits() -> Limits {
     Limits {
-        records: 100_000_000,
-        bytes: usize::MAX,
+        records: 50_000_000,
+        bytes: 3 * 1024 * 1024 * 1024,
     }
 }
 
