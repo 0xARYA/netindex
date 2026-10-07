@@ -7,10 +7,12 @@ description = "Immutable IP range and ASN indexes with opaque borrowed payloads"
 readme = "README.md"
 documentation = "https://docs.rs/netindex"
 repository = "https://github.com/0xARYA/netindex"
-publish = false
-license = "UNLICENSED"
+license = "MIT OR Apache-2.0"
 keywords = ["ip", "cidr", "asn", "index"]
 categories = ["data-structures", "network-programming"]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [features]
 external-sort = ["dep:tempfile"]
@@ -78,5 +80,3 @@ private_intra_doc_links = "allow"
 
 [profile.release]
 codegen-units = 1
-
-

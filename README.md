@@ -4,6 +4,8 @@ Read and write immutable IP-range and exact-ASN indexes. Each assertion retains
 its original target and an opaque payload. Queries return every match, including
 overlaps and duplicates.
 
+Licensed under either [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your option.
+
 ## Quick start
 
 Add `netindex` to your dependencies:
