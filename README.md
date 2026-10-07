@@ -23,7 +23,7 @@ for workloads and measurement instructions.
 
 ```toml
 [dependencies]
-netindex = "0.1"
+netindex = "1"
 ```
 
 ```rust
