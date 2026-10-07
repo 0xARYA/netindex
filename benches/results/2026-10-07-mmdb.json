@@ -1,0 +1,689 @@
+{
+  "date": "2026-10-07",
+  "cpu": "AMD Ryzen 9 9950X3D2",
+  "os": "Windows 11 Home 10.0.26200",
+  "toolchain": "rustc 1.95.0, LLVM 22.1.2, x86_64-pc-windows-msvc",
+  "affinity": "logical CPU 2 (mask 4)",
+  "features": [
+    "mmdb",
+    "mmap",
+    "shared-values"
+  ],
+  "profile": "release, codegen-units=1, no custom RUSTFLAGS",
+  "native_reader": "maxminddb 0.32.0",
+  "criterion": {
+    "samples": 30,
+    "warmup_seconds": 1,
+    "measurement_seconds": 2,
+    "open_measurement_extended_automatically": true
+  },
+  "executable_sha256": "bd3f9a4e6b0a4fe20fd863030608be52691400f70b2416ae66bac730654539b7",
+  "source_sha256": {
+    "benches/mmdb.rs": "fd5b06222d4af6f4bb3ef7b88626072b825fec8eda264f8ec0bdcf5a87533419",
+    "benches/support/dictionary.rs": "c9a39e9c5518b2c884a8eec9bf6122d60a471a0112ffdb64acfeb06bac40c51c",
+    "benches/support/mod.rs": "42b2a5d74766c98144b59e05401ebdf73d9ad0a3e732a639b79b9425443659bb",
+    "benches/support/schema.rs": "0586dd1c9d70457e7661e6ced4984f7d9e93f2cba753f56da851ff549074634e"
+  },
+  "inputs": [
+    {
+      "provider": "DB-IP",
+      "kind": "asn",
+      "url": "https://download.db-ip.com/free/dbip-asn-lite-2026-10.mmdb.gz",
+      "bytes": 9566363,
+      "sha256": "4384bfcfb594391bc4e0ab37751f44661eaf7cadbeee28a90a6b82dc935fec4c",
+      "nidx_bytes": 26042890,
+      "assertions": 2926747
+    },
+    {
+      "provider": "DB-IP",
+      "kind": "city",
+      "url": "https://download.db-ip.com/free/dbip-city-lite-2026-10.mmdb.gz",
+      "bytes": 126998165,
+      "sha256": "9e250f02722d1ad1780f88192f0e908af285478a33e76b88b349c9181ae9d0f5",
+      "nidx_bytes": 338687889,
+      "assertions": 38928557
+    }
+  ],
+  "measurements": [
+    {
+      "benchmark": "mmdb/asn/aliases/fields/mmdb",
+      "confidence_95_ns": [
+        253.952,
+        258.42
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 256.072
+    },
+    {
+      "benchmark": "mmdb/asn/aliases/fields/netindex",
+      "confidence_95_ns": [
+        64.652,
+        67.642
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 66.118
+    },
+    {
+      "benchmark": "mmdb/asn/aliases/json/mmdb",
+      "confidence_95_ns": [
+        361.047,
+        394.47
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 377.437
+    },
+    {
+      "benchmark": "mmdb/asn/aliases/json/netindex",
+      "confidence_95_ns": [
+        146.758,
+        147.388
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 147.062
+    },
+    {
+      "benchmark": "mmdb/asn/aliases/lookup/mmdb",
+      "confidence_95_ns": [
+        208.801,
+        209.98
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 209.352
+    },
+    {
+      "benchmark": "mmdb/asn/aliases/lookup/netindex",
+      "confidence_95_ns": [
+        39.717,
+        40.85
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 40.27
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-hit/fields/mmdb",
+      "confidence_95_ns": [
+        101.783,
+        102.363
+      ],
+      "operation": "query",
+      "operations_per_batch": 558,
+      "mean_ns_per_operation": 102.07
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-hit/fields/netindex",
+      "confidence_95_ns": [
+        79.124,
+        80.494
+      ],
+      "operation": "query",
+      "operations_per_batch": 558,
+      "mean_ns_per_operation": 79.82
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-hit/json/mmdb",
+      "confidence_95_ns": [
+        207.436,
+        210.399
+      ],
+      "operation": "query",
+      "operations_per_batch": 558,
+      "mean_ns_per_operation": 208.685
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-hit/json/netindex",
+      "confidence_95_ns": [
+        183.925,
+        185.28
+      ],
+      "operation": "query",
+      "operations_per_batch": 558,
+      "mean_ns_per_operation": 184.555
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-hit/lookup/mmdb",
+      "confidence_95_ns": [
+        51.143,
+        51.281
+      ],
+      "operation": "query",
+      "operations_per_batch": 558,
+      "mean_ns_per_operation": 51.211
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-hit/lookup/netindex",
+      "confidence_95_ns": [
+        44.98,
+        45.279
+      ],
+      "operation": "query",
+      "operations_per_batch": 558,
+      "mean_ns_per_operation": 45.094
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-uniform/fields/mmdb",
+      "confidence_95_ns": [
+        86.221,
+        93.671
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 89.981
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-uniform/fields/netindex",
+      "confidence_95_ns": [
+        68.518,
+        70.026
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 69.268
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-uniform/json/mmdb",
+      "confidence_95_ns": [
+        159.38,
+        159.895
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 159.64
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-uniform/json/netindex",
+      "confidence_95_ns": [
+        154.032,
+        155.306
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 154.601
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-uniform/lookup/mmdb",
+      "confidence_95_ns": [
+        30.871,
+        33.55
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 32.23
+    },
+    {
+      "benchmark": "mmdb/asn/ipv4-uniform/lookup/netindex",
+      "confidence_95_ns": [
+        47.613,
+        52.534
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 50.051
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-hit/fields/mmdb",
+      "confidence_95_ns": [
+        165.49,
+        166.524
+      ],
+      "operation": "query",
+      "operations_per_batch": 147,
+      "mean_ns_per_operation": 166.0
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-hit/fields/netindex",
+      "confidence_95_ns": [
+        77.262,
+        78.425
+      ],
+      "operation": "query",
+      "operations_per_batch": 147,
+      "mean_ns_per_operation": 77.853
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-hit/json/mmdb",
+      "confidence_95_ns": [
+        331.631,
+        370.845
+      ],
+      "operation": "query",
+      "operations_per_batch": 147,
+      "mean_ns_per_operation": 350.479
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-hit/json/netindex",
+      "confidence_95_ns": [
+        275.51,
+        308.646
+      ],
+      "operation": "query",
+      "operations_per_batch": 147,
+      "mean_ns_per_operation": 292.413
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-hit/lookup/mmdb",
+      "confidence_95_ns": [
+        113.922,
+        114.192
+      ],
+      "operation": "query",
+      "operations_per_batch": 147,
+      "mean_ns_per_operation": 114.048
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-hit/lookup/netindex",
+      "confidence_95_ns": [
+        47.955,
+        48.474
+      ],
+      "operation": "query",
+      "operations_per_batch": 147,
+      "mean_ns_per_operation": 48.215
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-uniform/fields/mmdb",
+      "confidence_95_ns": [
+        33.118,
+        33.851
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 33.44
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-uniform/fields/netindex",
+      "confidence_95_ns": [
+        25.401,
+        26.854
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 26.113
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-uniform/json/mmdb",
+      "confidence_95_ns": [
+        58.851,
+        59.213
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 59.018
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-uniform/json/netindex",
+      "confidence_95_ns": [
+        49.028,
+        49.411
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 49.203
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-uniform/lookup/mmdb",
+      "confidence_95_ns": [
+        15.524,
+        15.641
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 15.582
+    },
+    {
+      "benchmark": "mmdb/asn/ipv6-uniform/lookup/netindex",
+      "confidence_95_ns": [
+        9.761,
+        9.795
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 9.777
+    },
+    {
+      "benchmark": "mmdb/asn/open/mmdb-validated",
+      "confidence_95_ns": [
+        32167935.528,
+        33028691.306
+      ],
+      "operation": "open",
+      "operations_per_batch": 1,
+      "mean_ns_per_operation": 32570921.111
+    },
+    {
+      "benchmark": "mmdb/asn/open/netindex-validated",
+      "confidence_95_ns": [
+        80211235.5,
+        80652130.667
+      ],
+      "operation": "open",
+      "operations_per_batch": 1,
+      "mean_ns_per_operation": 80425116.667
+    },
+    {
+      "benchmark": "mmdb/city/aliases/fields/mmdb",
+      "confidence_95_ns": [
+        414.563,
+        416.167
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 415.347
+    },
+    {
+      "benchmark": "mmdb/city/aliases/fields/netindex",
+      "confidence_95_ns": [
+        72.681,
+        78.498
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 75.583
+    },
+    {
+      "benchmark": "mmdb/city/aliases/json/mmdb",
+      "confidence_95_ns": [
+        848.19,
+        933.528
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 892.892
+    },
+    {
+      "benchmark": "mmdb/city/aliases/json/netindex",
+      "confidence_95_ns": [
+        420.638,
+        434.978
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 428.722
+    },
+    {
+      "benchmark": "mmdb/city/aliases/lookup/mmdb",
+      "confidence_95_ns": [
+        183.702,
+        184.055
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 183.873
+    },
+    {
+      "benchmark": "mmdb/city/aliases/lookup/netindex",
+      "confidence_95_ns": [
+        37.847,
+        38.204
+      ],
+      "operation": "query",
+      "operations_per_batch": 4,
+      "mean_ns_per_operation": 38.024
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-hit/fields/mmdb",
+      "confidence_95_ns": [
+        378.009,
+        388.102
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 382.022
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-hit/fields/netindex",
+      "confidence_95_ns": [
+        98.416,
+        99.313
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 98.868
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-hit/json/mmdb",
+      "confidence_95_ns": [
+        669.924,
+        673.832
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 671.872
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-hit/json/netindex",
+      "confidence_95_ns": [
+        370.847,
+        372.98
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 371.833
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-hit/lookup/mmdb",
+      "confidence_95_ns": [
+        47.331,
+        47.551
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 47.437
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-hit/lookup/netindex",
+      "confidence_95_ns": [
+        48.153,
+        49.064
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 48.515
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-uniform/fields/mmdb",
+      "confidence_95_ns": [
+        362.621,
+        382.054
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 371.866
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-uniform/fields/netindex",
+      "confidence_95_ns": [
+        88.877,
+        90.253
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 89.507
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-uniform/json/mmdb",
+      "confidence_95_ns": [
+        597.442,
+        602.691
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 599.825
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-uniform/json/netindex",
+      "confidence_95_ns": [
+        330.27,
+        332.638
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 331.409
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-uniform/lookup/mmdb",
+      "confidence_95_ns": [
+        39.689,
+        45.193
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 42.305
+    },
+    {
+      "benchmark": "mmdb/city/ipv4-uniform/lookup/netindex",
+      "confidence_95_ns": [
+        47.554,
+        50.012
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 48.663
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-hit/fields/mmdb",
+      "confidence_95_ns": [
+        451.671,
+        459.353
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 455.405
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-hit/fields/netindex",
+      "confidence_95_ns": [
+        103.615,
+        114.286
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 108.942
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-hit/json/mmdb",
+      "confidence_95_ns": [
+        797.571,
+        821.507
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 808.68
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-hit/json/netindex",
+      "confidence_95_ns": [
+        406.556,
+        412.347
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 409.053
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-hit/lookup/mmdb",
+      "confidence_95_ns": [
+        101.994,
+        105.947
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 103.799
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-hit/lookup/netindex",
+      "confidence_95_ns": [
+        62.144,
+        67.716
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 64.942
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-uniform/fields/mmdb",
+      "confidence_95_ns": [
+        266.673,
+        268.533
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 267.619
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-uniform/fields/netindex",
+      "confidence_95_ns": [
+        84.338,
+        87.853
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 85.908
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-uniform/json/mmdb",
+      "confidence_95_ns": [
+        501.59,
+        504.479
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 502.976
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-uniform/json/netindex",
+      "confidence_95_ns": [
+        300.917,
+        302.692
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 301.793
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-uniform/lookup/mmdb",
+      "confidence_95_ns": [
+        15.6,
+        15.696
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 15.649
+    },
+    {
+      "benchmark": "mmdb/city/ipv6-uniform/lookup/netindex",
+      "confidence_95_ns": [
+        54.45,
+        55.143
+      ],
+      "operation": "query",
+      "operations_per_batch": 1024,
+      "mean_ns_per_operation": 54.789
+    },
+    {
+      "benchmark": "mmdb/city/open/mmdb-validated",
+      "confidence_95_ns": [
+        522898750.5,
+        529474174.5
+      ],
+      "operation": "open",
+      "operations_per_batch": 1,
+      "mean_ns_per_operation": 526031066.667
+    },
+    {
+      "benchmark": "mmdb/city/open/netindex-validated",
+      "confidence_95_ns": [
+        1054992856.083,
+        1059267641.833
+      ],
+      "operation": "open",
+      "operations_per_batch": 1,
+      "mean_ns_per_operation": 1057106086.667
+    }
+  ]
+}

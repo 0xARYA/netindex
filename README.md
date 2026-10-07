@@ -16,8 +16,21 @@ assertions. Your application chooses the payload schema and encoding.
 Readers work with owned bytes, borrowed slices, or memory-mapped files. Writers
 accept unsorted input, with disk-backed construction available for larger datasets.
 For an existing MMDB or a frequently changing routing table, a native reader or
-mutable trie may fit better. See [benchmarks](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md)
-for workloads and measurement instructions.
+mutable trie may fit better.
+
+Measured warm JSON responses against `maxminddb 0.32.0` on DB-IP Lite data:
+
+| Sampled hits | MMDB | netindex |
+| --- | ---: | ---: |
+| ASN IPv4 | 209 ns | 185 ns |
+| ASN IPv6 | 350 ns | 292 ns |
+| City IPv4 | 672 ns | 372 ns |
+| City IPv6 | 809 ns | 409 ns |
+
+This uses public conversion APIs and a caller-owned codec. Converted files are
+about 2.7× larger; MMDB wins some lookup-only cases and opens faster. See
+[full results and reproduction](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md)
+for workloads, hardware, serialization scope, and confidence intervals.
 
 ## Quick start
 

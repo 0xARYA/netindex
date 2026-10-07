@@ -1,38 +1,74 @@
 # Benchmarks
 
-Run the maintained Criterion harness from the crate directory:
+## MMDB comparison
+
+Measured on 7 October 2026: Ryzen 9 9950X3D2, Windows 11, Rust 1.95.0,
+one pinned logical CPU. Both readers map the same cached DB-IP Lite October 2026
+data; netindex converts it through its public APIs. The MMDB reader is unchanged
+`maxminddb 0.32.0`. SIMD is disabled.
+
+**Each cell is MMDB → netindex, in ns/query; lower is better.** These are
+Criterion batch means divided by query count, with 30 samples and warm pages.
+
+| Dataset / workload | Lookup only | Read fields | JSON response |
+| --- | ---: | ---: | ---: |
+| ASN / ipv4-hit | 51 → 45 | 102 → 80 | 209 → 185 |
+| ASN / ipv6-hit | 114 → 48 | 166 → 78 | 350 → 292 |
+| ASN / ipv4-uniform | 32 → 50 | 90 → 69 | 160 → 155 |
+| ASN / ipv6-uniform | 16 → 10 | 33 → 26 | 59 → 49 |
+| City / ipv4-hit | 47 → 49 | 382 → 99 | 672 → 372 |
+| City / ipv6-hit | 104 → 65 | 455 → 109 | 809 → 409 |
+| City / ipv4-uniform | 42 → 49 | 372 → 90 | 600 → 331 |
+| City / ipv6-uniform | 16 → 55 | 268 → 86 | 503 → 302 |
+
+JSON timings include lookup, borrowed field decoding, response construction,
+allocation, and serialization. Every timed IP is checked for identical fields,
+network, and JSON before measurement. Misses serialize as `null`.
+
+| Dataset | MMDB / nidx file size | Validated opening: MMDB / netindex |
+| --- | ---: | ---: |
+| ASN | 9.12 MiB / 24.84 MiB | 32.6 ms / 80.4 ms |
+| City | 121.11 MiB / 323.00 MiB | 526.0 ms / 1057.1 ms |
+
+Conversion uses a caller-owned fixed-field codec with shared strings. ASN selects
+number and organization; City selects country, continent, first region, city,
+postal code, coordinates, accuracy radius, and time zone, using English names.
+It expands aliases and adds IPv6 targets for the canonical `::/96` subtree.
+This costs storage: **the converted files are about 2.7× larger**. Opening includes
+native `verify()` or netindex validation plus `StringPool::open()`. File size is
+not resident memory.
+
+Hit workloads sample every 997th native network, capped at 1,024 IPs per family;
+uniform workloads contain 1,024 deterministic IPs including misses. Four additional
+alias addresses are checked and timed. Cold pages, concurrent throughput, HTTP,
+RSS, and request p95/p99 are outside this measurement.
+
+[Results, confidence intervals, query counts, input hashes, and build details](benches/results/2026-10-07-mmdb.json).
+The benchmark codec and conversion are in [benches/mmdb.rs](benches/mmdb.rs) and
+[benches/support](benches/support).
+
+### Reproduce
+
+Download and decompress the two MMDBs identified in the results file once. Keep
+them immutable throughout the run. Set paths to those cached inputs:
 
 ```sh
-cargo bench --bench index
+NETINDEX_BENCH_ASN=/data/dbip-asn.mmdb \
+NETINDEX_BENCH_CITY=/data/dbip-city.mmdb \
+cargo +1.95.0 bench --bench mmdb --features mmdb,mmap,shared-values
 ```
 
-It uses 65,536 deterministic assertions per scenario and batches of 1,024 queries.
-IPv4, IPv6, overlapping ranges, and exact ASN keys are checked against original
-input before timing. Failed operations fail the benchmark process.
+Pin to one CPU for comparable results. Derived `.nidx` files are rebuilt under
+`target/mmdb-bench`; no download occurs.
 
-| Group | Includes |
-| --- | --- |
-| `lookup` | Visiting all matches and reading their IDs, targets, and payload lengths. |
-| `lookup-json` | Lookup, eight-byte scalar decoding, collecting `{id, value}` records, and JSON serialization. |
-| `open` | Complete index validation over warm backing bytes. |
-| `build` | Ingestion, sorting, payload deduplication, and complete file encoding with shared or unique payloads. |
-| `predecessor-model` | An address-directory experiment, separate from the public reader. |
-
-`lookup-json` includes misses and all overlapping matches. Its response schema is
-a benchmark fixture; applications choose their own payload codec. It excludes
-HTTP, network transfer, and async task coordination.
-
-## Compare changes
+## Index regression benchmarks
 
 ```sh
 cargo bench --bench index -- --save-baseline before
 cargo bench --bench index -- --baseline before
 ```
 
-Use the same toolchain, release settings, machine load, and CPU affinity. Criterion
-reports batch times; divide by query count for per-query averages. These are warm
-measurements, not cold-page timings or request p95/p99.
-
-The earlier MMDB comparisons used experimental alias routing that is not in the
-public converter. Those figures are omitted here. No current comparative speed
-or memory claim is made for MMDB conversion.
+This separate harness uses 65,536 assertions and 1,024 queries per scenario
+for IPv4, IPv6, overlaps, and ASN keys. It measures visitors, scalar payloads
+serialized as `{id, value}`, validation, building, and an address-directory
+experiment. Failed operations fail either benchmark process.
