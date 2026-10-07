@@ -1,7 +1,4 @@
-use std::{
-    io,
-    net::{IpAddr, Ipv4Addr},
-};
+use std::net::{IpAddr, Ipv4Addr};
 
 use netindex::{Builder, Error, Limits, Reader, Target};
 
@@ -45,7 +42,7 @@ pub(super) fn lookup_batch(reader: &Reader<Vec<u8>>, addresses: &[IpAddr]) -> Re
     }
 
     if count != 768 {
-        return Err(io::Error::other("unexpected batch match count").into());
+        return Err(Error::Invalid("example batch match count"));
     }
 
     Ok(count)
