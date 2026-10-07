@@ -22,10 +22,10 @@ Measured warm JSON responses against `maxminddb 0.32.0` on DB-IP Lite data:
 
 | Sampled hits | MMDB | netindex |
 | --- | ---: | ---: |
-| ASN IPv4 | 209 ns | 185 ns |
-| ASN IPv6 | 350 ns | 292 ns |
-| City IPv4 | 672 ns | 372 ns |
-| City IPv6 | 809 ns | 409 ns |
+| ASN IPv4 | 257 ns | 198 ns |
+| ASN IPv6 | 314 ns | 228 ns |
+| City IPv4 | 703 ns | 487 ns |
+| City IPv6 | 865 ns | 383 ns |
 
 This uses public conversion APIs and a caller-owned codec. Converted files are
 about 2.7× larger; MMDB wins some lookup-only cases and opens faster. See

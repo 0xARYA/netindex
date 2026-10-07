@@ -12,23 +12,24 @@ Criterion batch means divided by query count, with 30 samples and warm pages.
 
 | Dataset / workload | Lookup only | Read fields | JSON response |
 | --- | ---: | ---: | ---: |
-| ASN / ipv4-hit | 51 → 45 | 102 → 80 | 209 → 185 |
-| ASN / ipv6-hit | 114 → 48 | 166 → 78 | 350 → 292 |
-| ASN / ipv4-uniform | 32 → 50 | 90 → 69 | 160 → 155 |
-| ASN / ipv6-uniform | 16 → 10 | 33 → 26 | 59 → 49 |
-| City / ipv4-hit | 47 → 49 | 382 → 99 | 672 → 372 |
-| City / ipv6-hit | 104 → 65 | 455 → 109 | 809 → 409 |
-| City / ipv4-uniform | 42 → 49 | 372 → 90 | 600 → 331 |
-| City / ipv6-uniform | 16 → 55 | 268 → 86 | 503 → 302 |
+| ASN / ipv4-hit | 55 → 50 | 135 → 80 | 257 → 198 |
+| ASN / ipv6-hit | 127 → 58 | 170 → 79 | 314 → 228 |
+| ASN / ipv4-uniform | 32 → 43 | 75 → 76 | 161 → 165 |
+| ASN / ipv6-uniform | 14 → 12 | 33 → 26 | 63 → 54 |
+| City / ipv4-hit | 55 → 53 | 404 → 119 | 703 → 487 |
+| City / ipv6-hit | 118 → 57 | 504 → 97 | 865 → 383 |
+| City / ipv4-uniform | 41 → 46 | 310 → 86 | 559 → 331 |
+| City / ipv6-uniform | 25 → 69 | 269 → 99 | 702 → 394 |
 
 JSON timings include lookup, borrowed field decoding, response construction,
 allocation, and serialization. Every timed IP is checked for identical fields,
-network, and JSON before measurement. Misses serialize as `null`.
+network, and JSON before measurement. Lookup-only returns the same optional
+network target on both readers; misses serialize as `null` in JSON timing.
 
 | Dataset | MMDB / nidx file size | Validated opening: MMDB / netindex |
 | --- | ---: | ---: |
-| ASN | 9.12 MiB / 24.84 MiB | 32.6 ms / 80.4 ms |
-| City | 121.11 MiB / 323.00 MiB | 526.0 ms / 1057.1 ms |
+| ASN | 9.12 MiB / 24.84 MiB | 34.7 ms / 84.0 ms |
+| City | 121.11 MiB / 323.00 MiB | 716.8 ms / 1062.1 ms |
 
 Conversion uses a caller-owned fixed-field codec with shared strings. ASN selects
 number and organization; City selects country, continent, first region, city,
@@ -59,7 +60,8 @@ cargo +1.95.0 bench --bench mmdb --features mmdb,mmap,shared-values
 ```
 
 Pin to one CPU for comparable results. Derived `.nidx` files are rebuilt under
-`target/mmdb-bench`; no download occurs.
+a private temporary directory under `target/mmdb-bench`, removed after the run;
+no download occurs.
 
 ## Index regression benchmarks
 
