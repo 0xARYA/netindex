@@ -1,4 +1,4 @@
-//! Warm lookup, validation, and complete build costs for deterministic inputs.
+//! Warm lookup, lookup plus JSON responses, validation, and complete builds.
 
 use std::{
     fs::{self, File},
@@ -10,12 +10,13 @@ use std::{
 
 use criterion::{BenchmarkId, Criterion, Throughput};
 use netindex::{Builder, Error, Limits, Reader, Target};
+use serde::{Deserialize, Serialize};
 
 #[expect(
     clippy::expect_used,
     reason = "a failed timed operation must fail the benchmark process"
 )]
-fn main() -> Result<(), Error> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut criterion = Criterion::default()
         .sample_size(30)
         .warm_up_time(Duration::from_secs(1))
@@ -99,14 +100,36 @@ fn main() -> Result<(), Error> {
                 .collect();
             actual.sort_unstable_by_key(|row| row.0);
 
+            let request = if scenario == "asn" {
+                Query::Asn(number)
+            } else {
+                Query::Ip(query)
+            };
+            let mut response: Vec<ResponseRecord> =
+                serde_json::from_slice(&json_response(&reader, request)?)?;
+            response.sort_unstable_by_key(|row| row.id);
+            let expected_response: Vec<_> = expected
+                .iter()
+                .map(|row| ResponseRecord {
+                    id: row.0 as u32,
+                    value: 42,
+                })
+                .collect();
+            if response != expected_response {
+                return Err(Error::Invalid(
+                    "serialized response disagrees with original-target oracle",
+                )
+                .into());
+            }
+
             if actual.len() != expected.len()
                 || actual.iter().zip(&expected).any(|(actual, expected)| {
                     actual.0 != expected.0 || actual.1 != expected.1 || actual.2 != expected.2
                 })
             {
-                return Err(Error::Invalid(
-                    "benchmark disagrees with original-target oracle",
-                ));
+                return Err(
+                    Error::Invalid("benchmark disagrees with original-target oracle").into(),
+                );
             }
         }
 
@@ -144,6 +167,25 @@ fn main() -> Result<(), Error> {
 
         group.finish();
 
+        let mut group = criterion.benchmark_group("lookup-json");
+        group.throughput(Throughput::Elements(queries.len() as u64));
+        group.bench_function(scenario, |bench| {
+            bench.iter(|| {
+                for (id, &query) in queries.iter().enumerate() {
+                    let request = if scenario == "asn" {
+                        Query::Asn((id as u32 * 7919) % 65_536 + 1)
+                    } else {
+                        Query::Ip(query)
+                    };
+                    black_box(
+                        json_response(&reader, request)
+                            .expect("lookup and JSON serialization benchmark failed"),
+                    );
+                }
+            })
+        });
+        group.finish();
+
         criterion.bench_function(&format!("open/{scenario}"), |bench| {
             bench.iter(|| {
                 Reader::open(black_box(bytes.as_slice()), Limits::default())
@@ -173,6 +215,43 @@ fn main() -> Result<(), Error> {
     criterion.final_summary();
 
     Ok(())
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
+struct ResponseRecord {
+    id: u32,
+    value: u64,
+}
+
+enum Query {
+    Ip(IpAddr),
+    Asn(u32),
+}
+
+fn json_response(
+    reader: &Reader<&[u8]>,
+    query: Query,
+) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    let mut records = Vec::new();
+    let mut emit = |matched: netindex::Match<'_>| {
+        let bytes = matched
+            .payload
+            .try_into()
+            .map_err(|_| Error::Invalid("benchmark u64 payload length"))?;
+        records.push(ResponseRecord {
+            id: matched.id,
+            value: u64::from_le_bytes(bytes),
+        });
+
+        Ok::<_, Error>(())
+    };
+
+    match query {
+        Query::Ip(address) => reader.visit_ip(address, &mut emit)?,
+        Query::Asn(number) => reader.visit_asn(number, &mut emit)?,
+    }
+
+    Ok(serde_json::to_vec(&records)?)
 }
 
 fn contains(target: Target, query: IpAddr) -> bool {

@@ -45,7 +45,7 @@ The [fuzz package](fuzz/README.md) runs on Linux with AddressSanitizer.
 
 ## Benchmarks
 
-See [comparative benchmarks](BENCHMARKS.md) for recorded workloads and results.
+See [benchmarks](BENCHMARKS.md) for workloads and reproduction.
 The Criterion harness below tracks changes within netindex:
 
 ```sh
@@ -55,7 +55,12 @@ cargo bench --bench index -- --baseline NAME
 
 Capture the baseline before editing. The harness measures warm lookup, complete
 validation, and building, using 65,536 assertions per scenario and 1,024 queries
-per lookup batch. Run comparisons serially on a fixed CPU core with consistent
+per lookup batch. `lookup-json` includes lookup, decoding each eight-byte scalar
+payload, allocating all matching records, and serializing `{id, value}` objects
+with serde_json. It includes misses and overlaps, but excludes HTTP and networking;
+the schema is a benchmark fixture, not a library codec.
+
+Run comparisons serially on a fixed CPU core with consistent
 build settings and machine load. Record input hashes, executable, toolchain,
 hardware, and measurement scope. Warm library timings do not establish HTTP
 capacity or cold-file behavior.

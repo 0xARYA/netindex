@@ -16,8 +16,8 @@ assertions. Your application chooses the payload schema and encoding.
 Readers work with owned bytes, borrowed slices, or memory-mapped files. Writers
 accept unsorted input, with disk-backed construction available for larger datasets.
 For an existing MMDB or a frequently changing routing table, a native reader or
-mutable trie may fit better. See [recorded benchmarks](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md)
-for local comparisons and their limits.
+mutable trie may fit better. See [benchmarks](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md)
+for workloads and measurement instructions.
 
 ## Quick start
 

@@ -1,51 +1,38 @@
-# Recorded benchmarks
+# Benchmarks
 
-These measurements come from a local comparison harness that is not shipped
-with the crate or repository. They describe the recorded experiment, not a
-performance guarantee. For the maintained Criterion harness, see
-[Contributing](CONTRIBUTING.md#benchmarks).
+Run the maintained Criterion harness from the crate directory:
 
-Measured 7 October 2026 against Rust maxminddb 0.32.0 using cached DB-IP ASN Lite
-and City Lite. Both readers map their files.
+```sh
+cargo bench --bench index
+```
 
-Results below use **benchmark-only alias routing**, fixed-size payloads and shared
-strings. The public converter does not provide alias routing.
+It uses 65,536 deterministic assertions per scenario and batches of 1,024 queries.
+IPv4, IPv6, overlapping ranges, and exact ASN keys are checked against original
+input before timing. Failed operations fail the benchmark process.
 
-## Lookup and borrowed fields
+| Group | Includes |
+| --- | --- |
+| `lookup` | Visiting all matches and reading their IDs, targets, and payload lengths. |
+| `lookup-json` | Lookup, eight-byte scalar decoding, collecting `{id, value}` records, and JSON serialization. |
+| `open` | Complete index validation over warm backing bytes. |
+| `build` | Ingestion, sorting, payload deduplication, and complete file encoding with shared or unique payloads. |
+| `predecessor-model` | An address-directory experiment, separate from the public reader. |
 
-Both readers return the same selected fields; serialization is excluded.
+`lookup-json` includes misses and all overlapping matches. Its response schema is
+a benchmark fixture; applications choose their own payload codec. It excludes
+HTTP, network transfer, and async task coordination.
 
-| Dataset / queries | MMDB ns/query | Routed netindex ns/query |
-| --- | ---: | ---: |
-| ASN / IPv4 hits | 105.6 | 75.3 |
-| ASN / IPv6 hits | 160.9 | 71.8 |
-| ASN / uniform IPv4 | 78.8 | 70.5 |
-| ASN / uniform IPv6 | 15.8 | 9.2 |
-| ASN / IPv6 alias hits | 242.8 | 98.6 |
-| City / IPv4 hits | 417.3 | 129.5 |
-| City / IPv6 hits | 458.7 | 144.1 |
-| City / uniform IPv4 | 355.7 | 122.8 |
-| City / uniform IPv6 | 250.3 | 73.0 |
-| City / IPv6 alias hits | 539.2 | 141.5 |
+## Compare changes
 
-## Serving memory
+```sh
+cargo bench --bench index -- --save-baseline before
+cargo bench --bench index -- --baseline before
+```
 
-| Dataset | MMDB warm MiB | Routed netindex warm MiB |
-| --- | ---: | ---: |
-| ASN | 14.55 | 11.61 |
-| City | 126.38 | 107.04 |
+Use the same toolchain, release settings, machine load, and CPU affinity. Criterion
+reports batch times; divide by query count for per-query averages. These are warm
+measurements, not cold-page timings or request p95/p99.
 
-Working set includes resident mapped pages, heap and runtime memory. Expanded
-conversion without alias routing measures about 21.9 MiB for ASN and 221.0 MiB
-for City, exceeding MMDB.
-
-## Method
-
-Windows 11, Ryzen 9 9950X3D2, Rust 1.98.1; scalar release builds with one codegen
-unit, no LTO or target-cpu override, pinned to logical CPU 2. Lookup figures are
-medians of three process medians, each with a discarded warmup and nine timed
-batches. Memory runs warm saved queries for sixteen passes.
-
-Fields and matched networks are checked against MMDB before timing. These are
-cached-file batch measurements; cold-disk behavior, concurrent throughput,
-p95/p99 and replacement peaks remain unmeasured.
+The earlier MMDB comparisons used experimental alias routing that is not in the
+public converter. Those figures are omitted here. No current comparative speed
+or memory claim is made for MMDB conversion.

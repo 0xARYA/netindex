@@ -588,6 +588,7 @@ dependencies = [
  "maxminddb",
  "memmap2",
  "serde",
+ "serde_json",
  "tempfile",
  "thiserror",
  "tokio",
