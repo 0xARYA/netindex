@@ -31,6 +31,8 @@ jobs:
         run: cargo +1.95.0 test --locked -- --test-threads=1
       - name: Test external builds and SIMD/scalar parity
         run: cargo +1.95.0 test --locked --release --all-features -- --test-threads=1
+      - name: Check benchmark correctness
+        run: cargo +1.95.0 bench --locked --bench index -- --test
       - name: Run Tokio example
         run: cargo +1.95.0 run --locked --example tokio
       - name: Run compio example

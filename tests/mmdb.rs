@@ -176,7 +176,8 @@ fn assert_native<B: AsRef<[u8]>>(
     converted: &Reader<B>,
     address: IpAddr,
 ) -> Result<(), Box<dyn StdError>> {
-    let expected = source.lookup(address)?.decode::<Proxy>()?;
+    let native = source.lookup(address)?;
+    let expected = native.decode::<Proxy>()?;
     let matches = converted.lookup_ip(address)?;
 
     match expected {
@@ -190,7 +191,17 @@ fn assert_native<B: AsRef<[u8]>>(
                 &[u8::from(proxy.is_public_proxy)],
                 "{address}"
             );
-            assert!(matches!(matched.target, Target::Network { .. }));
+
+            let network = native.network()?;
+
+            assert_eq!(
+                matched.target,
+                Target::Network {
+                    address: network.ip(),
+                    prefix: network.prefix(),
+                },
+                "{address}"
+            );
         }
         None => assert!(matches.is_empty(), "{address}"),
     }

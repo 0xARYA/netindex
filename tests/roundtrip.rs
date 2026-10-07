@@ -15,6 +15,7 @@ fn independent_consecutive_id_fixture_preserves_targets_and_rejects_invalid_base
     let reader = Reader::open(bytes.as_slice(), Limits::default()).unwrap();
 
     assert_eq!(reader.len(), 3);
+
     for (address, id) in [("10.0.0.1", 1), ("10.0.0.2", 2)] {
         let rows = reader.lookup_ip(address.parse().unwrap()).unwrap();
 
@@ -23,6 +24,7 @@ fn independent_consecutive_id_fixture_preserves_targets_and_rejects_invalid_base
         assert_eq!(rows[0].target, Target::Address(address.parse().unwrap()));
         assert_eq!(rows[0].payload, b"x");
     }
+
     assert_eq!(reader.lookup_asn(7).unwrap()[0].id, 0);
     assert!(reader
         .lookup_ip("10.0.0.3".parse().unwrap())
@@ -807,6 +809,7 @@ fn assert_ip<B: AsRef<[u8]>>(reader: &Reader<B>, targets: &[Target], query: IpAd
         .unwrap();
 
     actual.sort_unstable();
+
     let expected: Vec<_> = targets
         .iter()
         .enumerate()

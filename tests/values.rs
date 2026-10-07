@@ -58,6 +58,7 @@ fn independent_pool_fixture_rejects_invalid_offsets_and_truncation() {
 
     let mut trailing = bytes.to_vec();
     trailing.push(0);
+
     assert!(ValuePool::open(&trailing, Limits::default()).is_err());
 }
 
@@ -70,6 +71,7 @@ fn limits_and_io_failures_leave_existing_ids_intact() {
     assert_eq!(builder.intern(b"a").unwrap(), 0);
     assert!(builder.intern(b"b").is_err());
     assert_eq!(builder.intern(b"a").unwrap(), 0);
+
     let bytes = builder.into_bytes().unwrap();
 
     assert!(ValuePool::open(
@@ -127,6 +129,7 @@ fn typed_strings_validate_once_and_borrow_only_valid_utf8() {
     let mut invalid = ValuePoolBuilder::new(Limits::default());
     invalid.intern(&[0xff]).unwrap();
     let invalid = invalid.into_bytes().unwrap();
+
     assert!(matches!(
         StringPool::open(&invalid, Limits::default()),
         Err(Error::Utf8(_))
@@ -134,6 +137,7 @@ fn typed_strings_validate_once_and_borrow_only_valid_utf8() {
 }
 
 struct Fail;
+
 impl io::Write for Fail {
     fn write(&mut self, _: &[u8]) -> io::Result<usize> {
         Err(io::Error::other("test write failure"))

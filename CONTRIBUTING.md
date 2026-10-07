@@ -51,7 +51,11 @@ The Criterion harness below tracks changes within netindex:
 ```sh
 cargo bench --bench index -- --save-baseline NAME
 cargo bench --bench index -- --baseline NAME
+cargo bench --bench index -- --test
 ```
+
+`--test` runs the correctness prechecks and each benchmark once; CI uses it
+without collecting timings.
 
 Capture the baseline before editing. The harness measures warm lookup, complete
 validation, and building, using 65,536 assertions per scenario and 1,024 queries

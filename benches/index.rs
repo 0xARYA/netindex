@@ -9,8 +9,9 @@ use std::{
 };
 
 use criterion::{BenchmarkId, Criterion, Throughput};
-use netindex::{Builder, Error, Limits, Reader, Target};
 use serde::{Deserialize, Serialize};
+
+use netindex::{Builder, Error, Limits, Reader, Target};
 
 #[expect(
     clippy::expect_used,
@@ -68,70 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             })
             .collect();
 
-        for (position, &query) in queries.iter().enumerate() {
-            let mut actual = Vec::new();
-            let number = (position as u32 * 7919) % 65_536 + 1;
-            let mut emit = |matched: netindex::Match<'_>| {
-                actual.push((
-                    matched.id as usize,
-                    matched.target,
-                    matched.payload.to_vec(),
-                ));
-                Ok::<_, Error>(())
-            };
-
-            if scenario == "asn" {
-                reader.visit_asn(number, &mut emit)?;
-            } else {
-                reader.visit_ip(query, &mut emit)?;
-            }
-
-            let expected: Vec<_> = targets
-                .iter()
-                .enumerate()
-                .filter(|(_, target)| {
-                    if scenario == "asn" {
-                        **target == Target::Asn(number)
-                    } else {
-                        contains(**target, query)
-                    }
-                })
-                .map(|(id, target)| (id, *target, 42u64.to_le_bytes()))
-                .collect();
-            actual.sort_unstable_by_key(|row| row.0);
-
-            let request = if scenario == "asn" {
-                Query::Asn(number)
-            } else {
-                Query::Ip(query)
-            };
-            let mut response: Vec<ResponseRecord> =
-                serde_json::from_slice(&json_response(&reader, request)?)?;
-            response.sort_unstable_by_key(|row| row.id);
-            let expected_response: Vec<_> = expected
-                .iter()
-                .map(|row| ResponseRecord {
-                    id: row.0 as u32,
-                    value: 42,
-                })
-                .collect();
-            if response != expected_response {
-                return Err(Error::Invalid(
-                    "serialized response disagrees with original-target oracle",
-                )
-                .into());
-            }
-
-            if actual.len() != expected.len()
-                || actual.iter().zip(&expected).any(|(actual, expected)| {
-                    actual.0 != expected.0 || actual.1 != expected.1 || actual.2 != expected.2
-                })
-            {
-                return Err(
-                    Error::Invalid("benchmark disagrees with original-target oracle").into(),
-                );
-            }
-        }
+        verify_queries(&reader, &targets, &queries, scenario, false)?;
 
         let mut group = criterion.benchmark_group("lookup");
         group.throughput(Throughput::Elements(queries.len() as u64));
@@ -196,6 +134,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let mut group = criterion.benchmark_group("build");
 
         for unique in [false, true] {
+            if unique {
+                let bytes = encode(&targets, true)?;
+                let reader = Reader::open(bytes.as_slice(), Limits::default())?;
+
+                verify_queries(&reader, &targets, &queries, scenario, true)?;
+            }
+
             group.bench_with_input(
                 BenchmarkId::new(scenario, if unique { "unique" } else { "shared" }),
                 &unique,
@@ -254,6 +199,86 @@ fn json_response(
     Ok(serde_json::to_vec(&records)?)
 }
 
+fn verify_queries(
+    reader: &Reader<&[u8]>,
+    targets: &[Target],
+    queries: &[IpAddr],
+    scenario: &str,
+    unique: bool,
+) -> Result<(), Box<dyn std::error::Error>> {
+    for (position, &query) in queries.iter().enumerate() {
+        let mut actual = Vec::new();
+        let number = (position as u32 * 7919) % 65_536 + 1;
+        let mut emit = |matched: netindex::Match<'_>| {
+            actual.push((
+                matched.id as usize,
+                matched.target,
+                matched.payload.to_vec(),
+            ));
+            Ok::<_, Error>(())
+        };
+
+        if scenario == "asn" {
+            reader.visit_asn(number, &mut emit)?;
+        } else {
+            reader.visit_ip(query, &mut emit)?;
+        }
+
+        let expected: Vec<_> = targets
+            .iter()
+            .enumerate()
+            .filter(|(_, target)| {
+                if scenario == "asn" {
+                    **target == Target::Asn(number)
+                } else {
+                    contains(**target, query)
+                }
+            })
+            .map(|(id, target)| {
+                let payload = if unique { id as u64 } else { 42 };
+
+                (id, *target, payload.to_le_bytes())
+            })
+            .collect();
+
+        actual.sort_unstable_by_key(|row| row.0);
+
+        let request = if scenario == "asn" {
+            Query::Asn(number)
+        } else {
+            Query::Ip(query)
+        };
+        let mut response: Vec<ResponseRecord> =
+            serde_json::from_slice(&json_response(reader, request)?)?;
+        response.sort_unstable_by_key(|row| row.id);
+
+        let expected_response: Vec<_> = expected
+            .iter()
+            .map(|row| ResponseRecord {
+                id: row.0 as u32,
+                value: if unique { row.0 as u64 } else { 42 },
+            })
+            .collect();
+
+        if response != expected_response {
+            return Err(Error::Invalid(
+                "serialized response disagrees with original-target oracle",
+            )
+            .into());
+        }
+
+        if actual.len() != expected.len()
+            || actual.iter().zip(&expected).any(|(actual, expected)| {
+                actual.0 != expected.0 || actual.1 != expected.1 || actual.2 != expected.2
+            })
+        {
+            return Err(Error::Invalid("benchmark disagrees with original-target oracle").into());
+        }
+    }
+
+    Ok(())
+}
+
 fn contains(target: Target, query: IpAddr) -> bool {
     match target {
         Target::Address(address) => address == query,
@@ -279,6 +304,7 @@ fn contains(target: Target, query: IpAddr) -> bool {
 
 fn encode(targets: &[Target], unique: bool) -> Result<Vec<u8>, Error> {
     let mut builder = Builder::new(Limits::default());
+
     for (id, target) in targets.iter().enumerate() {
         let payload = if unique { id as u64 } else { 42 };
         builder.push(*target, &payload.to_le_bytes())?;
@@ -382,6 +408,7 @@ impl Directory {
         let buckets = 1usize << directory_bits;
         let shift = family_bits - directory_bits;
         let mut offsets = Vec::with_capacity(buckets + 1);
+
         for bucket in 0..buckets {
             offsets.push(starts.partition_point(|&start| start >> shift < bucket as u128) as u32);
         }

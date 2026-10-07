@@ -32,8 +32,11 @@ fn owned_and_borrowed_readers_support_concurrent_ip_and_asn_visitors() {
 
                 workers.push(scope.spawn(move || {
                     for _ in 0..32 {
-                        assert_eq!(collect(&owned, addresses)?, collect(borrowed, addresses)?);
-                        assert_eq!(&collect(&owned, addresses)?, expected);
+                        let owned_matches = collect(&owned, addresses)?;
+                        let borrowed_matches = collect(borrowed, addresses)?;
+
+                        assert_eq!(&owned_matches, expected);
+                        assert_eq!(&borrowed_matches, expected);
                     }
 
                     Ok::<_, Error>(())

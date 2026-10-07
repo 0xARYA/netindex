@@ -12,6 +12,8 @@ fn independent_fixed_reference_fixture_rejects_bad_ids_and_descriptors() {
 
     for (id, payload) in expected.iter().enumerate() {
         let rows = reader.lookup_asn(id as u32 + 1).unwrap();
+
+        assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].id, id as u32);
         assert_eq!(rows[0].payload, *payload);
     }
@@ -32,6 +34,7 @@ fn independent_fixed_reference_fixture_rejects_bad_ids_and_descriptors() {
     ] {
         let mut invalid = bytes.to_vec();
         invalid[offset] = value;
+
         assert!(
             Reader::open(invalid, Limits::default()).is_err(),
             "offset={offset} value={value}"
@@ -57,13 +60,19 @@ fn fixed_lengths_cross_reference_width_and_pool_boundaries_without_losing_payloa
 
         let bytes = builder.into_bytes(b"").unwrap();
         let reader = Reader::open(bytes, Limits::default()).unwrap();
+        let mut delivered = Vec::new();
 
         reader
             .visit_all(|row| {
                 assert_eq!(row.payload, expected[row.id as usize]);
+                delivered.push(row.id);
                 Ok::<_, Error>(())
             })
             .unwrap();
+
+        delivered.sort_unstable();
+
+        assert_eq!(delivered, (0..count as u32 * 2).collect::<Vec<_>>());
     }
 
     let mut builder = Builder::new(Limits::default());
@@ -83,6 +92,8 @@ fn independent_uniform_kind_fixture_preserves_networks_and_rejects_ambiguous_fla
 
     for (address, network, id) in [("10.0.0.42", "10.0.0.0", 0), ("10.0.1.99", "10.0.1.0", 1)] {
         let rows = reader.lookup_ip(address.parse().unwrap()).unwrap();
+
+        assert_eq!(rows.len(), 1);
         assert_eq!(
             rows[0].target,
             Target::Network {
@@ -110,6 +121,7 @@ fn mixed_kind_blocks_and_unordered_ids_keep_their_original_targets() {
         .rev()
         .map(|id| {
             let address = std::net::Ipv4Addr::from(id * 256).into();
+
             if id < 300 || id % 2 == 0 {
                 Target::Network {
                     address,
@@ -127,12 +139,18 @@ fn mixed_kind_blocks_and_unordered_ids_keep_their_original_targets() {
     }
 
     let reader = Reader::open(builder.into_bytes(b"").unwrap(), Limits::default()).unwrap();
+    let mut delivered = Vec::new();
 
     reader
         .visit_all(|row| {
             assert_eq!(row.target, targets[row.id as usize]);
             assert_eq!(row.payload, b"same");
+            delivered.push(row.id);
             Ok::<_, Error>(())
         })
         .unwrap();
+
+    delivered.sort_unstable();
+
+    assert_eq!(delivered, (0..targets.len() as u32).collect::<Vec<_>>());
 }
