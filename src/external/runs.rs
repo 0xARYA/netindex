@@ -273,6 +273,7 @@ fn merge(
                 }
                 _ => return Err(Error::Invalid("run merge state")),
             }
+
             written += 1;
         }
 

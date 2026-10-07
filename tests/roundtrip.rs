@@ -10,6 +10,34 @@ use std::{
 use netindex::{Builder, Error, Limits, Reader, Target};
 
 #[test]
+fn independent_consecutive_id_fixture_preserves_targets_and_rejects_invalid_bases() {
+    let bytes = include_bytes!("fixtures/consecutive-ids.nidx");
+    let reader = Reader::open(bytes.as_slice(), Limits::default()).unwrap();
+
+    assert_eq!(reader.len(), 3);
+    for (address, id) in [("10.0.0.1", 1), ("10.0.0.2", 2)] {
+        let rows = reader.lookup_ip(address.parse().unwrap()).unwrap();
+
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].id, id);
+        assert_eq!(rows[0].target, Target::Address(address.parse().unwrap()));
+        assert_eq!(rows[0].payload, b"x");
+    }
+    assert_eq!(reader.lookup_asn(7).unwrap()[0].id, 0);
+    assert!(reader
+        .lookup_ip("10.0.0.3".parse().unwrap())
+        .unwrap()
+        .is_empty());
+
+    for base in [0u32, 2, u32::MAX] {
+        let mut invalid = bytes.to_vec();
+        invalid[108..112].copy_from_slice(&base.to_le_bytes());
+
+        assert!(Reader::open(invalid, Limits::default()).is_err());
+    }
+}
+
+#[test]
 fn convenience_build_and_lookup_preserve_borrowed_payloads_and_every_match() {
     let targets = [
         Target::Network {
@@ -353,7 +381,7 @@ fn packed_blocks_preserve_targets_at_fences_gaps_and_address_extremes() {
 
     let bytes = encode(&targets, b"");
 
-    assert_eq!(u32::from_le_bytes(bytes[12..16].try_into().unwrap()), 7);
+    assert_eq!(u32::from_le_bytes(bytes[12..16].try_into().unwrap()), 11);
 
     let reader = Reader::open(bytes, Limits::default()).unwrap();
 
@@ -428,7 +456,7 @@ fn independently_encoded_interval_fixture_preserves_targets_and_rejects_other_ve
         Target::Address("203.0.113.43".parse().unwrap()),
     ];
     let reader = Reader::open(
-        include_bytes!("fixtures/interval.ipidx").as_slice(),
+        include_bytes!("fixtures/interval.nidx").as_slice(),
         Limits::default(),
     )
     .unwrap();
@@ -453,7 +481,7 @@ fn independently_encoded_interval_fixture_preserves_targets_and_rejects_other_ve
 #[test]
 fn independently_encoded_packed_fixture_preserves_ids_and_gaps() {
     let reader = Reader::open(
-        include_bytes!("fixtures/packed-ipv4.ipidx").as_slice(),
+        include_bytes!("fixtures/packed-ipv4.nidx").as_slice(),
         Limits::default(),
     )
     .unwrap();
@@ -486,7 +514,7 @@ fn independently_encoded_packed_fixture_preserves_ids_and_gaps() {
 #[test]
 fn fixed_ipv6_and_mixed_fixtures_preserve_family_and_overlap_semantics() {
     let reader = Reader::open(
-        include_bytes!("fixtures/packed-ipv6.ipidx").as_slice(),
+        include_bytes!("fixtures/packed-ipv6.nidx").as_slice(),
         Limits::default(),
     )
     .unwrap();
@@ -514,7 +542,7 @@ fn fixed_ipv6_and_mixed_fixtures_preserve_family_and_overlap_semantics() {
     }
 
     let reader = Reader::open(
-        include_bytes!("fixtures/mixed.ipidx").as_slice(),
+        include_bytes!("fixtures/mixed.nidx").as_slice(),
         Limits::default(),
     )
     .unwrap();
@@ -678,7 +706,7 @@ fn packed_corruption_truncation_and_accepted_mutations_remain_safe() {
         .collect();
     let bytes = encode(&targets, b"");
 
-    assert_eq!(bytes[12], 5);
+    assert_eq!(bytes[12], 9);
 
     for end in 0..bytes.len() {
         assert!(Reader::open(&bytes[..end], Limits::default()).is_err());
@@ -728,6 +756,31 @@ fn packed_corruption_truncation_and_accepted_mutations_remain_safe() {
             assert_eq!(actual, expected, "mutation={offset} query={query}");
         }
     }
+}
+
+#[test]
+fn repeated_payload_runs_do_not_allow_unvalidated_spans() {
+    let mut builder = Builder::new(Limits::default());
+    for asn in 1..=4 {
+        builder.push(Target::Asn(asn), b"same").unwrap();
+    }
+    builder.push(Target::Asn(5), b"other").unwrap();
+
+    let bytes = builder.into_bytes(b"").unwrap();
+    let reader = Reader::open(bytes.clone(), Limits::default()).unwrap();
+
+    for asn in 1..=4 {
+        assert_eq!(reader.lookup_asn(asn).unwrap()[0].payload, b"same");
+    }
+
+    // Eight-byte ASN rows precede compact payload slots in this fixture.
+    let slots = 80 + 5 * 8;
+    let mut invalid = bytes;
+    for id in 1..4 {
+        invalid[slots + id * 8..slots + id * 8 + 4].copy_from_slice(&1u32.to_le_bytes());
+    }
+
+    assert!(Reader::open(invalid, Limits::default()).is_err());
 }
 
 fn encode(targets: &[Target], metadata: &[u8]) -> Vec<u8> {

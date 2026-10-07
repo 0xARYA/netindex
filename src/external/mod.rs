@@ -8,7 +8,12 @@ use std::{
 
 use tempfile::TempDir;
 
-use crate::{layout::Layout, target::Entry, Error, Limits, Target};
+use crate::{
+    layout::Layout,
+    payload::{SlotWriter, Slots},
+    target::Entry,
+    Error, Limits, Target,
+};
 use runs::{Row, Sorter};
 
 mod encode;
@@ -52,7 +57,7 @@ pub struct ExternalBuildStats {
     pub payload_cache_bytes: usize,
 }
 
-/// Disk-backed builder retaining bounded target runs and a bounded payload cache.
+/// Disk-backed builder with bounded target buffers and a payload cache.
 ///
 /// Keeps every assertion and insertion-order ID. Binary merges open two input
 /// runs at a time; only logarithmically many completed runs remain. Cache misses
@@ -93,6 +98,7 @@ pub struct ExternalBuilder {
     cache: HashMap<Vec<u8>, (u64, u64)>,
     cache_bytes: usize,
     payload_bytes: usize,
+    fixed_length: Option<usize>,
     counts: [usize; 3],
     records: usize,
     limits: Limits,
@@ -107,7 +113,8 @@ impl ExternalBuilder {
     /// Create private temporary files beneath an existing caller-selected directory.
     ///
     /// # Errors
-    /// Returns invalid run size, allocation, or temporary-file creation failures.
+    /// Fails on invalid run size, failed memory reservations, or temporary-file
+    /// creation errors.
     pub fn new(directory: &Path, limits: Limits, options: ExternalOptions) -> Result<Self, Error> {
         if options.run_records == 0 {
             return Err(Error::Invalid("external run size"));
@@ -139,6 +146,7 @@ impl ExternalBuilder {
             cache: HashMap::new(),
             cache_bytes: 0,
             payload_bytes: 0,
+            fixed_length: None,
             counts: [0; 3],
             records: 0,
             limits,
@@ -158,7 +166,8 @@ impl ExternalBuilder {
     /// return an error. This prevents publication after partial temporary-file I/O.
     ///
     /// # Errors
-    /// Returns invalid targets, input/output/disk limits, allocation, or temporary I/O failures.
+    /// Fails on invalid targets, exceeded limits, failed memory reservations, or
+    /// temporary-file I/O errors.
     pub fn push(&mut self, target: Target, payload: &[u8]) -> Result<(), Error> {
         if self.failed {
             return Err(Error::Invalid("failed external builder"));
@@ -179,7 +188,8 @@ impl ExternalBuilder {
     /// must discard them. Does not synchronize, validate payloads, or publish.
     ///
     /// # Errors
-    /// Returns invalid state/output position, limits, temporary I/O, or output failure.
+    /// Fails on invalid builder state or output position, exceeded limits, or
+    /// temporary-file or output I/O errors.
     pub fn write_to(
         mut self,
         output: impl Write + Seek,
@@ -204,18 +214,14 @@ impl ExternalBuilder {
         let mut run = sorter.finish(self.directory.path(), &mut self.budget)?;
 
         let packed = encode::sizes(run.file(), self.counts)?;
-        let slot_width = if self.payload_bytes <= u32::MAX as usize {
-            8
-        } else {
-            16
-        };
+        let slot_encoding = Slots::select(self.records, self.payload_bytes, self.fixed_length)?;
         let layout = Layout::with_packed(
             self.counts,
             metadata.len(),
             self.payload_bytes,
             self.limits,
             packed,
-            slot_width,
+            slot_encoding,
         )?;
 
         let mut output = BufWriter::new(output);
@@ -233,6 +239,7 @@ impl ExternalBuilder {
             .map_err(temporary("rewind payload slots"))?;
 
         let mut slots = BufReader::new(self.slots.get_mut());
+        let mut encoded = SlotWriter::new(&mut output, slot_encoding)?;
 
         for _ in 0..self.records {
             let mut bytes = [0; 16];
@@ -240,16 +247,10 @@ impl ExternalBuilder {
                 .read_exact(&mut bytes)
                 .map_err(temporary("read payload slots"))?;
 
-            if slot_width == 8 {
-                for offset in [0, 8] {
-                    let value = crate::layout::usize_at(&bytes, offset)?;
-                    let value =
-                        u32::try_from(value).map_err(|_| Error::Invalid("compact payload span"))?;
-                    output.write_all(&value.to_le_bytes())?;
-                }
-            } else {
-                output.write_all(&bytes)?;
-            }
+            encoded.push(
+                crate::layout::usize_at(&bytes, 0)? as u64,
+                crate::layout::usize_at(&bytes, 8)? as u64,
+            )?;
         }
 
         self.payloads
@@ -270,6 +271,7 @@ impl ExternalBuilder {
 
     fn append(&mut self, target: Target, payload: &[u8]) -> Result<(), Error> {
         let id = u32::try_from(self.records).map_err(|_| Error::Limit("records"))?;
+
         let row = match target {
             Target::Asn(0) => return Err(Error::Invalid("ASN zero")),
             Target::Asn(number) => Row::new(
@@ -350,6 +352,11 @@ impl ExternalBuilder {
             self.cache_bytes += charge;
         }
 
+        self.fixed_length = if self.records == 0 {
+            Some(payload.len())
+        } else {
+            self.fixed_length.filter(|&length| length == payload.len())
+        };
         self.counts = counts;
         self.payload_bytes = payload_bytes;
         self.records += 1;
@@ -413,10 +420,12 @@ fn copy_payloads(input: &mut File, output: &mut impl Write, bytes: usize) -> Res
         let chunk = buffer
             .get_mut(..length)
             .ok_or(Error::Invalid("payload copy buffer"))?;
+
         input
             .read_exact(chunk)
             .map_err(temporary("read payload pool"))?;
         output.write_all(chunk)?;
+
         remaining -= length;
     }
 

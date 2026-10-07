@@ -15,6 +15,9 @@ use crate::Target;
 /// Payload encoding and builder limits belong to the callback. To preserve native
 /// IPv6 alias lookups, pass [`WithinOptions::include_aliased_networks`]. Default
 /// options omit aliases and networks without data, but retain empty values.
+/// Native iteration represents the canonical `::/96` subtree as IPv4 targets.
+/// Matching IPv6 queries into that subtree requires caller-side routing or
+/// additional IPv6 targets, even when alias iteration is enabled.
 ///
 /// Validation precedes callbacks. A later iteration or callback failure stops
 /// delivery; earlier pushes are not rolled back. Discard the partial build on error.
@@ -39,7 +42,7 @@ use crate::Target;
 /// ```
 ///
 /// # Errors
-/// Returns native validation, traversal, or network errors converted to `E`.
+/// Stops on native validation, traversal, or network errors, converted to `E`.
 /// Callback errors retain their original type and cause.
 pub fn visit_networks<'a, B: AsRef<[u8]>, E: From<MaxMindDbError>>(
     reader: &'a Reader<B>,

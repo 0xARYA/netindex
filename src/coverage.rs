@@ -66,7 +66,7 @@ impl CoverageRouter {
     /// Build routing tables from coverage in reader order.
     ///
     /// # Errors
-    /// Returns a limit error beyond 64 readers or a memory-reservation failure.
+    /// Fails beyond 64 readers or if a memory reservation fails.
     pub fn new(coverage: &[Coverage]) -> Result<Self, Error> {
         if coverage.len() > 64 {
             return Err(Error::Limit("routed readers"));
@@ -97,24 +97,29 @@ impl CoverageRouter {
 
     /// Yield every possible reader position in original order, without allocating.
     pub fn candidates(&self, address: IpAddr) -> impl Iterator<Item = usize> {
+        candidates(self.mask(address))
+    }
+
+    pub(crate) fn mask(&self, address: IpAddr) -> u64 {
         let (ipv6, bucket) = bucket(address);
-        let mut mask = self
-            .masks
+        self.masks
             .get(usize::from(ipv6) * BUCKETS + bucket)
             .copied()
-            .unwrap_or(u64::MAX);
-
-        std::iter::from_fn(move || {
-            if mask == 0 {
-                return None;
-            }
-
-            let position = mask.trailing_zeros() as usize;
-            mask &= mask - 1;
-
-            Some(position)
-        })
+            .unwrap_or(u64::MAX)
     }
+}
+
+pub(crate) fn candidates(mut mask: u64) -> impl Iterator<Item = usize> {
+    std::iter::from_fn(move || {
+        if mask == 0 {
+            return None;
+        }
+
+        let position = mask.trailing_zeros() as usize;
+        mask &= mask - 1;
+
+        Some(position)
+    })
 }
 
 fn bucket(address: IpAddr) -> (bool, usize) {

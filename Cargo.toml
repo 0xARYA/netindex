@@ -17,15 +17,19 @@ all-features = true
 [features]
 external-sort = ["dep:tempfile"]
 mmdb = ["dep:maxminddb"]
+mmap = ["dep:memmap2"]
 simd = []
+shared-values = []
 
 [dependencies]
 hashbrown = { version = "0.17.1", default-features = false, features = ["inline-more"] }
 maxminddb = { version = "0.32", optional = true, default-features = false }
+memmap2 = { version = "0.9.11", optional = true }
 tempfile = { version = "3", optional = true }
 thiserror = "2"
 
 [dev-dependencies]
+tempfile = "3"
 compio = { version = "0.19.2", default-features = false, features = ["runtime", "polling"] }
 criterion = { version = "0.8.2", default-features = false }
 serde = { version = "1", features = ["derive"] }
@@ -41,7 +45,7 @@ workspace = true
 [workspace]
 resolver = '3'
 members = ['.']
-exclude = ['fuzz']
+exclude = ['fuzz', 'benchmarks']
 
 [workspace.lints.clippy]
 unwrap_used = "deny"
@@ -51,8 +55,7 @@ todo = "deny"
 unimplemented = "deny"
 unreachable = "deny"
 indexing_slicing = "deny"
-# `indexing_slicing` does not cover `&s[a..b]` on a `str`: that panics on a non-char-boundary index,
-# and a byte offset computed against a vendor-controlled URL or header is not provably a boundary.
+# String slices also require UTF-8 boundary checks.
 string_slice = "deny"
 missing_errors_doc = "warn"
 missing_panics_doc = "warn"

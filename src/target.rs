@@ -79,24 +79,47 @@ pub(crate) struct Entry<N = u128> {
 
 impl Entry {
     pub(crate) fn target(self, ipv6: bool) -> Result<Target, Error> {
-        let address = ip(self.start, ipv6);
-        let target = match self.kind {
-            0 => Target::Address(address),
-            1 => Target::Network {
-                address,
-                prefix: self.prefix,
-            },
-            2 => Target::Range {
-                start: address,
-                end: ip(self.end, ipv6),
-            },
-            _ => return Err(Error::Invalid("target kind")),
-        };
-
-        let (expected, _) = target.entry(self.id)?;
-        if expected.end != self.end || expected.prefix != self.prefix {
+        let width = if ipv6 { 128 } else { 32 };
+        if !ipv6 && (self.start > u128::from(u32::MAX) || self.end > u128::from(u32::MAX)) {
             return Err(Error::Invalid("target bounds"));
         }
+
+        let address = ip(self.start, ipv6);
+        let target = match self.kind {
+            0 => {
+                if self.prefix != width || self.start != self.end {
+                    return Err(Error::Invalid("target bounds"));
+                }
+
+                Target::Address(address)
+            }
+            1 => {
+                if self.prefix > width {
+                    return Err(Error::Invalid("network prefix"));
+                }
+
+                let host = host_mask(width - self.prefix);
+                if self.start & host != 0 || self.end != self.start | host {
+                    return Err(Error::Invalid("target bounds"));
+                }
+
+                Target::Network {
+                    address,
+                    prefix: self.prefix,
+                }
+            }
+            2 => {
+                if self.start > self.end || self.prefix != 0 {
+                    return Err(Error::Invalid("target bounds"));
+                }
+
+                Target::Range {
+                    start: address,
+                    end: ip(self.end, ipv6),
+                }
+            }
+            _ => return Err(Error::Invalid("target kind")),
+        };
 
         Ok(target)
     }
@@ -143,5 +166,84 @@ fn ip(value: u128, ipv6: bool) -> IpAddr {
         Ipv6Addr::from(value).into()
     } else {
         Ipv4Addr::from(value as u32).into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn decoded_targets_preserve_every_prefix_and_reject_invalid_bounds() {
+        for ipv6 in [false, true] {
+            let width = if ipv6 { 128 } else { 32 };
+            for prefix in 0..=width {
+                let end = host_mask(width - prefix);
+                let entry = Entry {
+                    start: 0,
+                    end,
+                    maximum: end,
+                    id: 7,
+                    prefix,
+                    kind: 1,
+                };
+                let target = entry.target(ipv6).unwrap();
+                let (roundtrip, family) = target.entry(entry.id).unwrap();
+
+                assert_eq!(family, ipv6);
+                assert_eq!((roundtrip.start, roundtrip.end), (entry.start, entry.end));
+                assert_eq!(roundtrip.prefix, prefix);
+
+                if prefix < width {
+                    assert!(Entry { start: 1, ..entry }.target(ipv6).is_err());
+                    assert!(Entry {
+                        end: end - 1,
+                        ..entry
+                    }
+                    .target(ipv6)
+                    .is_err());
+                }
+            }
+        }
+
+        let entry = Entry {
+            start: 1,
+            end: 1,
+            maximum: 1,
+            id: 0,
+            prefix: 32,
+            kind: 0,
+        };
+        for invalid in [
+            Entry {
+                prefix: 31,
+                ..entry
+            },
+            Entry { end: 2, ..entry },
+            Entry {
+                start: 1u128 << 32,
+                end: 1u128 << 32,
+                ..entry
+            },
+            Entry {
+                kind: 1,
+                prefix: 33,
+                ..entry
+            },
+            Entry {
+                kind: 2,
+                prefix: 0,
+                end: 0,
+                ..entry
+            },
+            Entry {
+                kind: 2,
+                prefix: 1,
+                ..entry
+            },
+            Entry { kind: 3, ..entry },
+        ] {
+            assert!(invalid.target(false).is_err());
+        }
     }
 }

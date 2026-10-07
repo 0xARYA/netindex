@@ -15,6 +15,16 @@ fn spilled_unsorted_runs_match_the_in_memory_writer_byte_for_byte() {
     let limits = Limits::default();
     let scenarios = [
         (0..1031u32)
+            .map(|id| Target::Network {
+                address: Ipv4Addr::from(id * 256).into(),
+                prefix: 24,
+            })
+            .chain((0..1031u128).map(|id| Target::Network {
+                address: Ipv6Addr::from(id << 64).into(),
+                prefix: 64,
+            }))
+            .collect::<Vec<_>>(),
+        (0..1031u32)
             .rev()
             .map(|id| Target::Network {
                 address: Ipv4Addr::from(id * 256).into(),
@@ -77,6 +87,20 @@ fn spilled_unsorted_runs_match_the_in_memory_writer_byte_for_byte() {
             let reader = Reader::open(actual_bytes.into_inner(), limits).unwrap();
 
             assert_eq!(reader.len(), targets.len());
+
+            let mut records = Vec::new();
+            reader
+                .visit_all(|row| {
+                    records.push((row.id as usize, row.target));
+                    Ok::<_, Error>(())
+                })
+                .unwrap();
+            records.sort_unstable_by_key(|row| row.0);
+
+            assert_eq!(
+                records,
+                targets.iter().copied().enumerate().collect::<Vec<_>>()
+            );
 
             assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
         }
@@ -285,6 +309,30 @@ fn invalid_targets_poison_the_external_builder_without_publication() {
     }
 }
 
+#[test]
+fn output_flush_failures_preserve_the_cause_and_remove_temporary_files() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut builder = ExternalBuilder::new(
+        directory.path(),
+        Limits::default(),
+        ExternalOptions {
+            run_records: 1,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    builder.push(Target::Asn(64512), b"evidence").unwrap();
+    let mut output = FailOnFlush(Cursor::new(Vec::new()));
+
+    let result = builder.write_to(&mut output, b"");
+
+    assert!(
+        matches!(result, Err(Error::Io(error)) if error.kind() == io::ErrorKind::PermissionDenied)
+    );
+    assert!(!output.0.get_ref().is_empty());
+    assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
+}
+
 struct FailOnWrite;
 
 impl Write for FailOnWrite {
@@ -300,5 +348,26 @@ impl Write for FailOnWrite {
 impl Seek for FailOnWrite {
     fn seek(&mut self, _: SeekFrom) -> io::Result<u64> {
         Ok(0)
+    }
+}
+
+struct FailOnFlush(Cursor<Vec<u8>>);
+
+impl Write for FailOnFlush {
+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+        self.0.write(bytes)
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Err(io::Error::new(
+            io::ErrorKind::PermissionDenied,
+            "test flush failure",
+        ))
+    }
+}
+
+impl Seek for FailOnFlush {
+    fn seek(&mut self, position: SeekFrom) -> io::Result<u64> {
+        self.0.seek(position)
     }
 }

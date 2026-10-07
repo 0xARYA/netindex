@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use crate::{packed, target::Entry, Error, Limits};
+use crate::{packed, payload::Slots, target::Entry, Error, Limits};
 
 pub(crate) const HEADER: usize = 80;
 pub(crate) const MAGIC: &[u8; 8] = b"IPINDEX\0";
@@ -121,7 +121,7 @@ pub(crate) struct Layout {
     pub v6: Section,
     pub asns: Section,
     pub slots: usize,
-    pub slot_width: usize,
+    pub slot_encoding: Slots,
     pub payloads: usize,
     pub bytes: usize,
 }
@@ -139,7 +139,7 @@ impl Layout {
             payloads,
             limits,
             [None, None],
-            if payloads <= u32::MAX as usize { 8 } else { 16 },
+            Slots::Spans(if payloads <= u32::MAX as usize { 8 } else { 16 }),
         )
     }
 
@@ -149,7 +149,7 @@ impl Layout {
         payloads: usize,
         limits: Limits,
         packed: [Option<usize>; 2],
-        slot_width: usize,
+        slot_encoding: Slots,
     ) -> Result<Self, Error> {
         let [v4, v6, asns] = counts;
         let [packed_v4, packed_v6] = packed;
@@ -162,7 +162,10 @@ impl Layout {
             offset: add(HEADER, metadata)?,
             count: v4,
             width: 20,
-            length: packed_v4.unwrap_or(multiply(v4, 20)?),
+            length: match packed_v4 {
+                Some(length) => length,
+                None => multiply(v4, 20)?,
+            },
             ipv6: false,
             encoding: if packed_v4.is_some() {
                 Encoding::Packed
@@ -174,7 +177,10 @@ impl Layout {
             offset: v4.end()?,
             count: v6,
             width: 56,
-            length: packed_v6.unwrap_or(multiply(v6, 56)?),
+            length: match packed_v6 {
+                Some(length) => length,
+                None => multiply(v6, 56)?,
+            },
             ipv6: true,
             encoding: if packed_v6.is_some() {
                 Encoding::Packed
@@ -193,7 +199,7 @@ impl Layout {
         };
 
         let slots = asns.end()?;
-        let payload_offset = add(slots, multiply(records, slot_width)?)?;
+        let payload_offset = add(slots, slot_encoding.size(records)?)?;
         let bytes = add(payload_offset, payloads)?;
         if bytes > limits.bytes {
             return Err(Error::Limit("artifact bytes"));
@@ -206,7 +212,7 @@ impl Layout {
             v6,
             asns,
             slots,
-            slot_width,
+            slot_encoding,
             payloads: payload_offset,
             bytes,
         })
@@ -217,7 +223,11 @@ impl Layout {
         let packed_v6 = self.v6.encoding == Encoding::Packed;
         let flags = u32::from(packed_v4)
             | (u32::from(packed_v6) << 1)
-            | (u32::from(self.slot_width == 8) << 2);
+            | match self.slot_encoding {
+                Slots::Spans(8) => 4,
+                Slots::Spans(_) => 0,
+                Slots::Fixed { .. } => 8,
+            };
 
         output.write_all(MAGIC)?;
         output.write_all(&VERSION.to_le_bytes())?;
@@ -254,7 +264,7 @@ impl Layout {
         }
 
         let flags = u32_at(bytes, 12)?;
-        if flags & !7 != 0 {
+        if flags & !15 != 0 || flags & 12 == 12 {
             return Err(Error::Invalid("reserved header fields"));
         }
 
@@ -274,23 +284,36 @@ impl Layout {
         }
 
         let payloads = usize_at(bytes, 56)?;
-        let slot_width = if flags & 4 != 0 { 8 } else { 16 };
-        if slot_width == 8 && payloads > u32::MAX as usize {
-            return Err(Error::Invalid("compact payload length"));
-        }
+        let counts = [
+            usize_at(bytes, 24)?,
+            usize_at(bytes, 32)?,
+            usize_at(bytes, 40)?,
+        ];
+        let metadata = usize_at(bytes, 48)?;
+        let slot_encoding = if flags & 8 != 0 {
+            let start = add(HEADER, metadata)?;
+            let v4 = match packed[0] {
+                Some(length) => length,
+                None => multiply(counts[0], 20)?,
+            };
+            let v6 = match packed[1] {
+                Some(length) => length,
+                None => multiply(counts[1], 56)?,
+            };
+            let start = add(start, v4)?;
+            let start = add(start, v6)?;
+            let start = add(start, multiply(counts[2], 8)?)?;
 
-        let layout = Self::with_packed(
-            [
-                usize_at(bytes, 24)?,
-                usize_at(bytes, 32)?,
-                usize_at(bytes, 40)?,
-            ],
-            usize_at(bytes, 48)?,
-            payloads,
-            limits,
-            packed,
-            slot_width,
-        )?;
+            Slots::read(bytes, start, payloads)?
+        } else {
+            if flags & 4 != 0 && payloads > u32::MAX as usize {
+                return Err(Error::Invalid("compact payload length"));
+            }
+
+            Slots::Spans(if flags & 4 != 0 { 8 } else { 16 })
+        };
+
+        let layout = Self::with_packed(counts, metadata, payloads, limits, packed, slot_encoding)?;
         if usize_at(bytes, 16)? != layout.records || bytes.len() != layout.bytes {
             return Err(Error::Invalid("artifact length or record count"));
         }
@@ -310,15 +333,7 @@ impl Layout {
             return Err(Error::Invalid("record ID"));
         }
 
-        let slot = add(self.slots, multiply(id, self.slot_width)?)?;
-        if self.slot_width == 8 {
-            Ok((
-                u32_at(bytes, slot)? as usize,
-                u32_at(bytes, add(slot, 4)?)? as usize,
-            ))
-        } else {
-            Ok((usize_at(bytes, slot)?, usize_at(bytes, add(slot, 8)?)?))
-        }
+        self.slot_encoding.span(bytes, self.slots, id)
     }
 }
 
@@ -361,12 +376,40 @@ fn byte_at(bytes: &[u8], offset: usize) -> Result<u8, Error> {
         .ok_or(Error::Invalid("truncated entry"))
 }
 
-fn add(left: usize, right: usize) -> Result<usize, Error> {
+pub(crate) fn add(left: usize, right: usize) -> Result<usize, Error> {
     left.checked_add(right)
         .ok_or(Error::Limit("addressable bytes"))
 }
 
-fn multiply(left: usize, right: usize) -> Result<usize, Error> {
+pub(crate) fn multiply(left: usize, right: usize) -> Result<usize, Error> {
     left.checked_mul(right)
         .ok_or(Error::Limit("addressable bytes"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn packed_layout_does_not_require_interval_representation_to_fit() {
+        let records = 80_000_000;
+        let layout = Layout::with_packed(
+            [0, records, 0],
+            0,
+            0,
+            Limits {
+                records,
+                bytes: usize::MAX,
+            },
+            [None, Some(640_000_000)],
+            Slots::Fixed {
+                length: 0,
+                width: 0,
+            },
+        )
+        .unwrap();
+
+        assert_eq!(layout.v6.length, 640_000_000);
+        assert_eq!(layout.bytes, 640_000_088);
+    }
 }

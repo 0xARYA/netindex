@@ -10,11 +10,12 @@ use hashbrown::HashTable;
 use crate::{
     layout::{slice, Layout},
     packed,
+    payload::{SlotWriter, Slots},
     target::Entry,
     Error, Limits, Target,
 };
 
-/// Bounded in-memory builder for one immutable component.
+/// In-memory builder for one immutable index.
 ///
 /// Buffers unsorted assertions and opaque payloads. Sorting preserves targets;
 /// identical payloads share bytes. See the [quick start](crate#quick-start).
@@ -30,7 +31,7 @@ pub struct Builder {
 }
 
 impl Builder {
-    /// Start an empty component with explicit limits.
+    /// Start an empty index with explicit limits.
     pub fn new(limits: Limits) -> Self {
         Self {
             limits,
@@ -44,22 +45,23 @@ impl Builder {
         }
     }
 
-    /// Append one assertion and its uninterpreted payload.
+    /// Append one assertion and its opaque payload.
     ///
     /// On failure no assertion is added. IDs follow insertion order.
     ///
     /// # Errors
-    /// Returns invalid targets, resource limits, or memory-reservation failures.
+    /// Fails on invalid targets, exceeded limits, or failed memory reservations.
     pub fn push(&mut self, target: Target, payload: &[u8]) -> Result<(), Error> {
         let hash = self.hash_state.hash_one(payload);
         self.push_hashed(target, payload, hash)
     }
 
-    /// Consume the builder and encode an owned in-memory component.
+    /// Consume the builder and return encoded bytes.
     /// Metadata remains opaque. Use [`Self::write_to`] for file output.
     ///
     /// # Errors
-    /// Returns metadata/file limits or a memory reservation failure through `Error::Io`.
+    /// Fails if metadata or file size exceeds limits, or output allocation fails
+    /// through [`Error::Io`].
     pub fn into_bytes(self, metadata: &[u8]) -> Result<Vec<u8>, Error> {
         let mut output = MemoryWriter(Vec::new());
         self.write_to(&mut output, metadata)?;
@@ -67,13 +69,13 @@ impl Builder {
         Ok(output.0)
     }
 
-    /// Sort, augment, and encode the component into the caller's writer.
+    /// Sort and encode the index into the caller's writer.
     ///
     /// Metadata is opaque and stored once. Output is buffered and flushed. Failure
     /// may leave partial output; the caller must stage and synchronize before publishing.
     ///
     /// # Errors
-    /// Returns metadata/file limits or output failures.
+    /// Fails if metadata or file size exceeds limits, or writing or flushing fails.
     pub fn write_to(mut self, output: impl Write, metadata: &[u8]) -> Result<(), Error> {
         drop(self.hashes);
 
@@ -85,18 +87,20 @@ impl Builder {
 
         let packed_v4 = packed::size(&self.v4).filter(|&size| size < self.v4.len() * 20);
         let packed_v6 = packed::size(&self.v6).filter(|&size| size < self.v6.len() * 56);
-        let slot_width = if self.payloads.len() <= u32::MAX as usize {
-            8
-        } else {
-            16
-        };
+
+        let length = self
+            .slots
+            .first()
+            .map(|&(_, length)| length as usize)
+            .filter(|&length| self.slots.iter().all(|&(_, value)| value == length as u64));
+        let slot_encoding = Slots::select(self.slots.len(), self.payloads.len(), length)?;
         let layout = Layout::with_packed(
             [self.v4.len(), self.v6.len(), self.asns.len()],
             metadata.len(),
             self.payloads.len(),
             self.limits,
             [packed_v4, packed_v6],
-            slot_width,
+            slot_encoding,
         )?;
 
         if packed_v4.is_none() {
@@ -133,14 +137,9 @@ impl Builder {
             output.write_all(&id.to_le_bytes())?;
         }
 
+        let mut slots = SlotWriter::new(&mut output, slot_encoding)?;
         for &(offset, length) in &self.slots {
-            if slot_width == 8 {
-                output.write_all(&(offset as u32).to_le_bytes())?;
-                output.write_all(&(length as u32).to_le_bytes())?;
-            } else {
-                output.write_all(&offset.to_le_bytes())?;
-                output.write_all(&length.to_le_bytes())?;
-            }
+            slots.push(offset, length)?;
         }
 
         output.write_all(&self.payloads)?;
@@ -151,6 +150,7 @@ impl Builder {
 
     fn push_hashed(&mut self, target: Target, payload: &[u8], hash: u64) -> Result<(), Error> {
         let id = u32::try_from(self.slots.len()).map_err(|_| Error::Limit("records"))?;
+
         let entry = match target {
             Target::Asn(0) => return Err(Error::Invalid("ASN zero")),
             Target::Asn(_) => None,
@@ -262,6 +262,7 @@ pub(crate) fn augment<N: Copy + Ord + Default>(entries: &mut [Entry<N>]) -> N {
     };
 
     entry.maximum = entry.end.max(augment(left)).max(augment(right));
+
     entry.maximum
 }
 

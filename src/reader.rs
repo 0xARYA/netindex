@@ -8,10 +8,14 @@ use crate::{
     Coverage, Error, Limits, Target,
 };
 
-/// One original assertion and a borrowed opaque payload.
+#[cfg(feature = "mmap")]
+#[path = "mmap.rs"]
+mod mmap;
+
+/// A matching assertion with its original target and borrowed payload.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Match<'a> {
-    /// Insertion-order record ID, unique within this component.
+    /// Insertion-order record ID, unique within this index.
     pub id: u32,
     /// Original address, network, inclusive range, or exact ASN.
     pub target: Target,
@@ -21,10 +25,9 @@ pub struct Match<'a> {
 
 /// Validated reader over owned bytes, a borrowed slice, or caller-owned mapping.
 ///
-/// The backing must remain unchanged after opening. Mapped-file safety belongs to
-/// the mapping's owner; this crate does not map or mutate files. Visitor methods
-/// allocate no output buffer; collected lookups allocate a result vector. Payload
-/// bytes are never reinterpreted.
+/// Keep the backing unchanged after opening. The caller owns mapping safety.
+/// Visitors allocate no output buffer; collected lookups allocate a result vector.
+/// Payload bytes remain opaque.
 /// Readers are `Send` and `Sync` when their backing storage is, and may be shared
 /// between threads without an internal lock.
 /// See [reading examples](crate#reading) for lookup and application decoding.
@@ -32,6 +35,8 @@ pub struct Reader<B: AsRef<[u8]>> {
     bytes: B,
     layout: Layout,
     search: Search,
+    bounds: [(u128, u128); 2],
+    ipv4_directory: Option<packed::Directory>,
 }
 
 impl<B: AsRef<[u8]>> Reader<B> {
@@ -39,19 +44,26 @@ impl<B: AsRef<[u8]>> Reader<B> {
     ///
     /// Checks target bounds, sorting, IDs, interval augmentation, contiguous
     /// payload spans, lengths, reserved fields, and version. Payload contents are opaque.
+    /// Caches address bounds and builds a small directory for large packed IPv4 sections.
     ///
     /// # Errors
-    /// Returns malformed/unsupported files, limits, or validation-memory failures.
+    /// Fails on malformed or unsupported files, exceeded limits, or failed
+    /// validation-memory reservations.
     pub fn open(bytes: B, limits: Limits) -> Result<Self, Error> {
         let data = bytes.as_ref();
         let layout = Layout::read(data, limits)?;
 
         validate(data, layout)?;
 
+        let bounds = [ip_bounds(data, layout.v4)?, ip_bounds(data, layout.v6)?];
+        let ipv4_directory = ip_directory(data, layout.v4, bounds[0])?;
+
         Ok(Self {
             bytes,
             layout,
             search: Search::detect(),
+            bounds,
+            ipv4_directory,
         })
     }
 
@@ -60,15 +72,15 @@ impl<B: AsRef<[u8]>> Reader<B> {
         self.layout.records
     }
 
-    /// Whether the component contains no assertions.
+    /// Whether the index contains no assertions.
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    /// Borrow the component's uninterpreted metadata.
+    /// Borrow the index's opaque metadata.
     ///
     /// # Errors
-    /// Returns a bounds failure if backing storage changed after opening.
+    /// Fails if changed backing storage makes the metadata bounds invalid.
     pub fn metadata(&self) -> Result<&[u8], Error> {
         slice(self.bytes.as_ref(), HEADER, self.layout.metadata)
     }
@@ -79,7 +91,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// allocates no heap memory and does not change the reader or file.
     ///
     /// # Errors
-    /// Returns invalid backing data if it changed after opening.
+    /// Fails if backing data became invalid after opening.
     pub fn coverage(&self) -> Result<Coverage, Error> {
         let mut coverage = Coverage::empty();
         let bytes = self.bytes.as_ref();
@@ -102,7 +114,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// A miss returns an empty vector. Use [`Self::visit_ip`] to avoid result allocation.
     ///
     /// # Errors
-    /// Returns invalid backing data or a result-vector memory reservation failure.
+    /// Fails on invalid backing data or a failed result-vector reservation.
     pub fn lookup_ip(&self, address: IpAddr) -> Result<Vec<Match<'_>>, Error> {
         let mut matches = Vec::new();
 
@@ -123,7 +135,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// avoid result allocation.
     ///
     /// # Errors
-    /// Returns invalid backing data or a result-vector memory reservation failure.
+    /// Fails on invalid backing data or a failed result-vector reservation.
     pub fn lookup_asn(&self, number: u32) -> Result<Vec<Match<'_>>, Error> {
         let mut matches = Vec::new();
 
@@ -143,52 +155,57 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// separately. The visitor is never called for ordinary misses.
     ///
     /// # Errors
-    /// Returns invalid backing data or the visitor's error, stopping on failure.
+    /// Stops on invalid backing data or a visitor error, preserving its type.
     pub fn visit_ip<'a, E: From<Error>>(
         &'a self,
         address: IpAddr,
         mut emit: impl FnMut(Match<'a>) -> Result<(), E>,
     ) -> Result<(), E> {
-        let section = if address.is_ipv6() {
-            self.layout.v6
-        } else {
-            self.layout.v4
-        };
+        let ipv6 = address.is_ipv6();
+        let query = number(address);
+        let (start, end) = if ipv6 { self.bounds[1] } else { self.bounds[0] };
+
+        if query < start || query > end {
+            return Ok(());
+        }
+
+        let section = if ipv6 { self.layout.v6 } else { self.layout.v4 };
 
         if section.encoding == Encoding::Packed {
             let bytes = self.bytes.as_ref();
             let data = slice(bytes, section.offset, section.length)?;
 
-            if let Some(position) =
-                packed::predecessor(data, section.count, number(address), self.search)?
-            {
-                let entry = section.entry(bytes, position)?;
-                if entry.start <= number(address) && number(address) <= entry.end {
-                    emit(Match {
-                        id: entry.id,
-                        target: entry.target(address.is_ipv6())?,
-                        payload: self.layout.payload(bytes, entry.id)?,
-                    })?;
-                }
+            if let Some(entry) = packed::lookup(
+                data,
+                section.count,
+                query,
+                ipv6,
+                self.search,
+                if ipv6 {
+                    None
+                } else {
+                    self.ipv4_directory.as_ref()
+                },
+            )? {
+                emit(Match {
+                    id: entry.id,
+                    target: entry.target(ipv6)?,
+                    payload: self.layout.payload(bytes, entry.id)?,
+                })?;
             }
 
             return Ok(());
         }
 
-        self.visit(
-            section,
-            0,
-            section.count,
-            number(address),
-            address.is_ipv6(),
-            &mut emit,
-        )
+        self.visit(section, 0, section.count, query, ipv6, &mut emit)
     }
 
     /// Visit every assertion for an exact ASN key, including duplicates.
     ///
+    /// Zero or a missing key does not call the visitor.
+    ///
     /// # Errors
-    /// Returns invalid backing data or the visitor's error; zero has no matches.
+    /// Stops on invalid backing data or a visitor error, preserving its type.
     pub fn visit_asn<'a, E: From<Error>>(
         &'a self,
         number: u32,
@@ -196,20 +213,23 @@ impl<B: AsRef<[u8]>> Reader<B> {
     ) -> Result<(), E> {
         let bytes = self.bytes.as_ref();
         let section = self.layout.asns;
-        let (mut low, mut high) = (0, section.count);
-
-        while low < high {
-            let mid = low + (high - low) / 2;
-            if u32_at(section.row(bytes, mid)?, 0)? < number {
-                low = mid + 1;
-            } else {
-                high = mid;
-            }
+        let (rows, remainder) = slice(bytes, section.offset, section.length)?.as_chunks::<8>();
+        if !remainder.is_empty() || rows.len() != section.count {
+            return Err(Error::Invalid("ASN section length").into());
         }
 
-        while low < section.count {
-            let row = section.row(bytes, low)?;
-            if u32_at(row, 0)? != number {
+        let key = |row: &[u8; 8]| {
+            let [a, b, c, d, _, _, _, _] = *row;
+            u32::from_le_bytes([a, b, c, d])
+        };
+
+        let first = rows.partition_point(|row| key(row) < number);
+        let matches = rows
+            .get(first..)
+            .ok_or(Error::Invalid("ASN index position"))?;
+
+        for row in matches {
+            if key(row) != number {
                 break;
             }
 
@@ -220,7 +240,6 @@ impl<B: AsRef<[u8]>> Reader<B> {
                 target: Target::Asn(number),
                 payload: self.layout.payload(bytes, id)?,
             })?;
-            low += 1;
         }
 
         Ok(())
@@ -229,7 +248,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// Visit all assertions, grouped by IPv4, IPv6, then ASN and sorted per section.
     ///
     /// # Errors
-    /// Returns invalid backing data or the visitor's error, stopping on failure.
+    /// Stops on invalid backing data or a visitor error, preserving its type.
     pub fn visit_all<'a, E: From<Error>>(
         &'a self,
         mut emit: impl FnMut(Match<'a>) -> Result<(), E>,
@@ -277,6 +296,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
 
         let bytes = self.bytes.as_ref();
         let mid = low + (high - low) / 2;
+
         if section.maximum(bytes, mid)? < query || section.start(bytes, low)? > query {
             return Ok(());
         }
@@ -310,6 +330,38 @@ impl<B: AsRef<[u8]>> fmt::Debug for Reader<B> {
             .field("artifact_bytes", &self.layout.bytes)
             .finish()
     }
+}
+
+fn ip_bounds(bytes: &[u8], section: Section) -> Result<(u128, u128), Error> {
+    if section.count == 0 {
+        return Ok((0, 0));
+    }
+
+    let start = section.entry(bytes, 0)?.start;
+    let end = if section.encoding == Encoding::Packed {
+        section.entry(bytes, section.count - 1)?.end
+    } else {
+        section.maximum(bytes, section.count / 2)?
+    };
+
+    Ok((start, end))
+}
+
+fn ip_directory(
+    bytes: &[u8],
+    section: Section,
+    (start, end): (u128, u128),
+) -> Result<Option<packed::Directory>, Error> {
+    if section.encoding != Encoding::Packed {
+        return Ok(None);
+    }
+
+    packed::Directory::build(
+        slice(bytes, section.offset, section.length)?,
+        section.count,
+        start,
+        end,
+    )
 }
 
 fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
@@ -364,13 +416,46 @@ fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
         previous = Some(key);
     }
 
+    drop(seen);
+
+    if matches!(layout.slot_encoding, crate::payload::Slots::Fixed { .. }) {
+        let mut end = 0;
+
+        for id in 0..layout.records {
+            let (start, length) = layout.span(bytes, id as u32)?;
+            if start > end {
+                return Err(Error::Invalid("payload reference order"));
+            }
+
+            slice(bytes, crate::layout::add(layout.payloads, start)?, length)?;
+
+            if start == end {
+                end = end
+                    .checked_add(length)
+                    .ok_or(Error::Limit("payload bytes"))?;
+            }
+        }
+
+        if end != layout.bytes - layout.payloads {
+            return Err(Error::Invalid("payload length"));
+        }
+
+        return Ok(());
+    }
+
     // First-seen contiguous spans stay sorted, including empty spans before new bytes.
     let mut offset = 0usize;
     let mut spans = Vec::new();
+    let mut previous_span = None;
 
     for id in 0..layout.records {
         let (start, length) = layout.span(bytes, id as u32)?;
+        if previous_span == Some((start, length)) {
+            continue;
+        }
+
         if (start < offset || length == 0) && spans.binary_search(&(start, length)).is_ok() {
+            previous_span = Some((start, length));
             continue;
         }
 
@@ -378,10 +463,11 @@ fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
             return Err(Error::Invalid("payload offset"));
         }
 
-        slice(bytes, layout.payloads + offset, length)?;
+        slice(bytes, crate::layout::add(layout.payloads, offset)?, length)?;
 
         spans.try_reserve(1)?;
         spans.push((start, length));
+        previous_span = Some((start, length));
         offset = offset
             .checked_add(length)
             .ok_or(Error::Limit("payload bytes"))?;

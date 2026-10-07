@@ -1,7 +1,9 @@
 #[cfg(all(feature = "simd", target_arch = "x86_64"))]
 use std::arch::x86_64::*;
 
-use crate::{layout::slice, packed::integer, Error};
+use crate::Error;
+#[cfg(all(feature = "simd", target_arch = "x86_64"))]
+use crate::{layout::slice, packed::integer};
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Search {
@@ -44,11 +46,40 @@ impl Search {
 }
 
 fn binary(bytes: &[u8], width: usize, target: u128) -> Result<usize, Error> {
-    let (mut low, mut high) = (0, bytes.len() / width);
+    match width {
+        1 => binary_width::<1>(bytes, target),
+        2 => binary_width::<2>(bytes, target),
+        4 => binary_width::<4>(bytes, target),
+        8 => binary_width::<8>(bytes, target),
+        16 => binary_width::<16>(bytes, target),
+        _ => Err(Error::Invalid("packed integer width")),
+    }
+}
+
+fn binary_width<const WIDTH: usize>(bytes: &[u8], target: u128) -> Result<usize, Error> {
+    let (values, _) = bytes.as_chunks::<WIDTH>();
+    let (mut low, mut high) = (0, values.len());
 
     while low < high {
         let mid = low + (high - low) / 2;
-        if integer(slice(bytes, mid * width, width)?)? <= target {
+        let row = values
+            .get(mid)
+            .ok_or(Error::Invalid("packed search column"))?;
+        let mut value = [0u8; 16];
+        value
+            .get_mut(..WIDTH)
+            .ok_or(Error::Invalid("packed integer width"))?
+            .copy_from_slice(row);
+
+        let value = u128::from_le_bytes(value);
+        // upper_bound returns early when the target exceeds this width.
+        let less_or_equal = if WIDTH <= 8 {
+            value as u64 <= target as u64
+        } else {
+            value <= target
+        };
+
+        if less_or_equal {
             low = mid + 1;
         } else {
             high = mid;

@@ -160,6 +160,7 @@ fn write_interval(
     let left = write_interval(input, output, count / 2, family)?;
     let mut root = next(input, family)?;
     let position = output.stream_position()?;
+
     write_entry(output, &root, family == 1)?;
 
     let right = write_interval(input, output, count - count / 2 - 1, family)?;

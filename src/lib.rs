@@ -7,6 +7,7 @@ pub use coverage::{Coverage, CoverageRouter};
 #[cfg(feature = "external-sort")]
 pub use external::{ExternalBuildStats, ExternalBuilder, ExternalOptions};
 pub use reader::{Match, Reader};
+pub use reader_set::ReaderSet;
 pub use target::Target;
 
 mod builder;
@@ -17,11 +18,19 @@ mod layout;
 #[cfg(feature = "mmdb")]
 pub mod mmdb;
 mod packed;
+mod payload;
 mod reader;
+mod reader_set;
 mod search;
 mod target;
+#[cfg(feature = "shared-values")]
+pub mod values;
 
-/// Failures in target validation, encoding, or opening an index.
+/// A validated file-backed reader; requires the mmap feature.
+#[cfg(feature = "mmap")]
+pub type MappedReader = Reader<memmap2::Mmap>;
+
+/// Failures in index and shared-value operations.
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
@@ -31,17 +40,31 @@ pub enum Error {
     /// An input target or encoded field violates the format.
     #[error("invalid {0}")]
     Invalid(&'static str),
+    /// A typed string pool contains invalid UTF-8.
+    #[cfg(feature = "shared-values")]
+    #[error("invalid shared string UTF-8")]
+    Utf8(#[from] std::str::Utf8Error),
     /// An on-disk version is not supported.
     #[error("unsupported index version {0}")]
     Version(u32),
     /// A memory reservation failed.
     #[error("failed to reserve index memory")]
     Allocation(#[from] TryReserveError),
-    /// Reserving the payload deduplication table failed.
-    #[error("failed to reserve payload index memory")]
+    /// Reserving an index or shared-value deduplication table failed.
+    #[error("failed to reserve deduplication table memory")]
     HashAllocation(#[from] hashbrown::TryReserveError),
-    /// Writing the caller's output failed.
-    #[error("failed to write index")]
+    /// Reading file metadata or creating a read-only mapping failed.
+    #[cfg(feature = "mmap")]
+    #[error("failed to {operation} index file")]
+    MappingIo {
+        /// Filesystem operation that failed.
+        operation: &'static str,
+        /// Underlying filesystem cause.
+        #[source]
+        error: io::Error,
+    },
+    /// Writing the caller's encoded artifact failed.
+    #[error("failed to write artifact")]
     Io(#[from] io::Error),
     /// Creating, reading, writing, or cleaning up temporary build files failed.
     #[cfg(feature = "external-sort")]
@@ -55,10 +78,10 @@ pub enum Error {
     },
 }
 
-/// Resource ceilings for building and opening a component.
+/// Resource limits for building and opening an index.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Limits {
-    /// Maximum assertions, including duplicate targets.
+    /// Maximum assertions (including duplicates), or unique values in a value pool.
     pub records: usize,
     /// Maximum complete artifact bytes, including metadata and payloads.
     pub bytes: usize,

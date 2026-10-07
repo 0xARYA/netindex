@@ -92,10 +92,10 @@ fn routing_supports_empty_sets_and_the_highest_source_bit() {
 #[test]
 fn fixed_components_produce_conservative_coverage() {
     for bytes in [
-        include_bytes!("fixtures/interval.ipidx").as_slice(),
-        include_bytes!("fixtures/packed-ipv4.ipidx").as_slice(),
-        include_bytes!("fixtures/packed-ipv6.ipidx").as_slice(),
-        include_bytes!("fixtures/mixed.ipidx").as_slice(),
+        include_bytes!("fixtures/interval.nidx").as_slice(),
+        include_bytes!("fixtures/packed-ipv4.nidx").as_slice(),
+        include_bytes!("fixtures/packed-ipv6.nidx").as_slice(),
+        include_bytes!("fixtures/mixed.nidx").as_slice(),
     ] {
         let reader = Reader::open(bytes, Limits::default()).unwrap();
         let coverage = reader.coverage().unwrap();

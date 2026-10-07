@@ -12,10 +12,10 @@ fn owned_and_borrowed_readers_support_concurrent_ip_and_asn_visitors() {
     assert_send_sync::<Reader<&[u8]>>();
 
     for bytes in [
-        include_bytes!("fixtures/mixed.ipidx").as_slice(),
-        include_bytes!("fixtures/packed-ipv4.ipidx").as_slice(),
-        include_bytes!("fixtures/packed-ipv6.ipidx").as_slice(),
-        include_bytes!("fixtures/interval.ipidx").as_slice(),
+        include_bytes!("fixtures/mixed.nidx").as_slice(),
+        include_bytes!("fixtures/packed-ipv4.nidx").as_slice(),
+        include_bytes!("fixtures/packed-ipv6.nidx").as_slice(),
+        include_bytes!("fixtures/interval.nidx").as_slice(),
     ] {
         let owned = Arc::new(Reader::open(bytes.to_vec(), Default::default()).unwrap());
         let borrowed = Reader::open(bytes, Default::default()).unwrap();
