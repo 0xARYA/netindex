@@ -57,8 +57,14 @@ jobs:
       - name: Seed fixed format corpus
         run: |
           mkdir -p fuzz/corpus/read
-          cp tests/fixtures/*.ipidx fuzz/corpus/read/
+          cp tests/fixtures/*.nidx fuzz/corpus/read/
       - name: Fuzz reading and lookup
         run: cargo +nightly-2026-09-01 fuzz run read --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536
       - name: Fuzz writing and roundtrip
         run: cargo +nightly-2026-09-01 fuzz run encode --fuzz-dir fuzz -- -max_total_time=60 -max_len=4096
+      - name: Seed shared values corpus
+        run: |
+          mkdir -p fuzz/corpus/values
+          cp tests/fixtures/values.bin fuzz/corpus/values/
+      - name: Fuzz shared bytes and validated strings
+        run: cargo +nightly-2026-09-01 fuzz run values --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536

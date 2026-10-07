@@ -67,48 +67,46 @@ fn main() -> Result<(), Error> {
             })
             .collect();
 
-        if matches!(scenario, "v4" | "v6") {
-            for &query in &queries {
-                let mut actual = Vec::new();
+        for (position, &query) in queries.iter().enumerate() {
+            let mut actual = Vec::new();
+            let number = (position as u32 * 7919) % 65_536 + 1;
+            let mut emit = |matched: netindex::Match<'_>| {
+                actual.push((
+                    matched.id as usize,
+                    matched.target,
+                    matched.payload.to_vec(),
+                ));
+                Ok::<_, Error>(())
+            };
 
-                reader.visit_ip(query, |matched| {
-                    actual.push((matched.id as usize, matched.target));
-                    Ok::<_, Error>(())
-                })?;
+            if scenario == "asn" {
+                reader.visit_asn(number, &mut emit)?;
+            } else {
+                reader.visit_ip(query, &mut emit)?;
+            }
 
-                let expected: Vec<_> = targets
-                    .iter()
-                    .enumerate()
-                    .filter_map(|(id, target)| {
-                        let Target::Network { address, prefix } = *target else {
-                            return None;
-                        };
+            let expected: Vec<_> = targets
+                .iter()
+                .enumerate()
+                .filter(|(_, target)| {
+                    if scenario == "asn" {
+                        **target == Target::Asn(number)
+                    } else {
+                        contains(**target, query)
+                    }
+                })
+                .map(|(id, target)| (id, *target, 42u64.to_le_bytes()))
+                .collect();
+            actual.sort_unstable_by_key(|row| row.0);
 
-                        let matches = match (address, query) {
-                            (IpAddr::V4(network), IpAddr::V4(query)) => {
-                                let mask =
-                                    u32::MAX.checked_shl(u32::from(32 - prefix)).unwrap_or(0);
-
-                                u32::from(network) & mask == u32::from(query) & mask
-                            }
-                            (IpAddr::V6(network), IpAddr::V6(query)) => {
-                                let mask =
-                                    u128::MAX.checked_shl(u32::from(128 - prefix)).unwrap_or(0);
-
-                                u128::from(network) & mask == u128::from(query) & mask
-                            }
-                            _ => false,
-                        };
-
-                        matches.then_some((id, *target))
-                    })
-                    .collect();
-
-                if actual != expected {
-                    return Err(Error::Invalid(
-                        "packed benchmark disagrees with original-network oracle",
-                    ));
-                }
+            if actual.len() != expected.len()
+                || actual.iter().zip(&expected).any(|(actual, expected)| {
+                    actual.0 != expected.0 || actual.1 != expected.1 || actual.2 != expected.2
+                })
+            {
+                return Err(Error::Invalid(
+                    "benchmark disagrees with original-target oracle",
+                ));
             }
         }
 
@@ -175,6 +173,29 @@ fn main() -> Result<(), Error> {
     criterion.final_summary();
 
     Ok(())
+}
+
+fn contains(target: Target, query: IpAddr) -> bool {
+    match target {
+        Target::Address(address) => address == query,
+        Target::Range { start, end } => {
+            start.is_ipv4() == query.is_ipv4() && start <= query && query <= end
+        }
+        Target::Network { address, prefix } => match (address, query) {
+            (IpAddr::V4(network), IpAddr::V4(query)) => {
+                let mask = u32::MAX.checked_shl(u32::from(32 - prefix)).unwrap_or(0);
+
+                u32::from(network) & mask == u32::from(query) & mask
+            }
+            (IpAddr::V6(network), IpAddr::V6(query)) => {
+                let mask = u128::MAX.checked_shl(u32::from(128 - prefix)).unwrap_or(0);
+
+                u128::from(network) & mask == u128::from(query) & mask
+            }
+            _ => false,
+        },
+        Target::Asn(_) => false,
+    }
 }
 
 fn encode(targets: &[Target], unique: bool) -> Result<Vec<u8>, Error> {

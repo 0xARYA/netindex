@@ -1,9 +1,4 @@
-# Clippy configuration (workspace root).
-#
-# Pins the MSRV so version-gated lints match the toolchain, and relaxes the restriction denies
-# (declared in [workspace.lints.clippy]) inside test code only — so "no unwrap/expect/panic in
-# library paths" holds for shipped code while tests stay ergonomic. A panic is acceptable ONLY
-# under `cfg(test)`.
+# Match the supported compiler; permit panic shortcuts only in tests.
 msrv = "1.95"
 
 allow-unwrap-in-tests = true
