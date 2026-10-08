@@ -257,8 +257,23 @@ impl<'a> StringPool<'a> {
     pub fn open(bytes: &'a [u8], limits: Limits) -> Result<Self, Error> {
         let values = ValuePool::open(bytes, limits)?;
 
-        for id in 0..values.len() {
-            std::str::from_utf8(values.get(id as u32)?)?;
+        #[cfg(feature = "simd")]
+        let body = simdutf8::compat::from_utf8(values.body);
+        #[cfg(not(feature = "simd"))]
+        let body = std::str::from_utf8(values.body);
+
+        let valid = body.is_ok_and(|body| {
+            values
+                .offsets
+                .iter()
+                .all(|offset| body.is_char_boundary(u32::from_le_bytes(*offset) as usize))
+        });
+
+        if !valid {
+            // Keep errors relative to the first invalid value, including split code points.
+            for id in 0..values.len() {
+                std::str::from_utf8(values.get(id as u32)?)?;
+            }
         }
 
         Ok(Self { values })

@@ -146,6 +146,29 @@ fn typed_strings_validate_once_and_borrow_only_valid_utf8() {
     ));
 }
 
+#[test]
+fn string_pools_reject_split_code_points_and_preserve_value_relative_errors() {
+    assert!(std::str::from_utf8(b"prefix\xc3\xa9").is_ok());
+
+    for values in [
+        vec![b"prefix".as_slice(), b"\xc3", b"\xa9"],
+        vec![b"prefix".as_slice(), b"ab\xff"],
+        vec![b"prefix".as_slice(), b"ab\xc3"],
+    ] {
+        let expected = std::str::from_utf8(values[1]).unwrap_err();
+        let mut builder = ValuePoolBuilder::new(Limits::default());
+        for value in values {
+            builder.intern(value).unwrap();
+        }
+        let bytes = builder.into_bytes().unwrap();
+
+        match StringPool::open(&bytes, Limits::default()) {
+            Err(Error::Utf8(actual)) => assert_eq!(actual, expected),
+            result => panic!("expected a value-relative UTF-8 error, got {result:?}"),
+        }
+    }
+}
+
 struct Fail;
 
 impl io::Write for Fail {

@@ -3,8 +3,13 @@
 use std::{env, fs::File, hint::black_box, path::Path, time::Duration};
 
 use criterion::Criterion;
-use memmap2::MmapOptions;
-use netindex::{Limits, codec::Decoder, mmdb};
+use memmap2::{Mmap, MmapOptions};
+use netindex::{
+    Limits,
+    codec::Decoder,
+    mmdb,
+    values::{StringPool, ValuePool, ValuePoolBuilder},
+};
 
 use support::{schema, schema::decode_native, typed};
 
@@ -46,6 +51,7 @@ fn compare(criterion: &mut Criterion, path: &Path, kind: &str) -> Result<()> {
     let file = File::open(path)?;
     // SAFETY: Caller-provided cached files must remain immutable throughout the run.
     let native = mmdb::Reader::from_source(unsafe { MmapOptions::new().map(&file)? })?;
+    native.verify()?;
     let mut fixed = fixed_codec::Pool::default();
     let mut codec = typed::encoder(kind)?;
     let mut original = Vec::new();
@@ -168,6 +174,87 @@ fn compare(criterion: &mut Criterion, path: &Path, kind: &str) -> Result<()> {
             );
         })
     });
+
+    strings(criterion, &native, kind)?;
+
+    Ok(())
+}
+
+#[expect(
+    clippy::expect_used,
+    reason = "timed failures must fail the benchmark process"
+)]
+#[expect(
+    clippy::print_stdout,
+    reason = "report the complete string pool measured independently of record sampling"
+)]
+fn strings(criterion: &mut Criterion, native: &mmdb::Reader<Mmap>, kind: &str) -> Result<()> {
+    let mut builder = ValuePoolBuilder::new(Limits::default());
+
+    for network in native.networks(mmdb::WithinOptions::default())? {
+        let network = network?;
+        let Some(fields) = decode_native(&network, kind)? else {
+            continue;
+        };
+
+        match fields {
+            schema::Fields::Asn(row) => {
+                for value in [row.organization, row.domain].into_iter().flatten() {
+                    builder.intern(value.as_bytes())?;
+                }
+            }
+            schema::Fields::Geo(row) => {
+                for value in [
+                    row.country_code,
+                    row.country_name,
+                    row.continent_code,
+                    row.region,
+                    row.region_code,
+                    row.city,
+                    row.postal_code,
+                    row.time_zone,
+                ]
+                .into_iter()
+                .flatten()
+                {
+                    builder.intern(value.as_bytes())?;
+                }
+            }
+        }
+    }
+
+    let bytes = builder.into_bytes()?;
+    let values = ValuePool::open(&bytes, Limits::default())?;
+    let strings = StringPool::open(&bytes, Limits::default())?;
+    for id in 0..values.len() {
+        assert_eq!(strings.get(id as u32)?.as_bytes(), values.get(id as u32)?);
+    }
+    println!(
+        "{kind}: {} unique strings, {} pool bytes",
+        strings.len(),
+        bytes.len()
+    );
+
+    let mut group = criterion.benchmark_group(format!("utf8/{kind}"));
+    group.bench_function("per-string-std", |bench| {
+        bench.iter(|| {
+            let values = ValuePool::open(black_box(&bytes), Limits::default())
+                .expect("value pool opening failed");
+            for id in 0..values.len() {
+                std::str::from_utf8(values.get(id as u32).expect("string reference failed"))
+                    .expect("UTF-8 validation failed");
+            }
+        });
+    });
+    group.bench_function("published", |bench| {
+        bench.iter(|| {
+            black_box(
+                StringPool::open(black_box(&bytes), Limits::default())
+                    .expect("string pool opening failed"),
+            );
+        });
+    });
+    group.finish();
 
     Ok(())
 }

@@ -1,0 +1,810 @@
+{
+  "date": "2026-10-08",
+  "baseline_revision": "5f3a59b6813d2c7187d8b4ddd6a5c6bc3eaa820f",
+  "baseline_note": "includes the uncommitted numeric target validation from the preceding experiment, shared by all ISA candidates",
+  "environment": {
+    "cpu": "AMD Ryzen 9 9950X3D2",
+    "os": "Windows",
+    "toolchain": "Rust 1.95.0",
+    "logical_processor": 1,
+    "samples": 30,
+    "warmup_seconds": 1,
+    "measurement_seconds": 2,
+    "features_detected": [
+      "avx2",
+      "avx512f",
+      "avx512bw",
+      "avx512vl"
+    ],
+    "interference": "other system workloads active; broad confidence intervals and changing unchanged controls prevent reliable ISA ranking"
+  },
+  "retained": {
+    "strings": "validate concatenated UTF-8 and every value boundary, with per-value diagnostic fallback",
+    "simd": "optional simdutf8 0.1.5 through the existing simd feature; default uses std",
+    "contract": "no encoded layout, allocation, payload schema, or lookup changes; preserve std Utf8Error relative to first invalid value"
+  },
+  "not_retained": {
+    "avx512": "64-byte unsigned comparison masks and 32-byte AVX-512VL unsigned masks passed scalar oracle tests but did not establish a repeatable advantage",
+    "vector_validation": "extra AVX2 monotonicity pass in complete packed opening passed corruption/roundtrip tests; did not establish a repeatable benefit; endpoint, prefix, ID, and payload validation still required",
+    "custom_neon_search": "bounded 16-byte unsigned comparison prototype cross-compiled for ARM64 MSVC; no execution or timing because no reachable ARM host; not shipped"
+  },
+  "utf8_inputs": [
+    {
+      "kind": "asn",
+      "unique_strings": 73355,
+      "strings_shorter_than_64_bytes": 72306,
+      "pool_bytes": 2109804,
+      "sha256": "f2f196041fa41d694c973d1b26fce4148edbfedf35dfb51c82d8e2f1fec41991"
+    },
+    {
+      "kind": "city",
+      "unique_strings": 177408,
+      "strings_shorter_than_64_bytes": 177387,
+      "pool_bytes": 3115763,
+      "sha256": "9008c711d42b66a375ec30f947fe072328c0cbb7975055240b70b7feee0bfd10"
+    }
+  ],
+  "scope": "string timings include ValuePool directory validation, UTF-8 validation and boundary checks; exclude building the dictionary, complete NIDX opening, record decoding and queries",
+  "reproduce": [
+    "set NETINDEX_BENCH_ASN and NETINDEX_BENCH_CITY to immutable cached DB-IP Lite October 2026 inputs",
+    "cargo +1.95.0 bench --bench codec --features codec,mmdb,mmap -- ^utf8/",
+    "cargo +1.95.0 bench --bench codec --features codec,mmdb,mmap,simd -- ^utf8/"
+  ],
+  "source_sha256": {
+    "src\\values.rs": "27d1a62d2903db26653252d2537322a33a579a1f0764e9b3ee7c498a91cdf959",
+    "tests\\values.rs": "c87d5fb6da5bc169f303aa9ee1ecfe95a29e46f575abf478f4cd8e3d7eb4ce2c",
+    "benches\\codec.rs": "74fe62c581c3d5c43b1b8e6e6487040be8c39f66df027e3a0f4abca709b440c5",
+    "Cargo.lock": "11cb06bcd7de2b158f6469f459707048e73f1ccdd7604fa2d2ab5e927256d157"
+  },
+  "experiment_sha256": {
+    "prototype-avx512.rs": "da760ada13cf6bcfcebfbcb03c625efa0a4356937420f5f1934edd168564299d",
+    "prototype-avx256.rs": "7296ef079068bd0b4d9c92ce7b0e37a9c20d35eb1bf17d5903b794c62a37c3a2",
+    "prototype-validation-search.rs": "22d0fa9bb53d49874b1952c19f92fab6b97a5f6ee8b2236cb5b22841a1fabd56",
+    "prototype-validation-packed.rs": "f9a9ffe84689df7c90b5ac2d6f2859f5a4424f9cffd884a2e18ea2340408abd4",
+    "neon-probe.rs": "efdee99ef6dab82e1fe87afa87c6fb1b00a1e36a2740620657575ec3d32bd2fc"
+  },
+  "prototype_executables": {
+    "followup-avx2.exe": "6f3554d6f52db5aeb8860166c658094cfb7d058c8bf93bba8f7b3f5ae73cd1cc",
+    "followup-avx256.exe": "0e7b4d572426113b99fec4acd629e1a3e385c0e47e1d1a0ce08f21bba949785e",
+    "followup-avx512.exe": "bdaf8b4813728553303990ae66f6fc7a090726e1d4f0aeb51815088966250f1b",
+    "followup-codec-default.exe": "5f025ae04878a6d0205994f97204f7d0049b4438157fcef2abe5469c8f0af6eb",
+    "followup-codec-simd.exe": "73c046c7f61999f743f20fbbd734e1289d0cc5842f795526230e6ba75f313f79",
+    "followup-scalar.exe": "08ff5afd1ad8af6b383c00237013616e9b891004c041c91370b14f0b5e2a3167",
+    "followup-validation.exe": "f6a7e196db4446351e74e757f973967a5928f9e0b357df142120615fe6e95e51"
+  },
+  "definitions": {
+    "followup-utf8": "isolated experiment: per-string std/SIMD, batched std/SIMD with boundary checks; public pool retains original per-string implementation in this first run",
+    "followup-utf8-published-scalar": "isolated repetition against public batched implementation, without simd",
+    "followup-utf8-published-simd": "isolated repetition against public batched implementation, with simd",
+    "followup-utf8-crate-default": "maintained codec benchmark, complete native dictionary, batched std versus previous per-string std",
+    "followup-utf8-crate-simd": "same maintained benchmark with SIMD batched validation",
+    "followup-scalar": "scalar original packed search",
+    "followup-avx2": "existing AVX2 search",
+    "followup-avx512": "AVX-512F/BW with 64-byte vectors",
+    "followup-avx256": "AVX-512F/BW/VL with 32-byte vectors",
+    "followup-validation": "existing AVX2 search plus additional AVX2 packed-order validation",
+    "repeat": "same copied executable as its named candidate; shortened scenario selection, unchanged sample/warmup settings"
+  },
+  "measurements": [
+    {
+      "run": "followup-avx2",
+      "benchmark": "lookup/v4",
+      "mean_ns": 55386.64034046801,
+      "mean_95_percent_ci_ns": [
+        49700.32219771934,
+        64507.440486874235
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx2",
+      "benchmark": "lookup/v6",
+      "mean_ns": 66505.47744481014,
+      "mean_95_percent_ci_ns": [
+        52569.38110404139,
+        85387.95403332643
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx2",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 83740.46392234732,
+      "mean_95_percent_ci_ns": [
+        53964.661130802386,
+        128238.29548900966
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx2",
+      "benchmark": "open/v4",
+      "mean_ns": 1626385.4714759316,
+      "mean_95_percent_ci_ns": [
+        1469450.280725329,
+        1904947.0856397848
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx2",
+      "benchmark": "open/v6",
+      "mean_ns": 1658940.0688974403,
+      "mean_95_percent_ci_ns": [
+        1498937.0689982262,
+        1862272.3573742835
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx2",
+      "benchmark": "open/v6-wide",
+      "mean_ns": 2567330.5646866607,
+      "mean_95_percent_ci_ns": [
+        2034177.0697439206,
+        3199964.0881104562
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx2-repeat",
+      "benchmark": "lookup/v4",
+      "mean_ns": 84302.92185418088,
+      "mean_95_percent_ci_ns": [
+        63671.543928718515,
+        111902.80935703
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx2-repeat",
+      "benchmark": "lookup/v6",
+      "mean_ns": 71718.95126136858,
+      "mean_95_percent_ci_ns": [
+        57929.2988802844,
+        88661.3984423794
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx2-repeat",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 98535.16248784788,
+      "mean_95_percent_ci_ns": [
+        73677.39239047322,
+        127765.85068041242
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx256",
+      "benchmark": "lookup/v4",
+      "mean_ns": 50445.70642556601,
+      "mean_95_percent_ci_ns": [
+        46514.14705131801,
+        56319.50057028174
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx256",
+      "benchmark": "lookup/v6",
+      "mean_ns": 49568.10291876158,
+      "mean_95_percent_ci_ns": [
+        47225.59161674413,
+        52433.49211580463
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx256",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 51269.19413545246,
+      "mean_95_percent_ci_ns": [
+        47979.332608622055,
+        54846.4174804585
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx256",
+      "benchmark": "open/v4",
+      "mean_ns": 1482433.1216196679,
+      "mean_95_percent_ci_ns": [
+        1460862.6779598538,
+        1506237.2593876845
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx256",
+      "benchmark": "open/v6",
+      "mean_ns": 1461714.871450498,
+      "mean_95_percent_ci_ns": [
+        1434641.2482919823,
+        1493231.2282990306
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx256",
+      "benchmark": "open/v6-wide",
+      "mean_ns": 1418065.798568179,
+      "mean_95_percent_ci_ns": [
+        1399621.934127158,
+        1438744.018888319
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx256-repeat",
+      "benchmark": "lookup/v4",
+      "mean_ns": 60983.177535188915,
+      "mean_95_percent_ci_ns": [
+        54994.907422374214,
+        67706.95109582631
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx256-repeat",
+      "benchmark": "lookup/v6",
+      "mean_ns": 109536.66799666839,
+      "mean_95_percent_ci_ns": [
+        90368.26215641388,
+        131576.4426820689
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx256-repeat",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 92612.56090288462,
+      "mean_95_percent_ci_ns": [
+        82756.54107236622,
+        103944.07956631828
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx512",
+      "benchmark": "lookup/v4",
+      "mean_ns": 65167.82911268444,
+      "mean_95_percent_ci_ns": [
+        55477.99492156727,
+        77031.12079661894
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx512",
+      "benchmark": "lookup/v6",
+      "mean_ns": 114368.94472827156,
+      "mean_95_percent_ci_ns": [
+        76285.65908539327,
+        162653.1508969031
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx512",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 93540.54845912855,
+      "mean_95_percent_ci_ns": [
+        70371.65072331957,
+        120730.61852357652
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx512",
+      "benchmark": "open/v4",
+      "mean_ns": 2436048.397587672,
+      "mean_95_percent_ci_ns": [
+        1881289.395725414,
+        3165756.737026496
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx512",
+      "benchmark": "open/v6",
+      "mean_ns": 1877270.3421209825,
+      "mean_95_percent_ci_ns": [
+        1584780.7907863606,
+        2265307.975572843
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx512",
+      "benchmark": "open/v6-wide",
+      "mean_ns": 1668404.4108926444,
+      "mean_95_percent_ci_ns": [
+        1597237.739722698,
+        1743771.1303357263
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-avx512-repeat",
+      "benchmark": "lookup/v4",
+      "mean_ns": 74142.19315792443,
+      "mean_95_percent_ci_ns": [
+        56877.632316023104,
+        100556.27237914638
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx512-repeat",
+      "benchmark": "lookup/v6",
+      "mean_ns": 60668.471666818885,
+      "mean_95_percent_ci_ns": [
+        53728.326550783204,
+        71097.92078188251
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-avx512-repeat",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 52593.89481377121,
+      "mean_95_percent_ci_ns": [
+        47606.88599370556,
+        58959.31134013247
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-scalar",
+      "benchmark": "lookup/v4",
+      "mean_ns": 38994.56905365816,
+      "mean_95_percent_ci_ns": [
+        38584.677936286746,
+        39517.96168807611
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-scalar",
+      "benchmark": "lookup/v6",
+      "mean_ns": 40005.50637288913,
+      "mean_95_percent_ci_ns": [
+        39307.25823368727,
+        41205.94077370122
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-scalar",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 43270.011026743225,
+      "mean_95_percent_ci_ns": [
+        42659.433356871734,
+        43928.37568008752
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-scalar",
+      "benchmark": "open/v4",
+      "mean_ns": 1417927.6389212136,
+      "mean_95_percent_ci_ns": [
+        1409850.3084706902,
+        1427868.827503673
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-scalar",
+      "benchmark": "open/v6",
+      "mean_ns": 1431454.641390989,
+      "mean_95_percent_ci_ns": [
+        1412663.6702233227,
+        1452902.7912744458
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-scalar",
+      "benchmark": "open/v6-wide",
+      "mean_ns": 1372357.2128163332,
+      "mean_95_percent_ci_ns": [
+        1353801.291840669,
+        1396852.993332834
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-scalar-repeat",
+      "benchmark": "lookup/v4",
+      "mean_ns": 42344.94664653849,
+      "mean_95_percent_ci_ns": [
+        40333.72241435097,
+        44897.10638279907
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-scalar-repeat",
+      "benchmark": "lookup/v6",
+      "mean_ns": 130801.06818187004,
+      "mean_95_percent_ci_ns": [
+        94692.68979026582,
+        171488.85568026092
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-scalar-repeat",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 82610.73682928261,
+      "mean_95_percent_ci_ns": [
+        61634.47130768139,
+        107856.90247570875
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/asn/batch-simd",
+      "mean_ns": 63367.21497943359,
+      "mean_95_percent_ci_ns": [
+        58416.24901125802,
+        69114.92788810073
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/asn/batch-std",
+      "mean_ns": 82511.57261347416,
+      "mean_95_percent_ci_ns": [
+        78975.2536384119,
+        86242.11310230079
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/asn/per-string-simd",
+      "mean_ns": 1131499.040535066,
+      "mean_95_percent_ci_ns": [
+        1127069.5354399604,
+        1135984.0130782952
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/asn/per-string-std",
+      "mean_ns": 1172536.2743348558,
+      "mean_95_percent_ci_ns": [
+        1145498.9062763462,
+        1206180.9126987373
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/city/batch-simd",
+      "mean_ns": 190636.7166387046,
+      "mean_95_percent_ci_ns": [
+        144964.3339245958,
+        250353.33235236024
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/city/batch-std",
+      "mean_ns": 736298.5713396458,
+      "mean_95_percent_ci_ns": [
+        699261.206558012,
+        797971.7905076455
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/city/per-string-simd",
+      "mean_ns": 2719259.374185049,
+      "mean_95_percent_ci_ns": [
+        2694603.5732673067,
+        2746527.6135284156
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/city/per-string-std",
+      "mean_ns": 2886077.5054889116,
+      "mean_95_percent_ci_ns": [
+        2807243.754301887,
+        2970237.8672010046
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/long-unicode-control/batch-simd",
+      "mean_ns": 130780.73719654974,
+      "mean_95_percent_ci_ns": [
+        130599.83711184945,
+        130972.20782980153
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/long-unicode-control/batch-std",
+      "mean_ns": 1181029.5797894741,
+      "mean_95_percent_ci_ns": [
+        1145751.8752941731,
+        1223977.7925927825
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/long-unicode-control/per-string-simd",
+      "mean_ns": 200721.48636582555,
+      "mean_95_percent_ci_ns": [
+        197587.81476300908,
+        205317.90850342507
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8",
+      "benchmark": "utf8/long-unicode-control/per-string-std",
+      "mean_ns": 1404662.2023040755,
+      "mean_95_percent_ci_ns": [
+        1230563.8442590677,
+        1644638.6832030413
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-crate-default",
+      "benchmark": "utf8/asn/per-string-std",
+      "mean_ns": 1404542.3566047093,
+      "mean_95_percent_ci_ns": [
+        1256400.3024074032,
+        1573740.961237393
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-crate-default",
+      "benchmark": "utf8/asn/published",
+      "mean_ns": 105604.33696138632,
+      "mean_95_percent_ci_ns": [
+        96339.52243055936,
+        117207.31898253463
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-crate-default",
+      "benchmark": "utf8/city/per-string-std",
+      "mean_ns": 4949146.325861071,
+      "mean_95_percent_ci_ns": [
+        3048995.2796067945,
+        7786888.893640338
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-crate-default",
+      "benchmark": "utf8/city/published",
+      "mean_ns": 894304.9132551369,
+      "mean_95_percent_ci_ns": [
+        766778.8118643007,
+        1065329.288480821
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-crate-simd",
+      "benchmark": "utf8/asn/per-string-std",
+      "mean_ns": 1251759.130529356,
+      "mean_95_percent_ci_ns": [
+        1157405.3008144968,
+        1387492.2518953518
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-crate-simd",
+      "benchmark": "utf8/asn/published",
+      "mean_ns": 71574.99900993727,
+      "mean_95_percent_ci_ns": [
+        67439.39229694338,
+        76519.7414369707
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-crate-simd",
+      "benchmark": "utf8/city/per-string-std",
+      "mean_ns": 3127360.983971319,
+      "mean_95_percent_ci_ns": [
+        2936819.604481648,
+        3330067.164235345
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-crate-simd",
+      "benchmark": "utf8/city/published",
+      "mean_ns": 147480.38088839984,
+      "mean_95_percent_ci_ns": [
+        139827.64996781643,
+        158924.10114205143
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-published-scalar",
+      "benchmark": "utf8/asn/per-string-std",
+      "mean_ns": 1369520.2309862108,
+      "mean_95_percent_ci_ns": [
+        1284938.0245165941,
+        1467678.6490828693
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-published-scalar",
+      "benchmark": "utf8/asn/published",
+      "mean_ns": 176329.7836919644,
+      "mean_95_percent_ci_ns": [
+        145707.7944432325,
+        217325.43115140632
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-published-scalar",
+      "benchmark": "utf8/city/per-string-std",
+      "mean_ns": 4438529.868082386,
+      "mean_95_percent_ci_ns": [
+        3807754.031078559,
+        5124709.147293644
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-published-scalar",
+      "benchmark": "utf8/city/published",
+      "mean_ns": 1085602.481529514,
+      "mean_95_percent_ci_ns": [
+        993970.3455717365,
+        1185275.7782941766
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-published-simd",
+      "benchmark": "utf8/asn/per-string-std",
+      "mean_ns": 2279934.007438449,
+      "mean_95_percent_ci_ns": [
+        1761280.7200709225,
+        3002730.549580213
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-published-simd",
+      "benchmark": "utf8/asn/published",
+      "mean_ns": 163836.8932574094,
+      "mean_95_percent_ci_ns": [
+        124464.19540807273,
+        208084.07419287928
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-published-simd",
+      "benchmark": "utf8/city/per-string-std",
+      "mean_ns": 3969448.1148975664,
+      "mean_95_percent_ci_ns": [
+        3442446.63130412,
+        4636354.687700629
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-utf8-published-simd",
+      "benchmark": "utf8/city/published",
+      "mean_ns": 226425.77236625145,
+      "mean_95_percent_ci_ns": [
+        200826.82462835265,
+        261906.51974109904
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-validation",
+      "benchmark": "lookup/v4",
+      "mean_ns": 46978.776954256486,
+      "mean_95_percent_ci_ns": [
+        45519.13085059298,
+        48575.95979776354
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-validation",
+      "benchmark": "lookup/v6",
+      "mean_ns": 89837.78836200619,
+      "mean_95_percent_ci_ns": [
+        69024.72815442421,
+        115556.57211823248
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-validation",
+      "benchmark": "lookup/v6-wide",
+      "mean_ns": 89108.8690246162,
+      "mean_95_percent_ci_ns": [
+        69334.71195762865,
+        115101.8228381378
+      ],
+      "queries_per_iteration": 1024
+    },
+    {
+      "run": "followup-validation",
+      "benchmark": "open/v4",
+      "mean_ns": 1598107.0086862172,
+      "mean_95_percent_ci_ns": [
+        1486119.9421996174,
+        1768597.117251309
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-validation",
+      "benchmark": "open/v6",
+      "mean_ns": 2177881.5978028015,
+      "mean_95_percent_ci_ns": [
+        1884307.699021452,
+        2535131.002068597
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-validation",
+      "benchmark": "open/v6-wide",
+      "mean_ns": 1698343.0974037955,
+      "mean_95_percent_ci_ns": [
+        1604770.577756722,
+        1814762.0273217014
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-validation-repeat",
+      "benchmark": "open/v4",
+      "mean_ns": 1418067.0427725282,
+      "mean_95_percent_ci_ns": [
+        1412461.9159326078,
+        1423895.7828057029
+      ],
+      "queries_per_iteration": null
+    },
+    {
+      "run": "followup-validation-repeat",
+      "benchmark": "open/v6",
+      "mean_ns": 1854047.216569969,
+      "mean_95_percent_ci_ns": [
+        1675368.700855357,
+        2053268.9082400464
+      ],
+      "queries_per_iteration": null
+    }
+  ]
+}

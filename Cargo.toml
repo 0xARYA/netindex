@@ -1,6 +1,6 @@
 [package]
 name = "netindex"
-version = "2.0.1"
+version = "2.0.2"
 edition = "2024"
 rust-version = "1.95"
 description = "Immutable IP-range and ASN indexes with borrowed payloads"
@@ -18,13 +18,14 @@ codec = ["shared-values"]
 external-sort = ["dep:tempfile"]
 mmdb = ["dep:maxminddb"]
 mmap = ["dep:memmap2"]
-simd = []
+simd = ["dep:simdutf8"]
 shared-values = []
 
 [dependencies]
 hashbrown = { version = "0.17.1", default-features = false, features = ["inline-more"] }
 maxminddb = { version = "0.32", optional = true, default-features = false }
 memmap2 = { version = "0.9.11", optional = true }
+simdutf8 = { version = "0.1.5", optional = true }
 tempfile = { version = "3", optional = true }
 thiserror = "2"
 

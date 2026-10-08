@@ -116,6 +116,42 @@ cargo bench --bench index -- --baseline before
 ```
 
 This harness uses 65,536 assertions and 1,024 queries per scenario for IPv4,
-IPv6, overlaps, and ASN keys. It measures visitors, scalar payloads serialized
+IPv6 (including uncompressed 128-bit deltas), overlaps, and ASN keys. It measures visitors, scalar payloads serialized
 as `{id, value}`, validation, building, and an address-directory experiment.
 Failed operations fail the benchmark process.
+
+## SIMD and validation follow-up
+
+On the same CPU, AVX2 variants did not consistently beat scalar search across
+cached ASN and City hit workloads. The optional packed-search SIMD path remains unchanged.
+A 128-bit comparison prototype and width-specialized searches were discarded.
+
+An opening profile instead found discarded target construction during validation.
+Checking numeric bounds directly improved ordinary IPv4/IPv6 network opening by
+7-13% across two paired trials of 65,536 assertions. Wide IPv6 address results
+were mixed: 21% faster in one pair and 6% slower in the other. These are warm
+synthetic validation measurements, not full-database startup measurements.
+
+[Results and profiling scope](benches/results/2026-10-08-simd.json).
+
+## String-pool opening
+
+Batched validation checks the shared UTF-8 body and every value boundary.
+The `simd` feature uses `simdutf8`; malformed inputs retain value-relative errors.
+The same cached ASN and City inputs produced 73,355 and 177,408 unique strings.
+
+| Dataset | Feature | Previous per-string validation (us) | Batched validation (us) |
+| --- | --- | ---: | ---: |
+| ASN | Default | 1,405 | 106 |
+| ASN | SIMD | 1,252 | 72 |
+| City | Default | 4,949 | 894 |
+| City | SIMD | 3,127 | 148 |
+
+These are paired means over 30 samples, including directory validation and boundary
+checks. Host activity caused timing variation; this measures string-pool opening,
+not complete database startup or lookup. Run the codec benchmark with `^utf8/`,
+with and without `simd`, to reproduce. [Measurements](benches/results/2026-10-08-simd-followup.json).
+
+AVX-512 searches and an additional vectorized ordering pass did not establish
+repeatable gains. A NEON search prototype compiled for ARM64 but was not run;
+the optional UTF-8 dependency supplies ARM64 acceleration independently.

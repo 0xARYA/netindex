@@ -283,7 +283,7 @@ dataset; in-range IDs from another pool cannot be detected automatically.
 | `mmdb` | Validated network iteration for caller-defined MMDB conversion. |
 | `shared-values` | Shared byte/string pools with caller-defined record schemas. |
 | `codec` | Optional typed records and pooled values; enables `shared-values`. |
-| `simd` | Runtime AVX2 dispatch on x86-64, with scalar fallback. |
+| `simd` | Runtime AVX2 search on x86-64 and SIMD string validation, with scalar fallbacks. |
 
 All features are disabled by default. Global `target-cpu=native` is not required.
 Rust 1.95 is supported. The public error enum is non-exhaustive; messages are

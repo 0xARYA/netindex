@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.2 - 2026-10-08
+
+Validate shared string pools in batches, with optional SIMD UTF-8 validation.
+Preserve per-value errors and reject boundaries that split Unicode characters.
+Avoid constructing unused targets during index validation.
+
+Add reproducible string-pool and wide IPv6 benchmarks with dated measurements.
+The public API and `.nidx` layout are unchanged.
+
 ## 2.0.1 — 2026-10-07
 
 Use Rust 2024 for the library and fuzz targets, with resolver 3 in both workspaces.
