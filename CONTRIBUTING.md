@@ -27,13 +27,16 @@ cargo +1.95.0 fmt --all -- --check
 cargo +1.95.0 clippy --locked --all-targets -- -D warnings
 cargo +1.95.0 clippy --locked --all-targets --all-features -- -D warnings
 cargo +1.95.0 test --locked -- --test-threads=1
-cargo +1.95.0 test --locked --all-features -- --test-threads=1
+cargo +1.95.0 test --locked --all-features -- --test-threads=1 --include-ignored
 cargo +1.95.0 doc --locked --all-features --no-deps
 cargo +1.95.0 package --locked --all-features
 ```
 
 Set `RUSTDOCFLAGS="-D warnings"` when checking documentation. Packaging requires
 a clean working tree; use `--allow-dirty` only for local verification.
+
+Feature-dependent README examples are skipped by default. The all-feature check
+includes them; the mapped-file example is compiled without opening a local file.
 
 Use `?` in documentation examples and assert observable results. Put ownership
 and failure contracts on the relevant API; link examples rather than repeating

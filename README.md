@@ -48,22 +48,25 @@ netindex = "2"
 ```rust
 use netindex::{Builder, Limits, Reader, Target};
 
-let mut builder = Builder::new(Limits::default());
-builder.push(
-    Target::Network {
-        address: "203.0.113.0".parse()?,
-        prefix: 24,
-    },
-    b"evidence",
-)?;
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut builder = Builder::new(Limits::default());
+    builder.push(
+        Target::Network {
+            address: "203.0.113.0".parse()?,
+            prefix: 24,
+        },
+        b"evidence",
+    )?;
 
-let bytes = builder.into_bytes(b"release metadata")?;
-let reader = Reader::open(bytes, Limits::default())?;
+    let bytes = builder.into_bytes(b"release metadata")?;
+    let reader = Reader::open(bytes, Limits::default())?;
 
-let matches = reader.lookup_ip("203.0.113.42".parse()?)?;
-assert_eq!(matches.len(), 1);
-assert_eq!(matches[0].payload, b"evidence");
-# Ok::<(), Box<dyn std::error::Error>>(())
+    let matches = reader.lookup_ip("203.0.113.42".parse()?)?;
+    assert_eq!(matches.len(), 1);
+    assert_eq!(matches[0].payload, b"evidence");
+
+    Ok(())
+}
 ```
 
 Index files use `.nidx`, for example `membership.nidx`.
@@ -82,17 +85,23 @@ Use [`Reader::visit_ip`], [`Reader::visit_asn`], or [`Reader::visit_all`] to avo
 allocating a result vector. A visitor error stops delivery:
 
 ```rust
-# use netindex::{Builder, Limits, Reader, Target};
-# let mut builder = Builder::new(Limits::default());
-# builder.push(Target::Address("203.0.113.42".parse()?), b"evidence")?;
-# let reader = Reader::open(builder.into_bytes(b"")?, Limits::default())?;
-reader.visit_ip("203.0.113.42".parse()?, |matched| {
-    let text = std::str::from_utf8(matched.payload)?;
-    assert_eq!(text, "evidence");
+use netindex::{Builder, Limits, Reader, Target};
 
-    Ok::<_, Box<dyn std::error::Error>>(())
-})?;
-# Ok::<(), Box<dyn std::error::Error>>(())
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let address = "203.0.113.42".parse()?;
+    let mut builder = Builder::new(Limits::default());
+    builder.push(Target::Address(address), b"evidence")?;
+    let reader = Reader::open(builder.into_bytes(b"")?, Limits::default())?;
+
+    reader.visit_ip(address, |matched| {
+        let text = std::str::from_utf8(matched.payload)?;
+        assert_eq!(text, "evidence");
+
+        Ok::<_, Box<dyn std::error::Error>>(())
+    })?;
+
+    Ok(())
+}
 ```
 
 ## Separate source files
@@ -116,20 +125,26 @@ the new set. Use [`CoverageRouter`] to manage readers separately.
 Enable `mmap` for `MappedReader::map_file`. It checks file-size limits before
 mapping, validates the index, and owns the mapping independently of the file handle.
 
-```rust,no_run
-# #[cfg(feature = "mmap")]
-# {
+```toml
+[dependencies]
+netindex = { version = "2", features = ["mmap"] }
+```
+
+```rust,ignore,no_run
 use std::fs::File;
 
 use netindex::{Limits, MappedReader};
 
-let file = File::open("membership.nidx")?;
-// SAFETY: No process modifies or truncates this file while the reader is alive.
-let reader = unsafe { MappedReader::map_file(&file, Limits::default()) }?;
-let matches = reader.lookup_ip("203.0.113.42".parse()?)?;
-# drop(matches);
-# }
-# Ok::<(), Box<dyn std::error::Error>>(())
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let file = File::open("membership.nidx")?;
+    // SAFETY: No process modifies or truncates this file while the reader is alive.
+    let reader = unsafe { MappedReader::map_file(&file, Limits::default()) }?;
+
+    let matches = reader.lookup_ip("203.0.113.42".parse()?)?;
+    println!("{} matching entries", matches.len());
+
+    Ok(())
+}
 ```
 
 Mapping is unsafe because changes to the file by any process can invalidate
@@ -209,40 +224,42 @@ cargo run --example compio
 The `codec` feature provides flat typed records with shared strings and bytes.
 Declare fields once, then encode records with that schema:
 
-```rust
-# #[cfg(feature = "codec")]
-# fn example() -> Result<(), netindex::Error> {
+```toml
+[dependencies]
+netindex = { version = "2", features = ["codec"] }
+```
+
+```rust,ignore
 use netindex::{
-    codec::{Decoder, Encoder, Field, Kind, Schema, Value},
     Builder, Error, Limits, Reader, Target,
+    codec::{Decoder, Encoder, Field, Kind, Schema, Value},
 };
 
-let limits = Limits::default();
-let schema = Schema::new(
-    &[Field::Required(Kind::U32), Field::Optional(Kind::String)],
-    limits,
-)?;
-let mut encoder = Encoder::new(schema, limits);
-let payload = encoder.encode(&[Value::U32(64512), Value::String("example network")])?;
-let metadata = encoder.into_metadata()?;
+fn main() -> Result<(), Error> {
+    let limits = Limits::default();
+    let schema = Schema::new(
+        &[Field::Required(Kind::U32), Field::Optional(Kind::String)],
+        limits,
+    )?;
+    let mut encoder = Encoder::new(schema, limits);
+    let payload = encoder.encode(&[Value::U32(64512), Value::String("example network")])?;
+    let metadata = encoder.into_metadata()?;
 
-let mut builder = Builder::new(limits);
-builder.push(Target::Asn(64512), &payload)?;
-let reader = Reader::open(builder.into_bytes(&metadata)?, limits)?;
-let decoder = Decoder::open(reader.metadata()?, limits)?;
+    let mut builder = Builder::new(limits);
+    builder.push(Target::Asn(64512), &payload)?;
+    let reader = Reader::open(builder.into_bytes(&metadata)?, limits)?;
+    let decoder = Decoder::open(reader.metadata()?, limits)?;
 
-reader.visit_asn(64512, |matched| {
-    let record = decoder.record(matched.payload)?;
+    reader.visit_asn(64512, |matched| {
+        let record = decoder.record(matched.payload)?;
 
-    assert_eq!(record.string(1)?, Some("example network"));
+        assert_eq!(record.string(1)?, Some("example network"));
 
-    Ok::<_, Error>(())
-})?;
-# Ok(())
-# }
-# #[cfg(feature = "codec")]
-# example()?;
-# Ok::<(), netindex::Error>(())
+        Ok::<_, Error>(())
+    })?;
+
+    Ok(())
+}
 ```
 
 Pass encoded records to the index builder as payloads and store codec metadata

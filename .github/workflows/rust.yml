@@ -30,7 +30,7 @@ jobs:
       - name: Test default features
         run: cargo +1.95.0 test --locked -- --test-threads=1
       - name: Test all features in release mode
-        run: cargo +1.95.0 test --locked --release --all-features -- --test-threads=1
+        run: cargo +1.95.0 test --locked --release --all-features -- --test-threads=1 --include-ignored
       - name: Check benchmark correctness
         run: cargo +1.95.0 bench --locked --bench index -- --test
       - name: Run Tokio example
