@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1 — 2026-10-07
+
+Use Rust 2024 for the library and fuzz targets, with resolver 3 in both workspaces.
+The public API, `.nidx` layout, and Rust 1.95 requirement are unchanged.
+
 ## 2.0.0 — 2026-10-07
 
 Breaking change: `.nidx` files now use the `NETINDEX` signature and layout version 3.

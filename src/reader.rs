@@ -1,12 +1,12 @@
 use std::{fmt, net::IpAddr};
 
 use crate::{
-    layout::{slice, u32_at, Encoding, Layout, Section, HEADER},
+    Coverage, Error, Limits, Target,
+    layout::{Encoding, HEADER, Layout, Section, slice, u32_at},
     packed,
     routing::BroadRoutes,
     search::Search,
-    target::{number, Entry},
-    Coverage, Error, Limits, Target,
+    target::{Entry, number},
 };
 
 #[cfg(feature = "mmap")]
@@ -156,16 +156,16 @@ impl<B: AsRef<[u8]>> Reader<B> {
 
         let section = if ipv6 { self.layout.v6 } else { self.layout.v4 };
 
-        if let Some(routes) = &self.broad_routes {
-            if let Some(entry) = routes.lookup(query, ipv6)? {
-                emit(Match {
-                    id: entry.id,
-                    target: entry.target(ipv6)?,
-                    payload: self.layout.payload(self.bytes.as_ref(), entry.id)?,
-                })?;
+        if let Some(routes) = &self.broad_routes
+            && let Some(entry) = routes.lookup(query, ipv6)?
+        {
+            emit(Match {
+                id: entry.id,
+                target: entry.target(ipv6)?,
+                payload: self.layout.payload(self.bytes.as_ref(), entry.id)?,
+            })?;
 
-                return Ok(());
-            }
+            return Ok(());
         }
 
         if section.encoding == Encoding::Packed {
@@ -433,10 +433,10 @@ fn validate(
             mark(&mut seen, layout.records, entry.id)?;
 
             coverage.insert(entry.start, entry.end, ipv6);
-            if section.encoding == Encoding::Packed {
-                if let Some(routes) = &mut routes {
-                    routes.insert(entry, ipv6)?;
-                }
+            if section.encoding == Encoding::Packed
+                && let Some(routes) = &mut routes
+            {
+                routes.insert(entry, ipv6)?;
             }
 
             previous = Some(key);

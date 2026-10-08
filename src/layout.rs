@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use crate::{packed, payload::Slots, target::Entry, Error, Limits};
+use crate::{Error, Limits, packed, payload::Slots, target::Entry};
 
 pub(crate) const HEADER: usize = 80;
 pub(crate) const MAGIC: &[u8; 8] = b"NETINDEX";

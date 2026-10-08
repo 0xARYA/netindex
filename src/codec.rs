@@ -5,8 +5,8 @@
 //! Replace records and metadata together. Decoding borrows the caller's bytes.
 
 use crate::{
-    values::{StringPool, ValuePool, ValuePoolBuilder},
     Error, Limits,
+    values::{StringPool, ValuePool, ValuePoolBuilder},
 };
 
 const MAGIC: &[u8; 8] = b"NETCODEC";
@@ -277,7 +277,7 @@ impl Encoder {
                     return Err(Error::CodecField {
                         position,
                         reason: "unexpected or missing value",
-                    })
+                    });
                 }
             }
         }

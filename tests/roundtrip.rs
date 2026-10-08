@@ -26,10 +26,12 @@ fn independent_consecutive_id_fixture_preserves_targets_and_rejects_invalid_base
     }
 
     assert_eq!(reader.lookup_asn(7).unwrap()[0].id, 0);
-    assert!(reader
-        .lookup_ip("10.0.0.3".parse().unwrap())
-        .unwrap()
-        .is_empty());
+    assert!(
+        reader
+            .lookup_ip("10.0.0.3".parse().unwrap())
+            .unwrap()
+            .is_empty()
+    );
 
     for base in [0u32, 2, u32::MAX] {
         let mut invalid = bytes.to_vec();
@@ -87,10 +89,12 @@ fn convenience_build_and_lookup_preserve_borrowed_payloads_and_every_match() {
 
     assert!(reader.lookup_asn(0).unwrap().is_empty());
     assert!(reader.lookup_asn(64513).unwrap().is_empty());
-    assert!(reader
-        .lookup_ip("192.0.2.1".parse().unwrap())
-        .unwrap()
-        .is_empty());
+    assert!(
+        reader
+            .lookup_ip("192.0.2.1".parse().unwrap())
+            .unwrap()
+            .is_empty()
+    );
 
     let mut builder = Builder::new(Limits::default());
     for target in targets {

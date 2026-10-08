@@ -1,10 +1,10 @@
 use std::io::Write;
 
 use crate::{
-    layout::{slice, u128_at, u32_at, usize_at},
+    Error,
+    layout::{slice, u32_at, u128_at, usize_at},
     search::Search,
     target::Entry,
-    Error,
 };
 
 pub(crate) const BLOCK: usize = 256;

@@ -147,11 +147,7 @@ pub(crate) fn number(address: IpAddr) -> u128 {
 }
 
 fn bits(address: IpAddr) -> u8 {
-    if address.is_ipv6() {
-        128
-    } else {
-        32
-    }
+    if address.is_ipv6() { 128 } else { 32 }
 }
 
 fn host_mask(bits: u8) -> u128 {
@@ -197,12 +193,14 @@ mod tests {
 
                 if prefix < width {
                     assert!(Entry { start: 1, ..entry }.target(ipv6).is_err());
-                    assert!(Entry {
-                        end: end - 1,
-                        ..entry
-                    }
-                    .target(ipv6)
-                    .is_err());
+                    assert!(
+                        Entry {
+                            end: end - 1,
+                            ..entry
+                        }
+                        .target(ipv6)
+                        .is_err()
+                    );
                 }
             }
         }

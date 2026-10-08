@@ -4,7 +4,7 @@ use std::{collections::hash_map::RandomState, fmt, hash::BuildHasher, io::Write}
 
 use hashbrown::HashTable;
 
-use crate::{layout::u32_at, Error, Limits};
+use crate::{Error, Limits, layout::u32_at};
 
 const MAGIC: &[u8; 8] = b"NIVALUES";
 const HEADER: usize = 12;

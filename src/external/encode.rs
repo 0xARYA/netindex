@@ -4,15 +4,15 @@ use std::{
 };
 
 use crate::{
+    Error,
     builder::{augment, write_entry},
     layout::slice,
     packed::{self, BLOCK, FENCE},
     target::Entry,
-    Error,
 };
 
 use super::{
-    runs::{Row, ROW_BYTES},
+    runs::{ROW_BYTES, Row},
     temporary,
 };
 

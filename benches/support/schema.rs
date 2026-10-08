@@ -2,8 +2,8 @@ use std::fmt;
 
 use maxminddb::LookupResult;
 use serde::{
-    de::{IgnoredAny, SeqAccess, Visitor},
     Deserialize, Deserializer, Serialize,
+    de::{IgnoredAny, SeqAccess, Visitor},
 };
 
 use super::Result;

@@ -6,9 +6,9 @@ use std::{
 
 use tempfile::NamedTempFile;
 
-use crate::{target::Entry, Error};
+use crate::{Error, target::Entry};
 
-use super::{temporary, DiskBudget};
+use super::{DiskBudget, temporary};
 
 pub(super) const ROW_BYTES: u64 = 40;
 

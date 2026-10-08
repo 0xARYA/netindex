@@ -1,8 +1,8 @@
 use std::io::Write;
 
 use crate::{
-    layout::{add, multiply, slice, u32_at, usize_at},
     Error,
+    layout::{add, multiply, slice, u32_at, usize_at},
 };
 
 #[derive(Debug, Clone, Copy)]

@@ -277,9 +277,11 @@ fn fine_routing_preserves_cross_bucket_ranges_and_address_extremes() {
         assert_eq!(matches, expected);
     }
 
-    assert!(ReaderSet::<Vec<u8>>::with_fine_routing(vec![])
-        .unwrap()
-        .is_empty());
+    assert!(
+        ReaderSet::<Vec<u8>>::with_fine_routing(vec![])
+            .unwrap()
+            .is_empty()
+    );
 }
 
 #[test]

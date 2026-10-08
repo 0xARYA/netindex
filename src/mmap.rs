@@ -2,7 +2,7 @@ use std::fs::File;
 
 use memmap2::{Mmap, MmapOptions};
 
-use crate::{layout::HEADER, Error, Limits, Reader};
+use crate::{Error, Limits, Reader, layout::HEADER};
 
 impl Reader<Mmap> {
     /// Map an entire immutable file read-only and validate the index.

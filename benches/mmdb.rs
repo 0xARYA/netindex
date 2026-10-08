@@ -12,12 +12,12 @@ use std::{
 use criterion::{BenchmarkId, Criterion, Throughput};
 use memmap2::{Mmap, MmapOptions};
 use netindex::{
-    codec::Decoder, mmdb, ExternalBuilder, ExternalOptions, Limits, MappedReader, Target,
+    ExternalBuilder, ExternalOptions, Limits, MappedReader, Target, codec::Decoder, mmdb,
 };
 use serde::Serialize;
 
 use support::{
-    schema::{decode_native, Fields},
+    schema::{Fields, decode_native},
     typed,
 };
 

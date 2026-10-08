@@ -1,4 +1,4 @@
-use crate::{target::Entry, Error};
+use crate::{Error, target::Entry};
 
 const BITS: u8 = 12;
 const BUCKETS: usize = 1 << BITS;

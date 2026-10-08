@@ -4,7 +4,7 @@ use std::{env, fs::File, hint::black_box, path::Path, time::Duration};
 
 use criterion::Criterion;
 use memmap2::MmapOptions;
-use netindex::{codec::Decoder, mmdb, Limits};
+use netindex::{Limits, codec::Decoder, mmdb};
 
 use support::{schema, schema::decode_native, typed};
 

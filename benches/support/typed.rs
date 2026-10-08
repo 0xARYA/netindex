@@ -1,13 +1,13 @@
 //! DB-IP field selection layered over the public schema-neutral codec.
 
 use netindex::{
-    codec::{Decoder, Encoder, Field, Kind, Value},
     Limits,
+    codec::{Decoder, Encoder, Field, Kind, Value},
 };
 
 use super::{
-    schema::{Asn, Coordinates, Fields, Geo},
     Result,
+    schema::{Asn, Coordinates, Fields, Geo},
 };
 
 pub(crate) fn encoder(kind: &str) -> Result<Encoder> {

@@ -2,7 +2,7 @@
 
 #![cfg(all(feature = "mmdb", feature = "shared-values", feature = "mmap"))]
 
-use netindex::{values::ValuePoolBuilder, Limits};
+use netindex::{Limits, values::ValuePoolBuilder};
 
 use schema::{Coordinates, Fields, Geo};
 

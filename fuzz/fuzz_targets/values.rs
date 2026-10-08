@@ -2,8 +2,8 @@
 
 use libfuzzer_sys::fuzz_target;
 use netindex::{
-    values::{StringPool, ValuePool, ValuePoolBuilder},
     Limits,
+    values::{StringPool, ValuePool, ValuePoolBuilder},
 };
 
 fuzz_target!(|bytes: &[u8]| {

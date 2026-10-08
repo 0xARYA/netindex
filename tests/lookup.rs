@@ -48,10 +48,12 @@ fn large_packed_ipv4_sections_preserve_hits_gaps_and_extrema() {
             }
         }
 
-        assert!(reader
-            .lookup_ip(IpAddr::V4(Ipv4Addr::from(u32::MAX)))
-            .unwrap()
-            .is_empty());
+        assert!(
+            reader
+                .lookup_ip(IpAddr::V4(Ipv4Addr::from(u32::MAX)))
+                .unwrap()
+                .is_empty()
+        );
         assert!(reader.lookup_ip("::".parse().unwrap()).unwrap().is_empty());
     }
 }

@@ -2,8 +2,8 @@
 
 use libfuzzer_sys::fuzz_target;
 use netindex::{
-    codec::{Decoder, Field, Kind, Value},
     Limits,
+    codec::{Decoder, Field, Kind, Value},
 };
 
 fuzz_target!(|input: &[u8]| {

@@ -1,13 +1,13 @@
 //! Benchmark-only ASN/city fixed layout used as the pre-public-codec baseline.
 
 use netindex::{
-    values::{StringPool, ValuePoolBuilder},
     Limits,
+    values::{StringPool, ValuePoolBuilder},
 };
 
 use super::{
-    schema::{Asn, Coordinates, Fields, Geo},
     Result,
+    schema::{Asn, Coordinates, Fields, Geo},
 };
 
 const MAGIC: &[u8; 6] = b"NISHAR";

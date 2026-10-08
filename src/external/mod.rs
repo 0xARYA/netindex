@@ -9,10 +9,10 @@ use std::{
 use tempfile::TempDir;
 
 use crate::{
+    Error, Limits, Target,
     layout::Layout,
     payload::{SlotWriter, Slots},
     target::Entry,
-    Error, Limits, Target,
 };
 use runs::{Row, Sorter};
 

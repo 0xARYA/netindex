@@ -8,11 +8,11 @@ use std::{
 use hashbrown::HashTable;
 
 use crate::{
-    layout::{slice, Layout},
+    Error, Limits, Target,
+    layout::{Layout, slice},
     packed,
     payload::{SlotWriter, Slots},
     target::Entry,
-    Error, Limits, Target,
 };
 
 /// In-memory builder for one immutable index.

@@ -1,6 +1,6 @@
 use std::net::IpAddr;
 
-use crate::{target::number, Error};
+use crate::{Error, target::number};
 
 const BUCKETS: usize = 4096;
 const WORDS: usize = BUCKETS / 64;
@@ -96,7 +96,7 @@ impl CoverageRouter {
     }
 
     /// Yield every possible reader position in original order, without allocating.
-    pub fn candidates(&self, address: IpAddr) -> impl Iterator<Item = usize> {
+    pub fn candidates(&self, address: IpAddr) -> impl Iterator<Item = usize> + use<> {
         candidates(self.mask(address))
     }
 

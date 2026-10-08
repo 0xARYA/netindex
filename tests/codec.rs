@@ -3,8 +3,8 @@
 #![cfg(feature = "codec")]
 
 use netindex::{
-    codec::{Decoder, Encoder, Field, Kind, Schema, Value},
     Error, Limits,
+    codec::{Decoder, Encoder, Field, Kind, Schema, Value},
 };
 
 #[test]
@@ -237,32 +237,38 @@ fn schema_validation_limits_and_presence_bits_cross_byte_boundaries() -> Result<
     assert_eq!(&record[..2], &[255, 1]);
     assert_eq!(decoder.record(&record)?.get(8)?, Value::Bool(false));
 
-    assert!(Schema::new(
-        &fields,
-        Limits {
-            records: 8,
-            ..Limits::default()
-        }
-    )
-    .is_err());
+    assert!(
+        Schema::new(
+            &fields,
+            Limits {
+                records: 8,
+                ..Limits::default()
+            }
+        )
+        .is_err()
+    );
 
-    assert!(Schema::new(
-        &fields,
-        Limits {
-            bytes: 10,
-            ..Limits::default()
-        }
-    )
-    .is_err());
+    assert!(
+        Schema::new(
+            &fields,
+            Limits {
+                bytes: 10,
+                ..Limits::default()
+            }
+        )
+        .is_err()
+    );
 
-    assert!(Decoder::open(
-        &metadata,
-        Limits {
-            bytes: metadata.len() - 1,
-            ..Limits::default()
-        }
-    )
-    .is_err());
+    assert!(
+        Decoder::open(
+            &metadata,
+            Limits {
+                bytes: metadata.len() - 1,
+                ..Limits::default()
+            }
+        )
+        .is_err()
+    );
 
     let schema = Schema::new(&[Field::Required(Kind::U64)], Limits::default())?;
     let mut encoder = Encoder::new(

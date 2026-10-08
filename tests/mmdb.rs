@@ -6,7 +6,7 @@
 use std::io::Cursor;
 use std::{error::Error as StdError, net::IpAddr};
 
-use netindex::{mmdb, Builder, Limits, Reader, Target};
+use netindex::{Builder, Limits, Reader, Target, mmdb};
 use serde::Deserialize;
 
 const SOURCE: &[u8] = include_bytes!("fixtures/anonymous.mmdb");
@@ -91,14 +91,18 @@ fn callbacks_can_skip_records_and_native_options_control_aliases() {
             .len(),
         1
     );
-    assert!(converted
-        .lookup_ip("6.1.0.2".parse().unwrap())
-        .unwrap()
-        .is_empty());
-    assert!(converted
-        .lookup_ip("::ffff:6.1.0.3".parse().unwrap())
-        .unwrap()
-        .is_empty());
+    assert!(
+        converted
+            .lookup_ip("6.1.0.2".parse().unwrap())
+            .unwrap()
+            .is_empty()
+    );
+    assert!(
+        converted
+            .lookup_ip("::ffff:6.1.0.3".parse().unwrap())
+            .unwrap()
+            .is_empty()
+    );
 }
 
 #[test]

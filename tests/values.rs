@@ -5,8 +5,8 @@
 use std::io;
 
 use netindex::{
-    values::{StringPool, ValuePool, ValuePoolBuilder},
     Error, Limits,
+    values::{StringPool, ValuePool, ValuePoolBuilder},
 };
 
 #[test]
@@ -28,9 +28,11 @@ fn shared_values_preserve_binary_strings_empty_values_and_ids() {
     assert_eq!(pool.get(text).unwrap(), "Montréal".as_bytes());
     assert_eq!(pool.get(binary).unwrap(), &[0xff, 0, 0x80]);
     assert_eq!(pool.get(empty).unwrap(), &[]);
-    assert!(bytes
-        .as_ptr_range()
-        .contains(&pool.get(text).unwrap().as_ptr()));
+    assert!(
+        bytes
+            .as_ptr_range()
+            .contains(&pool.get(text).unwrap().as_ptr())
+    );
     assert!(matches!(pool.get(3), Err(Error::Invalid("value ID"))));
     assert!(pool.get(u32::MAX).is_err());
 }
@@ -74,22 +76,26 @@ fn limits_and_io_failures_leave_existing_ids_intact() {
 
     let bytes = builder.into_bytes().unwrap();
 
-    assert!(ValuePool::open(
-        &bytes,
-        Limits {
-            records: 0,
-            ..Limits::default()
-        }
-    )
-    .is_err());
-    assert!(ValuePool::open(
-        &bytes,
-        Limits {
-            bytes: bytes.len() - 1,
-            ..Limits::default()
-        }
-    )
-    .is_err());
+    assert!(
+        ValuePool::open(
+            &bytes,
+            Limits {
+                records: 0,
+                ..Limits::default()
+            }
+        )
+        .is_err()
+    );
+    assert!(
+        ValuePool::open(
+            &bytes,
+            Limits {
+                bytes: bytes.len() - 1,
+                ..Limits::default()
+            }
+        )
+        .is_err()
+    );
 
     let mut bounded = ValuePoolBuilder::new(Limits {
         records: 10,
@@ -102,9 +108,11 @@ fn limits_and_io_failures_leave_existing_ids_intact() {
     let empty = ValuePoolBuilder::new(Limits::default())
         .into_bytes()
         .unwrap();
-    assert!(ValuePool::open(&empty, Limits::default())
-        .unwrap()
-        .is_empty());
+    assert!(
+        ValuePool::open(&empty, Limits::default())
+            .unwrap()
+            .is_empty()
+    );
 
     assert!(matches!(bounded.write_to(Fail), Err(Error::Io(_))));
 }
@@ -121,9 +129,11 @@ fn typed_strings_validate_once_and_borrow_only_valid_utf8() {
     assert!(!strings.is_empty());
     assert_eq!(strings.get(empty).unwrap(), "");
     assert_eq!(strings.get(unicode).unwrap(), "🦀 Montréal");
-    assert!(bytes
-        .as_ptr_range()
-        .contains(&strings.get(unicode).unwrap().as_ptr()));
+    assert!(
+        bytes
+            .as_ptr_range()
+            .contains(&strings.get(unicode).unwrap().as_ptr())
+    );
     assert!(strings.get(u32::MAX).is_err());
 
     let mut invalid = ValuePoolBuilder::new(Limits::default());
