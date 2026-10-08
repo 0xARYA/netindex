@@ -4,8 +4,26 @@ Read and write immutable IP-range and exact-ASN indexes. Queries return every
 matching assertion, including overlaps and duplicates, with its original target
 and borrowed payload bytes.
 
-Licensed under [MIT](https://github.com/0xARYA/netindex/blob/main/LICENSE-MIT) or
-[Apache-2.0](https://github.com/0xARYA/netindex/blob/main/LICENSE-APACHE), at your option.
+## Performance
+
+Warm DB-IP Lite City hit queries measured **3.3–4.3× faster lookup and field
+decoding** and **1.7–1.8× faster lookup through JSON serialization** than the Rust
+MMDB reader, with identical fields, networks, and JSON output.
+
+| Query | netindex (ns) | MMDB (ns) | Speedup |
+| --- | ---: | ---: | ---: |
+| IPv4 lookup + fields | 110 | 359 | **3.3×** |
+| IPv6 lookup + fields | 93 | 401 | **4.3×** |
+| IPv4 lookup + fields + JSON | 383 | 699 | **1.8×** |
+| IPv6 lookup + fields + JSON | 464 | 788 | **1.7×** |
+
+Measured on Ryzen 9 9950X3D2, Windows 11, Rust 1.95.0, using `maxminddb 0.32.0`
+and netindex's public codec. Times are warm mean ns/query. Some lookup workloads
+favor MMDB; converted files are about 2.2× larger and validated opening is slower.
+See [benchmarks](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md) for all
+workloads, methodology, and reproduction instructions.
+
+## Use cases
 
 Use netindex for datasets built periodically and queried repeatedly: membership
 feeds, network policy, and IP intelligence. It accepts unsorted IPv4 and IPv6
@@ -15,8 +33,10 @@ metadata are opaque; applications choose their schema or use the optional codec.
 Readers use owned bytes, borrowed slices, or immutable mappings. Writers build
 in memory or with bounded external sorting. Disjoint networks use compact blocks;
 overlaps use an interval index. Identical payloads share bytes without merging
-assertions. See [benchmarks](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md)
-for measured workloads and tradeoffs.
+assertions.
+
+Licensed under [MIT](https://github.com/0xARYA/netindex/blob/main/LICENSE-MIT) or
+[Apache-2.0](https://github.com/0xARYA/netindex/blob/main/LICENSE-APACHE), at your option.
 
 ## Quick start
 
