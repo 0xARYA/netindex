@@ -3,65 +3,110 @@
 ## MMDB comparison
 
 Measured on 7 October 2026: Ryzen 9 9950X3D2, Windows 11, Rust 1.95.0,
-one pinned logical CPU. Both readers map the same cached DB-IP Lite October 2026
-data; netindex converts it through its public APIs. The MMDB reader is unchanged
-`maxminddb 0.32.0`. SIMD is disabled.
+one pinned logical CPU. Both readers map cached DB-IP Lite October 2026 data.
+The native reader is `maxminddb 0.32.0`. Netindex uses the public index and
+`codec` APIs; the benchmark adapter only selects provider fields. SIMD was disabled.
 
-**Each cell is MMDB → netindex, in ns/query; lower is better.** These are
-Criterion batch means divided by query count, with 30 samples and warm pages.
+**Times are ns/query; lower is better.** These are Criterion batch means
+divided by query count, with 30 samples and warm pages.
 
-| Dataset / workload | Lookup only | Read fields | JSON response |
-| --- | ---: | ---: | ---: |
-| ASN / ipv4-hit | 55 → 50 | 135 → 80 | 257 → 198 |
-| ASN / ipv6-hit | 127 → 58 | 170 → 79 | 314 → 228 |
-| ASN / ipv4-uniform | 32 → 43 | 75 → 76 | 161 → 165 |
-| ASN / ipv6-uniform | 14 → 12 | 33 → 26 | 63 → 54 |
-| City / ipv4-hit | 55 → 53 | 404 → 119 | 703 → 487 |
-| City / ipv6-hit | 118 → 57 | 504 → 97 | 865 → 383 |
-| City / ipv4-uniform | 41 → 46 | 310 → 86 | 559 → 331 |
-| City / ipv6-uniform | 25 → 69 | 269 → 99 | 702 → 394 |
+| Dataset / workload | Reader | Lookup | Fields | JSON |
+| --- | --- | ---: | ---: | ---: |
+| ASN / ipv4-hit | MMDB | 55 | 105 | 212 |
+| ASN / ipv4-hit | netindex | 47 | 77 | 188 |
+| ASN / ipv6-hit | MMDB | 127 | 170 | 311 |
+| ASN / ipv6-hit | netindex | 50 | 78 | 231 |
+| ASN / ipv4-uniform | MMDB | 30 | 80 | 170 |
+| ASN / ipv4-uniform | netindex | 46 | 83 | 187 |
+| ASN / ipv6-uniform | MMDB | 15 | 34 | 72 |
+| ASN / ipv6-uniform | netindex | 13 | 23 | 53 |
+| City / ipv4-hit | MMDB | 49 | 359 | 699 |
+| City / ipv4-hit | netindex | 46 | 110 | 383 |
+| City / ipv6-hit | MMDB | 111 | 401 | 788 |
+| City / ipv6-hit | netindex | 51 | 93 | 464 |
+| City / ipv4-uniform | MMDB | 42 | 389 | 657 |
+| City / ipv4-uniform | netindex | 54 | 124 | 362 |
+| City / ipv6-uniform | MMDB | 26 | 272 | 542 |
+| City / ipv6-uniform | netindex | 56 | 88 | 315 |
 
-JSON timings include lookup, borrowed field decoding, response construction,
-allocation, and serialization. Every timed IP is checked for identical fields,
-network, and JSON before measurement. Lookup-only returns the same optional
-network target on both readers; misses serialize as `null` in JSON timing.
+JSON includes lookup, borrowed decoding, response construction, allocation, and
+serialization. Every timed query is checked for identical fields, network, and JSON.
+Lookup returns the same optional network on both readers; JSON misses are `null`.
+Warm batch means do not establish cold or concurrent tail latency.
 
-| Dataset | MMDB / nidx file size | Validated opening: MMDB / netindex |
-| --- | ---: | ---: |
-| ASN | 9.12 MiB / 24.84 MiB | 34.7 ms / 84.0 ms |
-| City | 121.11 MiB / 323.00 MiB | 716.8 ms / 1062.1 ms |
+| Dataset | Reader | File size (MiB) | Validated opening (ms) |
+| --- | --- | ---: | ---: |
+| ASN | MMDB | 9.12 | 31.9 |
+| ASN | netindex | 20.36 | 72.8 |
+| City | MMDB | 121.11 | 602.3 |
+| City | netindex | 268.51 | 1060.9 |
 
-Conversion uses a caller-owned fixed-field codec with shared strings. ASN selects
-number and organization; City selects country, continent, first region, city,
-postal code, coordinates, accuracy radius, and time zone, using English names.
-It expands aliases and adds IPv6 targets for the canonical `::/96` subtree.
-This costs storage: **the converted files are about 2.7× larger**. Opening includes
-native `verify()` or netindex validation plus `StringPool::open()`. File size is
-not resident memory.
+Conversion uses the public codec and shared strings: ASN number
+and organization; City country, continent, first region, city, postal code,
+coordinates, accuracy radius, and time zone, using English names. Aliases are
+expanded, including IPv6 targets for canonical `::/96`. Converted files remain
+about **2.2 times the MMDB file size**. Opening includes native `verify()` or index
+validation plus `Decoder::open()`, without decoding every payload.
 
-Hit workloads sample every 997th native network, capped at 1,024 IPs per family;
-uniform workloads contain 1,024 deterministic IPs including misses. Four additional
-alias addresses are checked and timed. Cold pages, concurrent throughput, HTTP,
-RSS, and request p95/p99 are outside this measurement.
+Optional broad routes reduced City uniform IPv6 lookup from 56 to 32 ns, fields
+from 88 to 59 ns, and JSON from 315 to 286 ns. They add up to 32 KiB per eligible
+family and can slow other queries; default reading leaves them disabled.
 
-[Results, confidence intervals, query counts, input hashes, and build details](benches/results/2026-10-07-mmdb.json).
-The benchmark codec and conversion are in [benches/mmdb.rs](benches/mmdb.rs) and
-[benches/support](benches/support).
+Hit workloads sample every 997th native network, capped at 1,024 IPs per family.
+Uniform workloads use 1,024 deterministic addresses including misses; four alias
+addresses are checked too. Cold queries, concurrency, HTTP, and p95/p99 are unmeasured.
 
-### Reproduce
+[Measurements, confidence intervals, hashes, and configuration](benches/results/2026-10-07-mmdb.json).
+The JSON also retains earlier fixed-codec build and replacement observations,
+explicitly marked historical; they were not rerun with the public codec.
 
-Download and decompress the two MMDBs identified in the results file once. Keep
-them immutable throughout the run. Set paths to those cached inputs:
+## Payload codec comparison
+
+`netindex::codec` is the published codec used in the MMDB comparison above.
+The fixed baseline is an older, hand-written codec kept only in the benchmarks.
+Both use shared strings; the public codec omits fields absent from DB-IP Lite.
+This separate warm payload benchmark samples every 997th native network, capped
+at 2,048 records: 705 ASN and 2,048 City records. It uses the same machine and
+30 samples, one-second warmup, and three-second measurements. Fields and JSON
+are checked before timing. Other Rust workloads were active; the unchanged
+control varied between trials, so these numbers do not establish a latency gain.
+
+Reading and JSON timings cover one record. Encoding covers 705 ASN records
+or 2,048 City records, including metadata finalization.
+
+| Dataset | Codec | Bytes / record | Read fields (ns / record) | JSON (ns / record) | Encode sample (us) |
+| --- | --- | ---: | ---: | ---: | ---: |
+| ASN | Fixed baseline | 12 | 14 | 83 | 100.4 |
+| ASN | netindex::codec | 9 | 17 | 95 | 50.2 |
+| City | Fixed baseline | 51 | 24 | 270 | 653.4 |
+| City | netindex::codec | 37 | 28 | 247 | 427.7 |
+
+Opening metadata
+took 3.4 us (fixed) and 2.8 us (public) for ASN; 12.0 us and 11.8 us for City.
+The public codec produced smaller records in these samples. Read and encoding timings varied;
+the results above do not establish a general performance advantage.
+These results exclude index lookup and full-file conversion; they do not replace
+the MMDB comparison above. [Measurements and hashes](benches/results/2026-10-07-codec.json).
+
+## Reproduce
+
+Download and decompress the two inputs identified in the results file once.
+Set `NETINDEX_BENCH_ASN` and `NETINDEX_BENCH_CITY` to their immutable cached paths:
 
 ```sh
-NETINDEX_BENCH_ASN=/data/dbip-asn.mmdb \
-NETINDEX_BENCH_CITY=/data/dbip-city.mmdb \
-cargo +1.95.0 bench --bench mmdb --features mmdb,mmap,shared-values
+cargo +1.95.0 bench --bench mmdb --features codec,mmdb,mmap,external-sort
 ```
 
-Pin to one CPU for comparable results. Derived `.nidx` files are rebuilt under
-a private temporary directory under `target/mmdb-bench`, removed after the run;
-no download occurs.
+Pin to one CPU for comparable results. Conversion uses a 64 MiB payload cache
+and an 8 GiB temporary-disk ceiling; ensure free disk can accommodate the build.
+Private `.nidx` outputs under `target/mmdb-bench` are removed after the run.
+No download occurs.
+
+With the same cached input paths, run the codec comparison with:
+
+```sh
+cargo +1.95.0 bench --bench codec --features codec,mmdb,mmap
+```
 
 ## Index regression benchmarks
 
@@ -70,7 +115,7 @@ cargo bench --bench index -- --save-baseline before
 cargo bench --bench index -- --baseline before
 ```
 
-This separate harness uses 65,536 assertions and 1,024 queries per scenario
-for IPv4, IPv6, overlaps, and ASN keys. It measures visitors, scalar payloads
-serialized as `{id, value}`, validation, building, and an address-directory
-experiment. Failed operations fail either benchmark process.
+This harness uses 65,536 assertions and 1,024 queries per scenario for IPv4,
+IPv6, overlaps, and ASN keys. It measures visitors, scalar payloads serialized
+as `{id, value}`, validation, building, and an address-directory experiment.
+Failed operations fail the benchmark process.

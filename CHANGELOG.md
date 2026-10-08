@@ -1,8 +1,13 @@
 # Changelog
 
-## 1.0.0 — 7 October 2026
+## 2.0.0 — 2026-10-07
 
-First stable release, with `.nidx` files, compact payload references, shared
-value pools, memory-mapped readers, and coverage routing across separate files.
-Includes bounded external sorting, MMDB network iteration, and optional AVX2.
+Breaking change: `.nidx` files now use the `NETINDEX` signature and layout version 3.
+Rebuild files produced by earlier releases; the reader does not accept older layouts.
+
+Immutable `.nidx` indexes for IPv4, IPv6, and exact ASN keys, retaining overlaps,
+duplicates, original targets, and borrowed payloads. Includes memory-mapped
+readers, coverage routing, bounded external sorting, MMDB network iteration,
+shared value pools, an optional record codec, and optional AVX2.
+
 Requires Rust 1.95; licensed under MIT OR Apache-2.0.

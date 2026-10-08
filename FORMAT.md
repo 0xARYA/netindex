@@ -13,8 +13,8 @@ Empty sections consume no bytes; trailing data is rejected.
 
 | Header offset | Width | Field |
 | ---: | ---: | --- |
-| 0 | 8 | ASCII `IPINDEX` followed by NUL |
-| 8 | 4 | Format identifier: 2 |
+| 0 | 8 | ASCII `NETINDEX` |
+| 8 | 4 | Format identifier: 3 |
 | 12 | 4 | Flags: bit 0 packed IPv4, bit 1 packed IPv6, bit 2 compact payload slots, bit 3 fixed-length payload references |
 | 16 | 8 | Total assertion count |
 | 24 | 8 | IPv4 row count |
@@ -53,8 +53,8 @@ by `(ASN, ID)`. They do not map IPs to ASNs.
 Each assertion has a payload slot in insertion order: offset relative to the
 payload section and length. Compact slots are two `u32` fields (8 bytes) and
 require a payload pool no larger than `u32::MAX`; otherwise slots are two `u64`
-fields (16 bytes). Bits 2 and 3 cannot both be set. Identical payloads reuse
-the same span.
+fields (16 bytes). Bits 2 and 3 cannot both be set. Slots may reuse a span for
+identical payloads; duplicate bytes in distinct spans are also valid.
 
 Each first-seen span starts at the current payload end; repeated spans must match
 an earlier offset and length exactly. There are no gaps, partial overlaps, or
@@ -69,12 +69,14 @@ pool ordinal using zero through four bytes. Width is the minimum whole-byte
 width for `pool_length / common_length - 1` when the common length is nonzero;
 one shared value requires no reference bytes. All-empty payloads use length
 zero and width zero.
+
 A reference selects the span `ordinal * common_length .. (ordinal + 1) * common_length`.
 The first distinct ordinal must be zero; subsequent first-seen ordinals increase
 by one, and every pool value must be referenced. Repeated ordinals share borrowed
 bytes. Validation checks these rules without an auxiliary span directory.
+
 Variable-length payloads retain offset/length slots. This encoding assumes no
-payload schema and introduces no reader allocation.
+payload schema and requires no per-value reader directory.
 
 ## Validation
 
@@ -95,9 +97,11 @@ overlaps retain the interval representation; no evidence is discarded.
 A packed section begins with `ceil(count / 256)` 32-byte block descriptors.
 Each descriptor holds a `u128` base address, `u64` data offset relative to the
 section, `u8` delta width and flags, `u8` shift, `u16` row count, and a `u32` ID base.
-The low six width bits select the delta width. Bit 7 marks consecutive IDs:
-row IDs are the ID base plus the row position, without overflow. Otherwise the
+The low five width bits select the delta width. Bit 7 marks implicit IDs;
+bit 5 selects a step of two instead of one and requires bit 7. Row IDs are the
+ID base plus the row position times the step, without overflow. Otherwise the
 ID base is zero and the block retains its explicit ID column.
+
 The shift byte's high bit marks a uniform target kind: width bit 6 selects
 network (1) or address (0), and the block omits its kind column. Width bit 6 must
 be zero when the block has an explicit kind column. The low seven shift bits
@@ -105,7 +109,7 @@ select shifts zero through 127. Delta widths are 1, 2, 4, 8, or 16. Blocks have
 256 rows except the last; their data follows the descriptor table contiguously.
 
 Each block stores fixed-width unsigned deltas, prefix bytes, target kind bytes
-when not uniform, and explicit `u32` IDs when not consecutive. The first delta
+when not uniform, and explicit `u32` IDs when not implicit. The first delta
 is zero. Addresses are `base + (delta << shift)`, with no overflow; inclusive ends follow the prefix.
 Kinds remain 0 for address and 1 for network. IDs and payload slots preserve
 original targets independently of their sorted positions.
@@ -133,3 +137,34 @@ The complete pool and value count are bounded by `Limits.bytes` and
 `ValuePool::open` validates the directory without allocating. `StringPool::open`
 also validates every value as UTF-8; its private validated state permits borrowed
 string access without repeated scans. Backing bytes must remain immutable.
+
+## Optional record codec
+
+`codec` leaves the index format unchanged. Its separate metadata starts with
+eight ASCII bytes `NETCODEC`, a `u32` field count, and two bytes per field:
+kind and presence mode. Kinds 0 through 8 are bool, u8, u16, u32, u64, i64,
+f64, string, and bytes. Modes 0, 1, and 2 mean required, optional, and globally
+absent. Unknown declarations are rejected. Field positions identify the schema;
+field names are not encoded.
+
+A `u64` string-pool byte length follows the declarations. The string pool and
+then the byte pool each use the `NIVALUES` encoding above. Both pools consume
+their exact declared region; there are no trailing bytes outside the byte pool.
+String-pool values are validated as UTF-8 when opened.
+
+Records begin with `ceil(optional fields / 8)` presence bytes, least-significant
+bit first, followed by field slots in declaration order without alignment
+padding. Required fields have no presence bit; absent fields have neither bit
+nor slot. Unused high presence bits must be zero. Scalars are little-endian;
+booleans are zero or one. Strings and bytes contain `u32` IDs in their respective
+pools. Floating-point bits are preserved, including signed zero and NaN payloads.
+
+Missing optional slots are written as zero, but readers ignore their contents.
+Row creation validates length and bitmap padding; accessing fields validates
+booleans and reference bounds. `Record::validate()` visits every field. Payloads
+from another schema or pool are not self-identifying: consumers must check their
+schema and keep metadata and records together.
+
+Related designs: fixed-position fields in [Simple Binary Encoding](https://github.com/FIXTradingCommunity/fix-simple-binary-encoding/blob/master/v2-0-RC2/doc/02FieldEncoding.md),
+dictionary references and presence bits in [Arrow](https://arrow.apache.org/docs/format/Columnar.html),
+and direct access to serialized data in [FlatBuffers](https://flatbuffers.dev/internals/).

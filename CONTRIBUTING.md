@@ -1,8 +1,9 @@
 # Contributing to netindex
 
-Keep provider schemas, application codecs, runtimes, and release policy outside the
-library. Use rustfmt, focused functions, and narrow visibility. Comments explain
-contracts or non-obvious constraints; names and code should explain the rest.
+Keep provider and application schemas, runtimes, and release policy outside the
+library. The optional codec supplies encoding mechanics. Use rustfmt, focused
+functions, and narrow visibility. Comments explain contracts or non-obvious
+constraints; names and code should explain the rest.
 
 Group imports as standard library, dependencies, then local items, before module
 declarations. Keep types beside their implementations, constructors first, entry
@@ -72,9 +73,10 @@ capacity or cold-file behavior.
 ## Format changes
 
 Update [FORMAT.md](FORMAT.md) when encoded bytes or validation rules change.
-The reader and writers implement one layout. Update both and the independent
-fixtures together when changing it. Keep record IDs, original targets, and every
-assertion intact when optimizing encoding.
+The reader and writers implement one layout. Keep both and the independent
+fixtures consistent when changing it. Encoded layout changes also require a
+package compatibility decision; fixture updates alone do not make them compatible.
+Keep record IDs, original targets, and every assertion intact when optimizing encoding.
 
 Rust 1.95 is the supported toolchain; a lower MSRV needs independent verification.
 Attach dated measurements and input provenance to changes that make performance
