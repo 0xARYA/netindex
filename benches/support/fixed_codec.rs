@@ -1,3 +1,5 @@
+//! Benchmark-only ASN/city fixed layout used as the pre-public-codec baseline.
+
 use netindex::{
     values::{StringPool, ValuePoolBuilder},
     Limits,
@@ -30,6 +32,7 @@ impl Pool {
         match fields {
             Fields::Asn(row) => {
                 bytes.extend_from_slice(&row.number.to_le_bytes());
+
                 for value in [row.organization, row.domain] {
                     bytes.extend_from_slice(&self.intern(value)?.to_le_bytes());
                 }
@@ -58,8 +61,10 @@ impl Pool {
                         .unwrap_or(0.0)
                         .to_le_bytes(),
                 );
+
                 let radius = coordinates.and_then(|v| v.accuracy_radius_km);
                 bytes.extend_from_slice(&radius.unwrap_or(0).to_le_bytes());
+
                 bytes.push(u8::from(coordinates.is_some()) | (u8::from(radius.is_some()) << 1));
             }
         }
@@ -115,6 +120,7 @@ pub(crate) fn decode<'a>(bytes: &[u8], kind: &str, pool: StringPool<'a>) -> Resu
     }
 
     let flags = *bytes.get(50).ok_or("missing coordinate flags")?;
+
     if flags > 3 || flags == 2 {
         return Err("invalid coordinate flags".into());
     }

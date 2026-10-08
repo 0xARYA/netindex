@@ -1,6 +1,6 @@
 use std::{fmt, net::IpAddr, sync::Arc};
 
-use crate::{Coverage, CoverageRouter, Error, Match, Reader};
+use crate::{CoverageRouter, Error, Match, Reader};
 
 /// An immutable ordered set of at most 64 readers with IP coverage routing.
 ///
@@ -9,15 +9,14 @@ use crate::{Coverage, CoverageRouter, Error, Match, Reader};
 /// Schema decoding, provider precedence and release activation belong to the caller.
 pub struct ReaderSet<B: AsRef<[u8]>> {
     readers: Vec<Arc<Reader<B>>>,
-    coverage: Vec<Coverage>,
     router: Routing,
 }
 
 impl<B: AsRef<[u8]>> ReaderSet<B> {
-    /// Compute coverage once and bind it to the supplied readers.
+    /// Bind cached coverage to the supplied readers without rescanning targets.
     ///
     /// # Errors
-    /// Returns coverage-validation, allocation or reader-count limit errors.
+    /// Returns allocation or reader-count limit errors.
     pub fn new(readers: Vec<Arc<Reader<B>>>) -> Result<Self, Error> {
         if readers.len() > 64 {
             return Err(Error::Limit("routed readers"));
@@ -26,16 +25,12 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
         let mut coverage = Vec::new();
         coverage.try_reserve_exact(readers.len())?;
         for reader in &readers {
-            coverage.push(reader.coverage()?);
+            coverage.push(reader.coverage());
         }
 
         let router = Routing::Coarse(CoverageRouter::new(&coverage)?);
 
-        Ok(Self {
-            readers,
-            coverage,
-            router,
-        })
+        Ok(Self { readers, router })
     }
 
     /// Build a set with finer, 16-bit IP coverage routing.
@@ -57,7 +52,6 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
 
         Ok(Self {
             readers,
-            coverage: Vec::new(),
             router: Routing::Fine(router),
         })
     }
@@ -120,11 +114,12 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
 
     /// Create a new set with one reader replaced, leaving this set usable.
     ///
-    /// Shares unchanged readers and retains their routing coverage; scans only the replacement.
+    /// Shares unchanged readers and uses their cached coverage for coarse routing.
+    /// Fine routing scans only the replacement.
     /// The caller decides when to publish the returned set.
     ///
     /// # Errors
-    /// Returns an invalid-position, coverage-validation or allocation error.
+    /// Returns an invalid-position, fine-routing validation or allocation error.
     pub fn replaced(&self, position: usize, reader: Arc<Reader<B>>) -> Result<Self, Error> {
         if position >= self.len() {
             return Err(Error::Invalid("reader position"));
@@ -140,23 +135,13 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
             }
         }));
 
-        let (coverage, router) = match &self.router {
+        let router = match &self.router {
             Routing::Coarse(_) => {
-                let replacement = reader.coverage()?;
-
                 let mut coverage = Vec::new();
                 coverage.try_reserve_exact(self.len())?;
-                coverage.extend(self.coverage.iter().enumerate().map(|(index, existing)| {
-                    if index == position {
-                        replacement.clone()
-                    } else {
-                        existing.clone()
-                    }
-                }));
+                coverage.extend(readers.iter().map(|reader| reader.coverage()));
 
-                let router = Routing::Coarse(CoverageRouter::new(&coverage)?);
-
-                (coverage, router)
+                Routing::Coarse(CoverageRouter::new(&coverage)?)
             }
             Routing::Fine(existing) => {
                 let mut router = FineRouter::empty()?;
@@ -167,15 +152,11 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
 
                 router.insert(position, &reader)?;
 
-                (Vec::new(), Routing::Fine(router))
+                Routing::Fine(router)
             }
         };
 
-        Ok(Self {
-            readers,
-            coverage,
-            router,
-        })
+        Ok(Self { readers, router })
     }
 }
 

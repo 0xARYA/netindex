@@ -11,13 +11,19 @@ fn mapped_reader_outlives_handle_and_shares_borrowed_matches() {
     let mut builder = Builder::new(Limits::default());
     builder.push(Target::Asn(64512), b"evidence").unwrap();
     builder.push(Target::Asn(64512), b"evidence").unwrap();
+    let network = Target::Network {
+        address: "10.0.0.0".parse().unwrap(),
+        prefix: 8,
+    };
+    builder.push(network, b"routed").unwrap();
 
     let mut file = tempfile::tempfile().unwrap();
     file.write_all(&builder.into_bytes(b"metadata").unwrap())
         .unwrap();
 
     // SAFETY: This private temporary file is never changed after mapping.
-    let reader = unsafe { MappedReader::map_file(&file, Limits::default()) }.unwrap();
+    let reader =
+        unsafe { MappedReader::map_file_with_broad_routes(&file, Limits::default()) }.unwrap();
     drop(file);
 
     let reader = Arc::new(reader);
@@ -35,6 +41,13 @@ fn mapped_reader_outlives_handle_and_shares_borrowed_matches() {
                 assert_eq!(first.payload.as_ptr(), second.payload.as_ptr());
                 assert_eq!(reader.metadata().unwrap(), b"metadata");
                 assert!(!reader.mapping().is_empty());
+
+                let routed = reader.lookup_ip("10.255.255.255".parse().unwrap()).unwrap();
+
+                assert_eq!(routed.len(), 1);
+                assert_eq!(routed[0].id, 2);
+                assert_eq!(routed[0].target, network);
+                assert_eq!(routed[0].payload, b"routed");
             });
         }
     });

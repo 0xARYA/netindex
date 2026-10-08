@@ -9,7 +9,7 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-netindex = { path = "..", features = ["simd", "shared-values"] }
+netindex = { path = "..", features = ["simd", "shared-values", "codec"] }
 
 [[bin]]
 name = "read"
@@ -28,6 +28,13 @@ bench = false
 [[bin]]
 name = "values"
 path = "fuzz_targets/values.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "codec"
+path = "fuzz_targets/codec.rs"
 test = false
 doc = false
 bench = false

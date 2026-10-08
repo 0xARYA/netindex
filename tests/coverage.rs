@@ -33,10 +33,7 @@ fn coverage_matches_bucket_boundaries_and_preserves_ranges_and_full_networks() {
         vec![],
     ];
     let readers: Vec<_> = cases.iter().map(|targets| reader(targets)).collect();
-    let coverage: Vec<_> = readers
-        .iter()
-        .map(|reader| reader.coverage().unwrap())
-        .collect();
+    let coverage: Vec<_> = readers.iter().map(|reader| reader.coverage()).collect();
     let router = CoverageRouter::new(&coverage).unwrap();
 
     for bucket in 0..4096u128 {
@@ -73,9 +70,7 @@ fn routing_supports_empty_sets_and_the_highest_source_bit() {
 
     assert_eq!(empty.candidates(query).count(), 0);
 
-    let coverage = reader(&[Target::Address(query), Target::Address(query)])
-        .coverage()
-        .unwrap();
+    let coverage = reader(&[Target::Address(query), Target::Address(query)]).coverage();
     let router = CoverageRouter::new(&vec![coverage.clone(); 64]).unwrap();
 
     assert_eq!(
@@ -98,7 +93,7 @@ fn fixed_components_produce_conservative_coverage() {
         include_bytes!("fixtures/mixed.nidx").as_slice(),
     ] {
         let reader = Reader::open(bytes, Limits::default()).unwrap();
-        let coverage = reader.coverage().unwrap();
+        let coverage = reader.coverage();
 
         reader
             .visit_all(|matched| {

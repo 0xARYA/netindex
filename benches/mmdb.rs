@@ -1,4 +1,4 @@
-//! Matched MMDB comparisons using public netindex APIs and a caller-owned codec.
+//! Matched MMDB comparisons using the public index and payload codec.
 
 use std::{
     env,
@@ -11,12 +11,14 @@ use std::{
 
 use criterion::{BenchmarkId, Criterion, Throughput};
 use memmap2::{Mmap, MmapOptions};
-use netindex::{mmdb, values::StringPool, Builder, Limits, MappedReader, Target};
+use netindex::{
+    codec::Decoder, mmdb, ExternalBuilder, ExternalOptions, Limits, MappedReader, Target,
+};
 use serde::Serialize;
 
 use support::{
-    dictionary,
     schema::{decode_native, Fields},
+    typed,
 };
 
 mod support;
@@ -66,14 +68,23 @@ fn compare(criterion: &mut Criterion, source: &Path, kind: &str) -> Result<()> {
     let artifact = run.path().join(format!("{kind}.nidx"));
 
     // A private directory prevents concurrent runs from replacing mapped files.
-    let mut builder = Builder::new(limits());
-    let mut encoder = dictionary::Pool::default();
+    let mut builder = ExternalBuilder::new(
+        run.path(),
+        limits(),
+        ExternalOptions {
+            payload_cache_bytes: 64 * 1024 * 1024,
+            temporary_bytes: 8 * 1024 * 1024 * 1024,
+            ..ExternalOptions::default()
+        },
+    )?;
+    let mut encoder = typed::encoder(kind)?;
+
     mmdb::visit_networks(
         &native,
         mmdb::WithinOptions::default().include_aliased_networks(),
         |target, record| {
             if let Some(fields) = decode_native(&record, kind)? {
-                let payload = encoder.encode(&fields)?;
+                let payload = typed::encode(&mut encoder, &fields)?;
                 builder.push(target, &payload)?;
 
                 // Native iteration exposes ::/96 as IPv4. Preserve that query space
@@ -97,22 +108,30 @@ fn compare(criterion: &mut Criterion, source: &Path, kind: &str) -> Result<()> {
         },
     )?;
 
-    builder.write_to(&mut File::create(&artifact)?, &encoder.metadata(kind)?)?;
+    builder.write_to(&mut File::create_new(&artifact)?, &encoder.into_metadata()?)?;
 
     let index = open(&artifact)?;
-    let pool = dictionary::pool(index.metadata()?, kind)?;
+    let decoder = Decoder::open(index.metadata()?, limits())?;
+    let routed = open_routed(&artifact)?;
+    let routed_decoder = Decoder::open(routed.metadata()?, limits())?;
     let workloads = workloads(&native)?;
     let mut checked = 0;
 
     for (_, queries) in &workloads {
         for &address in queries {
-            if native_target(&native, address)? != index_target(&index, address)? {
+            if native_target(&native, address)? != index_target(&index, address)?
+                || index_target(&index, address)? != index_target(&routed, address)?
+            {
                 return Err(format!("{kind} lookup mismatch at {address}").into());
             }
 
             let expected = native_response(&native, address, kind)?;
-            let actual = index_response(&index, address, kind, pool)?;
-            if actual != expected || serde_json::to_vec(&actual)? != serde_json::to_vec(&expected)?
+            let actual = index_response(&index, address, kind, &decoder)?;
+            if actual != expected
+                || index_response(&routed, address, kind, &routed_decoder)? != expected
+                || serde_json::to_vec(&actual)? != serde_json::to_vec(&expected)?
+                || serde_json::to_vec(&index_response(&routed, address, kind, &routed_decoder)?)?
+                    != serde_json::to_vec(&expected)?
             {
                 return Err(format!("{kind} response mismatch at {address}").into());
             }
@@ -161,31 +180,37 @@ fn compare(criterion: &mut Criterion, source: &Path, kind: &str) -> Result<()> {
                     });
                 },
             );
-            group.bench_function(
-                BenchmarkId::new(format!("{name}/{operation}"), "netindex"),
-                |bench| {
-                    bench.iter(|| {
-                        for &address in &queries {
-                            if operation == "lookup" {
-                                black_box(
-                                    index_target(&index, address).expect("netindex lookup failed"),
-                                );
-                            } else {
-                                let response = index_response(&index, address, kind, pool)
-                                    .expect("netindex decoding failed");
-                                if operation == "json" {
+            for (label, reader, decoder) in [
+                ("netindex", &index, &decoder),
+                ("netindex-broad", &routed, &routed_decoder),
+            ] {
+                group.bench_function(
+                    BenchmarkId::new(format!("{name}/{operation}"), label),
+                    |bench| {
+                        bench.iter(|| {
+                            for &address in &queries {
+                                if operation == "lookup" {
                                     black_box(
-                                        serde_json::to_vec(&response)
-                                            .expect("netindex response serialization failed"),
+                                        index_target(reader, address)
+                                            .expect("netindex lookup failed"),
                                     );
                                 } else {
-                                    black_box(response);
+                                    let response = index_response(reader, address, kind, decoder)
+                                        .expect("netindex decoding failed");
+                                    if operation == "json" {
+                                        black_box(
+                                            serde_json::to_vec(&response)
+                                                .expect("netindex response serialization failed"),
+                                        );
+                                    } else {
+                                        black_box(response);
+                                    }
                                 }
                             }
-                        }
-                    });
-                },
-            );
+                        });
+                    },
+                );
+            }
         }
     }
     group.finish();
@@ -199,16 +224,30 @@ fn compare(criterion: &mut Criterion, source: &Path, kind: &str) -> Result<()> {
             black_box(reader);
         })
     });
-    group.bench_function("netindex-validated", |bench| {
-        bench.iter(|| {
-            let reader = open(&artifact).expect("netindex opening failed");
-            black_box(
-                dictionary::pool(reader.metadata().expect("netindex metadata failed"), kind)
-                    .expect("string pool validation failed"),
-            );
-            black_box(reader);
-        })
-    });
+    for (label, open_reader) in [
+        (
+            "netindex-validated",
+            open as fn(&Path) -> Result<MappedReader>,
+        ),
+        (
+            "netindex-broad-validated",
+            open_routed as fn(&Path) -> Result<MappedReader>,
+        ),
+    ] {
+        group.bench_function(label, |bench| {
+            bench.iter(|| {
+                let reader = open_reader(&artifact).expect("netindex opening failed");
+                black_box(
+                    Decoder::open(
+                        reader.metadata().expect("netindex metadata failed"),
+                        limits(),
+                    )
+                    .expect("codec validation failed"),
+                );
+                black_box(reader);
+            })
+        });
+    }
     group.finish();
 
     Ok(())
@@ -220,6 +259,7 @@ fn native_response<'a>(
     kind: &str,
 ) -> Result<Option<Response<'a>>> {
     let result = native.lookup(address)?;
+
     let Some(fields) = decode_native(&result, kind)? else {
         return Ok(None);
     };
@@ -235,6 +275,7 @@ fn native_response<'a>(
 
 fn native_target(native: &mmdb::Reader<Mmap>, address: IpAddr) -> Result<Option<Target>> {
     let result = native.lookup(address)?;
+
     if !result.has_data() {
         return Ok(None);
     }
@@ -264,7 +305,7 @@ fn index_response<'a>(
     index: &'a MappedReader,
     address: IpAddr,
     kind: &str,
-    pool: StringPool<'a>,
+    decoder: &Decoder<'a>,
 ) -> Result<Option<Response<'a>>> {
     let mut response = None;
     index.visit_ip(address, |row| {
@@ -279,8 +320,9 @@ fn index_response<'a>(
         response = Some(Response {
             address,
             prefix,
-            fields: dictionary::decode(row.payload, kind, pool)?,
+            fields: typed::decode(decoder, row.payload, kind)?,
         });
+
         Ok::<_, Box<dyn std::error::Error>>(())
     })?;
 
@@ -290,6 +332,11 @@ fn index_response<'a>(
 fn open(path: &Path) -> Result<MappedReader> {
     // SAFETY: Benchmark-owned derived files remain immutable while readers exist.
     Ok(unsafe { MappedReader::map_file(&File::open(path)?, limits()) }?)
+}
+
+fn open_routed(path: &Path) -> Result<MappedReader> {
+    // SAFETY: The private artifact remains unchanged while any benchmark reader exists.
+    Ok(unsafe { MappedReader::map_file_with_broad_routes(&File::open(path)?, limits()) }?)
 }
 
 fn mapped(path: &Path) -> Result<Mmap> {

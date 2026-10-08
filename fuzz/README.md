@@ -5,7 +5,7 @@ This separate package pins fuzz dependencies and keeps libFuzzer out of the libr
 `read` validates bounded arbitrary file bytes, then compares IP and ASN searches
 against a linear scan of accepted assertions. It checks assertion endpoints,
 address extrema, additional queries derived from input bytes, and conservative
-coverage routing. Fixed interval, packed IPv4, packed IPv6, and mixed fixtures
+coverage and optional broad-network routing. Fixed interval, packed IPv4, packed IPv6, and mixed fixtures
 seed the corpus.
 
 `encode` generates up to 128 mixed targets with arbitrary canonical prefix lengths,
@@ -36,4 +36,14 @@ cp tests/fixtures/values.bin fuzz/corpus/values/
 cargo +nightly-2026-09-01 fuzz run values --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536
 ```
 
-All three targets run in Linux CI.
+`codec` splits input into metadata and a record, then exercises schema parsing,
+pool validation, lazy field access, and complete record validation. Its first
+byte is the metadata length (up to 255 bytes). Seed it with the independent fixture:
+
+```sh
+mkdir -p fuzz/corpus/codec
+cp tests/fixtures/codec.bin fuzz/corpus/codec/
+cargo +nightly-2026-09-01 fuzz run codec --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536
+```
+
+All four targets run in Linux CI.

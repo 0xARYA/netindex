@@ -4,6 +4,59 @@
 //! network is delivered separately; no collection of decoded records is retained.
 //! Use the callback to select fields, skip records, and push into [`crate::Builder`]
 //! or `ExternalBuilder` (with `external-sort`).
+//!
+//! For bounded target buffering, use `ExternalBuilder` and a seekable temporary
+//! output. Payload encoding and any shared-value pool remain caller-owned.
+//! The builder's limits exclude those caller buffers and the native input.
+
+#![cfg_attr(
+    feature = "external-sort",
+    doc = r#"
+```no_run
+use std::{
+    net::{IpAddr, Ipv6Addr},
+    path::Path,
+};
+
+use netindex::{mmdb, ExternalBuilder, ExternalOptions, Limits, Target};
+
+let staging = Path::new("staging");
+let source = mmdb::Reader::open_readfile("source.mmdb")?;
+let mut builder = ExternalBuilder::new(
+    staging, Limits::default(), ExternalOptions::default(),
+)?;
+let options = mmdb::WithinOptions::default().include_aliased_networks();
+
+mmdb::visit_networks(&source, options, |target, record| {
+    if let Some(number) = record.decode_path::<u32>(&["autonomous_system_number".into()])? {
+        let payload = number.to_le_bytes();
+        builder.push(target, &payload)?;
+
+        if let Target::Network { address: IpAddr::V4(address), prefix } = target {
+            builder.push(
+                Target::Network {
+                    address: Ipv6Addr::from(u128::from(u32::from(address))).into(),
+                    prefix: prefix + 96,
+                },
+                &payload,
+            )?;
+        }
+    }
+
+    Ok::<_, Box<dyn std::error::Error>>(())
+})?;
+
+let mut output = tempfile::tempfile_in(staging)?;
+builder.write_to(&mut output, b"application metadata")?;
+# Ok::<(), Box<dyn std::error::Error>>(())
+```
+
+This example retains every native alias and adds IPv6 targets for the canonical
+`::/96` query space. Input remains random-access; network decoding is incremental.
+The temporary output is deleted on drop. Validate payloads and synchronize the
+completed file before applying the application's publication policy.
+"#
+)]
 
 pub use maxminddb::{LookupResult, MaxMindDbError, Reader, WithinOptions};
 

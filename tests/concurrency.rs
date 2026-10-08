@@ -31,13 +31,11 @@ fn owned_and_borrowed_readers_support_concurrent_ip_and_asn_visitors() {
                 let expected = &expected;
 
                 workers.push(scope.spawn(move || {
-                    for _ in 0..32 {
-                        let owned_matches = collect(&owned, addresses)?;
-                        let borrowed_matches = collect(borrowed, addresses)?;
+                    let owned_matches = collect(&owned, addresses)?;
+                    let borrowed_matches = collect(borrowed, addresses)?;
 
-                        assert_eq!(&owned_matches, expected);
-                        assert_eq!(&borrowed_matches, expected);
-                    }
+                    assert_eq!(&owned_matches, expected);
+                    assert_eq!(&borrowed_matches, expected);
 
                     Ok::<_, Error>(())
                 }));

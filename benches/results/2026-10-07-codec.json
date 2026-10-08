@@ -1,0 +1,1045 @@
+{
+  "date": "2026-10-07",
+  "library_version": "2.0.0",
+  "revision_base": "7011c1611eb470eb651e62f0c73a66c51b70a94c",
+  "working_tree": "local uncommitted codec implementation",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "platform": "Windows x86_64 MSVC",
+  "cpu": "AMD Ryzen 9 9950X3D2",
+  "logical_cpu": 2,
+  "affinity_mask": 4,
+  "samples": 30,
+  "warmup_seconds": 1,
+  "measurement_seconds": 3,
+  "scope": "Warm sequential payload-only batches. No IP lookup, networking, native MMDB timing, full-file conversion, cold faults, or serving memory measurement. Full-field and JSON equality checked for every sampled record before timing. Failed operations fail the benchmark process. Build encodes each sample and finalizes metadata; opening validates schema and shared strings. Generic codec uses typed accessors. Concurrent unrelated Rust workloads were observed; control timings varied across trials. These measurements are descriptive and do not establish a latency gain.",
+  "inputs": [
+    {
+      "file": "dbip-asn.mmdb",
+      "bytes": 9566363,
+      "sha256": "4384bfcfb594391bc4e0ab37751f44661eaf7cadbeee28a90a6b82dc935fec4c",
+      "sample_records": 705,
+      "sample": "every 997th non-aliased native network, stopping at 2048 decoded records"
+    },
+    {
+      "file": "dbip-city.mmdb",
+      "bytes": 126998165,
+      "sha256": "9e250f02722d1ad1780f88192f0e908af285478a33e76b88b349c9181ae9d0f5",
+      "sample_records": 2048,
+      "sample": "every 997th non-aliased native network, stopping at 2048 decoded records"
+    }
+  ],
+  "sources": {
+    "benches/codec.rs": "97718635871744ade89519fd643f15b8bc70a008874b449f17efd4b642ee2f32",
+    "benches/support/typed.rs": "c128be37d63fb39c2bfa331e6e2c5823c6a3617b768ef5a09f67e0337ea2cdd1",
+    "benches/support/schema.rs": "0586dd1c9d70457e7661e6ced4984f7d9e93f2cba753f56da851ff549074634e",
+    "src/codec.rs": "ea35536a9fe1841cd2923b4bb5e2c2763dca0a79d0f5e4d0cdb641bff3f1de2d",
+    "src/values.rs": "00c7b6514e7639be52f046bbbc43ed41ba60c5878e72c5a3cfc97056da77adfe",
+    "benches/support/fixed_codec.rs": "d84ef699f495441b8253febf0401ded3bac47b46a3d9e85c05814d8025871a8b",
+    "src/lib.rs": "653f9218a5446db873e6ff4a5b0f03289bf0042474cdb5dce6eac511b05c2c93",
+    "benches/support/mod.rs": "7845c94d6c0d3ce1d053dd02c51aa9fd22bd6520ba371a5cbdb4e48c7d0b42c0"
+  },
+  "executable_sha256": "b35d66fb6cce083255bd0474c4fa8d10a34b67b6ad78706e88bf9a17bd301dff",
+  "sample_layouts": {
+    "asn": {
+      "fixed_record_bytes": 12,
+      "public_record_bytes": 9,
+      "fixed_metadata_bytes": 14066,
+      "public_metadata_bytes": 14100
+    },
+    "city": {
+      "fixed_record_bytes": 51,
+      "public_record_bytes": 37,
+      "fixed_metadata_bytes": 24620,
+      "public_metadata_bytes": 24670
+    }
+  },
+  "measurements": [
+    {
+      "dataset": "asn",
+      "operation": "fields",
+      "implementation": "fixed",
+      "unit": "ns/record",
+      "mean": 13.926518956003989,
+      "confidence_interval": {
+        "lower_bound": 13.241506356512387,
+        "upper_bound": 14.591634519513446
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 9335.261981341233,
+            "upper_bound": 10287.10233625698
+          },
+          "point_estimate": 9818.195863982812,
+          "standard_error": 242.89511596493065
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8591.546999336872,
+            "upper_bound": 11036.8671875
+          },
+          "point_estimate": 10988.974264705881,
+          "standard_error": 951.7401240718964
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 71.04382269705275,
+            "upper_bound": 1789.8049477541197
+          },
+          "point_estimate": 242.29101959553546,
+          "standard_error": 618.2420817026826
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8638.123341207165,
+            "upper_bound": 9399.584966308663
+          },
+          "point_estimate": 8947.825647805394,
+          "standard_error": 195.7993500544199
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1215.9794741702742,
+            "upper_bound": 1440.8445598779856
+          },
+          "point_estimate": 1371.2951404518074,
+          "standard_error": 57.90166478791963
+        }
+      },
+      "batch_records": 705
+    },
+    {
+      "dataset": "asn",
+      "operation": "fields",
+      "implementation": "public",
+      "unit": "ns/record",
+      "mean": 17.000169691673182,
+      "confidence_interval": {
+        "lower_bound": 15.877602504004482,
+        "upper_bound": 18.083990611560655
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11193.70976532316,
+            "upper_bound": 12749.213381150263
+          },
+          "point_estimate": 11985.119632629594,
+          "standard_error": 399.08397588378153
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 9883.535427971685,
+            "upper_bound": 13129.171481766822
+          },
+          "point_estimate": 12854.504365690806,
+          "standard_error": 1274.0141790962348
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 436.8906704509167,
+            "upper_bound": 4127.624439431884
+          },
+          "point_estimate": 3739.8325977033123,
+          "standard_error": 1145.7356212759519
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 10174.333603021225,
+            "upper_bound": 11336.296319141455
+          },
+          "point_estimate": 10628.95075937516,
+          "standard_error": 296.5707799674284
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1880.0304880739466,
+            "upper_bound": 2447.870967280464
+          },
+          "point_estimate": 2217.4624354083558,
+          "standard_error": 145.3864283036681
+        }
+      },
+      "batch_records": 705
+    },
+    {
+      "dataset": "asn",
+      "operation": "json",
+      "implementation": "fixed",
+      "unit": "ns/record",
+      "mean": 82.75475805511152,
+      "confidence_interval": {
+        "lower_bound": 78.283038244286,
+        "upper_bound": 87.6032367744248
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 55189.541962221636,
+            "upper_bound": 61760.28192596949
+          },
+          "point_estimate": 58342.10442885362,
+          "standard_error": 1703.4409062528237
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 51082.99434483645,
+            "upper_bound": 59079.30484330484
+          },
+          "point_estimate": 54618.41363764441,
+          "standard_error": 2128.2916988924326
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1726.9388519317931,
+            "upper_bound": 12707.331011142032
+          },
+          "point_estimate": 6595.54692136717,
+          "standard_error": 2773.0919777940962
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 51797.43971588515,
+            "upper_bound": 54861.50767488221
+          },
+          "point_estimate": 53128.27120819718,
+          "standard_error": 790.9913529829071
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6896.772568008656,
+            "upper_bound": 10973.729324757189
+          },
+          "point_estimate": 9501.943175777065,
+          "standard_error": 1039.2851918938761
+        }
+      },
+      "batch_records": 705
+    },
+    {
+      "dataset": "asn",
+      "operation": "json",
+      "implementation": "public",
+      "unit": "ns/record",
+      "mean": 95.45537216754865,
+      "confidence_interval": {
+        "lower_bound": 91.62947867158164,
+        "upper_bound": 99.11583620334144
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 64598.78246346505,
+            "upper_bound": 69876.66452335572
+          },
+          "point_estimate": 67296.0373781218,
+          "standard_error": 1345.9275312320408
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 65822.31548699335,
+            "upper_bound": 71300.85725677831
+          },
+          "point_estimate": 69279.5859133127,
+          "standard_error": 1337.347757726669
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2938.8161222895246,
+            "upper_bound": 9829.074627596068
+          },
+          "point_estimate": 5836.481713752859,
+          "standard_error": 1862.2378872715287
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 66842.3294376271,
+            "upper_bound": 71017.39439946848
+          },
+          "point_estimate": 69023.7187230371,
+          "standard_error": 1070.1232687176068
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 5369.194608168863,
+            "upper_bound": 8950.324043066803
+          },
+          "point_estimate": 7473.706256265721,
+          "standard_error": 908.2759993514493
+        }
+      },
+      "batch_records": 705
+    },
+    {
+      "dataset": "asn",
+      "operation": "open",
+      "implementation": "fixed",
+      "unit": "ns/open",
+      "mean": 3372.3302945172954,
+      "confidence_interval": {
+        "lower_bound": 3186.1885074075717,
+        "upper_bound": 3592.2059335828526
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3186.1885074075717,
+            "upper_bound": 3592.2059335828526
+          },
+          "point_estimate": 3372.3302945172954,
+          "standard_error": 104.24722383943738
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3016.567444416459,
+            "upper_bound": 3543.6972881795773
+          },
+          "point_estimate": 3242.001021798365,
+          "standard_error": 131.7526948663577
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 243.00620605439846,
+            "upper_bound": 604.0478609078568
+          },
+          "point_estimate": 477.7337919272491,
+          "standard_error": 91.54242062955413
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3082.8671838995274,
+            "upper_bound": 3386.1130764147856
+          },
+          "point_estimate": 3232.396768285742,
+          "standard_error": 77.09403411563713
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 309.4691751346874,
+            "upper_bound": 821.903458455456
+          },
+          "point_estimate": 578.4413577886536,
+          "standard_error": 141.31381272022512
+        }
+      },
+      "batch_records": 0
+    },
+    {
+      "dataset": "asn",
+      "operation": "open",
+      "implementation": "public",
+      "unit": "ns/open",
+      "mean": 2750.1549352715915,
+      "confidence_interval": {
+        "lower_bound": 2654.7993049732786,
+        "upper_bound": 2863.274050335035
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2654.7993049732786,
+            "upper_bound": 2863.274050335035
+          },
+          "point_estimate": 2750.1549352715915,
+          "standard_error": 53.49871786878066
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2590.214922827137,
+            "upper_bound": 2692.7356523493772
+          },
+          "point_estimate": 2624.4250570318763,
+          "standard_error": 31.184514610835652
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 57.635674898692216,
+            "upper_bound": 219.7075358909399
+          },
+          "point_estimate": 103.7044855249856,
+          "standard_error": 42.08286822074989
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2604.084774917777,
+            "upper_bound": 2739.3842717103666
+          },
+          "point_estimate": 2668.294223346762,
+          "standard_error": 34.896205874106215
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 162.1743693457922,
+            "upper_bound": 388.29478685817924
+          },
+          "point_estimate": 297.6825559997631,
+          "standard_error": 57.26819054867405
+        }
+      },
+      "batch_records": 0
+    },
+    {
+      "dataset": "asn",
+      "operation": "build",
+      "implementation": "fixed",
+      "unit": "ns/batch",
+      "mean": 100355.14010240721,
+      "confidence_interval": {
+        "lower_bound": 96460.39713596743,
+        "upper_bound": 103815.48419474399
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 96460.39713596743,
+            "upper_bound": 103815.48419474399
+          },
+          "point_estimate": 100355.14010240721,
+          "standard_error": 1875.766066519363
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 100654.25373134328,
+            "upper_bound": 107124.37810945274
+          },
+          "point_estimate": 105351.43330964226,
+          "standard_error": 1590.2864927825526
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2147.5528705989213,
+            "upper_bound": 11571.678305755677
+          },
+          "point_estimate": 4735.9756808449965,
+          "standard_error": 2318.2116218620636
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 90249.11150418877,
+            "upper_bound": 102695.45954116201
+          },
+          "point_estimate": 96187.46900084453,
+          "standard_error": 3174.2714427966157
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 7341.698908867341,
+            "upper_bound": 12655.908900892333
+          },
+          "point_estimate": 10560.38119344396,
+          "standard_error": 1366.7662288264457
+        }
+      },
+      "batch_records": 705
+    },
+    {
+      "dataset": "asn",
+      "operation": "build",
+      "implementation": "public",
+      "unit": "ns/batch",
+      "mean": 50216.12211055732,
+      "confidence_interval": {
+        "lower_bound": 49651.63601172541,
+        "upper_bound": 50805.44191045815
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 49651.63601172541,
+            "upper_bound": 50805.44191045815
+          },
+          "point_estimate": 50216.12211055732,
+          "standard_error": 295.70281385916746
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 49204.26539935161,
+            "upper_bound": 51054.70085470086
+          },
+          "point_estimate": 49919.88060016906,
+          "standard_error": 508.5860202090391
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 994.1491921405335,
+            "upper_bound": 2565.7413452150968
+          },
+          "point_estimate": 1760.0172379842147,
+          "standard_error": 386.9756823931867
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 49170.6482614721,
+            "upper_bound": 50636.77352702794
+          },
+          "point_estimate": 49837.240776146115,
+          "standard_error": 378.40436771668
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1291.6143291861674,
+            "upper_bound": 1918.1387209804502
+          },
+          "point_estimate": 1650.6597467197314,
+          "standard_error": 159.866399434689
+        }
+      },
+      "batch_records": 705
+    },
+    {
+      "dataset": "city",
+      "operation": "fields",
+      "implementation": "fixed",
+      "unit": "ns/record",
+      "mean": 23.676899408943807,
+      "confidence_interval": {
+        "lower_bound": 22.79360904908143,
+        "upper_bound": 24.52861216863126
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 46681.311332518766,
+            "upper_bound": 50234.59772135682
+          },
+          "point_estimate": 48490.28998951692,
+          "standard_error": 905.0834423551169
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 47041.044285714284,
+            "upper_bound": 51752.142857142855
+          },
+          "point_estimate": 49301.69160997732,
+          "standard_error": 1258.5623296521335
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2711.6774974531863,
+            "upper_bound": 7841.947810777595
+          },
+          "point_estimate": 4974.275908918387,
+          "standard_error": 1408.6224424358784
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 47043.12531396009,
+            "upper_bound": 51383.54372834038
+          },
+          "point_estimate": 49339.98706655586,
+          "standard_error": 1118.6938634802875
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3852.5703112701785,
+            "upper_bound": 5966.044666397989
+          },
+          "point_estimate": 5082.097822132853,
+          "standard_error": 539.5820349066256
+        }
+      },
+      "batch_records": 2048
+    },
+    {
+      "dataset": "city",
+      "operation": "fields",
+      "implementation": "public",
+      "unit": "ns/record",
+      "mean": 27.76919633665721,
+      "confidence_interval": {
+        "lower_bound": 26.385611862401245,
+        "upper_bound": 29.141785060414716
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 54037.73309419775,
+            "upper_bound": 59682.37580372934
+          },
+          "point_estimate": 56871.314097473965,
+          "standard_error": 1455.2298561578848
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 49586.79067460317,
+            "upper_bound": 62051.09375
+          },
+          "point_estimate": 61588.131944444445,
+          "standard_error": 5127.483765153978
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1314.2289783344365,
+            "upper_bound": 16622.72557988763
+          },
+          "point_estimate": 12500.679763362688,
+          "standard_error": 4155.165690504149
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 49737.3014540749,
+            "upper_bound": 54358.2879223081
+          },
+          "point_estimate": 51536.14771725718,
+          "standard_error": 1181.0294567465608
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6811.598930686456,
+            "upper_bound": 9140.712378348113
+          },
+          "point_estimate": 8055.307179804098,
+          "standard_error": 608.4385266153566
+        }
+      },
+      "batch_records": 2048
+    },
+    {
+      "dataset": "city",
+      "operation": "json",
+      "implementation": "fixed",
+      "unit": "ns/record",
+      "mean": 269.9197897193069,
+      "confidence_interval": {
+        "lower_bound": 256.05520016087263,
+        "upper_bound": 284.23899276188314
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 524401.0499294671,
+            "upper_bound": 582121.4571763367
+          },
+          "point_estimate": 552795.7293451405,
+          "standard_error": 14851.812481239893
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 482191.68331668334,
+            "upper_bound": 613092.2532467532
+          },
+          "point_estimate": 518274.76110845676,
+          "standard_error": 28824.445117984895
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 27383.702975380616,
+            "upper_bound": 127511.62428383516
+          },
+          "point_estimate": 71346.23955274904,
+          "standard_error": 24312.260663068293
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 571967.0683669451,
+            "upper_bound": 631883.0669288731
+          },
+          "point_estimate": 605492.3253002947,
+          "standard_error": 15447.59941895234
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 67237.87065877656,
+            "upper_bound": 90866.55143170337
+          },
+          "point_estimate": 82149.50610412422,
+          "standard_error": 5944.273026073436
+        }
+      },
+      "batch_records": 2048
+    },
+    {
+      "dataset": "city",
+      "operation": "json",
+      "implementation": "public",
+      "unit": "ns/record",
+      "mean": 246.64745196810722,
+      "confidence_interval": {
+        "lower_bound": 242.7776989749797,
+        "upper_bound": 251.20909750540503
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 497208.7275007584,
+            "upper_bound": 514476.2316910695
+          },
+          "point_estimate": 505133.9816306836,
+          "standard_error": 4459.823808678186
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 490456.5705128205,
+            "upper_bound": 510589.6666666666
+          },
+          "point_estimate": 495433.72153209115,
+          "standard_error": 5028.744931209785
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6003.059060091096,
+            "upper_bound": 27431.2281593525
+          },
+          "point_estimate": 13794.76908842726,
+          "standard_error": 5564.394495399455
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 493253.30633786955,
+            "upper_bound": 507571.75560888066
+          },
+          "point_estimate": 499276.17310065223,
+          "standard_error": 3637.2165550278696
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 13759.267339781773,
+            "upper_bound": 33865.632259887745
+          },
+          "point_estimate": 24699.468802038155,
+          "standard_error": 5346.494858802333
+        }
+      },
+      "batch_records": 2048
+    },
+    {
+      "dataset": "city",
+      "operation": "open",
+      "implementation": "fixed",
+      "unit": "ns/open",
+      "mean": 11994.572427091472,
+      "confidence_interval": {
+        "lower_bound": 11729.55873735965,
+        "upper_bound": 12276.89377178156
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11729.55873735965,
+            "upper_bound": 12276.89377178156
+          },
+          "point_estimate": 11994.572427091472,
+          "standard_error": 139.53754508455964
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11717.060522664726,
+            "upper_bound": 12326.283793304749
+          },
+          "point_estimate": 11976.2595094469,
+          "standard_error": 157.92078154342744
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 415.85603664293563,
+            "upper_bound": 1099.2658597673305
+          },
+          "point_estimate": 745.5205523286332,
+          "standard_error": 183.48231134941017
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11503.672131427873,
+            "upper_bound": 12009.557525380747
+          },
+          "point_estimate": 11771.93041793508,
+          "standard_error": 130.1589648155662
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 557.8256336486414,
+            "upper_bound": 965.3402555421422
+          },
+          "point_estimate": 777.6558487836371,
+          "standard_error": 105.94392317188992
+        }
+      },
+      "batch_records": 0
+    },
+    {
+      "dataset": "city",
+      "operation": "open",
+      "implementation": "public",
+      "unit": "ns/open",
+      "mean": 11827.81722820396,
+      "confidence_interval": {
+        "lower_bound": 11550.765057893552,
+        "upper_bound": 12079.352372816278
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11550.765057893552,
+            "upper_bound": 12079.352372816278
+          },
+          "point_estimate": 11827.81722820396,
+          "standard_error": 136.10390958299618
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11744.971962616823,
+            "upper_bound": 12030.967462789893
+          },
+          "point_estimate": 11914.641744548286,
+          "standard_error": 74.00007294654407
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 198.74229553704035,
+            "upper_bound": 914.8732743012862
+          },
+          "point_estimate": 545.2781005997535,
+          "standard_error": 181.47500312890006
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11820.901703412672,
+            "upper_bound": 12246.902945897044
+          },
+          "point_estimate": 12056.13569441081,
+          "standard_error": 109.6496715044117
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 449.6887963550075,
+            "upper_bound": 1039.9714208654516
+          },
+          "point_estimate": 759.9548910450696,
+          "standard_error": 154.7781034644709
+        }
+      },
+      "batch_records": 0
+    },
+    {
+      "dataset": "city",
+      "operation": "build",
+      "implementation": "fixed",
+      "unit": "ns/batch",
+      "mean": 653371.7715740526,
+      "confidence_interval": {
+        "lower_bound": 637565.9397475569,
+        "upper_bound": 669101.9137227715
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 637565.9397475569,
+            "upper_bound": 669101.9137227715
+          },
+          "point_estimate": 653371.7715740526,
+          "standard_error": 8078.882579430238
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 637991.1333333333,
+            "upper_bound": 665923.6344537815
+          },
+          "point_estimate": 649325.3846153846,
+          "standard_error": 7497.220851830086
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 20493.1974054038,
+            "upper_bound": 60106.13211308644
+          },
+          "point_estimate": 35588.47390984499,
+          "standard_error": 10697.995303394238
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 644826.7140803526,
+            "upper_bound": 672107.3637441625
+          },
+          "point_estimate": 657334.2570068747,
+          "standard_error": 6997.983260164326
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 31825.632032655572,
+            "upper_bound": 56273.007387971564
+          },
+          "point_estimate": 45319.02719599836,
+          "standard_error": 6247.257533123702
+        }
+      },
+      "batch_records": 2048
+    },
+    {
+      "dataset": "city",
+      "operation": "build",
+      "implementation": "public",
+      "unit": "ns/batch",
+      "mean": 427742.3958085397,
+      "confidence_interval": {
+        "lower_bound": 422598.9404945136,
+        "upper_bound": 432716.58409869217
+      },
+      "estimates_ns_per_batch": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 422598.9404945136,
+            "upper_bound": 432716.58409869217
+          },
+          "point_estimate": 427742.3958085397,
+          "standard_error": 2594.3801922918897
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 418565.1477272727,
+            "upper_bound": 436246.2258454106
+          },
+          "point_estimate": 425189.6634615385,
+          "standard_error": 5455.312469283372
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8219.259033267226,
+            "upper_bound": 22115.978555800393
+          },
+          "point_estimate": 16110.404922316462,
+          "standard_error": 3268.0759015400204
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 421318.1178872388,
+            "upper_bound": 431598.86745698715
+          },
+          "point_estimate": 425927.3122686409,
+          "standard_error": 2626.903721811907
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11371.914868924014,
+            "upper_bound": 16617.49704169854
+          },
+          "point_estimate": 14356.893922685304,
+          "standard_error": 1340.287676549311
+        }
+      },
+      "batch_records": 2048
+    }
+  ],
+  "fuzz": {
+    "target": "codec",
+    "runs": 36519188,
+    "duration_seconds": 61,
+    "sanitizer": "AddressSanitizer",
+    "failures": 0,
+    "scope": "seeded smoke campaign checking agreement between dynamic and typed accessors, not proof of exhaustive coverage"
+  },
+  "bootstrap_resamples": 10000,
+  "process_priority": "High",
+  "optimization_pass": {
+    "retained": "Compile optional presence byte and mask once; remove Option<usize> from schema slots.",
+    "schema_slot_bytes_x86_64": {
+      "before": 32,
+      "after": 16
+    },
+    "size_evidence": "Original assembly shifts slot index by 5; compiler print-type-sizes reports final Slot as 16 bytes.",
+    "encoding_changed": false,
+    "api_changed": false,
+    "rejected": [
+      {
+        "candidate": "first_chunk byte reads",
+        "reason": "No consistent latency gain in noisy matched trials."
+      },
+      {
+        "candidate": "force-inline string getter",
+        "reason": "No consistent latency gain; retain normal inline policy."
+      }
+    ],
+    "latency_conclusion": "No reliable cross-run gain established. No changes to hashing, alignment, SIMD, or encoded bytes.",
+    "profile": {
+      "tool": "samply ETW sampling; llvm-pdbutil function mapping and llvm-objdump assembly inspection",
+      "workload": "codec/city/fields/public, optimized baseline with line debug information, separate from timing runs",
+      "lost_events": 3364,
+      "resolved_application_leaf_samples": 12622,
+      "top_leaf_samples": {
+        "codec::typed::decode": 8466,
+        "netindex::codec::Record::string": 3486
+      },
+      "profile_sha256": "41763898ea846beb5e4b427fc68a07f3951d918d0e1234396fc5bad61abcfcc5",
+      "writer_profile": "Second sampling attempt stalled before benchmark launch and was stopped; encoding measured by Criterion."
+    }
+  }
+}

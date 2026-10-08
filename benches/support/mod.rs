@@ -1,4 +1,6 @@
 use super::Result;
 
-pub(super) mod dictionary;
 pub(super) mod schema;
+
+#[cfg(feature = "codec")]
+pub(super) mod typed;

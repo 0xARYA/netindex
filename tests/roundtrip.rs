@@ -580,36 +580,22 @@ fn fixed_ipv6_and_mixed_fixtures_preserve_family_and_overlap_semantics() {
 }
 
 #[test]
-fn immutable_readers_can_be_shared_between_requests_without_locks() {
-    let targets = [
-        Target::Network {
-            address: "203.0.113.0".parse().unwrap(),
-            prefix: 24,
-        },
-        Target::Address("203.0.113.42".parse().unwrap()),
-        Target::Network {
-            address: "2001:db8::".parse().unwrap(),
-            prefix: 32,
-        },
-    ];
-    let reader = Reader::open(encode(&targets, b""), Limits::default()).unwrap();
-
-    std::thread::scope(|scope| {
-        for query in ["203.0.113.42", "203.0.114.42", "2001:db8::42", "::1"] {
-            let reader = &reader;
-            let targets = &targets;
-            scope.spawn(move || assert_ip(reader, targets, query.parse().unwrap()));
-        }
-    });
-}
-
-#[test]
 fn truncated_corrupt_and_unsupported_files_are_rejected_before_lookup() {
     let targets = [
         Target::Address("203.0.113.42".parse().unwrap()),
         Target::Address("203.0.113.43".parse().unwrap()),
     ];
     let bytes = encode(&targets, b"");
+
+    assert_eq!(&bytes[..8], b"NETINDEX");
+
+    let mut old_signature = bytes.clone();
+    old_signature[..8].copy_from_slice(b"IPINDEX\0");
+
+    assert!(matches!(
+        Reader::open(old_signature, Limits::default()),
+        Err(Error::Invalid("index magic"))
+    ));
 
     for end in 0..bytes.len() {
         assert!(
@@ -619,11 +605,11 @@ fn truncated_corrupt_and_unsupported_files_are_rejected_before_lookup() {
     }
 
     let mut version = bytes.clone();
-    version[8..12].copy_from_slice(&3u32.to_le_bytes());
+    version[8..12].copy_from_slice(&2u32.to_le_bytes());
 
     assert!(matches!(
         Reader::open(version, Limits::default()),
-        Err(Error::Version(3))
+        Err(Error::Version(2))
     ));
 
     for offset in [0, 16, 64, 80 + 8, 80 + 16, 80 + 18, 100 + 12, 120] {

@@ -11,6 +11,8 @@ pub use reader_set::ReaderSet;
 pub use target::Target;
 
 mod builder;
+#[cfg(feature = "codec")]
+pub mod codec;
 mod coverage;
 #[cfg(feature = "external-sort")]
 mod external;
@@ -21,6 +23,7 @@ mod packed;
 mod payload;
 mod reader;
 mod reader_set;
+mod routing;
 mod search;
 mod target;
 #[cfg(feature = "shared-values")]
@@ -30,7 +33,7 @@ pub mod values;
 #[cfg(feature = "mmap")]
 pub type MappedReader = Reader<memmap2::Mmap>;
 
-/// Failures in index and shared-value operations.
+/// Failures in index, shared-value, and codec operations.
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
@@ -40,6 +43,15 @@ pub enum Error {
     /// An input target or encoded field violates the format.
     #[error("invalid {0}")]
     Invalid(&'static str),
+    /// A codec field has an invalid position, kind, or supplied value.
+    #[cfg(feature = "codec")]
+    #[error("invalid codec field {position}: {reason}")]
+    CodecField {
+        /// Zero-based position in the caller's schema.
+        position: usize,
+        /// The violated field requirement.
+        reason: &'static str,
+    },
     /// A typed string pool contains invalid UTF-8.
     #[cfg(feature = "shared-values")]
     #[error("invalid shared string UTF-8")]
@@ -63,8 +75,8 @@ pub enum Error {
         #[source]
         error: io::Error,
     },
-    /// Writing the caller's encoded artifact failed.
-    #[error("failed to write artifact")]
+    /// I/O on the caller's encoded artifact failed.
+    #[error("artifact I/O failed")]
     Io(#[from] io::Error),
     /// Creating, reading, writing, or cleaning up temporary build files failed.
     #[cfg(feature = "external-sort")]
@@ -81,7 +93,7 @@ pub enum Error {
 /// Resource limits for building and opening an index.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Limits {
-    /// Maximum assertions (including duplicates), or unique values in a value pool.
+    /// Maximum assertions (including duplicates), unique pool values, or codec fields.
     pub records: usize,
     /// Maximum complete artifact bytes, including metadata and payloads.
     pub bytes: usize,

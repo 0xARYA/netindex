@@ -288,8 +288,9 @@ pub(crate) fn write_entry(output: &mut impl Write, entry: &Entry, ipv6: bool) ->
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::Reader;
+
+    use super::*;
 
     #[test]
     fn hash_collisions_compare_bytes_before_reusing_payloads() {

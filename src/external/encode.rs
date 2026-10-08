@@ -3,16 +3,17 @@ use std::{
     io::{BufReader, Read, Seek, SeekFrom, Write},
 };
 
-use super::{
-    runs::{Row, ROW_BYTES},
-    temporary,
-};
 use crate::{
     builder::{augment, write_entry},
     layout::slice,
     packed::{self, BLOCK, FENCE},
     target::Entry,
     Error,
+};
+
+use super::{
+    runs::{Row, ROW_BYTES},
+    temporary,
 };
 
 pub(super) fn sizes(input: &mut File, counts: [usize; 3]) -> Result<[Option<usize>; 2], Error> {

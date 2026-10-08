@@ -18,6 +18,7 @@ struct Block {
     shift: u8,
     count: usize,
     first_id: Option<u32>,
+    id_step: u32,
     kind: u8,
 }
 
@@ -60,6 +61,7 @@ pub(crate) fn write<N: Copy + Into<u128>>(
         let block = describe(rows, offset);
         let width = block.width
             | if block.first_id.is_some() { 0x80 } else { 0 }
+            | if block.id_step == 2 { 0x20 } else { 0 }
             | if block.kind == 1 { 0x40 } else { 0 };
         let shift = block.shift | if block.kind <= 1 { 0x80 } else { 0 };
 
@@ -113,6 +115,23 @@ pub(crate) fn entry(
     let local = position % BLOCK;
 
     block_entry(bytes, block, local, ipv6)
+}
+
+pub(crate) fn visit_entries<E: From<Error>>(
+    bytes: &[u8],
+    count: usize,
+    ipv6: bool,
+    mut emit: impl FnMut(Entry) -> Result<(), E>,
+) -> Result<(), E> {
+    for index in 0..count.div_ceil(BLOCK) {
+        let block = read_block(bytes, count, index)?;
+
+        for local in 0..block.count {
+            emit(block_entry(bytes, block, local, ipv6)?)?;
+        }
+    }
+
+    Ok(())
 }
 
 #[derive(Debug)]
@@ -215,10 +234,11 @@ pub(crate) fn validate(bytes: &[u8], count: usize) -> Result<(), Error> {
 
     for index in 0..count.div_ceil(BLOCK) {
         let block = read_block(bytes, count, index)?;
-        if block
-            .first_id
-            .is_some_and(|first| first.checked_add((block.count - 1) as u32).is_none())
-        {
+        if block.first_id.is_some_and(|first| {
+            first
+                .checked_add((block.count - 1) as u32 * block.id_step)
+                .is_none()
+        }) {
             return Err(Error::Invalid("packed record ID"));
         }
 
@@ -296,7 +316,7 @@ fn block_entry(bytes: &[u8], block: Block, local: usize, ipv6: bool) -> Result<E
 
     let id = match block.first_id {
         Some(first) => first
-            .checked_add(local as u32)
+            .checked_add(local as u32 * block.id_step)
             .ok_or(Error::Invalid("packed record ID"))?,
         None => u32_at(
             bytes,
@@ -343,11 +363,25 @@ fn describe<N: Copy + Into<u128>>(entries: &[Entry<N>], offset: usize) -> Block 
         .find(|width| maximum.checked_shr(width * 8).unwrap_or(0) == 0)
         .unwrap_or(16);
 
+    let mut id_step = 1;
     let first_id = entries.first().map(|entry| entry.id).filter(|&first| {
-        entries
+        let step = entries
+            .get(1)
+            .and_then(|entry| entry.id.checked_sub(first))
+            .unwrap_or(1);
+        if !matches!(step, 1 | 2) {
+            return false;
+        }
+
+        let sequential = entries
             .iter()
             .enumerate()
-            .all(|(position, entry)| first.checked_add(position as u32) == Some(entry.id))
+            .all(|(position, entry)| first.checked_add(position as u32 * step) == Some(entry.id));
+        if sequential {
+            id_step = step;
+        }
+
+        sequential
     });
 
     let kind = entries.first().map_or(2, |entry| entry.kind);
@@ -364,6 +398,7 @@ fn describe<N: Copy + Into<u128>>(entries: &[Entry<N>], offset: usize) -> Block 
         shift: shift as u8,
         count: entries.len(),
         first_id,
+        id_step,
         kind,
     }
 }
@@ -375,7 +410,8 @@ fn read_block(bytes: &[u8], count: usize, index: usize) -> Result<Block, Error> 
 
     let row = slice(bytes, index * FENCE, FENCE)?;
     let flags = *row.get(24).ok_or(Error::Invalid("packed width"))?;
-    let width = usize::from(flags & 0x3f);
+    let width = usize::from(flags & 0x1f);
+    let id_step = if flags & 0x20 != 0 { 2 } else { 1 };
     let first_id = if flags & 0x80 != 0 {
         Some(u32_at(row, 28)?)
     } else {
@@ -395,6 +431,7 @@ fn read_block(bytes: &[u8], count: usize, index: usize) -> Result<Block, Error> 
     ) as usize;
 
     if !matches!(width, 1 | 2 | 4 | 8 | 16)
+        || (first_id.is_none() && id_step != 1)
         || (kind == 2 && flags & 0x40 != 0)
         || rows != (count - index * BLOCK).min(BLOCK)
         || (first_id.is_none() && u32_at(row, 28)? != 0)
@@ -411,6 +448,7 @@ fn read_block(bytes: &[u8], count: usize, index: usize) -> Result<Block, Error> 
         shift: shift as u8,
         count: rows,
         first_id,
+        id_step,
         kind,
     };
     slice(bytes, offset, rows * block.row_width())?;

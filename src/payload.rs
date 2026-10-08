@@ -48,6 +48,7 @@ impl Slots {
         let width = *bytes
             .get(add(offset, 4)?)
             .ok_or(Error::Invalid("payload reference width"))?;
+
         if slice(bytes, add(offset, 5)?, 3)?
             .iter()
             .any(|&byte| byte != 0)

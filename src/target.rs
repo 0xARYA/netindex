@@ -80,6 +80,7 @@ pub(crate) struct Entry<N = u128> {
 impl Entry {
     pub(crate) fn target(self, ipv6: bool) -> Result<Target, Error> {
         let width = if ipv6 { 128 } else { 32 };
+
         if !ipv6 && (self.start > u128::from(u32::MAX) || self.end > u128::from(u32::MAX)) {
             return Err(Error::Invalid("target bounds"));
         }

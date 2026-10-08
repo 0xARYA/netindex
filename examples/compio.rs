@@ -26,6 +26,7 @@ async fn run(runtime: &Runtime) -> Result<(), Box<dyn Error>> {
             break;
         }
 
+        // Observe every started job before returning the first failure.
         let mut failure: Option<Box<dyn Error>> = None;
         for job in jobs {
             let result = job

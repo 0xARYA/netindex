@@ -1,11 +1,10 @@
 [package]
 name = "netindex"
-version = "1.0.0"
+version = "2.0.0"
 edition = "2021"
 rust-version = "1.95"
-description = "Immutable IP range and ASN indexes with opaque borrowed payloads"
+description = "Immutable IP-range and ASN indexes with borrowed payloads"
 readme = "README.md"
-documentation = "https://docs.rs/netindex"
 repository = "https://github.com/0xARYA/netindex"
 license = "MIT OR Apache-2.0"
 keywords = ["ip", "cidr", "asn", "index"]
@@ -15,6 +14,7 @@ categories = ["data-structures", "network-programming"]
 all-features = true
 
 [features]
+codec = ["shared-values"]
 external-sort = ["dep:tempfile"]
 mmdb = ["dep:maxminddb"]
 mmap = ["dep:memmap2"]
@@ -43,15 +43,20 @@ harness = false
 [[bench]]
 name = "mmdb"
 harness = false
-required-features = ["mmdb", "mmap", "shared-values"]
+required-features = ["codec", "mmdb", "mmap", "external-sort"]
+
+[[bench]]
+name = "codec"
+harness = false
+required-features = ["codec", "mmdb", "mmap"]
 
 [lints]
 workspace = true
 
 [workspace]
-resolver = '3'
-members = ['.']
-exclude = ['fuzz', 'benchmarks']
+resolver = "3"
+members = ["."]
+exclude = ["fuzz", "benchmarks"]
 
 [workspace.lints.clippy]
 unwrap_used = "deny"
@@ -85,7 +90,6 @@ unsafe_op_in_unsafe_fn = "deny"
 [workspace.lints.rustdoc]
 broken_intra_doc_links = "deny"
 private_intra_doc_links = "allow"
-
 
 [profile.release]
 codegen-units = 1

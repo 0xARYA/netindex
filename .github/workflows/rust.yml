@@ -29,7 +29,7 @@ jobs:
         run: cargo +1.95.0 clippy --locked --all-targets --all-features -- -D warnings
       - name: Test default features
         run: cargo +1.95.0 test --locked -- --test-threads=1
-      - name: Test external builds and SIMD/scalar parity
+      - name: Test all features in release mode
         run: cargo +1.95.0 test --locked --release --all-features -- --test-threads=1
       - name: Check benchmark correctness
         run: cargo +1.95.0 bench --locked --bench index -- --test
@@ -60,6 +60,8 @@ jobs:
         run: |
           mkdir -p fuzz/corpus/read
           cp tests/fixtures/*.nidx fuzz/corpus/read/
+          mkdir -p fuzz/corpus/codec
+          cp tests/fixtures/codec.bin fuzz/corpus/codec/
       - name: Fuzz reading and lookup
         run: cargo +nightly-2026-09-01 fuzz run read --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536
       - name: Fuzz writing and roundtrip
@@ -70,3 +72,5 @@ jobs:
           cp tests/fixtures/values.bin fuzz/corpus/values/
       - name: Fuzz shared bytes and validated strings
         run: cargo +nightly-2026-09-01 fuzz run values --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536
+      - name: Fuzz typed codec metadata and records
+        run: cargo +nightly-2026-09-01 fuzz run codec --fuzz-dir fuzz -- -max_total_time=60 -max_len=65536

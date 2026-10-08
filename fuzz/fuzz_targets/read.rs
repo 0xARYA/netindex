@@ -6,7 +6,7 @@ use libfuzzer_sys::fuzz_target;
 use netindex::{CoverageRouter, Error, Limits, Reader, Target};
 
 fuzz_target!(|bytes: &[u8]| {
-    let Ok(reader) = Reader::open(
+    let Ok(reader) = Reader::open_with_broad_routes(
         bytes,
         Limits {
             records: 4096,
@@ -26,7 +26,7 @@ fuzz_target!(|bytes: &[u8]| {
 
     assert_eq!(assertions.len(), reader.len());
 
-    let coverage = reader.coverage().unwrap();
+    let coverage = reader.coverage();
     let router = CoverageRouter::new(std::slice::from_ref(&coverage)).unwrap();
     let mut queries = vec![
         IpAddr::from(Ipv4Addr::UNSPECIFIED),

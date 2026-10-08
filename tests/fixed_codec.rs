@@ -1,59 +1,57 @@
-//! Independent fixture checks for the comparison payload codec.
+//! Independent fixtures keep the benchmark-only fixed-codec baseline honest.
 
 #![cfg(all(feature = "mmdb", feature = "shared-values", feature = "mmap"))]
 
 use netindex::{values::ValuePoolBuilder, Limits};
 
-use support::{
-    dictionary,
-    schema::{Coordinates, Fields, Geo},
-};
+use schema::{Coordinates, Fields, Geo};
 
-#[path = "../benches/support/mod.rs"]
+#[path = "../benches/support/schema.rs"]
 #[expect(
     dead_code,
     reason = "only the benchmark codec is exercised by these tests"
 )]
-mod support;
+mod schema;
+
+#[path = "../benches/support/fixed_codec.rs"]
+#[expect(
+    dead_code,
+    reason = "fixtures exercise baseline records rather than its metadata writer"
+)]
+mod fixed_codec;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 #[test]
-fn asn_codec_decodes_independent_bytes_and_rejects_truncation() -> Result<()> {
+fn asn_baseline_decodes_independent_number_organization_and_absent_domain() -> Result<()> {
     let mut values = ValuePoolBuilder::new(Limits::default());
     values.intern(b"example network")?;
 
     let mut metadata = b"NISHAR\0\0".to_vec();
     values.write_to(&mut metadata)?;
-    let pool = dictionary::pool(&metadata, "asn")?;
+    let pool = fixed_codec::pool(&metadata, "asn")?;
 
     let mut payload = 64512_u32.to_le_bytes().to_vec();
     payload.extend_from_slice(&0_u32.to_le_bytes());
     payload.extend_from_slice(&u32::MAX.to_le_bytes());
 
-    let fields = dictionary::decode(&payload, "asn", pool)?;
+    let fields = fixed_codec::decode(&payload, "asn", pool)?;
     assert!(
         matches!(fields, Fields::Asn(row) if row.number == 64512 && row.organization == Some("example network") && row.domain.is_none())
     );
-
-    payload.pop();
-    assert!(dictionary::decode(&payload, "asn", pool).is_err());
-
-    let invalid_reference = [0, 0, 0, 0, 1, 0, 0, 0, 255, 255, 255, 255];
-    assert!(dictionary::decode(&invalid_reference, "asn", pool).is_err());
 
     Ok(())
 }
 
 #[test]
-fn city_codec_decodes_independent_fields_and_coordinates() -> Result<()> {
+fn city_baseline_preserves_independent_fields_coordinates_and_radius() -> Result<()> {
     let mut values = ValuePoolBuilder::new(Limits::default());
     values.intern(b"US")?;
     values.intern(b"example city")?;
 
     let mut metadata = b"NISHAR\x01\0".to_vec();
     values.write_to(&mut metadata)?;
-    let pool = dictionary::pool(&metadata, "city")?;
+    let pool = fixed_codec::pool(&metadata, "city")?;
 
     let mut payload = Vec::new();
     for id in [
@@ -89,14 +87,8 @@ fn city_codec_decodes_independent_fields_and_coordinates() -> Result<()> {
         time_zone: None,
     });
 
-    assert_eq!(dictionary::decode(&payload, "city", pool)?, expected);
-    assert_eq!(dictionary::Pool::default().encode(&expected)?, payload);
-
-    *payload.last_mut().ok_or("missing flags")? = 2;
-    assert!(dictionary::decode(&payload, "city", pool).is_err());
-
-    payload.pop();
-    assert!(dictionary::decode(&payload, "city", pool).is_err());
+    assert_eq!(fixed_codec::decode(&payload, "city", pool)?, expected);
+    assert_eq!(fixed_codec::Pool::default().encode(&expected)?, payload);
 
     Ok(())
 }

@@ -97,7 +97,7 @@ impl ValuePoolBuilder {
     /// # Errors
     /// Fails on limits, allocation, or output failure.
     pub fn into_bytes(self) -> Result<Vec<u8>, Error> {
-        let size = check_size(self.offsets.len(), self.bytes.len(), self.limits)?;
+        let size = self.encoded_length()?;
         let mut output = Vec::new();
         output.try_reserve_exact(size)?;
         self.write_to(&mut output)?;
@@ -110,7 +110,7 @@ impl ValuePoolBuilder {
     /// # Errors
     /// Fails on limits or output failure. Publication and synchronization belong to the caller.
     pub fn write_to(self, mut output: impl Write) -> Result<(), Error> {
-        check_size(self.offsets.len(), self.bytes.len(), self.limits)?;
+        self.encoded_length()?;
         drop(self.hashes);
 
         output.write_all(MAGIC)?;
@@ -125,6 +125,10 @@ impl ValuePoolBuilder {
         output.flush()?;
 
         Ok(())
+    }
+
+    pub(crate) fn encoded_length(&self) -> Result<usize, Error> {
+        check_size(self.offsets.len(), self.bytes.len(), self.limits)
     }
 }
 

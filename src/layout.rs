@@ -3,8 +3,8 @@ use std::io::Write;
 use crate::{packed, payload::Slots, target::Entry, Error, Limits};
 
 pub(crate) const HEADER: usize = 80;
-pub(crate) const MAGIC: &[u8; 8] = b"IPINDEX\0";
-pub(crate) const VERSION: u32 = 2;
+pub(crate) const MAGIC: &[u8; 8] = b"NETINDEX";
+pub(crate) const VERSION: u32 = 3;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Encoding {
@@ -154,6 +154,7 @@ impl Layout {
         let [v4, v6, asns] = counts;
         let [packed_v4, packed_v6] = packed;
         let records = add(add(v4, v6)?, asns)?;
+
         if records > limits.records || records > u32::MAX as usize {
             return Err(Error::Limit("records"));
         }
@@ -201,6 +202,7 @@ impl Layout {
         let slots = asns.end()?;
         let payload_offset = add(slots, slot_encoding.size(records)?)?;
         let bytes = add(payload_offset, payloads)?;
+
         if bytes > limits.bytes {
             return Err(Error::Limit("artifact bytes"));
         }
@@ -314,6 +316,7 @@ impl Layout {
         };
 
         let layout = Self::with_packed(counts, metadata, payloads, limits, packed, slot_encoding)?;
+
         if usize_at(bytes, 16)? != layout.records || bytes.len() != layout.bytes {
             return Err(Error::Invalid("artifact length or record count"));
         }

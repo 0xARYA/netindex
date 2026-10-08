@@ -1,13 +1,14 @@
 use std::{
     fs::File,
-    io::{BufReader, BufWriter, Read, Seek, SeekFrom, Write},
+    io::{self, BufReader, BufWriter, Read, Seek, SeekFrom, Write},
     path::Path,
 };
 
 use tempfile::NamedTempFile;
 
-use super::{temporary, DiskBudget};
 use crate::{target::Entry, Error};
+
+use super::{temporary, DiskBudget};
 
 pub(super) const ROW_BYTES: u64 = 40;
 
@@ -66,8 +67,13 @@ impl Row {
         let first = bytes
             .get_mut(..1)
             .ok_or(Error::Invalid("temporary row buffer"))?;
-        if input.read(first).map_err(temporary("read run"))? == 0 {
-            return Ok(None);
+        loop {
+            match input.read(first) {
+                Ok(0) => return Ok(None),
+                Ok(_) => break,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(error) => return Err(temporary("read run")(error)),
+            }
         }
 
         input
@@ -297,6 +303,40 @@ mod tests {
     use super::*;
 
     #[test]
+    fn interrupted_reads_retry_without_losing_the_row() {
+        struct InterruptedOnce<'a> {
+            bytes: &'a [u8],
+            interrupted: bool,
+        }
+
+        impl Read for InterruptedOnce<'_> {
+            fn read(&mut self, output: &mut [u8]) -> io::Result<usize> {
+                if !self.interrupted {
+                    self.interrupted = true;
+                    return Err(io::Error::from(io::ErrorKind::Interrupted));
+                }
+
+                self.bytes.read(output)
+            }
+        }
+
+        let mut bytes = [0; ROW_BYTES as usize];
+        bytes[0] = 7;
+        bytes[16] = 9;
+        bytes[32] = 3;
+        bytes[37] = 2;
+        let mut input = InterruptedOnce {
+            bytes: &bytes,
+            interrupted: false,
+        };
+
+        let row = Row::read(&mut input).unwrap().unwrap();
+
+        assert_eq!(row.key(), (0, 7, 9, 3));
+        assert!(Row::read(&mut input).unwrap().is_none());
+    }
+
+    #[test]
     fn buffered_rows_reconstruct_maxima_without_changing_run_bytes() {
         let entry = Entry {
             start: 3,
@@ -340,7 +380,7 @@ mod tests {
 
         for length in 1..bytes.len() {
             assert!(
-                matches!(Row::read(&mut Cursor::new(&bytes[..length])), Err(Error::TemporaryIo { error, .. }) if error.kind() == std::io::ErrorKind::UnexpectedEof)
+                matches!(Row::read(&mut Cursor::new(&bytes[..length])), Err(Error::TemporaryIo { error, .. }) if error.kind() == io::ErrorKind::UnexpectedEof)
             );
         }
 

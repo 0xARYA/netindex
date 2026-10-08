@@ -20,6 +20,34 @@ impl Reader<Mmap> {
     /// # Errors
     /// Returns file metadata, mapping, resource-limit, or index-validation errors.
     pub unsafe fn map_file(file: &File, limits: Limits) -> Result<Self, Error> {
+        // SAFETY: The caller guarantees immutable file contents for the reader's lifetime.
+        unsafe { Self::map_inner(file, limits, false) }
+    }
+
+    /// Map an immutable file and collect broad-network routes during validation.
+    ///
+    /// See [`Self::open_with_broad_routes`] for routing costs and behavior.
+    ///
+    /// # Safety
+    /// The file must remain unchanged for every reader and borrowed match's lifetime,
+    /// as required by [`Self::map_file`].
+    ///
+    /// # Errors
+    /// Returns file metadata, mapping, resource-limit, validation, or allocation errors.
+    pub unsafe fn map_file_with_broad_routes(file: &File, limits: Limits) -> Result<Self, Error> {
+        // SAFETY: The caller guarantees immutable file contents for the reader's lifetime.
+        unsafe { Self::map_inner(file, limits, true) }
+    }
+
+    /// Borrow the mapping for platform-specific access advice.
+    ///
+    /// Hints do not replace validation or guarantee residency. The mapping has
+    /// the same lifetime and immutable-file requirements as this reader.
+    pub fn mapping(&self) -> &Mmap {
+        &self.bytes
+    }
+
+    unsafe fn map_inner(file: &File, limits: Limits, broad_routes: bool) -> Result<Self, Error> {
         let metadata = file.metadata().map_err(|error| Error::MappingIo {
             operation: "read metadata for",
             error,
@@ -43,14 +71,6 @@ impl Reader<Mmap> {
             }
         })?;
 
-        Self::open(mapping, limits)
-    }
-
-    /// Borrow the mapping for platform-specific access advice.
-    ///
-    /// Hints do not replace validation or guarantee residency. The mapping has
-    /// the same lifetime and immutable-file requirements as this reader.
-    pub fn mapping(&self) -> &Mmap {
-        &self.bytes
+        Self::open_inner(mapping, limits, broad_routes)
     }
 }

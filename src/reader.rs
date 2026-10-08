@@ -3,8 +3,9 @@ use std::{fmt, net::IpAddr};
 use crate::{
     layout::{slice, u32_at, Encoding, Layout, Section, HEADER},
     packed,
+    routing::BroadRoutes,
     search::Search,
-    target::number,
+    target::{number, Entry},
     Coverage, Error, Limits, Target,
 };
 
@@ -37,6 +38,8 @@ pub struct Reader<B: AsRef<[u8]>> {
     search: Search,
     bounds: [(u128, u128); 2],
     ipv4_directory: Option<packed::Directory>,
+    coverage: Coverage,
+    broad_routes: Option<BroadRoutes>,
 }
 
 impl<B: AsRef<[u8]>> Reader<B> {
@@ -50,21 +53,19 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// Fails on malformed or unsupported files, exceeded limits, or failed
     /// validation-memory reservations.
     pub fn open(bytes: B, limits: Limits) -> Result<Self, Error> {
-        let data = bytes.as_ref();
-        let layout = Layout::read(data, limits)?;
+        Self::open_inner(bytes, limits, false)
+    }
 
-        validate(data, layout)?;
-
-        let bounds = [ip_bounds(data, layout.v4)?, ip_bounds(data, layout.v6)?];
-        let ipv4_directory = ip_directory(data, layout.v4, bounds[0])?;
-
-        Ok(Self {
-            bytes,
-            layout,
-            search: Search::detect(),
-            bounds,
-            ipv4_directory,
-        })
+    /// Validate and cache direct routes for broad, disjoint packed networks.
+    ///
+    /// Uses up to 32 KiB per eligible address family. Routes are collected during
+    /// validation; other targets retain the ordinary lookup path. This can improve
+    /// broad-network queries but adds a check to other queries; measure your workload.
+    ///
+    /// # Errors
+    /// Returns the same validation errors as [`Self::open`], or a route allocation error.
+    pub fn open_with_broad_routes(bytes: B, limits: Limits) -> Result<Self, Error> {
+        Self::open_inner(bytes, limits, true)
     }
 
     /// Number of assertions, including duplicates.
@@ -85,27 +86,11 @@ impl<B: AsRef<[u8]>> Reader<B> {
         slice(self.bytes.as_ref(), HEADER, self.layout.metadata)
     }
 
-    /// Derive conservative coverage once when assembling a set of readers.
+    /// Return conservative coverage cached during validation.
     ///
-    /// Scans IP targets without decoding payloads or expanding addresses. This
-    /// allocates no heap memory and does not change the reader or file.
-    ///
-    /// # Errors
-    /// Fails if backing data became invalid after opening.
-    pub fn coverage(&self) -> Result<Coverage, Error> {
-        let mut coverage = Coverage::empty();
-        let bytes = self.bytes.as_ref();
-
-        for (section, ipv6) in [(self.layout.v4, false), (self.layout.v6, true)] {
-            for position in 0..section.count {
-                let entry = section.entry(bytes, position)?;
-                entry.target(ipv6)?;
-
-                coverage.insert(entry.start, entry.end, ipv6);
-            }
-        }
-
-        Ok(coverage)
+    /// Copies a 1 KiB summary without rescanning targets or decoding payloads.
+    pub fn coverage(&self) -> Coverage {
+        self.coverage.clone()
     }
 
     /// Collect every assertion containing an IP, including overlaps and duplicates.
@@ -171,6 +156,18 @@ impl<B: AsRef<[u8]>> Reader<B> {
 
         let section = if ipv6 { self.layout.v6 } else { self.layout.v4 };
 
+        if let Some(routes) = &self.broad_routes {
+            if let Some(entry) = routes.lookup(query, ipv6)? {
+                emit(Match {
+                    id: entry.id,
+                    target: entry.target(ipv6)?,
+                    payload: self.layout.payload(self.bytes.as_ref(), entry.id)?,
+                })?;
+
+                return Ok(());
+            }
+        }
+
         if section.encoding == Encoding::Packed {
             let bytes = self.bytes.as_ref();
             let data = slice(bytes, section.offset, section.length)?;
@@ -214,6 +211,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
         let bytes = self.bytes.as_ref();
         let section = self.layout.asns;
         let (rows, remainder) = slice(bytes, section.offset, section.length)?.as_chunks::<8>();
+
         if !remainder.is_empty() || rows.len() != section.count {
             return Err(Error::Invalid("ASN section length").into());
         }
@@ -256,14 +254,27 @@ impl<B: AsRef<[u8]>> Reader<B> {
         let bytes = self.bytes.as_ref();
 
         for (section, ipv6) in [(self.layout.v4, false), (self.layout.v6, true)] {
-            for position in 0..section.count {
-                let entry = section.entry(bytes, position)?;
-
+            let mut visit = |entry: Entry| -> Result<(), E> {
                 emit(Match {
                     id: entry.id,
                     target: entry.target(ipv6)?,
                     payload: self.layout.payload(bytes, entry.id)?,
                 })?;
+
+                Ok(())
+            };
+
+            if section.encoding == Encoding::Packed {
+                packed::visit_entries(
+                    slice(bytes, section.offset, section.length)?,
+                    section.count,
+                    ipv6,
+                    &mut visit,
+                )?;
+            } else {
+                for position in 0..section.count {
+                    visit(section.entry(bytes, position)?)?;
+                }
             }
         }
 
@@ -279,6 +290,26 @@ impl<B: AsRef<[u8]>> Reader<B> {
         }
 
         Ok(())
+    }
+
+    fn open_inner(bytes: B, limits: Limits, broad_routes: bool) -> Result<Self, Error> {
+        let data = bytes.as_ref();
+        let layout = Layout::read(data, limits)?;
+
+        let (coverage, broad_routes) = validate(data, layout, broad_routes)?;
+
+        let bounds = [ip_bounds(data, layout.v4)?, ip_bounds(data, layout.v6)?];
+        let ipv4_directory = ip_directory(data, layout.v4, bounds[0])?;
+
+        Ok(Self {
+            bytes,
+            layout,
+            search: Search::detect(),
+            bounds,
+            ipv4_directory,
+            coverage,
+            broad_routes,
+        })
     }
 
     fn visit<'a, E: From<Error>>(
@@ -308,6 +339,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
         }
 
         let entry = section.entry(bytes, mid)?;
+
         if query <= entry.end {
             emit(Match {
                 id: entry.id,
@@ -364,11 +396,17 @@ fn ip_directory(
     )
 }
 
-fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
+fn validate(
+    bytes: &[u8],
+    layout: Layout,
+    broad_routes: bool,
+) -> Result<(Coverage, Option<BroadRoutes>), Error> {
     let mut seen = Vec::new();
     let words = layout.records.div_ceil(64);
     seen.try_reserve_exact(words)?;
     seen.resize(words, 0u64);
+    let mut coverage = Coverage::empty();
+    let mut routes = broad_routes.then(BroadRoutes::empty);
 
     for (section, ipv6) in [(layout.v4, false), (layout.v6, true)] {
         if section.encoding == Encoding::Packed {
@@ -378,8 +416,7 @@ fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
         let mut previous = None;
         let mut previous_end = None;
 
-        for position in 0..section.count {
-            let entry = section.entry(bytes, position)?;
+        let mut check = |entry: Entry| -> Result<(), Error> {
             entry.target(ipv6)?;
 
             let key = (entry.start, entry.end, entry.id);
@@ -394,8 +431,31 @@ fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
             }
 
             mark(&mut seen, layout.records, entry.id)?;
+
+            coverage.insert(entry.start, entry.end, ipv6);
+            if section.encoding == Encoding::Packed {
+                if let Some(routes) = &mut routes {
+                    routes.insert(entry, ipv6)?;
+                }
+            }
+
             previous = Some(key);
             previous_end = Some(entry.end);
+
+            Ok(())
+        };
+
+        if section.encoding == Encoding::Packed {
+            packed::visit_entries(
+                slice(bytes, section.offset, section.length)?,
+                section.count,
+                ipv6,
+                &mut check,
+            )?;
+        } else {
+            for position in 0..section.count {
+                check(section.entry(bytes, position)?)?;
+            }
         }
 
         if section.encoding == Encoding::Interval {
@@ -408,6 +468,7 @@ fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
     for position in 0..layout.asns.count {
         let row = layout.asns.row(bytes, position)?;
         let key = (u32_at(row, 0)?, u32_at(row, 4)?);
+
         if key.0 == 0 || previous.is_some_and(|previous| previous >= key) {
             return Err(Error::Invalid("ASN entry order or key"));
         }
@@ -440,7 +501,7 @@ fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
             return Err(Error::Invalid("payload length"));
         }
 
-        return Ok(());
+        return Ok((coverage, routes.filter(|routes| !routes.is_empty())));
     }
 
     // First-seen contiguous spans stay sorted, including empty spans before new bytes.
@@ -477,7 +538,7 @@ fn validate(bytes: &[u8], layout: Layout) -> Result<(), Error> {
         return Err(Error::Invalid("payload length"));
     }
 
-    Ok(())
+    Ok((coverage, routes.filter(|routes| !routes.is_empty())))
 }
 
 fn mark(seen: &mut [u64], records: usize, id: u32) -> Result<(), Error> {
@@ -512,6 +573,7 @@ fn validate_maximum(
         .endpoint(bytes, mid)?
         .max(validate_maximum(bytes, section, low, mid)?)
         .max(validate_maximum(bytes, section, mid + 1, high)?);
+
     if expected != section.maximum(bytes, mid)? {
         return Err(Error::Invalid("interval maximum"));
     }
