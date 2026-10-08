@@ -79,20 +79,36 @@ pub(crate) struct Entry<N = u128> {
 
 impl Entry {
     pub(crate) fn target(self, ipv6: bool) -> Result<Target, Error> {
-        let width = if ipv6 { 128 } else { 32 };
+        self.validate(ipv6)?;
 
+        let address = ip(self.start, ipv6);
+        let target = match self.kind {
+            0 => Target::Address(address),
+            1 => Target::Network {
+                address,
+                prefix: self.prefix,
+            },
+            2 => Target::Range {
+                start: address,
+                end: ip(self.end, ipv6),
+            },
+            _ => return Err(Error::Invalid("target kind")),
+        };
+
+        Ok(target)
+    }
+
+    pub(crate) fn validate(self, ipv6: bool) -> Result<(), Error> {
+        let width = if ipv6 { 128 } else { 32 };
         if !ipv6 && (self.start > u128::from(u32::MAX) || self.end > u128::from(u32::MAX)) {
             return Err(Error::Invalid("target bounds"));
         }
 
-        let address = ip(self.start, ipv6);
-        let target = match self.kind {
+        match self.kind {
             0 => {
                 if self.prefix != width || self.start != self.end {
                     return Err(Error::Invalid("target bounds"));
                 }
-
-                Target::Address(address)
             }
             1 => {
                 if self.prefix > width {
@@ -103,26 +119,16 @@ impl Entry {
                 if self.start & host != 0 || self.end != self.start | host {
                     return Err(Error::Invalid("target bounds"));
                 }
-
-                Target::Network {
-                    address,
-                    prefix: self.prefix,
-                }
             }
             2 => {
                 if self.start > self.end || self.prefix != 0 {
                     return Err(Error::Invalid("target bounds"));
                 }
-
-                Target::Range {
-                    start: address,
-                    end: ip(self.end, ipv6),
-                }
             }
             _ => return Err(Error::Invalid("target kind")),
-        };
+        }
 
-        Ok(target)
+        Ok(())
     }
 }
 

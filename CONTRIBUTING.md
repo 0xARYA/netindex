@@ -62,7 +62,8 @@ cargo bench --bench index -- --test
 without collecting timings.
 
 Capture the baseline before editing. The harness measures warm lookup, complete
-validation, and building, using 65,536 assertions per scenario and 1,024 queries
+validation, and building, including IPv6 deltas requiring 16 bytes. It uses
+65,536 assertions per scenario and 1,024 queries
 per lookup batch. `lookup-json` includes lookup, decoding each eight-byte scalar
 payload, allocating all matching records, and serializing `{id, value}` objects
 with serde_json. It includes misses and overlaps, but excludes HTTP and networking;

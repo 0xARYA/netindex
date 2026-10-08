@@ -417,7 +417,7 @@ fn validate(
         let mut previous_end = None;
 
         let mut check = |entry: Entry| -> Result<(), Error> {
-            entry.target(ipv6)?;
+            entry.validate(ipv6)?;
 
             let key = (entry.start, entry.end, entry.id);
             if previous.is_some_and(|previous| previous >= key) {

@@ -29,7 +29,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut sizes = File::create("target/criterion/index-sizes.csv")?;
     writeln!(sizes, "scenario,records,shared_bytes")?;
 
-    for scenario in ["v4", "v6", "overlap", "asn"] {
+    for scenario in ["v4", "v6", "v6-wide", "overlap", "asn"] {
         let targets: Vec<_> = (0..65_536u32)
             .map(|id| match scenario {
                 "v4" => Target::Network {
@@ -40,6 +40,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     address: Ipv6Addr::from(u128::from(id) << 64).into(),
                     prefix: 72,
                 },
+                "v6-wide" => {
+                    Target::Address(Ipv6Addr::from((u128::from(id) << 80) | u128::from(id)).into())
+                }
                 "asn" => Target::Asn(id + 1),
                 _ => Target::Range {
                     start: Ipv4Addr::from(id * 32).into(),
@@ -57,7 +60,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .map(|id| {
                 let key = id.wrapping_mul(2654435761) % 65_536;
 
-                if scenario == "v6" {
+                if scenario == "v6-wide" {
+                    IpAddr::from(Ipv6Addr::from(
+                        (u128::from(key) << 80) | u128::from(key + id % 2),
+                    ))
+                } else if scenario == "v6" {
                     IpAddr::from(Ipv6Addr::from(
                         (u128::from(key) << 64) + (u128::from(id % 2) << 63),
                     ))
