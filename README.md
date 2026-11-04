@@ -19,9 +19,13 @@ MMDB reader, with identical fields, networks, and JSON output.
 
 Measured on Ryzen 9 9950X3D2, Windows 11, Rust 1.95.0, using `maxminddb 0.32.0`
 and netindex's public codec. Times are warm mean ns/query. Some lookup workloads
-favor MMDB; converted files are about 2.2× larger and validated opening is slower.
+favor MMDB; those converted fixtures were about 2.2× larger and validated opening
+was slower.
 See [benchmarks](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md) for all
 workloads, methodology, and reproduction instructions.
+
+The latest [performance audit](https://github.com/0xARYA/netindex/blob/main/PERFORMANCE.md)
+covers external-build I/O, every packed width, and application PGO versus ThinLTO.
 
 ## Use cases
 
@@ -165,8 +169,13 @@ caller-owned output. Metadata is stored once as opaque bytes.
 
 Enable `external-sort` for `ExternalBuilder` when buffering all assertions would
 exceed your budget. `ExternalOptions` bounds sorted runs, the payload cache, and
-temporary-disk usage. Insertion IDs are preserved. Repeated payloads outside the
-cache may occupy additional output bytes. Discard the builder after a failed push.
+temporary-disk usage. Insertion IDs are preserved. Identical payloads share their
+first-seen span, including when the memory cache is full or disabled. Uncached
+values use a disk-backed hash table with full byte comparisons in bounded chunks;
+the cache only accelerates matching. This trades random temporary-file I/O for
+complete deduplication. Table growth charges both old and new tables against the
+temporary-byte limit; builds may require a larger disk budget than earlier versions.
+Discard the builder after a failed push.
 
 The external writer requires empty, seekable output at position zero. Either
 writer can leave partial output on failure. Stage output, check success, and
@@ -283,9 +292,13 @@ dataset; in-range IDs from another pool cannot be detected automatically.
 | `mmdb` | Validated network iteration for caller-defined MMDB conversion. |
 | `shared-values` | Shared byte/string pools with caller-defined record schemas. |
 | `codec` | Optional typed records and pooled values; enables `shared-values`. |
+| `simd-utf8` | SIMD string validation with scalar index search; enable `shared-values` or `codec` to use string pools. |
 | `simd` | Runtime AVX2 search on x86-64 and SIMD string validation, with scalar fallbacks. |
 
 All features are disabled by default. Global `target-cpu=native` is not required.
+Measure search on your workload: SIMD search can be slower than scalar for small
+packed blocks. `simd-utf8` enables accelerated string-pool opening independently;
+`simd` includes it and also enables AVX2 search.
 Rust 1.95 is supported. The public error enum is non-exhaustive; messages are
 diagnostics, not a stable wire format.
 

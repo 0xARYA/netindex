@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.1.0 - 2026-11-04
+
+Deduplicate every external-builder payload, including values outside the memory
+cache, using a disk-backed hash table and complete byte comparisons. Preserve
+first-seen spans, insertion IDs, targets, and all assertions without changing the
+public API or `.nidx` format. Uncached values require random temporary-file I/O;
+table growth counts both tables against the temporary-disk budget.
+
+Reduce external-builder file operations with positioned I/O and comparisons
+against buffered payload bytes. Keep the reader handle separate from the append
+handle, including on Windows where positioned I/O changes the file cursor.
+
+Specialize AVX2 predecessor search for 1-, 2-, 4- and 8-byte columns. Add the
+`simd-utf8` feature for accelerated strings with scalar search; existing `simd`
+continues to enable both. Add all-width lookup benchmarks and correctness checks.
+
 ## 2.0.2 - 2026-10-08
 
 Validate shared string pools in batches, with optional SIMD UTF-8 validation.

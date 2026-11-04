@@ -2,8 +2,6 @@
 use std::arch::x86_64::*;
 
 use crate::Error;
-#[cfg(all(feature = "simd", target_arch = "x86_64"))]
-use crate::{layout::slice, packed::integer};
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Search {
@@ -38,7 +36,15 @@ impl Search {
         if self.avx2 && width <= 8 && count >= 32 / width {
             // SAFETY: detect() established AVX2 support; the complete column has
             // at least one vector and the search bounds its unaligned load.
-            return unsafe { avx2_tail(bytes, width, target) };
+            return unsafe {
+                match width {
+                    1 => avx2_tail::<1>(bytes, target),
+                    2 => avx2_tail::<2>(bytes, target),
+                    4 => avx2_tail::<4>(bytes, target),
+                    8 => avx2_tail::<8>(bytes, target),
+                    _ => binary(bytes, width, target),
+                }
+            };
         }
 
         binary(bytes, width, target)
@@ -91,14 +97,24 @@ fn binary_width<const WIDTH: usize>(bytes: &[u8], target: u128) -> Result<usize,
 
 #[cfg(all(feature = "simd", target_arch = "x86_64"))]
 #[target_feature(enable = "avx2")]
-unsafe fn avx2_tail(bytes: &[u8], width: usize, target: u128) -> Result<usize, Error> {
-    let lanes = 32 / width;
-    let count = bytes.len() / width;
+unsafe fn avx2_tail<const WIDTH: usize>(bytes: &[u8], target: u128) -> Result<usize, Error> {
+    let lanes = 32 / WIDTH;
+    let (column, _) = bytes.as_chunks::<WIDTH>();
+    let count = column.len();
+    let target = target as u64;
     let (mut low, mut high) = (0, count);
 
     while high - low > lanes {
         let mid = low + (high - low) / 2;
-        if integer(slice(bytes, mid * width, width)?)? <= target {
+        let row = column
+            .get(mid)
+            .ok_or(Error::Invalid("packed search column"))?;
+        let mut value = [0; 8];
+        value
+            .get_mut(..WIDTH)
+            .ok_or(Error::Invalid("packed integer width"))?
+            .copy_from_slice(row);
+        if u64::from_le_bytes(value) <= target {
             low = mid + 1;
         } else {
             high = mid;
@@ -107,11 +123,11 @@ unsafe fn avx2_tail(bytes: &[u8], width: usize, target: u128) -> Result<usize, E
 
     let start = low.min(count - lanes);
 
-    // SAFETY: start <= count - lanes, lanes * width == 32, and bytes is a
+    // SAFETY: start <= count - lanes, lanes * WIDTH == 32, and bytes is a
     // complete column. The load is within the slice even for a partial block.
-    let values = unsafe { _mm256_loadu_si256(bytes.as_ptr().add(start * width).cast()) };
+    let values = unsafe { _mm256_loadu_si256(bytes.as_ptr().add(start * WIDTH).cast()) };
 
-    let greater = match width {
+    let greater = match WIDTH {
         1 => _mm256_cmpgt_epi8(
             _mm256_xor_si256(values, _mm256_set1_epi8(i8::MIN)),
             _mm256_set1_epi8((target as u8 ^ 0x80) as i8),
@@ -126,13 +142,13 @@ unsafe fn avx2_tail(bytes: &[u8], width: usize, target: u128) -> Result<usize, E
         ),
         8 => _mm256_cmpgt_epi64(
             _mm256_xor_si256(values, _mm256_set1_epi64x(i64::MIN)),
-            _mm256_set1_epi64x((target as u64 ^ 0x8000_0000_0000_0000) as i64),
+            _mm256_set1_epi64x((target ^ 0x8000_0000_0000_0000) as i64),
         ),
-        _ => return binary(bytes, width, target),
+        _ => return Err(Error::Invalid("packed integer width")),
     };
     let mask = _mm256_movemask_epi8(greater) as u32;
 
-    Ok(start + mask.trailing_zeros() as usize / width)
+    Ok(start + mask.trailing_zeros() as usize / WIDTH)
 }
 
 #[cfg(test)]

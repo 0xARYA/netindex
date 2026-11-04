@@ -1,5 +1,39 @@
 # Benchmarks
 
+## External payload deduplication
+
+Measured on 4 November 2026: Ryzen 9 9950X3D2, Windows x86_64 MSVC, Rust 1.95.0,
+release builds pinned to logical CPU 2 (affinity mask 4). Three alternating,
+sequential runs compare revision `f8719cd` with disk-backed deduplication on the
+same generated input: 100,000 ASN assertions, 4,096 distinct variable-length
+payloads, 1,024-row runs and a 4 KiB payload cache.
+
+| Measurement | Cache-only baseline | Complete deduplication |
+| --- | ---: | ---: |
+| Artifact bytes | 9,536,345 | 1,926,943 |
+| Peak logical temporary bytes | 17,536,257 | 9,926,855 |
+| Retained payload cache bytes | 4,086 | 4,086 |
+| Build elapsed, observed range (ms) | 149–176 | 553–1,135 |
+
+Every assertion's lookup is checked against its generated target, ID and complete
+payload. Complete deduplication also produces byte-for-byte identical output to
+the in-memory builder. The baseline retains the same lookup semantics but writes
+repeated uncached payload bytes. Disk-backed matching reduces this fixture's file
+size by 79.8%, at the cost of more build I/O and elapsed time. The cache continues
+to avoid disk-table work for retained values.
+
+The timer covers pushes and finalization, excluding builder creation, validation
+and the oracle. Logical buffer and temporary sizes do not measure RSS, allocator
+overhead or filesystem cache. These three trials are descriptive; they do not
+establish general build throughput, City conversion savings, or lookup latency.
+Mostly unique inputs also pay for the disk table without a size benefit and may
+need a larger temporary-disk budget. No provider schema is involved.
+
+Reproduce with `cargo +1.95.0 run --locked --release --features external-sort --example dedup`,
+pinning both baseline and candidate to the same CPU. Copy the unchanged example
+into a checkout of the baseline revision for comparison.
+[Input and executable hashes, settings and raw trials](benches/results/2026-11-04-external-dedup.json).
+
 ## MMDB comparison
 
 Measured on 7 October 2026: Ryzen 9 9950X3D2, Windows 11, Rust 1.95.0,
@@ -120,10 +154,10 @@ IPv6 (including uncompressed 128-bit deltas), overlaps, and ASN keys. It measure
 as `{id, value}`, validation, building, and an address-directory experiment.
 Failed operations fail the benchmark process.
 
-## SIMD and validation follow-up
+## SIMD and validation follow-up (2026-10-08)
 
 On the same CPU, AVX2 variants did not consistently beat scalar search across
-cached ASN and City hit workloads. The optional packed-search SIMD path remains unchanged.
+cached ASN and City hit workloads. The optional packed-search SIMD path remained unchanged.
 A 128-bit comparison prototype and width-specialized searches were discarded.
 
 An opening profile instead found discarded target construction during validation.
@@ -137,7 +171,8 @@ synthetic validation measurements, not full-database startup measurements.
 ## String-pool opening
 
 Batched validation checks the shared UTF-8 body and every value boundary.
-The `simd` feature uses `simdutf8`; malformed inputs retain value-relative errors.
+The `simd-utf8` feature (also enabled by `simd`) uses `simdutf8`; malformed inputs
+retain value-relative errors.
 The same cached ASN and City inputs produced 73,355 and 177,408 unique strings.
 
 | Dataset | Feature | Previous per-string validation (us) | Batched validation (us) |
@@ -155,3 +190,16 @@ with and without `simd`, to reproduce. [Measurements](benches/results/2026-10-08
 AVX-512 searches and an additional vectorized ordering pass did not establish
 repeatable gains. A NEON search prototype compiled for ARM64 but was not run;
 the optional UTF-8 dependency supplies ARM64 acceleration independently.
+
+## External I/O, all packed widths, and application build tuning (2026-11-04)
+
+The [performance audit](PERFORMANCE.md) records ETW profiling, assembly inspection,
+paired scalar/AVX2 trials across every packed width, positioned-I/O measurements,
+and application PGO versus ThinLTO. It includes reproduction instructions,
+related-project research, and limits on the conclusions.
+
+Run `cargo bench --bench search -- --test` for all-width correctness checks,
+then repeat with `--features simd` before the benchmark separator. The timed
+workload uses 65,536 address assertions and 1,024 queries per batch, half hits
+and half misses. It checks original targets, IDs, payload bytes, and the actual
+encoded width before timing. CI runs both variants without collecting timings.

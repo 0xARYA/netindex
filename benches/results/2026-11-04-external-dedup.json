@@ -1,0 +1,93 @@
+{
+  "date": "2026-11-04",
+  "baseline_revision": "f8719cd99c8bf7bd0c3e5e903bb634b99eacc43d",
+  "candidate": "uncommitted disk-backed payload deduplication",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "platform": "Windows x86_64 MSVC",
+  "cpu": "AMD Ryzen 9 9950X3D2",
+  "affinity_mask": 4,
+  "command": "cargo +1.95.0 build --locked --release --features external-sort --example dedup",
+  "example_sha256": "04a3d3ac409d8f739c9282f856b4ecfd14bb3c048e21417bc4c6202796195897",
+  "input_sha256": "83c93c8af4c3436dba565d2565076d8005faf3c8e990845610dfb3c337a1010a",
+  "input_hash_encoding": "Concatenate little-endian u32 ASN, little-endian u32 payload length, then payload bytes for each generated assertion in insertion order. Metadata is ASCII dedup-v1.",
+  "baseline_executable_sha256": "3b8df38f974cbd6f4d9a7c34836492080baec34c5af3a5ac5d2ffce6ff40bb1f",
+  "candidate_executable_sha256": "84d5e26fe0b0908ca5d45b86be60f99584ce37700e5611bb84f09859aeabe159",
+  "scope": "Synthetic 100000 ASN assertions, 4096 distinct variable-length payloads, run_records=1024, payload_cache_bytes=4096, temporary_bytes=1073741824. Sequential alternating trials on one logical CPU, no concurrent builds. Timer includes ExternalBuilder pushes and finalization, excluding creation, reader validation and oracle. Every lookup is checked independently; candidate output also matches Builder byte-for-byte. Logical temporary/cache bytes exclude allocator overhead, filesystem cache and RSS. Not a City conversion, cold-disk or lookup latency benchmark. Three trials are descriptive, not a general timing claim.",
+  "trials": [
+    {
+      "trial": 1,
+      "baseline": {
+        "artifact_bytes": 9536345,
+        "build_elapsed_ms": 148.9072,
+        "distinct_payloads": 4096,
+        "fixture": "dedup-v1",
+        "identical_to_in_memory": false,
+        "in_memory_bytes": 1926943,
+        "payload_cache_bytes": 4086,
+        "records": 100000,
+        "temporary_peak_bytes": 17536257
+      },
+      "candidate": {
+        "artifact_bytes": 1926943,
+        "build_elapsed_ms": 1135.292,
+        "distinct_payloads": 4096,
+        "fixture": "dedup-v1",
+        "identical_to_in_memory": true,
+        "in_memory_bytes": 1926943,
+        "payload_cache_bytes": 4086,
+        "records": 100000,
+        "temporary_peak_bytes": 9926855
+      }
+    },
+    {
+      "trial": 2,
+      "baseline": {
+        "artifact_bytes": 9536345,
+        "build_elapsed_ms": 175.8388,
+        "distinct_payloads": 4096,
+        "fixture": "dedup-v1",
+        "identical_to_in_memory": false,
+        "in_memory_bytes": 1926943,
+        "payload_cache_bytes": 4086,
+        "records": 100000,
+        "temporary_peak_bytes": 17536257
+      },
+      "candidate": {
+        "artifact_bytes": 1926943,
+        "build_elapsed_ms": 623.2724,
+        "distinct_payloads": 4096,
+        "fixture": "dedup-v1",
+        "identical_to_in_memory": true,
+        "in_memory_bytes": 1926943,
+        "payload_cache_bytes": 4086,
+        "records": 100000,
+        "temporary_peak_bytes": 9926855
+      }
+    },
+    {
+      "trial": 3,
+      "baseline": {
+        "artifact_bytes": 9536345,
+        "build_elapsed_ms": 158.87,
+        "distinct_payloads": 4096,
+        "fixture": "dedup-v1",
+        "identical_to_in_memory": false,
+        "in_memory_bytes": 1926943,
+        "payload_cache_bytes": 4086,
+        "records": 100000,
+        "temporary_peak_bytes": 17536257
+      },
+      "candidate": {
+        "artifact_bytes": 1926943,
+        "build_elapsed_ms": 552.6073,
+        "distinct_payloads": 4096,
+        "fixture": "dedup-v1",
+        "identical_to_in_memory": true,
+        "in_memory_bytes": 1926943,
+        "payload_cache_bytes": 4086,
+        "records": 100000,
+        "temporary_peak_bytes": 9926855
+      }
+    }
+  ]
+}

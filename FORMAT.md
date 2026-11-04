@@ -55,6 +55,10 @@ payload section and length. Compact slots are two `u32` fields (8 bytes) and
 require a payload pool no larger than `u32::MAX`; otherwise slots are two `u64`
 fields (16 bytes). Bits 2 and 3 cannot both be set. Slots may reuse a span for
 identical payloads; duplicate bytes in distinct spans are also valid.
+Both current builders reuse the first-seen span for identical payloads. The
+external builder uses a bounded memory cache with a disk-backed fallback; older
+external builds may contain repeated bytes after their cache filled. Both forms
+use this same format and remain readable.
 
 Each first-seen span starts at the current payload end; repeated spans must match
 an earlier offset and length exactly. There are no gaps, partial overlaps, or

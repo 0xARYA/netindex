@@ -1,6 +1,6 @@
 [package]
 name = "netindex"
-version = "2.0.2"
+version = "2.1.0"
 edition = "2024"
 rust-version = "1.95"
 description = "Immutable IP-range and ASN indexes with borrowed payloads"
@@ -18,7 +18,8 @@ codec = ["shared-values"]
 external-sort = ["dep:tempfile"]
 mmdb = ["dep:maxminddb"]
 mmap = ["dep:memmap2"]
-simd = ["dep:simdutf8"]
+simd = ["simd-utf8"]
+simd-utf8 = ["dep:simdutf8"]
 shared-values = []
 
 [dependencies]
@@ -39,6 +40,10 @@ tokio = { version = "1", default-features = false, features = ["rt", "sync"] }
 
 [[bench]]
 name = "index"
+harness = false
+
+[[bench]]
+name = "search"
 harness = false
 
 [[bench]]

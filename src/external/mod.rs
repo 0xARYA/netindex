@@ -14,9 +14,12 @@ use crate::{
     payload::{SlotWriter, Slots},
     target::Entry,
 };
+use dedup::DiskTable;
 use runs::{Row, Sorter};
 
+mod dedup;
 mod encode;
+mod positioned;
 mod runs;
 
 /// Working-set and temporary-disk limits for an external build.
@@ -27,7 +30,8 @@ pub struct ExternalOptions {
     /// Maximum target rows sorted in memory before spilling a run.
     pub run_records: usize,
     /// Maximum retained payload key bytes plus 64 bytes charged per cache entry.
-    /// Once full, uncached payloads are written separately, even if identical.
+    /// Uncached payloads use a disk-backed table with complete byte comparisons.
+    /// Zero disables the memory cache, not deduplication.
     pub payload_cache_bytes: usize,
     /// Maximum live temporary-file bytes, including simultaneous merge inputs/output.
     /// Excludes the caller's output and filesystem metadata.
@@ -57,12 +61,14 @@ pub struct ExternalBuildStats {
     pub payload_cache_bytes: usize,
 }
 
-/// Disk-backed builder with bounded target buffers and a payload cache.
+/// Disk-backed builder with bounded target buffers and complete payload deduplication.
 ///
 /// Keeps every assertion and insertion-order ID. Binary merges open two input
-/// runs at a time; only logarithmically many completed runs remain. Cache misses
-/// can produce a larger artifact than [`crate::Builder`], without changing lookup
-/// results. Temporary files are owned by this builder and removed on drop.
+/// runs at a time; only logarithmically many completed runs remain. Payloads outside
+/// the memory cache are indexed on disk and compared in bounded chunks. Identical
+/// payloads share the first-seen span, just as in [`crate::Builder`]. The disk table
+/// uses random I/O and is charged to the temporary-byte limit, including both tables
+/// during growth. Temporary files are owned by this builder and removed on drop.
 /// Cleanup failures or process termination can leave files for the caller to remove.
 ///
 /// # Example
@@ -95,8 +101,10 @@ pub struct ExternalBuilder {
     sorter: Option<Sorter>,
     slots: BufWriter<File>,
     payloads: BufWriter<File>,
+    payload_reader: File,
     cache: HashMap<Vec<u8>, (u64, u64)>,
     cache_bytes: usize,
+    disk_table: DiskTable,
     payload_bytes: usize,
     fixed_length: Option<usize>,
     counts: [usize; 3],
@@ -137,14 +145,18 @@ impl ExternalBuilder {
             .create_new(true)
             .open(directory.path().join("payloads"))
             .map_err(temporary("create payload pool"))?;
+        let payload_reader = File::open(directory.path().join("payloads"))
+            .map_err(temporary("open payload comparison handle"))?;
 
         Ok(Self {
             directory,
             sorter: Some(sorter),
             slots: BufWriter::new(slots),
             payloads: BufWriter::new(payloads),
+            payload_reader,
             cache: HashMap::new(),
             cache_bytes: 0,
+            disk_table: DiskTable::new(),
             payload_bytes: 0,
             fixed_length: None,
             counts: [0; 3],
@@ -200,6 +212,7 @@ impl ExternalBuilder {
         }
 
         self.cache = HashMap::new();
+        self.disk_table.close(&mut self.budget)?;
         self.slots
             .flush()
             .map_err(temporary("flush payload slots"))?;
@@ -297,7 +310,17 @@ impl ExternalBuilder {
             .ok_or(Error::Invalid("temporary section"))?;
         *count = count.checked_add(1).ok_or(Error::Limit("records"))?;
 
-        let existing = self.cache.get(payload).copied();
+        let hash = self.disk_table.hash(payload);
+        let existing = match self.cache.get(payload).copied() {
+            Some(span) => Some(span),
+            None => self.disk_table.find(
+                hash,
+                payload,
+                &mut self.payloads,
+                &self.payload_reader,
+                self.payload_bytes as u64,
+            )?,
+        };
         let added = if existing.is_some() { 0 } else { payload.len() };
         let payload_bytes = self
             .payload_bytes
@@ -335,6 +358,10 @@ impl ExternalBuilder {
 
         let span = existing.unwrap_or((self.payload_bytes as u64, payload.len() as u64));
         if existing.is_none() {
+            if cache_key.is_none() {
+                self.disk_table
+                    .insert(hash, span, self.directory.path(), &mut self.budget)?;
+            }
             self.payloads
                 .write_all(payload)
                 .map_err(temporary("write payload pool"))?;
@@ -441,6 +468,47 @@ mod tests {
     use std::io::Cursor;
 
     use super::*;
+
+    #[test]
+    fn failed_disk_payload_comparison_poisoning_prevents_finalization() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut builder = ExternalBuilder::new(
+            directory.path(),
+            Limits::default(),
+            ExternalOptions {
+                payload_cache_bytes: 0,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        builder.push(Target::Asn(1), b"payload").unwrap();
+        builder.payloads.flush().unwrap();
+        builder.payloads = BufWriter::new(
+            OpenOptions::new()
+                .write(true)
+                .open(builder.directory.path().join("payloads"))
+                .unwrap(),
+        );
+        builder.payload_reader = OpenOptions::new()
+            .write(true)
+            .open(builder.directory.path().join("payloads"))
+            .unwrap();
+
+        assert!(matches!(
+            builder.push(Target::Asn(2), b"payload"),
+            Err(Error::TemporaryIo {
+                operation: "compare payload pool",
+                ..
+            })
+        ));
+        let mut output = Cursor::new(Vec::new());
+        assert!(matches!(
+            builder.write_to(&mut output, b""),
+            Err(Error::Invalid("failed external builder"))
+        ));
+        assert!(output.get_ref().is_empty());
+        assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
+    }
 
     #[test]
     fn failed_temporary_payload_io_poisoning_prevents_finalization() {

@@ -156,6 +156,118 @@ fn a_full_or_disabled_payload_cache_preserves_every_assertion() {
 }
 
 #[test]
+fn disk_deduplication_matches_first_seen_spans_across_growth_and_overlaps() {
+    let directory = tempfile::tempdir().unwrap();
+    let address: IpAddr = "203.0.113.42".parse().unwrap();
+    let targets = [
+        Target::Address(address),
+        Target::Network {
+            address: "203.0.113.0".parse().unwrap(),
+            prefix: 24,
+        },
+        Target::Range {
+            start: address,
+            end: "203.0.113.99".parse().unwrap(),
+        },
+        Target::Asn(64512),
+        Target::Address("::ffff:203.0.113.42".parse().unwrap()),
+    ];
+
+    for payload_cache_bytes in [0, 65, 1024] {
+        for fixed in [false, true] {
+            let mut expected = Builder::new(Limits::default());
+            let mut actual = ExternalBuilder::new(
+                directory.path(),
+                Limits::default(),
+                ExternalOptions {
+                    run_records: 7,
+                    payload_cache_bytes,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            let mut assertions = Vec::new();
+            for id in 0..1200usize {
+                let key = (id % 300) as u32;
+                let mut payload = if fixed {
+                    vec![0x7b; 16]
+                } else {
+                    vec![0x7b; 4 + key as usize % 19]
+                };
+                payload[..4].copy_from_slice(&key.to_le_bytes());
+                if !fixed && key == 0 {
+                    payload.clear();
+                }
+                let target = targets[id % targets.len()];
+                expected.push(target, &payload).unwrap();
+                actual.push(target, &payload).unwrap();
+                assertions.push((id as u32, target, payload));
+            }
+
+            let expected = expected.into_bytes(b"metadata").unwrap();
+            let mut bytes = Cursor::new(Vec::new());
+            let stats = actual.write_to(&mut bytes, b"metadata").unwrap();
+            assert_eq!(bytes.get_ref(), &expected);
+            assert!(stats.payload_cache_bytes <= payload_cache_bytes);
+            let reader = Reader::open(bytes.into_inner(), Limits::default()).unwrap();
+            let mut rows = Vec::new();
+            reader
+                .visit_all(|row| {
+                    rows.push((row.id, row.target, row.payload.to_vec()));
+                    Ok::<_, Error>(())
+                })
+                .unwrap();
+            rows.sort_unstable_by_key(|row| row.0);
+            assert_eq!(rows, assertions);
+
+            let expected_matches: Vec<_> = assertions
+                .iter()
+                .filter(|(_, target, _)| targets[..3].contains(target))
+                .map(|(id, target, payload)| (*id, *target, payload.clone()))
+                .collect();
+            let matches = reader.lookup_ip(address).unwrap();
+            let mut actual_matches: Vec<_> = matches
+                .iter()
+                .map(|row| (row.id, row.target, row.payload.to_vec()))
+                .collect();
+            actual_matches.sort_unstable_by_key(|row| row.0);
+            assert_eq!(actual_matches, expected_matches);
+        }
+    }
+    assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
+}
+
+#[test]
+fn disk_table_budget_failure_poisoning_prevents_output() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut builder = ExternalBuilder::new(
+        directory.path(),
+        Limits::default(),
+        ExternalOptions {
+            payload_cache_bytes: 0,
+            temporary_bytes: 1535,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert!(matches!(
+        builder.push(Target::Asn(1), b"uncached"),
+        Err(Error::Limit("temporary bytes"))
+    ));
+    assert!(matches!(
+        builder.push(Target::Asn(2), b"uncached"),
+        Err(Error::Invalid("failed external builder"))
+    ));
+    let mut output = Cursor::new(Vec::new());
+    assert!(matches!(
+        builder.write_to(&mut output, b""),
+        Err(Error::Invalid("failed external builder"))
+    ));
+    assert!(output.get_ref().is_empty());
+    assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
+}
+
+#[test]
 fn limits_invalid_inputs_and_output_failures_remove_temporary_files() {
     let directory = tempfile::tempdir().unwrap();
 

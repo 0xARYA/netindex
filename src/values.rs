@@ -257,9 +257,9 @@ impl<'a> StringPool<'a> {
     pub fn open(bytes: &'a [u8], limits: Limits) -> Result<Self, Error> {
         let values = ValuePool::open(bytes, limits)?;
 
-        #[cfg(feature = "simd")]
+        #[cfg(feature = "simd-utf8")]
         let body = simdutf8::compat::from_utf8(values.body);
-        #[cfg(not(feature = "simd"))]
+        #[cfg(not(feature = "simd-utf8"))]
         let body = std::str::from_utf8(values.body);
 
         let valid = body.is_ok_and(|body| {
