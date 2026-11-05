@@ -409,3 +409,17 @@ linked disassembly. AVX-512 has gains and regressions; packed NEON improves
 tested hot-IP cases 1.14-1.16x, with other workload tradeoffs. These warm,
 virtualized-host results remain research and do not qualify all microarchitectures
 or justify a blanket production policy.
+
+### Real payload distribution and reuse (P1-09)
+
+[Study/reproduction](benches/payload_distribution/README.md) scans retained
+old/current City output and an independent public IPtoASN snapshot with exact
+byte equality. [Results](benches/payload_distribution/RESULTS.md) retain two
+fresh-process passes, independent Python crosschecks, complete payload/borrowed
+pointer verification, all original ASN assertions, lengths/frequencies, physical
+duplication and insertion-order reuse. Current City payload bytes are fully
+deduplicated; eight-byte variable-length references consume 61.4% of that file.
+The three-byte-ID plus distinct-span-directory arithmetic estimate motivates
+P1-10; it is not an implemented format or measured lookup/build improvement.
+Raw provider records remain private. Locality counts describe construction
+order and distinguish payload-only reuse from the actual cache admission charge.

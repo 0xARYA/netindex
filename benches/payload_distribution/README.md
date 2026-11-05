@@ -55,3 +55,19 @@ each payload as version byte, ASN u32, country-length u16, country UTF-8 and the
 remaining description UTF-8. It verifies every built target/ID/payload against
 the original framed source. No schema is installed in the library. Downloaded
 snapshots change; retain the archive, framed rows and receipt to reproduce a run.
+
+Native runs and distributions are documented in [RESULTS.md](RESULTS.md).
+For retained output:
+
+```sh
+python3 benches/payload_distribution/verify.py /tmp/payload-distribution --output /tmp/distribution.json
+python3 benches/payload_distribution/verify_sources.py /tmp/payload-distribution
+python3 benches/payload_distribution/verify_independent.py /tmp/payload-distribution --output /tmp/independent.json
+```
+
+The independent Python verifier scans every reference with its own slot parser,
+byte-keyed counters, reference-gap histogram and payload-only LRU implementation.
+It checks LRU equivalence only after requiring individual payloads to fit 4 MiB.
+The distinct-intervening tree's independent naive oracle is in the Rust tests.
+Source verification permits Windows/Linux line-ending differences only. Use the
+measurement revision recorded in the results if later library sources change.

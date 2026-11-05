@@ -81,8 +81,10 @@ not complete the broader experiments below.
 
 ## P1: storage and construction
 
-- [ ] **P1-09 Payload distribution (in progress).** Cardinality, lengths, duplicate bytes and
-  repeat distance on real inputs.
+- [x] **P1-09 Payload distribution.** Exact cardinality, lengths, physical/logical
+  duplicate bytes, insertion-order gaps/distinct-byte reuse and cache admission
+  qualified on retained real City and independent IPtoASN snapshots.
+  [Results](benches/payload_distribution/RESULTS.md).
 - [ ] **P1-10 Compact references.** Payload IDs plus a distinct span directory;
   establish the break-even point for variable-length records.
 - [ ] **P1-11 Shared aliases.** Design logical target/ID mappings that preserve
@@ -445,8 +447,9 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-09 payload distribution**. P1-08 completed native
-AVX-512/NEON qualification; results remain workload-specific research.
+Next in priority order: **P1-10 compact references**. P1-09 found variable-length
+payload references dominate current City storage; its arithmetic estimate remains
+unimplemented and excludes decoding/validation/compatibility costs.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
 
@@ -911,12 +914,44 @@ Retain research, without production/API/encoding/version changes. These are
 warm virtualized-host measurements, without PMU or bare-metal isolation. Intel,
 Apple, other ARM cores, SVE/SVE2 and cross-query AVX-512/NEON remain unmeasured.
 [Detailed results and reproducible evidence](benches/architectures/RESULTS.md).
-Next: **P1-09 payload distribution**.
+At the P1-08 checkpoint, next was **P1-09 payload distribution**.
 
-### P1-09 payload distribution started - 2026-11-05
+### P1-09 payload distribution completed - 2026-11-05
 
-Analyzing retained real City old/current output plus a public IPtoASN combined
-IPv4/IPv6 snapshot. Exact byte equality, logical/physical duplication, length and
-frequency distributions, insertion-order reuse and conservative workspace/RSS
-accounting are isolated under benches/payload_distribution. Four independent
-small-fixture tests and study Clippy pass. Raw provider records stay local.
+Measurement revision ccd069d. Three files / two independent real source snapshots:
+old/current retained City (20,255,722 assertions each) and public IPtoASN combined
+IPv4/IPv6 (719,149 ranges, including ASN zero). Raw provider data stays local.
+Two fresh processes per file, reverse case order, CPU 20, Rust 1.95 portable
+release. Input/executable/source hashes, wall/RSS and all aggregate data retained.
+
+City: 271,275 distinct complete payloads / 16,726,691 unique bytes. Original pool
+503,375,959 bytes contains 486,649,268 redundant bytes; the current pool has zero
+redundant bytes. Original/current insertion-order payload digests, frequencies,
+family sharing and reuse agree exactly. Six record lengths (11/46/50/54/58/62),
+reference-weighted p50/p90/p99/max 62 bytes. IPtoASN: 86,902 values / 4,166,150
+unique bytes; 166 lengths, p50/p90/p99/max 40/66/95/222; zero redundant storage.
+
+Exact first-seen 4 MiB key-cache model (length + 64) predicts City's original
+503,375,959 pool bytes and 8,186,119 physical spans exactly. Distinguish that
+non-evicting admission model from reference gaps, distinct reuse and payload-only
+LRU: 94.52% of City's repeated references fit a 4 MiB payload-byte footprint,
+excluding metadata/overhead and without any serving-traffic claim.
+
+Current City references consume 162,045,776 bytes, 61.4% of the file. Three-byte
+IDs + eight-byte distinct span directory estimate 62,937,366 bytes (94.5 MiB
+reference reduction). The same estimate saves 2.8 MiB for IPtoASN. This is P1-10
+input, not an implemented format, measured speed gain or minimum-size claim.
+
+Four focused study tests pass on Windows/Linux. Independent Python full scans
+agree on byte equality/cardinality, lengths/frequencies, physical spans, gaps,
+digests and 4 MiB payload-only LRU counts. All original ASN IDs/targets/payloads
+and all analyzer payload slots/borrowed pointers are checked. Six profile runs,
+exact repeat parity, all retained hashes and 28 measured source/lock files pass.
+Root fmt, both Clippy configurations, default/all-feature tests including ignored,
+warning-denied docs and all-feature package verification pass.
+
+Analyzer times: City ~6.5-7.0 s; IPtoASN ~0.19 s. City modeled workspace 273.8 MiB,
+but maximum RSS ~976.0 MiB old / 530.8 MiB current, including mapped input. The
+512 MiB model is not an RSS bound. No library/API/encoding/version change.
+[Detailed results](benches/payload_distribution/RESULTS.md).
+Next: **P1-10 compact references**.

@@ -1,0 +1,39 @@
+{
+  "script_sha256": "4d084b7daa367d5a4203a21625a49d2e038815e3169397c8557ad62e745504eb",
+  "receipt_sha256": "43a2bc2c992ff70f4efdf78995c486f77de3d7ac103cbf7ffafb4fa507bc452f",
+  "datasets": {
+    "city-original": {
+      "records": 20255722,
+      "distinct_values": 271275,
+      "unique_bytes": 16726691,
+      "logical_bytes": 1195593764,
+      "physical_nonempty_spans": 8186119,
+      "reference_gaps_match": true,
+      "frequency_and_length_histograms_match": true,
+      "payload_only_4mib_lru_hits": 18890111,
+      "logical_payload_sha256": "7ec61477994782265deefd2134fbc0f5cfa00400279ad3f7e87951ff9eb2d63c"
+    },
+    "city-current": {
+      "records": 20255722,
+      "distinct_values": 271275,
+      "unique_bytes": 16726691,
+      "logical_bytes": 1195593764,
+      "physical_nonempty_spans": 271275,
+      "reference_gaps_match": true,
+      "frequency_and_length_histograms_match": true,
+      "payload_only_4mib_lru_hits": 18890111,
+      "logical_payload_sha256": "7ec61477994782265deefd2134fbc0f5cfa00400279ad3f7e87951ff9eb2d63c"
+    },
+    "asn": {
+      "records": 719149,
+      "distinct_values": 86902,
+      "unique_bytes": 4166150,
+      "logical_bytes": 30165566,
+      "physical_nonempty_spans": 86902,
+      "reference_gaps_match": true,
+      "frequency_and_length_histograms_match": true,
+      "payload_only_4mib_lru_hits": 632247,
+      "logical_payload_sha256": "bd88be4b40c88cd3659265239c545adf26a89d921175bfa4aefec681a134b6ec"
+    }
+  }
+}
