@@ -1,0 +1,2699 @@
+{
+  "date": "2026-11-05",
+  "task": "P1-13",
+  "prior_commit": "c7b8530",
+  "host": "Ryzen 9 9950X3D2; WSL2 Ubuntu 24.04; ext4; logical CPU 20",
+  "build_flags": "--locked --release --all-features --example rebuild (scalar replay: --features external-sort,mmap)",
+  "toolchain": [
+    "rustc 1.95.0 (59807616e 2026-04-14)",
+    "binary: rustc",
+    "commit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860",
+    "commit-date: 2026-04-14",
+    "host: x86_64-unknown-linux-gnu",
+    "release: 1.95.0",
+    "LLVM version: 22.1.2"
+  ],
+  "executables_sha256": {
+    "baseline-rebuild": "1f252d5fa779ab9a2b4867c323d7985b5c684446a7dba8329542e4a339ea3b29",
+    "grouped-rebuild": "fb2a85c778eaceceac6200497f335b5d88dbf2c947f3ea42e535250791aff804",
+    "final-rebuild": "0db8df8cd8dcaa3f8ec3bbf97528868fa760602da84c7e5a097fa59320eeff54",
+    "scalar-rebuild": "b01fc3b26e2b1c6fd57403e8f9d3200993a983274fc8f399be1c7964f1e6c184"
+  },
+  "inputs_sha256": {
+    "/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx": "348b657507936b6b8953eb8bc83dcf2e5147c220c7c685da9a734d2d7a1717dd",
+    "/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx": "7e5095968be43d8537ca76a9039fede4227c48fd7ec215e55d31f9f921cb9acf",
+    "/root/.cache/netindex-disk-cache/canonical.nidx": "1fc75070b34d5c3e8050e19c189371fee77582ba3b3dbe73ea4d4da5bc2f8917"
+  },
+  "final_sources_sha256": {
+    "src/external/dedup.rs": "755d00a5826aca122eb7940a3129c62a8173e345dc6ee8e8c4953b4776be7cb9",
+    "src/external/groups.rs": "6de918298d3c1d04fc130fd806af2d4fde3f323cddcf7c73615fe43f04124ad9",
+    "src/external/mod.rs": "004a97a9dd3b45625bd662a596f28831eaa27505737bbd455c59c6806d475204"
+  },
+  "initial_sources_sha256": {
+    "src/external/dedup.rs": "a3f69f508a4f2211e4b018f7c02f6bdc0ff02e83c075e0e97f086adde481f4ae",
+    "src/external/groups.rs": "ab8459fd41b5e92f345612fed1b89b8d09549482bff436e618b1e45586e78d0c",
+    "src/external/mod.rs": "aca2e7f1e70593b559fb2c4e794401e7fa036d3d6c04511c55e45384a7ce48e9"
+  },
+  "scope": "Warm-input construction excludes replay preparation, verification and fsync. Grid runs: GNU time. Separate perf counters: whole process. Each output matched input with cmp. Initial probe always scanned a group; final probe checks home slot first and keeps grouped lookup out of the ordinary inlined path. SIMD-off replays exercise the portable group implementation.",
+  "replays": {
+    "asn-zero-perf-baseline": {
+      "phases": [
+        {
+          "input_open_ms": 24.992335,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 68.088371,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 395.026525,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.775197,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 111.652485
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:10:40 2026",
+        "",
+        "579.28,msec,task-clock,579281785,100.00,0.998,CPUs utilized",
+        "2962269408,,cycles,579281785,100.00,5.114,GHz",
+        "7162652721,,instructions,579281785,100.00,2.42,insn per cycle",
+        "415605,,syscalls:sys_enter_pread64,579281785,100.00,717.449,K/sec",
+        "114313,,syscalls:sys_enter_pwrite64,579281785,100.00,197.336,K/sec"
+      ],
+      "counters": {
+        "task-clock": 579.28,
+        "cycles": 2962269408.0,
+        "instructions": 7162652721.0,
+        "syscalls:sys_enter_pread64": 415605.0,
+        "syscalls:sys_enter_pwrite64": 114313.0
+      }
+    },
+    "canonical-0-grouped-r2": {
+      "phases": [
+        {
+          "input_open_ms": 132.95046,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 375.750648,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3596.056323,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 135.468287,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 422.737607
+        }
+      ],
+      "peak_rss_kib": 445428.0,
+      "user_seconds": 2.87,
+      "system_seconds": 1.5
+    },
+    "asn-scalar": {
+      "phases": [
+        {
+          "input_open_ms": 30.476846,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 58.012738,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 315.69907800000004,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 15.935667,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 120.62083
+        }
+      ]
+    },
+    "canonical-finalgrid-final-r2": {
+      "phases": [
+        {
+          "input_open_ms": 123.791278,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 352.940285,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3271.642896,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 125.15082199999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 429.040525
+        }
+      ],
+      "peak_rss_kib": 445948.0,
+      "user_seconds": 2.87,
+      "system_seconds": 1.16
+    },
+    "city-finalgrid-final-r1": {
+      "phases": [
+        {
+          "input_open_ms": 421.790208,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2044.941797,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14836.598252,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 424.12742799999995,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1628.296817
+        }
+      ],
+      "peak_rss_kib": 1457076.0,
+      "user_seconds": 11.59,
+      "system_seconds": 6.75
+    },
+    "city-8388608-grouped-r2": {
+      "phases": [
+        {
+          "input_open_ms": 488.41243099999997,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2202.002668,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14300.845535,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 433.898921,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1479.858384
+        }
+      ],
+      "peak_rss_kib": 1457072.0,
+      "user_seconds": 11.4,
+      "system_seconds": 6.25
+    },
+    "canonical-8388608-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 125.15232300000001,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 361.736064,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3202.383042,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 133.11662099999998,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 409.900172
+        }
+      ],
+      "peak_rss_kib": 445180.0,
+      "user_seconds": 2.84,
+      "system_seconds": 1.12
+    },
+    "city-zero-perf-final": {
+      "phases": [
+        {
+          "input_open_ms": 514.164443,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2426.382917,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 19827.810362,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 662.900394,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 2313.401109
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:11:04 2026",
+        "",
+        "24224.43,msec,task-clock,24224426077,100.00,0.985,CPUs utilized",
+        "109662933900,,cycles,24224426077,100.00,4.527,GHz",
+        "239851635986,,instructions,24224426077,100.00,2.19,insn per cycle",
+        "18355202,,syscalls:sys_enter_pread64,24224426077,100.00,757.715,K/sec",
+        "500002,,syscalls:sys_enter_pwrite64,24224426077,100.00,20.640,K/sec"
+      ],
+      "counters": {
+        "task-clock": 24224.43,
+        "cycles": 109662933900.0,
+        "instructions": 239851635986.0,
+        "syscalls:sys_enter_pread64": 18355202.0,
+        "syscalls:sys_enter_pwrite64": 500002.0
+      }
+    },
+    "canonical-8388608-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 126.09072900000001,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 362.636823,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3311.7034670000003,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 132.267086,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 415.80908900000003
+        }
+      ],
+      "peak_rss_kib": 445180.0,
+      "user_seconds": 2.79,
+      "system_seconds": 1.29
+    },
+    "canonical-0-grouped-r1": {
+      "phases": [
+        {
+          "input_open_ms": 130.125873,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 368.02700799999997,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3683.138199,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 124.15681500000001,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 401.19095
+        }
+      ],
+      "peak_rss_kib": 445428.0,
+      "user_seconds": 2.72,
+      "system_seconds": 1.7
+    },
+    "city-8388608-grouped-r1": {
+      "phases": [
+        {
+          "input_open_ms": 441.770534,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2205.1416590000003,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14934.917928,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 598.745509,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1637.9402810000001
+        }
+      ],
+      "peak_rss_kib": 1457076.0,
+      "user_seconds": 11.69,
+      "system_seconds": 6.01
+    },
+    "asn-0-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 17.315234,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 43.294157,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 354.66814600000004,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 17.206873,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 124.63449
+        }
+      ],
+      "peak_rss_kib": 98908.0,
+      "user_seconds": 0.36,
+      "system_seconds": 0.15
+    },
+    "city-0-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 444.620359,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2400.4317889999998,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14764.254055,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 591.8714120000001,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1665.547063
+        }
+      ],
+      "peak_rss_kib": 1457316.0,
+      "user_seconds": 11.99,
+      "system_seconds": 6.65
+    },
+    "city-zero-perf-baseline": {
+      "phases": [
+        {
+          "input_open_ms": 488.188081,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2333.198009,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 17835.089537000003,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 492.787767,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 2042.6554659999997
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:10:42 2026",
+        "",
+        "21899.61,msec,task-clock,21899608029,100.00,0.985,CPUs utilized",
+        "101103945289,,cycles,21899608029,100.00,4.617,GHz",
+        "239374351750,,instructions,21899608029,100.00,2.37,insn per cycle",
+        "18261321,,syscalls:sys_enter_pread64,21899608029,100.00,833.865,K/sec",
+        "500002,,syscalls:sys_enter_pwrite64,21899608029,100.00,22.832,K/sec"
+      ],
+      "counters": {
+        "task-clock": 21899.61,
+        "cycles": 101103945289.0,
+        "instructions": 239374351750.0,
+        "syscalls:sys_enter_pread64": 18261321.0,
+        "syscalls:sys_enter_pwrite64": 500002.0
+      }
+    },
+    "canonical-scalar": {
+      "phases": [
+        {
+          "input_open_ms": 140.85065,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 370.016298,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3553.4320749999997,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 131.50195100000002,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 452.852388
+        }
+      ]
+    },
+    "asn-8388608-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 16.802813,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 43.731183,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 298.672086,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.06782,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 117.123165
+        }
+      ],
+      "peak_rss_kib": 98916.0,
+      "user_seconds": 0.35,
+      "system_seconds": 0.1
+    },
+    "city-scalar": {
+      "phases": [
+        {
+          "input_open_ms": 474.035258,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2431.155946,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14985.510724,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 603.754872,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 2017.656292
+        }
+      ]
+    },
+    "canonical-perf-baseline": {
+      "phases": [
+        {
+          "input_open_ms": 128.446902,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 386.158709,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3534.9513039999997,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 126.78431400000001,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 437.22838
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:08:55 2026",
+        "",
+        "4339.79,msec,task-clock,4339793971,100.00,0.993,CPUs utilized",
+        "22419296418,,cycles,4339793971,100.00,5.166,GHz",
+        "53309067023,,instructions,4339793971,100.00,2.38,insn per cycle",
+        "2121823,,syscalls:sys_enter_pread64,4339793971,100.00,488.923,K/sec",
+        "259503,,syscalls:sys_enter_pwrite64,4339793971,100.00,59.796,K/sec"
+      ],
+      "counters": {
+        "task-clock": 4339.79,
+        "cycles": 22419296418.0,
+        "instructions": 53309067023.0,
+        "syscalls:sys_enter_pread64": 2121823.0,
+        "syscalls:sys_enter_pwrite64": 259503.0
+      }
+    },
+    "city-perf-baseline": {
+      "phases": [
+        {
+          "input_open_ms": 446.648491,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2174.5642310000003,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 19529.704857999997,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 531.214521,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1519.828308
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:09:08 2026",
+        "",
+        "18502.28,msec,task-clock,18502280228,100.00,0.796,CPUs utilized",
+        "90278067043,,cycles,18502280228,100.00,4.879,GHz",
+        "218911555204,,instructions,18502280228,100.00,2.42,insn per cycle",
+        "8124584,,syscalls:sys_enter_pread64,18502280228,100.00,439.113,K/sec",
+        "260464,,syscalls:sys_enter_pwrite64,18502280228,100.00,14.077,K/sec"
+      ],
+      "counters": {
+        "task-clock": 18502.28,
+        "cycles": 90278067043.0,
+        "instructions": 218911555204.0,
+        "syscalls:sys_enter_pread64": 8124584.0,
+        "syscalls:sys_enter_pwrite64": 260464.0
+      }
+    },
+    "asn-finalgrid-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 15.955134,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 40.702043,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 276.881238,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 15.973794999999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 108.074069
+        }
+      ],
+      "peak_rss_kib": 98912.0,
+      "user_seconds": 0.31,
+      "system_seconds": 0.11
+    },
+    "asn-perf-grouped": {
+      "phases": [
+        {
+          "input_open_ms": 17.983843,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 43.217553,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 289.71776500000004,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.499678,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 114.796544
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:08:54 2026",
+        "",
+        "451.37,msec,task-clock,451368805,100.00,0.999,CPUs utilized",
+        "2396442860,,cycles,451368805,100.00,5.309,GHz",
+        "6214404329,,instructions,451368805,100.00,2.59,insn per cycle",
+        "79388,,syscalls:sys_enter_pread64,451368805,100.00,175.883,K/sec",
+        "8186,,syscalls:sys_enter_pwrite64,451368805,100.00,18.136,K/sec"
+      ],
+      "counters": {
+        "task-clock": 451.37,
+        "cycles": 2396442860.0,
+        "instructions": 6214404329.0,
+        "syscalls:sys_enter_pread64": 79388.0,
+        "syscalls:sys_enter_pwrite64": 8186.0
+      }
+    },
+    "canonical-8388608-grouped-r1": {
+      "phases": [
+        {
+          "input_open_ms": 127.773473,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 357.818008,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3311.974799,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 123.457603,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 401.20102099999997
+        }
+      ],
+      "peak_rss_kib": 445940.0,
+      "user_seconds": 2.76,
+      "system_seconds": 1.3
+    },
+    "asn-zero-perf-final": {
+      "phases": [
+        {
+          "input_open_ms": 16.770208,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 42.805229,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 368.209327,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.695567,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 112.53811900000001
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:10:41 2026",
+        "",
+        "527.66,msec,task-clock,527655600,100.00,0.999,CPUs utilized",
+        "2782443369,,cycles,527655600,100.00,5.273,GHz",
+        "7168810187,,instructions,527655600,100.00,2.58,insn per cycle",
+        "415720,,syscalls:sys_enter_pread64,527655600,100.00,787.862,K/sec",
+        "114313,,syscalls:sys_enter_pwrite64,527655600,100.00,216.643,K/sec"
+      ],
+      "counters": {
+        "task-clock": 527.66,
+        "cycles": 2782443369.0,
+        "instructions": 7168810187.0,
+        "syscalls:sys_enter_pread64": 415720.0,
+        "syscalls:sys_enter_pwrite64": 114313.0
+      }
+    },
+    "asn-0-grouped-r1": {
+      "phases": [
+        {
+          "input_open_ms": 17.179799,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 44.832518,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 352.20821,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 72.67505,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 170.46951900000002
+        }
+      ],
+      "peak_rss_kib": 98904.0,
+      "user_seconds": 0.36,
+      "system_seconds": 0.14
+    },
+    "city-finalgrid-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 431.226612,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2195.1921190000003,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14196.408965,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 423.482741,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1532.4270709999998
+        }
+      ],
+      "peak_rss_kib": 1457084.0,
+      "user_seconds": 11.47,
+      "system_seconds": 6.19
+    },
+    "asn-finalgrid-final-r1": {
+      "phases": [
+        {
+          "input_open_ms": 16.336435,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 42.207471000000005,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 325.850928,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.054606,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 114.801272
+        }
+      ],
+      "peak_rss_kib": 99036.0,
+      "user_seconds": 0.34,
+      "system_seconds": 0.1
+    },
+    "asn-finalgrid-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 16.315416,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 43.418933,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 282.739212,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 15.752109,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 106.117617
+        }
+      ],
+      "peak_rss_kib": 98912.0,
+      "user_seconds": 0.32,
+      "system_seconds": 0.11
+    },
+    "canonical-perf-grouped": {
+      "phases": [
+        {
+          "input_open_ms": 128.144805,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 396.377618,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3689.640228,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 127.24898300000001,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 466.427479
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:08:59 2026",
+        "",
+        "4544.46,msec,task-clock,4544459712,100.00,0.996,CPUs utilized",
+        "23030586128,,cycles,4544459712,100.00,5.068,GHz",
+        "53259459493,,instructions,4544459712,100.00,2.31,insn per cycle",
+        "2111281,,syscalls:sys_enter_pread64,4544459712,100.00,464.584,K/sec",
+        "259105,,syscalls:sys_enter_pwrite64,4544459712,100.00,57.016,K/sec"
+      ],
+      "counters": {
+        "task-clock": 4544.46,
+        "cycles": 23030586128.0,
+        "instructions": 53259459493.0,
+        "syscalls:sys_enter_pread64": 2111281.0,
+        "syscalls:sys_enter_pwrite64": 259105.0
+      }
+    },
+    "asn-0-grouped-r2": {
+      "phases": [
+        {
+          "input_open_ms": 18.528803,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 46.097318,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 422.88533099999995,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.767802,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 117.662192
+        }
+      ],
+      "peak_rss_kib": 98904.0,
+      "user_seconds": 0.35,
+      "system_seconds": 0.18
+    },
+    "city-finalgrid-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 434.699449,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2065.8129710000003,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14402.875289000001,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 511.03719700000005,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1818.103018
+        }
+      ],
+      "peak_rss_kib": 1457084.0,
+      "user_seconds": 11.89,
+      "system_seconds": 6.16
+    },
+    "canonical-0-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 124.824111,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 364.33754200000004,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3805.5805940000005,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 122.994056,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 410.606521
+        }
+      ],
+      "peak_rss_kib": 445948.0,
+      "user_seconds": 2.82,
+      "system_seconds": 1.73
+    },
+    "canonical-0-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 126.322578,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 356.338364,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3601.03762,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 131.857778,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 415.760802
+        }
+      ],
+      "peak_rss_kib": 445184.0,
+      "user_seconds": 2.8,
+      "system_seconds": 1.56
+    },
+    "city-0-grouped-r2": {
+      "phases": [
+        {
+          "input_open_ms": 434.815742,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2162.6690750000002,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 15209.098627,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 422.457695,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1758.828514
+        }
+      ],
+      "peak_rss_kib": 1457304.0,
+      "user_seconds": 11.76,
+      "system_seconds": 7.18
+    },
+    "city-0-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 431.148432,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2256.3875749999997,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 15292.223995,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 610.5919,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1691.198005
+        }
+      ],
+      "peak_rss_kib": 1457316.0,
+      "user_seconds": 11.74,
+      "system_seconds": 7.27
+    },
+    "canonical-finalgrid-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 124.851537,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 355.526533,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3067.597104,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 125.05707699999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 382.88110800000004
+        }
+      ],
+      "peak_rss_kib": 445184.0,
+      "user_seconds": 2.65,
+      "system_seconds": 1.14
+    },
+    "asn-0-grouped-r0": {
+      "phases": [
+        {
+          "input_open_ms": 15.827986,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 42.509083000000004,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 354.50453999999996,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.682056,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 115.469024
+        }
+      ],
+      "peak_rss_kib": 98908.0,
+      "user_seconds": 0.36,
+      "system_seconds": 0.15
+    },
+    "canonical-finalgrid-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 126.86798099999999,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 367.31,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3185.480401,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 122.182607,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 400.72740400000004
+        }
+      ],
+      "peak_rss_kib": 445436.0,
+      "user_seconds": 2.69,
+      "system_seconds": 1.24
+    },
+    "city-8388608-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 444.725246,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2241.634222,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 16186.236921999998,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 434.83259400000003,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1573.294108
+        }
+      ],
+      "peak_rss_kib": 1457084.0,
+      "user_seconds": 12.08,
+      "system_seconds": 7.69
+    },
+    "city-0-grouped-r1": {
+      "phases": [
+        {
+          "input_open_ms": 432.585327,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2117.9195640000003,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 16453.627529999998,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 595.1092100000001,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1710.8816610000001
+        }
+      ],
+      "peak_rss_kib": 1457304.0,
+      "user_seconds": 12.18,
+      "system_seconds": 7.05
+    },
+    "asn-8388608-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 18.445156,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 48.648232,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 306.23791500000004,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.60559,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 124.307973
+        }
+      ],
+      "peak_rss_kib": 98916.0,
+      "user_seconds": 0.36,
+      "system_seconds": 0.11
+    },
+    "canonical-finalgrid-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 124.60335,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 354.08756800000003,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3131.920536,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 125.94803099999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 407.13005000000004
+        }
+      ],
+      "peak_rss_kib": 445180.0,
+      "user_seconds": 2.77,
+      "system_seconds": 1.06
+    },
+    "city-finalgrid-final-r2": {
+      "phases": [
+        {
+          "input_open_ms": 422.008021,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2006.074221,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14778.350698,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 758.560392,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 2484.98639
+        }
+      ],
+      "peak_rss_kib": 1457076.0,
+      "user_seconds": 12.48,
+      "system_seconds": 6.51
+    },
+    "canonical-finalgrid-final-r1": {
+      "phases": [
+        {
+          "input_open_ms": 125.329929,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 355.636522,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3185.464895,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 123.325695,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 398.860436
+        }
+      ],
+      "peak_rss_kib": 445948.0,
+      "user_seconds": 2.56,
+      "system_seconds": 1.35
+    },
+    "city-perf-grouped": {
+      "phases": [
+        {
+          "input_open_ms": 443.647156,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2114.374529,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14948.51357,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 440.19244699999996,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1517.718919
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:09:32 2026",
+        "",
+        "18263.28,msec,task-clock,18263277225,100.00,0.982,CPUs utilized",
+        "89570892389,,cycles,18263277225,100.00,4.904,GHz",
+        "219135041696,,instructions,18263277225,100.00,2.45,insn per cycle",
+        "8099169,,syscalls:sys_enter_pread64,18263277225,100.00,443.467,K/sec",
+        "259739,,syscalls:sys_enter_pwrite64,18263277225,100.00,14.222,K/sec"
+      ],
+      "counters": {
+        "task-clock": 18263.28,
+        "cycles": 89570892389.0,
+        "instructions": 219135041696.0,
+        "syscalls:sys_enter_pread64": 8099169.0,
+        "syscalls:sys_enter_pwrite64": 259739.0
+      }
+    },
+    "asn-0-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 16.917194,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 43.433212999999995,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 357.438112,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.5146,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 107.762147
+        }
+      ],
+      "peak_rss_kib": 98908.0,
+      "user_seconds": 0.34,
+      "system_seconds": 0.17
+    },
+    "canonical-8388608-grouped-r0": {
+      "phases": [
+        {
+          "input_open_ms": 129.162863,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 401.131827,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3317.207418,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 128.553422,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 414.14525000000003
+        }
+      ],
+      "peak_rss_kib": 445688.0,
+      "user_seconds": 2.89,
+      "system_seconds": 1.25
+    },
+    "city-8388608-baseline-r2": {
+      "phases": [
+        {
+          "input_open_ms": 557.4391549999999,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2165.572966,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14522.623878999999,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 580.094582,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1899.665111
+        }
+      ],
+      "peak_rss_kib": 1458616.0,
+      "user_seconds": 11.83,
+      "system_seconds": 6.24
+    },
+    "asn-8388608-grouped-r2": {
+      "phases": [
+        {
+          "input_open_ms": 16.672637,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 43.183688,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 304.856691,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.577189,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 119.924003
+        }
+      ],
+      "peak_rss_kib": 99032.0,
+      "user_seconds": 0.37,
+      "system_seconds": 0.09
+    },
+    "city-perf-final": {
+      "phases": [
+        {
+          "input_open_ms": 443.35056000000003,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2104.555624,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 15582.875453,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 646.638837,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1841.301777
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:09:51 2026",
+        "",
+        "19218.19,msec,task-clock,19218191323,100.00,0.983,CPUs utilized",
+        "93334571417,,cycles,19218191323,100.00,4.857,GHz",
+        "219406273836,,instructions,19218191323,100.00,2.35,insn per cycle",
+        "8101497,,syscalls:sys_enter_pread64,19218191323,100.00,421.554,K/sec",
+        "260136,,syscalls:sys_enter_pwrite64,19218191323,100.00,13.536,K/sec"
+      ],
+      "counters": {
+        "task-clock": 19218.19,
+        "cycles": 93334571417.0,
+        "instructions": 219406273836.0,
+        "syscalls:sys_enter_pread64": 8101497.0,
+        "syscalls:sys_enter_pwrite64": 260136.0
+      }
+    },
+    "asn-finalgrid-final-r2": {
+      "phases": [
+        {
+          "input_open_ms": 15.957696,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 41.231939000000004,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 288.278082,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.28683,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 109.63489999999999
+        }
+      ],
+      "peak_rss_kib": 99036.0,
+      "user_seconds": 0.33,
+      "system_seconds": 0.11
+    },
+    "asn-8388608-grouped-r0": {
+      "phases": [
+        {
+          "input_open_ms": 16.406332,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 42.534169,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 300.537484,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 17.410928,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 123.592386
+        }
+      ],
+      "peak_rss_kib": 99032.0,
+      "user_seconds": 0.34,
+      "system_seconds": 0.12
+    },
+    "asn-8388608-grouped-r1": {
+      "phases": [
+        {
+          "input_open_ms": 15.793117999999998,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 41.289769,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 286.996064,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 17.894422,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 115.546292
+        }
+      ],
+      "peak_rss_kib": 99032.0,
+      "user_seconds": 0.33,
+      "system_seconds": 0.1
+    },
+    "asn-perf-final": {
+      "phases": [
+        {
+          "input_open_ms": 16.572408,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 42.045116,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 353.137161,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 17.315812,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 128.039919
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:08:54 2026",
+        "",
+        "483.72,msec,task-clock,483717896,100.00,0.917,CPUs utilized",
+        "2531713334,,cycles,483717896,100.00,5.234,GHz",
+        "6219602951,,instructions,483717896,100.00,2.46,insn per cycle",
+        "79373,,syscalls:sys_enter_pread64,483717896,100.00,164.089,K/sec",
+        "8184,,syscalls:sys_enter_pwrite64,483717896,100.00,16.919,K/sec"
+      ],
+      "counters": {
+        "task-clock": 483.72,
+        "cycles": 2531713334.0,
+        "instructions": 6219602951.0,
+        "syscalls:sys_enter_pread64": 79373.0,
+        "syscalls:sys_enter_pwrite64": 8184.0
+      }
+    },
+    "city-0-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 435.60105799999997,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2087.791405,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 15691.013831,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 584.155082,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1755.3583239999998
+        }
+      ],
+      "peak_rss_kib": 1457312.0,
+      "user_seconds": 11.96,
+      "system_seconds": 7.28
+    },
+    "asn-perf-baseline": {
+      "phases": [
+        {
+          "input_open_ms": 17.751045,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 46.100072,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 305.633531,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.571171,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 114.561651
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:08:53 2026",
+        "",
+        "470.37,msec,task-clock,470371334,100.00,0.998,CPUs utilized",
+        "2430440768,,cycles,470371334,100.00,5.167,GHz",
+        "6231425286,,instructions,470371334,100.00,2.56,insn per cycle",
+        "79381,,syscalls:sys_enter_pread64,470371334,100.00,168.762,K/sec",
+        "8186,,syscalls:sys_enter_pwrite64,470371334,100.00,17.403,K/sec"
+      ],
+      "counters": {
+        "task-clock": 470.37,
+        "cycles": 2430440768.0,
+        "instructions": 6231425286.0,
+        "syscalls:sys_enter_pread64": 79381.0,
+        "syscalls:sys_enter_pwrite64": 8186.0
+      }
+    },
+    "asn-8388608-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 16.535343,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 42.819623,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 300.55656,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 17.748186,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 119.007703
+        }
+      ],
+      "peak_rss_kib": 98912.0,
+      "user_seconds": 0.36,
+      "system_seconds": 0.1
+    },
+    "canonical-8388608-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 124.21641,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 365.254713,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3871.187243,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 133.274613,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 506.92337
+        }
+      ],
+      "peak_rss_kib": 445176.0,
+      "user_seconds": 2.93,
+      "system_seconds": 1.47
+    },
+    "canonical-finalgrid-final-r0": {
+      "phases": [
+        {
+          "input_open_ms": 124.657231,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 351.413389,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3166.619781,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 122.11913100000001,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 397.801103
+        }
+      ],
+      "peak_rss_kib": 445948.0,
+      "user_seconds": 2.66,
+      "system_seconds": 1.24
+    },
+    "city-finalgrid-final-r0": {
+      "phases": [
+        {
+          "input_open_ms": 427.555987,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2024.1533289999998,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14684.610709999999,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 571.465993,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1924.825533
+        }
+      ],
+      "peak_rss_kib": 1457076.0,
+      "user_seconds": 11.6,
+      "system_seconds": 6.75
+    },
+    "asn-finalgrid-final-r0": {
+      "phases": [
+        {
+          "input_open_ms": 16.07081,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 42.116621,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 293.721248,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4456448,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 15.922716,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 109.675106
+        }
+      ],
+      "peak_rss_kib": 99036.0,
+      "user_seconds": 0.33,
+      "system_seconds": 0.1
+    },
+    "canonical-0-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 131.85889,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 375.36985699999997,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3566.237966,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 125.901669,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 413.33243699999997
+        }
+      ],
+      "peak_rss_kib": 445436.0,
+      "user_seconds": 2.86,
+      "system_seconds": 1.48
+    },
+    "city-8388608-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 454.925973,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2306.3706079999997,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14851.392071,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 540.103404,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1527.303883
+        }
+      ],
+      "peak_rss_kib": 1457080.0,
+      "user_seconds": 11.45,
+      "system_seconds": 6.86
+    },
+    "canonical-8388608-grouped-r2": {
+      "phases": [
+        {
+          "input_open_ms": 131.035362,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 365.555993,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3354.3947319999997,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 125.709605,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 441.095439
+        }
+      ],
+      "peak_rss_kib": 445940.0,
+      "user_seconds": 2.92,
+      "system_seconds": 1.23
+    },
+    "asn-0-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 16.595961,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 42.900678,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 357.914165,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 17.062745,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 111.871184
+        }
+      ],
+      "peak_rss_kib": 98908.0,
+      "user_seconds": 0.36,
+      "system_seconds": 0.14
+    },
+    "city-8388608-grouped-r0": {
+      "phases": [
+        {
+          "input_open_ms": 604.315504,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2331.888416,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 15462.036788000001,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 595.712897,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1823.245633
+        }
+      ],
+      "peak_rss_kib": 1457072.0,
+      "user_seconds": 12.31,
+      "system_seconds": 6.24
+    },
+    "canonical-0-grouped-r0": {
+      "phases": [
+        {
+          "input_open_ms": 126.129728,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 363.813975,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3525.0843800000002,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 123.11330299999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 390.577904
+        }
+      ],
+      "peak_rss_kib": 445432.0,
+      "user_seconds": 2.76,
+      "system_seconds": 1.52
+    },
+    "canonical-perf-final": {
+      "phases": [
+        {
+          "input_open_ms": 131.481278,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 389.404978,
+          "records": 5724698,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 62361502,
+          "build_ms": 3367.453012,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4849664,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 5724698,
+          "temporary_peak_bytes": 570638099
+        },
+        {
+          "assertions": 5724698,
+          "output_open_ms": 121.98072499999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 396.615701
+        }
+      ],
+      "perf_csv": [
+        "# started on Thu Nov  5 15:09:04 2026",
+        "",
+        "4150.44,msec,task-clock,4150441876,100.00,0.997,CPUs utilized",
+        "21913392078,,cycles,4150441876,100.00,5.280,GHz",
+        "53341183372,,instructions,4150441876,100.00,2.43,insn per cycle",
+        "2111077,,syscalls:sys_enter_pread64,4150441876,100.00,508.639,K/sec",
+        "259182,,syscalls:sys_enter_pwrite64,4150441876,100.00,62.447,K/sec"
+      ],
+      "counters": {
+        "task-clock": 4150.44,
+        "cycles": 21913392078.0,
+        "instructions": 53341183372.0,
+        "syscalls:sys_enter_pread64": 2111077.0,
+        "syscalls:sys_enter_pwrite64": 259182.0
+      }
+    },
+    "city-0-grouped-r0": {
+      "phases": [
+        {
+          "input_open_ms": 440.751419,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2236.687958,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 16666.994404,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 528.17451,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1983.629146
+        }
+      ],
+      "peak_rss_kib": 1457304.0,
+      "user_seconds": 12.44,
+      "system_seconds": 8.0
+    },
+    "asn-finalgrid-baseline-r0": {
+      "phases": [
+        {
+          "input_open_ms": 16.746084,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 43.320633,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 294.950341,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.239157000000002,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 110.766743
+        }
+      ],
+      "peak_rss_kib": 98912.0,
+      "user_seconds": 0.33,
+      "system_seconds": 0.11
+    },
+    "city-finalgrid-baseline-r1": {
+      "phases": [
+        {
+          "input_open_ms": 546.680569,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2107.067368,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 13727.258465,
+          "disk_cache_budget": 8388608,
+          "disk_cache_bytes": 4325376,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 422.99099,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1407.105796
+        }
+      ],
+      "peak_rss_kib": 1457080.0,
+      "user_seconds": 10.94,
+      "system_seconds": 5.85
+    }
+  },
+  "disposition": "Rejected: retain P1-12 production code; both candidates archived, with no experimental module active.",
+  "source_archive": {
+    "initial": "e7c448ca797b7052f9b12ac21d926c84fda4667f",
+    "revised": "b335c0d6312e078161990bb6b78756970521fb02"
+  },
+  "verification": {
+    "replays_with_full_assertion_and_100005_query_checks_and_byte_cmp": 70,
+    "windows_candidate_checks": [
+      {
+        "exit_code": 0,
+        "check": "fmt"
+      },
+      {
+        "exit_code": 0,
+        "check": "clippy-default"
+      },
+      {
+        "exit_code": 0,
+        "check": "clippy-all"
+      },
+      {
+        "exit_code": 0,
+        "check": "test-default"
+      },
+      {
+        "exit_code": 0,
+        "check": "test-all"
+      },
+      {
+        "exit_code": 0,
+        "check": "doc"
+      },
+      {
+        "exit_code": 0,
+        "check": "package"
+      }
+    ],
+    "linux_asan": {
+      "simd": {
+        "passed": 17,
+        "failed": 0
+      },
+      "portable": {
+        "passed": 17,
+        "failed": 0
+      }
+    },
+    "production_sources_unchanged": true
+  }
+}

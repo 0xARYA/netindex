@@ -460,3 +460,12 @@ write-back cache for the external builder's temporary payload table. An
 unchanged temporary-disk charges. The measurement includes the canonical
 City base from P1-11. Separate syscall counts show fewer positioned reads
 and writes. Native Windows performance and cold storage were not measured.
+
+## Grouped payload-table metadata - 2026-11-05
+
+[P1-13 results](benches/grouped_metadata/README.md) reject both bounded
+resident fingerprint filters tested against the P1-12 page cache. The revised
+filter used another 128-512 KiB within an unchanged 8 MiB limit, increased
+median build time by 1.7-4.1%, and reduced positioned reads by less than 0.6%.
+Candidate source remains archived; production retains P1-12. Input/output
+identity, scalar/SIMD paths, CPU instructions and syscall counts are recorded.

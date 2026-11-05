@@ -14,6 +14,7 @@ described in [BENCHMARKS.md](../BENCHMARKS.md).
 | [Compact references](compact_references/README.md) | Production format-4 qualification, independent verification and migration tradeoffs |
 | [Shared aliases](shared_aliases/README.md) | Exact City replay and warm format-5 qualification |
 | [Disk-table cache](disk_table_cache/README.md) | Bounded external-build cache, byte-exact replays and syscall counts |
+| [Grouped metadata](grouped_metadata/README.md) | Rejected resident filters, measured tradeoffs and archived source |
 | `results/` | Immutable measurement and verification receipts |
 
 The completed P1-01–P1-08 prototype code is [archived](ARCHIVE.md). Their report

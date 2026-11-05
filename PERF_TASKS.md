@@ -8,7 +8,7 @@ experiment alone does not complete an implementation task.
 
 Historical P1-01 through P1-08 completions record qualification, not shipped
 features. Their source is [archived](benches/ARCHIVE.md); their measurements and
-decisions remain below. P1-12 implements an opt-in disk-table cache; P1-13 is next.
+decisions remain below. P1-13 rejects the measured grouped filters; P1-14 is next.
 
 Statuses: `[ ]` queued; `[-]` active; `[x]` completed; `[!]` waiting on a named
 dependency. Existing 2.1.0 results are in [PERFORMANCE.md](PERFORMANCE.md); they do
@@ -103,7 +103,10 @@ not complete the broader experiments below.
 - [x] **P1-12 Disk-table cache.** Optional bounded write-back cache; a
   4.125 MiB page charge reduced median build time by 11-15% on three inputs.
   [Measurements](benches/disk_table_cache/README.md).
-- [ ] **P1-13 Grouped metadata.** Reduce probe work while keeping exact equality.
+- [x] **P1-13 Grouped metadata.** Qualified and rejected two bounded
+  resident filters. The revised candidate was 1.7-4.1% slower while avoiding
+  less than 0.6% of positioned reads. Keep P1-12's production cache.
+  [Measurements and recovery](benches/grouped_metadata/README.md).
 - [ ] **P1-14 Partitioned dedup.** Compare sequential spill/merge against random I/O.
 - [ ] **P1-15 Bitpacking.** Measure block decoding versus direct packed access.
 - [ ] **P1-16 Compatibility.** Record format and migration decisions before
@@ -1071,3 +1074,30 @@ and 100,005 queries each. Results are warm-input WSL2/ext4 measurements.
 [raw receipt](benches/results/2026-11-05-disk-table-cache.json).
 Next priority: **P1-13 grouped metadata**; measure probe work without
 changing full payload equality.
+
+### P1-13 qualification and disposition - 2026-11-05
+
+Reject both tested grouped-fingerprint candidates for production. Under the
+same 8 MiB table-cache limit, the revised candidate raised median build time
+from 14,196 to 14,778 ms on materialized City, 3,132 to 3,185 ms on the
+canonical City base, and 282.74 to 293.72 ms on IPtoASN. It charged another
+512 KiB on City or 128 KiB on IPtoASN within that limit. Separate profiles
+showed only 0.01-0.51% fewer positioned reads and no consistent instruction
+reduction. Cached adjacent probes already account for most of the opportunity.
+
+The initial always-grouped probe was roughly flat on cached controls. A
+revision checks the home fingerprint first and isolates grouped lookup from
+the ordinary inlined path; its repeated timings still do not justify
+adoption. Both keep exact hash, length and full-payload comparisons and
+preserve byte-identical output and temporary-disk charges.
+
+Candidate source and tests are archived on
+codex/p1-13-grouped-metadata-study. The production tree retains P1-12; no
+experimental modules or new API are left active. The report records source,
+input and binary hashes, complete replays, SIMD-off parity, CPU instructions,
+positioned-I/O counters, timing ranges, and qualification limitations.
+
+[Results and source recovery](benches/grouped_metadata/README.md),
+[raw receipt](benches/results/2026-11-05-grouped-metadata.json).
+Next priority: **P1-14 partitioned deduplication**, comparing sequential
+spill/merge with the unchanged exact-equality random-I/O builder.
