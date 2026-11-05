@@ -19,6 +19,7 @@ use runs::{Row, Sorter};
 
 mod dedup;
 mod encode;
+mod groups;
 mod positioned;
 mod runs;
 
@@ -213,7 +214,7 @@ impl ExternalBuilder {
     /// Enable a write-back cache for the temporary payload table, before pushing rows.
     ///
     /// The cache is allocated only if the table is needed. The limit covers page
-    /// storage and tags, separately from the payload-key cache and temporary disk
+    /// storage, tags and grouped fingerprints, separately from the payload-key cache and temporary disk
     /// budget. It excludes allocator overhead and the operating system's file cache.
     /// Zero (the default) uses uncached positioned I/O.
     ///
@@ -228,7 +229,7 @@ impl ExternalBuilder {
         Ok(())
     }
 
-    /// Memory reserved for disk-table cache pages and tags so far.
+    /// Memory reserved for disk-table cache pages, tags and fingerprints so far.
     pub fn disk_table_cache_bytes(&self) -> usize {
         self.disk_table.cache_bytes()
     }

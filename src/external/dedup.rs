@@ -10,7 +10,7 @@ use tempfile::NamedTempFile;
 
 use crate::Error;
 
-use super::{DiskBudget, positioned, temporary};
+use super::{DiskBudget, groups::Groups, positioned, temporary};
 
 const CELL_BYTES: u64 = 24;
 const PAGE_CELLS: u64 = 16;
@@ -25,6 +25,7 @@ pub(super) struct DiskTable {
     state: RandomState,
     cell_bytes: u64,
     pages: PageCache,
+    groups: Groups,
 }
 
 impl DiskTable {
@@ -36,6 +37,7 @@ impl DiskTable {
             state: RandomState::new(),
             cell_bytes: CELL_BYTES,
             pages: PageCache::default(),
+            groups: Groups::default(),
         }
     }
 
@@ -51,7 +53,7 @@ impl DiskTable {
     }
 
     pub(super) fn cache_bytes(&self) -> usize {
-        self.pages.slots.capacity() * size_of::<Page>()
+        self.pages.slots.capacity() * size_of::<Page>() + self.groups.bytes()
     }
 
     pub(super) fn hash(&self, payload: &[u8]) -> u64 {
@@ -85,6 +87,38 @@ impl DiskTable {
         };
 
         let mut position = hash & (self.capacity - 1);
+        if self.groups.enabled() {
+            let mut remaining = self.capacity;
+            while remaining > 0 {
+                let probe = self.groups.probe(position, hash)?;
+                let mut candidates = probe.candidates;
+                while candidates != 0 {
+                    let lane = candidates.trailing_zeros();
+                    candidates &= candidates - 1;
+                    let cell = self.pages.read(
+                        file.as_file_mut(),
+                        probe.base + u64::from(lane),
+                        self.cell_bytes,
+                    )?;
+                    let length = cell
+                        .length_plus_one
+                        .checked_sub(1)
+                        .ok_or(Error::Invalid("payload table fingerprint"))?;
+                    if cell.hash == hash
+                        && length == payload.len() as u64
+                        && equals(pool, reader, end, cell.offset, payload)?
+                    {
+                        return Ok(Some((cell.offset, length, cell.ordinal as u32)));
+                    }
+                }
+                if probe.empty.is_some() {
+                    return Ok(None);
+                }
+                remaining = remaining.saturating_sub(probe.count);
+                position = (probe.base + 16) & (self.capacity - 1);
+            }
+            return Err(Error::Invalid("full payload table"));
+        }
         for _ in 0..self.capacity {
             let cell = self
                 .pages
@@ -142,6 +176,7 @@ impl DiskTable {
             cell,
             self.cell_bytes,
             &mut self.pages,
+            &mut self.groups,
         )?;
         self.entries += 1;
 
@@ -175,6 +210,12 @@ impl DiskTable {
             .map_err(temporary("size payload table"))?;
 
         self.pages.allocate()?;
+        self.groups.reset(
+            capacity,
+            self.pages
+                .budget
+                .saturating_sub(self.pages.slots.capacity() * size_of::<Page>()),
+        )?;
         if let Some(previous) = self.file.as_mut() {
             // Rehash reads the old table sequentially; the cache then belongs to the new file.
             self.pages
@@ -193,6 +234,7 @@ impl DiskTable {
                         cell,
                         self.cell_bytes,
                         &mut self.pages,
+                        &mut self.groups,
                     )?;
                 }
             }
@@ -426,8 +468,22 @@ fn place(
     cell: Cell,
     cell_bytes: u64,
     pages: &mut PageCache,
+    groups: &mut Groups,
 ) -> Result<(), Error> {
     let mut position = cell.hash & (capacity - 1);
+    if groups.enabled() {
+        let mut remaining = capacity;
+        while remaining > 0 {
+            let probe = groups.probe(position, cell.hash)?;
+            if let Some(position) = probe.empty {
+                pages.write(file, position, cell_bytes, cell)?;
+                return groups.set(position, cell.hash);
+            }
+            remaining = remaining.saturating_sub(probe.count);
+            position = (probe.base + 16) & (capacity - 1);
+        }
+        return Err(Error::Invalid("full payload table"));
+    }
     for _ in 0..capacity {
         if pages.read(file, position, cell_bytes)?.length_plus_one == 0 {
             return pages.write(file, position, cell_bytes, cell);
