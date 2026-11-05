@@ -336,3 +336,12 @@ The [P1-01 study](benches/interleaved/README.md) compares ordinary visitors with
 1/4/8/16-lane research kernels in an isolated core copy. Its
 [results](benches/interleaved/RESULTS.md) include fresh-process repeats, linked-code
 inspection and an explicit decision to retain the prototype without adoption.
+
+## Cross-query SIMD (2026-11-04)
+
+The [P1-02 study](benches/cross_query/README.md) compares ordinary visitors,
+P1-01 interleaving and AVX2 gathers across independent ASN/packed-IP queries,
+with existing tail SIMD independently enabled/disabled.
+[Results and decision](benches/cross_query/RESULTS.md) include all six large-case
+fresh-process repeats, native eight-lane u32 ASN, generated-code inspection and
+qualified hardware-counter availability. No default/API change is adopted.

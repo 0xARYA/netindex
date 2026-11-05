@@ -1,0 +1,321 @@
+{
+  "date": "2026-11-04",
+  "primary_sha256": "e8a44101937216442bbf86127d71e1296d5c1695743e6bb53c83ccdc4bad7d27",
+  "tool": "GNU objdump (GNU Binutils for Ubuntu) 2.42",
+  "inspection_source_sha256": "dcb9de20cb5d6908a49698416b08a1a9e00044551e703179653d36b66b36f42c",
+  "conclusion": "Five specialized AVX2 kernels per executable contain masked 64-bit gather and vector compare instructions: ASN/fence x four/eight queries plus native eight-lane u32 ASN. This confirms cross-query SIMD in linked code, independently of optional existing packed-tail SIMD. Whole-function static instruction counts and stack accesses are not execution counts, spill costs, cache misses or measured memory-level parallelism. Runtime detection is asserted by every checked corpus; forced scalar paths are checked separately. No causal performance attribution follows from disassembly alone.",
+  "counter_probe": {
+    "command": [
+      "perf",
+      "stat",
+      "-e",
+      "cycles,instructions,branches,branch-misses,cache-misses",
+      "--",
+      "/bin/true"
+    ],
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "WARNING: perf not found for kernel 6.6.114.1-microsoft\n\n  You may need to install the following packages for this specific kernel:\n    linux-tools-6.6.114.1-microsoft-standard-WSL2\n    linux-cloud-tools-6.6.114.1-microsoft-standard-WSL2\n\n  You may also want to install one of the following packages to keep up to date:\n    linux-tools-standard-WSL2\n    linux-cloud-tools-standard-WSL2\n",
+    "status": "unavailable"
+  },
+  "rows": [
+    {
+      "profile": "default",
+      "executable_sha256": "a4b2b98bc4150ec5a9bdbfa354d63c201fe5d468fe07572a8524a5e9068b78c7",
+      "disassembly_sha256": "0e995d9a810667863b04c71ed4858d1a12566ff41639c54724bb173b7a5ec9a1",
+      "kernels": [
+        {
+          "symbol": "00000000000250c0 000000000000014e t netindex_cross_query_core::study_simd::vector",
+          "symbol_bytes": 334,
+          "instruction_counts": {
+            "vpgatherqq": 2,
+            "vpgatherdd": 0,
+            "vpcmpgtq": 4,
+            "vpcmpgtd": 0,
+            "vpcmpeqq": 1,
+            "vpxor": 6,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "2516d:\tvpgatherqq ymm12,QWORD PTR [rax+ymm10*8],ymm11",
+            "25186:\tvpgatherqq ymm13,QWORD PTR [rsi+ymm10*8],ymm2"
+          ],
+          "rsp_memory_operand_instructions": 0,
+          "prologue": [
+            "   250c0:\tvmovdqu ymm0,YMMWORD PTR [rdx]",
+            "   250c4:\tvmovdqu ymm1,YMMWORD PTR [rcx]",
+            "   250c8:\tvpcmpgtq ymm2,ymm1,ymm0",
+            "   250cd:\tvtestpd ymm2,ymm2",
+            "   250d2:\tje     251fe <netindex_cross_query_core::study_simd::vector+0x13e>",
+            "   250d8:\tvmovq  xmm3,QWORD PTR [r8+0x30]",
+            "   250de:\tvmovq  xmm4,QWORD PTR [r8+0x20]",
+            "   250e4:\tvpunpcklqdq xmm3,xmm4,xmm3"
+          ]
+        },
+        {
+          "symbol": "0000000000025210 00000000000000ef t netindex_cross_query_core::study_simd::vector",
+          "symbol_bytes": 239,
+          "instruction_counts": {
+            "vpgatherqq": 1,
+            "vpgatherdd": 0,
+            "vpcmpgtq": 3,
+            "vpcmpgtd": 0,
+            "vpcmpeqq": 0,
+            "vpxor": 3,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "25283:\tvpgatherqq ymm9,QWORD PTR [rsi+ymm8*8],ymm5"
+          ],
+          "rsp_memory_operand_instructions": 0,
+          "prologue": [
+            "   25210:\tvmovdqu ymm0,YMMWORD PTR [rdx]",
+            "   25214:\tvmovdqu ymm1,YMMWORD PTR [rcx]",
+            "   25218:\tvpcmpgtq ymm5,ymm1,ymm0",
+            "   2521d:\tvtestpd ymm5,ymm5",
+            "   25222:\tje     252ef <netindex_cross_query_core::study_simd::vector+0xdf>",
+            "   25228:\tvmovq  xmm2,QWORD PTR [r8+0x30]",
+            "   2522e:\tvmovq  xmm3,QWORD PTR [r8+0x20]",
+            "   25234:\tvpunpcklqdq xmm2,xmm3,xmm2"
+          ]
+        },
+        {
+          "symbol": "0000000000025300 000000000000022d t netindex_cross_query_core::study_simd::vector",
+          "symbol_bytes": 557,
+          "instruction_counts": {
+            "vpgatherqq": 1,
+            "vpgatherdd": 0,
+            "vpcmpgtq": 3,
+            "vpcmpgtd": 0,
+            "vpcmpeqq": 0,
+            "vpxor": 4,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "25428:\tvpgatherqq ymm8,QWORD PTR [rsi+ymm7*8],ymm5"
+          ],
+          "rsp_memory_operand_instructions": 16,
+          "prologue": [
+            "   25300:\tpush   rbp",
+            "   25301:\tmov    rbp,rsp",
+            "   25304:\tand    rsp,0xffffffffffffffe0",
+            "   25308:\tsub    rsp,0xe0",
+            "   2530f:\tvmovq  xmm0,QWORD PTR [r8+0x30]",
+            "   25315:\tvmovq  xmm1,QWORD PTR [r8+0x20]",
+            "   2531b:\tvpunpcklqdq xmm0,xmm1,xmm0",
+            "   2531f:\tvmovq  xmm1,QWORD PTR [r8+0x10]"
+          ]
+        },
+        {
+          "symbol": "0000000000025530 00000000000002bd t netindex_cross_query_core::study_simd::vector",
+          "symbol_bytes": 701,
+          "instruction_counts": {
+            "vpgatherqq": 2,
+            "vpgatherdd": 0,
+            "vpcmpgtq": 4,
+            "vpcmpgtd": 0,
+            "vpcmpeqq": 1,
+            "vpxor": 8,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "256c3:\tvpgatherqq ymm8,QWORD PTR [rsi+ymm7*8],ymm9",
+            "256ce:\tvpgatherqq ymm9,QWORD PTR [rax+ymm7*8],ymm4"
+          ],
+          "rsp_memory_operand_instructions": 19,
+          "prologue": [
+            "   25530:\tpush   rbp",
+            "   25531:\tmov    rbp,rsp",
+            "   25534:\tand    rsp,0xffffffffffffffe0",
+            "   25538:\tsub    rsp,0x120",
+            "   2553f:\tvmovq  xmm0,QWORD PTR [r8+0x30]",
+            "   25545:\tvmovq  xmm1,QWORD PTR [r8+0x20]",
+            "   2554b:\tvpunpcklqdq xmm0,xmm1,xmm0",
+            "   2554f:\tvmovq  xmm1,QWORD PTR [r8+0x10]"
+          ]
+        },
+        {
+          "symbol": "00000000000722e0 000000000000027a t netindex_cross_query_core::study_simd::vector32",
+          "symbol_bytes": 634,
+          "instruction_counts": {
+            "vpgatherqq": 0,
+            "vpgatherdd": 1,
+            "vpcmpgtq": 0,
+            "vpcmpgtd": 2,
+            "vpcmpeqq": 0,
+            "vpxor": 13,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "72406:\tvpgatherdd ymm8,DWORD PTR [rsi+ymm7*8],ymm3"
+          ],
+          "rsp_memory_operand_instructions": 0,
+          "prologue": [
+            "   722e0:\tvpxor  xmm1,xmm1,xmm1",
+            "   722e4:\tvpxor  xmm0,xmm0,xmm0",
+            "   722e8:\ttest   r8,r8",
+            "   722eb:\tje     722fb <netindex_cross_query_core::study_simd::vector32+0x1b>",
+            "   722ed:\tvmovd  xmm0,DWORD PTR [rcx]",
+            "   722f1:\tcmp    r8,0x1",
+            "   722f5:\tjne    72481 <netindex_cross_query_core::study_simd::vector32+0x1a1>",
+            "   722fb:\tvpblendd ymm0,ymm0,ymm1,0x2"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "simd",
+      "executable_sha256": "b1f0322bea21791e86b157485614e0b971491c1a5797180568a8e9e02f34ab52",
+      "disassembly_sha256": "187f66bfa7b6400803bc00e725d17c7990f39869b15748ef934f9e789883ece7",
+      "kernels": [
+        {
+          "symbol": "00000000000254e0 000000000000022d t netindex_cross_query_core::study_simd::vector",
+          "symbol_bytes": 557,
+          "instruction_counts": {
+            "vpgatherqq": 1,
+            "vpgatherdd": 0,
+            "vpcmpgtq": 3,
+            "vpcmpgtd": 0,
+            "vpcmpeqq": 0,
+            "vpxor": 4,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "25608:\tvpgatherqq ymm8,QWORD PTR [rsi+ymm7*8],ymm5"
+          ],
+          "rsp_memory_operand_instructions": 16,
+          "prologue": [
+            "   254e0:\tpush   rbp",
+            "   254e1:\tmov    rbp,rsp",
+            "   254e4:\tand    rsp,0xffffffffffffffe0",
+            "   254e8:\tsub    rsp,0xe0",
+            "   254ef:\tvmovq  xmm0,QWORD PTR [r8+0x30]",
+            "   254f5:\tvmovq  xmm1,QWORD PTR [r8+0x20]",
+            "   254fb:\tvpunpcklqdq xmm0,xmm1,xmm0",
+            "   254ff:\tvmovq  xmm1,QWORD PTR [r8+0x10]"
+          ]
+        },
+        {
+          "symbol": "0000000000025710 000000000000014e t netindex_cross_query_core::study_simd::vector",
+          "symbol_bytes": 334,
+          "instruction_counts": {
+            "vpgatherqq": 2,
+            "vpgatherdd": 0,
+            "vpcmpgtq": 4,
+            "vpcmpgtd": 0,
+            "vpcmpeqq": 1,
+            "vpxor": 6,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "257bd:\tvpgatherqq ymm12,QWORD PTR [rax+ymm10*8],ymm11",
+            "257d6:\tvpgatherqq ymm13,QWORD PTR [rsi+ymm10*8],ymm2"
+          ],
+          "rsp_memory_operand_instructions": 0,
+          "prologue": [
+            "   25710:\tvmovdqu ymm0,YMMWORD PTR [rdx]",
+            "   25714:\tvmovdqu ymm1,YMMWORD PTR [rcx]",
+            "   25718:\tvpcmpgtq ymm2,ymm1,ymm0",
+            "   2571d:\tvtestpd ymm2,ymm2",
+            "   25722:\tje     2584e <netindex_cross_query_core::study_simd::vector+0x13e>",
+            "   25728:\tvmovq  xmm3,QWORD PTR [r8+0x30]",
+            "   2572e:\tvmovq  xmm4,QWORD PTR [r8+0x20]",
+            "   25734:\tvpunpcklqdq xmm3,xmm4,xmm3"
+          ]
+        },
+        {
+          "symbol": "0000000000025860 00000000000000ef t netindex_cross_query_core::study_simd::vector",
+          "symbol_bytes": 239,
+          "instruction_counts": {
+            "vpgatherqq": 1,
+            "vpgatherdd": 0,
+            "vpcmpgtq": 3,
+            "vpcmpgtd": 0,
+            "vpcmpeqq": 0,
+            "vpxor": 3,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "258d3:\tvpgatherqq ymm9,QWORD PTR [rsi+ymm8*8],ymm5"
+          ],
+          "rsp_memory_operand_instructions": 0,
+          "prologue": [
+            "   25860:\tvmovdqu ymm0,YMMWORD PTR [rdx]",
+            "   25864:\tvmovdqu ymm1,YMMWORD PTR [rcx]",
+            "   25868:\tvpcmpgtq ymm5,ymm1,ymm0",
+            "   2586d:\tvtestpd ymm5,ymm5",
+            "   25872:\tje     2593f <netindex_cross_query_core::study_simd::vector+0xdf>",
+            "   25878:\tvmovq  xmm2,QWORD PTR [r8+0x30]",
+            "   2587e:\tvmovq  xmm3,QWORD PTR [r8+0x20]",
+            "   25884:\tvpunpcklqdq xmm2,xmm3,xmm2"
+          ]
+        },
+        {
+          "symbol": "0000000000025950 00000000000002bd t netindex_cross_query_core::study_simd::vector",
+          "symbol_bytes": 701,
+          "instruction_counts": {
+            "vpgatherqq": 2,
+            "vpgatherdd": 0,
+            "vpcmpgtq": 4,
+            "vpcmpgtd": 0,
+            "vpcmpeqq": 1,
+            "vpxor": 8,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "25ae3:\tvpgatherqq ymm8,QWORD PTR [rsi+ymm7*8],ymm9",
+            "25aee:\tvpgatherqq ymm9,QWORD PTR [rax+ymm7*8],ymm4"
+          ],
+          "rsp_memory_operand_instructions": 19,
+          "prologue": [
+            "   25950:\tpush   rbp",
+            "   25951:\tmov    rbp,rsp",
+            "   25954:\tand    rsp,0xffffffffffffffe0",
+            "   25958:\tsub    rsp,0x120",
+            "   2595f:\tvmovq  xmm0,QWORD PTR [r8+0x30]",
+            "   25965:\tvmovq  xmm1,QWORD PTR [r8+0x20]",
+            "   2596b:\tvpunpcklqdq xmm0,xmm1,xmm0",
+            "   2596f:\tvmovq  xmm1,QWORD PTR [r8+0x10]"
+          ]
+        },
+        {
+          "symbol": "0000000000072e30 000000000000027a t netindex_cross_query_core::study_simd::vector32",
+          "symbol_bytes": 634,
+          "instruction_counts": {
+            "vpgatherqq": 0,
+            "vpgatherdd": 1,
+            "vpcmpgtq": 0,
+            "vpcmpgtd": 2,
+            "vpcmpeqq": 0,
+            "vpxor": 13,
+            "vpblendvb": 2,
+            "vzeroupper": 1
+          },
+          "gather_excerpts": [
+            "72f56:\tvpgatherdd ymm8,DWORD PTR [rsi+ymm7*8],ymm3"
+          ],
+          "rsp_memory_operand_instructions": 0,
+          "prologue": [
+            "   72e30:\tvpxor  xmm1,xmm1,xmm1",
+            "   72e34:\tvpxor  xmm0,xmm0,xmm0",
+            "   72e38:\ttest   r8,r8",
+            "   72e3b:\tje     72e4b <netindex_cross_query_core::study_simd::vector32+0x1b>",
+            "   72e3d:\tvmovd  xmm0,DWORD PTR [rcx]",
+            "   72e41:\tcmp    r8,0x1",
+            "   72e45:\tjne    72fd1 <netindex_cross_query_core::study_simd::vector32+0x1a1>",
+            "   72e4b:\tvpblendd ymm0,ymm0,ymm1,0x2"
+          ]
+        }
+      ]
+    }
+  ]
+}

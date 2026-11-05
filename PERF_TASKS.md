@@ -51,7 +51,9 @@ not complete the broader experiments below.
 
 - [x] **P1-01 Interleaving.** Measured fixed-group prototype; retained as research,
   with large-uniform gains and hot/small regressions. [Results](benches/interleaved/RESULTS.md).
-- [ ] **P1-02 SIMD across queries.** Compare with existing SIMD tail search.
+- [x] **P1-02 SIMD across queries.** Qualified AVX2 ASN/fence prototypes, native
+  eight-lane u32 ASN, scalar fallbacks and existing tail-SIMD controls. Research
+  retained without default adoption. [Results](benches/cross_query/RESULTS.md).
 - [ ] **P1-03 Eytzinger.** Compare fence layouts with the sorted baseline.
 - [ ] **P1-04 Flat B+ tree.** Prototype PlanB-inspired node search; preserve the
   declared query contract rather than importing single-result LPM assumptions.
@@ -430,8 +432,8 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-02 SIMD across queries**, including lower-overhead
-lane state and hot/partial-batch controls from P1-01.
+Next in priority order: **P1-03 Eytzinger fence layouts**, retaining ordinary
+scalar, interleaving and cross-query SIMD comparators.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
 
@@ -461,7 +463,7 @@ adoption; aggregate costs are not per-query tail latency or production capacity.
 Linked-code inspection records the timed dispatchers and their stack reservations,
 without attributing effects to unmeasured hardware counters. P2-05 remains open
 for future promising variants; P2-07/P2-08 still own representative application PGO
-and build-setting evaluation. Next: P1-02 cross-query SIMD and cheaper lane state.
+and build-setting evaluation. Follow-through: P1-02 cross-query SIMD and cheaper lane state.
 
 Verification: root formatting, default/all-feature all-target Clippy with warnings
 denied, default tests, all-feature tests including ignored cases, warnings-denied
@@ -471,3 +473,42 @@ Python parsing, JSON parsing and local documentation links passed. The integrity
 receipt verifies all 34 local processes and 960 measurements against retained
 source/executable/input/log hashes and checked totals. CI is tracked separately
 on the publishing commit. No version bump or registry publication is needed.
+
+### P1-02 completed: cross-query SIMD (2026-11-04)
+
+[Study and decision](benches/cross_query/RESULTS.md): 32 primary processes plus
+six fresh-process repeats, 1,792 measurements. Compare ordinary visitors, P1-01
+1/4/8/16 interleaving, 4/8-query AVX2 masked 64-bit gathers, and native eight-lane
+u32 ASN gathers. Existing packed-tail SIMD is independently enabled/disabled;
+cross-query AVX2 is detected in both builds. IP variant 112 duplicates variant
+108 as a diagnostic control; native u32 gathers apply to ASN only.
+
+Original assertions, full ordered matches, payload bytes/pointers, partial/empty
+batches and typed callback-error prefixes pass. Forced scalar versions of all
+new kernels pass the same corpus checks. Twelve generated-core unit tests include
+linear unsigned-boundary/alignment oracles. Preparation is independently
+reproduced in a disposable shadow checkout; receipts verify final source, lock,
+executable, input, raw-log, trial-grid and derived timing/count integrity.
+
+Assembly inspection confirms five specialized AVX2 kernels per executable,
+including VPGATHERQQ/VPCMPGTQ and native VPGATHERDD/VPCMPGTD. Eight-query 64-bit
+state remains stack-backed; native u32 ASN supplies a compact-state alternative.
+Matching perf tooling is unavailable for this WSL kernel. Static inspection is
+not runtime counter evidence. Large-uniform benefits coexist with hot/small
+regressions and timing variation; retain research only, with no library source,
+format, API or release-policy change. No universal-win claim or adaptive dispatch
+policy follows. Next: P1-03 Eytzinger fence layouts; P1-06 owns adaptive selection.
+
+Fresh default-build four-trial medians: IPv6 vector-8 uniform 162.7 versus
+scalar 270.8 ns/query; native-u32 ASN uniform 89.8 versus 155.6. Corresponding
+hot costs are 68.8 versus 42.6 and 34.2 versus 22.0 ns/query. IPv4 duplicate
+source-algorithm controls vary substantially, and native/64-bit ASN rankings
+change across runs. These are qualified throughput observations, not stable
+statistical speedups or per-query tail latencies.
+
+Verification: documented root formatting, default/all-feature all-target Clippy
+with warnings denied, default tests, all-feature tests including ignored cases,
+and warnings-denied docs passed. Standalone default/SIMD release Clippy, harness/
+fragment formatting, twelve final generated-core tests, generated-core lib/test
+Clippy and receipt/shadow-source verification passed. Local packaging is checked
+on this checkpoint; hosted CI is tracked separately on its publishing commit.

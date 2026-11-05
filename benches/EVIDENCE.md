@@ -64,3 +64,10 @@ repeats, assembly inspection and local integrity verification. The study preserv
 ordinary scalar controls and original-input checks in an isolated generated core.
 Large uniform gains coexist with hot/small regressions; no default or public API
 change is adopted. Later variants still require their own qualification.
+
+[P1-02 cross-query SIMD](cross_query/RESULTS.md) adds 38 processes and 1,792
+measurements across ordinary scalar, P1-01 interleaving, four/eight-query AVX2
+and native eight-lane u32 ASN kernels. Complete oracle/borrowed-pointer/error
+checks include forced scalar fallback; shadow-checkout preparation reproduces
+the final source snapshot. Linked gathers/comparisons are inspected; matching
+WSL perf tooling is unavailable, so no hardware-counter claim is made.
