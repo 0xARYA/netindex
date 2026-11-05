@@ -1,8 +1,14 @@
 # Performance work queue
 
 Work in priority order. Update this file with commands, immutable-input hashes,
-measurements, correctness results, and remaining limitations. A prototype may be
-rejected; completion means a recorded decision, not necessarily adoption.
+measurements, correctness results, and remaining limitations. Queued optimization
+work should deliver a focused production implementation with tests and measured
+benefits. Stop at rejection only when the evidence justifies it; a successful
+experiment alone does not complete an implementation task.
+
+Historical P1-01 through P1-08 completions record qualification, not shipped
+features. Their source is [archived](benches/ARCHIVE.md); their measurements and
+decisions remain below. P1-10 should implement and qualify compact references.
 
 Statuses: `[ ]` queued; `[-]` active; `[x]` completed; `[!]` waiting on a named
 dependency. Existing 2.1.0 results are in [PERFORMANCE.md](PERFORMANCE.md); they do
@@ -955,3 +961,27 @@ but maximum RSS ~976.0 MiB old / 530.8 MiB current, including mapped input. The
 512 MiB model is not an RSS bound. No library/API/encoding/version change.
 [Detailed results](benches/payload_distribution/RESULTS.md).
 Next: **P1-10 compact references**.
+
+### 2026-11-05: retire unadopted search study harnesses
+
+Retired 89 tracked files / 10,103 source lines from completed P1-01 through
+P1-08 studies, including the one-off architecture workflow. Preserve all result
+reports and immutable JSON measurements. Short per-study READMEs now link to
+the full pre-retirement snapshot 9010a9eb6bcd8e96c0a60d98b12a44db974ddf79;
+the archive manifest records every removed Git blob for verification/recovery.
+
+The adaptive selector remains rejected. Other unadopted candidates are archived
+without relabeling their workload-specific gains as failures. Production
+benchmarks, comparison/qualification baselines and the payload profiler remain
+active. No library/API/encoding/version change. Raw local input data, generated
+source snapshots, executables, profiles and disassembly remain untouched.
+This is source-tree cleanup; no artifact disk reclamation is claimed.
+
+Next: implement **P1-10 compact references**, then measure its size, lookup,
+startup and validation-memory costs before deciding adoption.
+
+Retirement verification: all 89 archive Git-blob pointers and 68 local report/
+recovery links pass. Production sources, root Cargo files, FORMAT.md, the main
+Rust workflow and all measurement JSON/result reports are unchanged. Documented
+fmt/Clippy/tests/docs/package checks and the production SIMD packed-width
+benchmark correctness smoke pass. No benchmark timings were collected.

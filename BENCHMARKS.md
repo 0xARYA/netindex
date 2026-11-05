@@ -332,6 +332,12 @@ workload uses 65,536 address assertions and 1,024 queries per batch, half hits
 and half misses. It checks original targets, IDs, payload bytes, and the actual
 encoded width before timing. CI runs both variants without collecting timings.
 
+The following P1-01 through P1-08 search studies are historical qualification.
+Their harness source and one-off architecture workflow are retired from the
+current tree; [archive/recovery instructions](benches/ARCHIVE.md) identify the
+complete frozen checkout. Reports and JSON evidence remain unchanged. Active
+production benchmarks and the payload profiler are listed in [benches](benches/README.md).
+
 ## Fixed-group query interleaving (2026-11-04)
 
 The [P1-01 study](benches/interleaved/README.md) compares ordinary visitors with

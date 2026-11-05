@@ -1,0 +1,542 @@
+{
+  "snapshot": "9010a9eb6bcd8e96c0a60d98b12a44db974ddf79",
+  "removed_files": 89,
+  "source_lines_removed": 10103,
+  "bytes_removed": 465788,
+  "files": [
+    {
+      "path": "benches/adaptive/Cargo.lock",
+      "git_blob": "eb567ff4072f655a24ac8669983ee9ce75956198",
+      "bytes": 4104,
+      "lines": 164
+    },
+    {
+      "path": "benches/adaptive/Cargo.toml",
+      "git_blob": "800f3389360983e2504ca486add540415bae4a76",
+      "bytes": 431,
+      "lines": 22
+    },
+    {
+      "path": "benches/adaptive/inspect_asm.py",
+      "git_blob": "73ba3677d115cf965bc1b2228d2675356d49f632",
+      "bytes": 5798,
+      "lines": 79
+    },
+    {
+      "path": "benches/adaptive/packed.inc.rs",
+      "git_blob": "70ecc4a27c5c0a00066454403e69a8d959c4d7d3",
+      "bytes": 839,
+      "lines": 26
+    },
+    {
+      "path": "benches/adaptive/prepare.py",
+      "git_blob": "871af8e8a26662b6e0d11ce336ef8c758e809e69",
+      "bytes": 7537,
+      "lines": 122
+    },
+    {
+      "path": "benches/adaptive/reader.inc.rs",
+      "git_blob": "580d0149882fd57363ae65be06d2365962b9e853",
+      "bytes": 11724,
+      "lines": 347
+    },
+    {
+      "path": "benches/adaptive/repeat.py",
+      "git_blob": "d9c853a1c060e6204e96596e6a6f5da5ca83df54",
+      "bytes": 2734,
+      "lines": 49
+    },
+    {
+      "path": "benches/adaptive/report.py",
+      "git_blob": "9c633b7b902ba3bc35ec90c077aa90eb0d5aaf6b",
+      "bytes": 9159,
+      "lines": 138
+    },
+    {
+      "path": "benches/adaptive/run.py",
+      "git_blob": "24d8e5f8f498b69c81b4695ccea80cf06d17d46b",
+      "bytes": 6766,
+      "lines": 85
+    },
+    {
+      "path": "benches/adaptive/study_adaptive.rs",
+      "git_blob": "ac3d77995607ca0d9ea083741ff7011f81306c3c",
+      "bytes": 2512,
+      "lines": 85
+    },
+    {
+      "path": "benches/adaptive/verify.py",
+      "git_blob": "b317d8b43a62eac8cf7e93e79934adbc8d0de41d",
+      "bytes": 9105,
+      "lines": 157
+    },
+    {
+      "path": "benches/architectures/Cargo.lock",
+      "git_blob": "caabe3d1da540cb4b2de91bcd773f9dbb4f59a5a",
+      "bytes": 4119,
+      "lines": 164
+    },
+    {
+      "path": "benches/architectures/Cargo.toml",
+      "git_blob": "ddb3b46b2639afb3d79411251c5718ead60941b7",
+      "bytes": 456,
+      "lines": 22
+    },
+    {
+      "path": "benches/architectures/inspect_asm.py",
+      "git_blob": "afe036f0700e577583029b553475b0d17c9c3b94",
+      "bytes": 1568,
+      "lines": 34
+    },
+    {
+      "path": "benches/architectures/kernels.rs",
+      "git_blob": "46db70133575aadb6fe9fe369fd717160bf9fc41",
+      "bytes": 6667,
+      "lines": 170
+    },
+    {
+      "path": "benches/architectures/prepare.py",
+      "git_blob": "981f8bb7ecb5eaa7bb1c2364fc06559c8502558d",
+      "bytes": 5449,
+      "lines": 98
+    },
+    {
+      "path": "benches/architectures/report.py",
+      "git_blob": "1c447fe73f128c39b5cc7c18b0effbc4a426d067",
+      "bytes": 4334,
+      "lines": 82
+    },
+    {
+      "path": "benches/architectures/run.py",
+      "git_blob": "70fd593dd77502af65be3ae8cd488bd9cb30d505",
+      "bytes": 3490,
+      "lines": 68
+    },
+    {
+      "path": "benches/architectures/study_arch.rs",
+      "git_blob": "aa5627206084821154c0b6198079eb62c661935a",
+      "bytes": 6526,
+      "lines": 160
+    },
+    {
+      "path": "benches/architectures/verify_inputs.py",
+      "git_blob": "ca4c0eb0b01cc03be33cd3ee4dea338c3b3fb132",
+      "bytes": 943,
+      "lines": 19
+    },
+    {
+      "path": "benches/architectures/verify_source.py",
+      "git_blob": "7646bd6c2da6fc802f2cd02c9a618bdd46f639a4",
+      "bytes": 1422,
+      "lines": 28
+    },
+    {
+      "path": "benches/cross_query/Cargo.lock",
+      "git_blob": "d704328231d6d1351930e30b925139bc69d2c089",
+      "bytes": 4113,
+      "lines": 164
+    },
+    {
+      "path": "benches/cross_query/Cargo.toml",
+      "git_blob": "17d741012ebd7101f905d1c11976dbf9d0c0ff44",
+      "bytes": 446,
+      "lines": 22
+    },
+    {
+      "path": "benches/cross_query/inspect.py",
+      "git_blob": "62483b9c53dad5f1481ada93a6ec6bb51afd209c",
+      "bytes": 3775,
+      "lines": 51
+    },
+    {
+      "path": "benches/cross_query/packed.inc.rs",
+      "git_blob": "5673930439681cab30d83003914b0b0ee89c0bf9",
+      "bytes": 1698,
+      "lines": 45
+    },
+    {
+      "path": "benches/cross_query/prepare.py",
+      "git_blob": "8b1c0d35bed1c57f4df2c558f49b4d5e440d9481",
+      "bytes": 3653,
+      "lines": 65
+    },
+    {
+      "path": "benches/cross_query/reader.inc.rs",
+      "git_blob": "f7f2d91af770438c7a18e0ba6067e2f92b0c9b6c",
+      "bytes": 6151,
+      "lines": 155
+    },
+    {
+      "path": "benches/cross_query/repeat.py",
+      "git_blob": "8369d96e11948ed9ee6431dcef14584a2585fd0c",
+      "bytes": 2425,
+      "lines": 47
+    },
+    {
+      "path": "benches/cross_query/report.py",
+      "git_blob": "567eb8c91ba5ec375d762faa8e12ead5839bd0e2",
+      "bytes": 7983,
+      "lines": 115
+    },
+    {
+      "path": "benches/cross_query/run.py",
+      "git_blob": "1299a1431ef8af9c765129efc0cbfe42d71cfc4e",
+      "bytes": 6814,
+      "lines": 83
+    },
+    {
+      "path": "benches/cross_query/study_simd.rs",
+      "git_blob": "b765037fc4c0c52bc654fac8fc64704967c050d4",
+      "bytes": 13281,
+      "lines": 335
+    },
+    {
+      "path": "benches/cross_query/verify.py",
+      "git_blob": "446d30845d8a6a8bad132ec38e8b7cb9707066d8",
+      "bytes": 5672,
+      "lines": 91
+    },
+    {
+      "path": "benches/eytzinger/Cargo.lock",
+      "git_blob": "6f011c42b2348e516ffd5d856b49506ec15d4255",
+      "bytes": 4107,
+      "lines": 164
+    },
+    {
+      "path": "benches/eytzinger/Cargo.toml",
+      "git_blob": "ce4a65a56c6010681938862107196ae9679adcd5",
+      "bytes": 436,
+      "lines": 22
+    },
+    {
+      "path": "benches/eytzinger/inspect_asm.py",
+      "git_blob": "22af02a11d0988dd647fb8f05add7a958c4eee7b",
+      "bytes": 3661,
+      "lines": 51
+    },
+    {
+      "path": "benches/eytzinger/packed.inc.rs",
+      "git_blob": "472bb04ab8eee1170a0e9f14cb66b483f4f5b81b",
+      "bytes": 702,
+      "lines": 20
+    },
+    {
+      "path": "benches/eytzinger/prepare.py",
+      "git_blob": "4196441dbd3f40978463bb64a3e9ec5494ac7ffb",
+      "bytes": 5101,
+      "lines": 84
+    },
+    {
+      "path": "benches/eytzinger/reader.inc.rs",
+      "git_blob": "c13ca68fe7ff708d03671c9ab43805a7b9dd5976",
+      "bytes": 5768,
+      "lines": 159
+    },
+    {
+      "path": "benches/eytzinger/repeat.py",
+      "git_blob": "8369d96e11948ed9ee6431dcef14584a2585fd0c",
+      "bytes": 2425,
+      "lines": 47
+    },
+    {
+      "path": "benches/eytzinger/report.py",
+      "git_blob": "b45fa49705173ec4cfe2f4f9a65618d2c05840df",
+      "bytes": 9858,
+      "lines": 139
+    },
+    {
+      "path": "benches/eytzinger/run.py",
+      "git_blob": "f7c244d9a4da88d678af1fd40b73d362ef761d9e",
+      "bytes": 6903,
+      "lines": 82
+    },
+    {
+      "path": "benches/eytzinger/study_eytzinger.rs",
+      "git_blob": "5512b560c3e2e08abe0afeed3970b5aca0dd1c1b",
+      "bytes": 5033,
+      "lines": 142
+    },
+    {
+      "path": "benches/eytzinger/verify.py",
+      "git_blob": "add680326c21f065fba380702726f26df239ea31",
+      "bytes": 6518,
+      "lines": 106
+    },
+    {
+      "path": "benches/flat_btree/Cargo.lock",
+      "git_blob": "5a8c59b036495c552b34098fdc01e3f5079c69c2",
+      "bytes": 4110,
+      "lines": 164
+    },
+    {
+      "path": "benches/flat_btree/Cargo.toml",
+      "git_blob": "2f58a91c68c7c76de7801127729b8a36c091d509",
+      "bytes": 441,
+      "lines": 22
+    },
+    {
+      "path": "benches/flat_btree/inspect_asm.py",
+      "git_blob": "af05daf1dd4f87762d5b9c51ec93f84054fb3e6f",
+      "bytes": 4084,
+      "lines": 53
+    },
+    {
+      "path": "benches/flat_btree/packed.inc.rs",
+      "git_blob": "472bb04ab8eee1170a0e9f14cb66b483f4f5b81b",
+      "bytes": 702,
+      "lines": 20
+    },
+    {
+      "path": "benches/flat_btree/prepare.py",
+      "git_blob": "2ba2dc57842ceb811ffd23a4f13f55780dc321bd",
+      "bytes": 5574,
+      "lines": 91
+    },
+    {
+      "path": "benches/flat_btree/reader.inc.rs",
+      "git_blob": "33d8d2741e700a36daff6fdc4b8e65aa2f588506",
+      "bytes": 10544,
+      "lines": 294
+    },
+    {
+      "path": "benches/flat_btree/repeat.py",
+      "git_blob": "dbe058ac962ccd6594c807653a32f343797e65fb",
+      "bytes": 2425,
+      "lines": 47
+    },
+    {
+      "path": "benches/flat_btree/report.py",
+      "git_blob": "bc686c517208ca9e19bf87d4a1612037ad10f837",
+      "bytes": 10543,
+      "lines": 152
+    },
+    {
+      "path": "benches/flat_btree/run.py",
+      "git_blob": "e5da9a7090863dfb4374b7c5115dd34088734434",
+      "bytes": 6468,
+      "lines": 82
+    },
+    {
+      "path": "benches/flat_btree/study_flat_btree.rs",
+      "git_blob": "a272d4affb888342d6dd391dbc685e8f79eb234a",
+      "bytes": 14409,
+      "lines": 391
+    },
+    {
+      "path": "benches/flat_btree/verify.py",
+      "git_blob": "f07f3bddaafba55cb39deac70c96c9ed58864885",
+      "bytes": 6855,
+      "lines": 114
+    },
+    {
+      "path": "benches/interleaved/Cargo.lock",
+      "git_blob": "63b92f2664948574c02f63f27f165f57d19c3a65",
+      "bytes": 4111,
+      "lines": 164
+    },
+    {
+      "path": "benches/interleaved/Cargo.toml",
+      "git_blob": "eb5a8d419aa04420e2b097da3a0173a3397c96dc",
+      "bytes": 358,
+      "lines": 18
+    },
+    {
+      "path": "benches/interleaved/inspect.py",
+      "git_blob": "90dd01d16b77b9aaae28610a8f0c7031f85fb6b5",
+      "bytes": 3605,
+      "lines": 44
+    },
+    {
+      "path": "benches/interleaved/packed.inc.rs",
+      "git_blob": "785ca64655872658f0f6d3b69a97fe361b81dcdb",
+      "bytes": 2158,
+      "lines": 61
+    },
+    {
+      "path": "benches/interleaved/prepare.py",
+      "git_blob": "2b47b4fb7ae7be3feb1eff2e4b9627253433c3ed",
+      "bytes": 1792,
+      "lines": 35
+    },
+    {
+      "path": "benches/interleaved/reader.inc.rs",
+      "git_blob": "6d5ace4305b687d25c6dd529934ebd95c0e7216a",
+      "bytes": 5124,
+      "lines": 126
+    },
+    {
+      "path": "benches/interleaved/repeat.py",
+      "git_blob": "d639f124a9335955240ab229986e86d5253206b2",
+      "bytes": 2401,
+      "lines": 47
+    },
+    {
+      "path": "benches/interleaved/run.py",
+      "git_blob": "c049c52802e5fc2c91228daf438019da8fbadd51",
+      "bytes": 6245,
+      "lines": 79
+    },
+    {
+      "path": "benches/interleaved/src/main.rs",
+      "git_blob": "9893e4760cc63f6a6408ffacde15a17bc6901e24",
+      "bytes": 18765,
+      "lines": 516
+    },
+    {
+      "path": "benches/interleaved/verify.py",
+      "git_blob": "49c73e507c92ca79e2e9293864d491e99f5f6282",
+      "bytes": 4943,
+      "lines": 80
+    },
+    {
+      "path": "benches/learned/Cargo.lock",
+      "git_blob": "fed044180cea96021b6c9bc0efe33c6d83fa870e",
+      "bytes": 4101,
+      "lines": 164
+    },
+    {
+      "path": "benches/learned/Cargo.toml",
+      "git_blob": "9a346dcb02bd546a6eb2fcc6673228d043705fb0",
+      "bytes": 512,
+      "lines": 26
+    },
+    {
+      "path": "benches/learned/fixtures.rs",
+      "git_blob": "983b13dce057373a3630b6d1b4ddb4c8f16fa2e6",
+      "bytes": 1602,
+      "lines": 44
+    },
+    {
+      "path": "benches/learned/inspect_asm.py",
+      "git_blob": "b89c5065393f98ccd9dd37861a980973e97f2d20",
+      "bytes": 5788,
+      "lines": 79
+    },
+    {
+      "path": "benches/learned/packed.inc.rs",
+      "git_blob": "472bb04ab8eee1170a0e9f14cb66b483f4f5b81b",
+      "bytes": 702,
+      "lines": 20
+    },
+    {
+      "path": "benches/learned/prepare.py",
+      "git_blob": "f971c1ac0ca48d8d756cd32f508ba4d431d67b3a",
+      "bytes": 7609,
+      "lines": 94
+    },
+    {
+      "path": "benches/learned/reader.inc.rs",
+      "git_blob": "ae7fa0bf42854a3a18e65be98653c5fe0b32a14c",
+      "bytes": 10290,
+      "lines": 291
+    },
+    {
+      "path": "benches/learned/repeat.py",
+      "git_blob": "250ddadfd3aa327bc0e333018e2e21ccca6cb9ee",
+      "bytes": 2858,
+      "lines": 49
+    },
+    {
+      "path": "benches/learned/report.py",
+      "git_blob": "4494f490bd5a192f81990315318aa82e81617b19",
+      "bytes": 9877,
+      "lines": 141
+    },
+    {
+      "path": "benches/learned/run.py",
+      "git_blob": "54abbf73a936a6ebee0f4954db7005ba111d7084",
+      "bytes": 6682,
+      "lines": 86
+    },
+    {
+      "path": "benches/learned/study_learned.rs",
+      "git_blob": "cd102038fd082c74b72389090d79f208d4365e59",
+      "bytes": 11889,
+      "lines": 350
+    },
+    {
+      "path": "benches/learned/verify.py",
+      "git_blob": "1499063d9b2a7823e2a6173e3a8f3defd22fccd5",
+      "bytes": 10395,
+      "lines": 166
+    },
+    {
+      "path": "benches/traversal/Cargo.lock",
+      "git_blob": "a139d9c3823e6263de2b8f91b3f9bff3d153e9c7",
+      "bytes": 4107,
+      "lines": 164
+    },
+    {
+      "path": "benches/traversal/Cargo.toml",
+      "git_blob": "8935662bcaec9fb5e20a544b9a39593b71cd4136",
+      "bytes": 436,
+      "lines": 22
+    },
+    {
+      "path": "benches/traversal/btree.inc.rs",
+      "git_blob": "7908bb6430c3eb87410945397414fa940e31ba63",
+      "bytes": 4933,
+      "lines": 136
+    },
+    {
+      "path": "benches/traversal/eytzinger.inc.rs",
+      "git_blob": "ee0ca4f8d29b4c8da8e391da9f7e9bbf8f85f692",
+      "bytes": 7168,
+      "lines": 213
+    },
+    {
+      "path": "benches/traversal/inspect_asm.py",
+      "git_blob": "d949a60ed737c166ddcf389eebbad325bb7ad0ce",
+      "bytes": 4779,
+      "lines": 66
+    },
+    {
+      "path": "benches/traversal/packed.inc.rs",
+      "git_blob": "472bb04ab8eee1170a0e9f14cb66b483f4f5b81b",
+      "bytes": 702,
+      "lines": 20
+    },
+    {
+      "path": "benches/traversal/prepare.py",
+      "git_blob": "e085663fa249f8df68be1fd9eeb16c8066c9773f",
+      "bytes": 6618,
+      "lines": 102
+    },
+    {
+      "path": "benches/traversal/reader.inc.rs",
+      "git_blob": "1f97bc25a40bbc582081776a61f41a226ee929b4",
+      "bytes": 18731,
+      "lines": 524
+    },
+    {
+      "path": "benches/traversal/repeat.py",
+      "git_blob": "a1e8fdc5b3c6a4a7b02425d56162521253fa0b86",
+      "bytes": 2426,
+      "lines": 47
+    },
+    {
+      "path": "benches/traversal/report.py",
+      "git_blob": "356605ab1c8556ea44f0746300a0d1ec2d2df0a5",
+      "bytes": 11011,
+      "lines": 159
+    },
+    {
+      "path": "benches/traversal/run.py",
+      "git_blob": "525c255c9ac07b75a3d138d32c5b531f23e2ca87",
+      "bytes": 6476,
+      "lines": 82
+    },
+    {
+      "path": "benches/traversal/verify.py",
+      "git_blob": "0adce7640e4ee1da472bd02d49e6175fd03c90ba",
+      "bytes": 7197,
+      "lines": 119
+    },
+    {
+      "path": ".github/workflows/architectures.yml",
+      "git_blob": "3bc01bb469aee2db256f0ecd60ec18a4d057f861",
+      "bytes": 1036,
+      "lines": 31
+    }
+  ]
+}
