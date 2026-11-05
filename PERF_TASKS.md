@@ -57,8 +57,10 @@ not complete the broader experiments below.
 - [x] **P1-03 Eytzinger.** Qualified sorted/Eytzinger RAM mirrors with rank maps,
   startup/memory accounting and prior interleaving/SIMD controls. Research only.
   [Results](benches/eytzinger/RESULTS.md).
-- [ ] **P1-04 Flat B+ tree.** Prototype PlanB-inspired node search; preserve the
-  declared query contract rather than importing single-result LPM assumptions.
+- [x] **P1-04 Flat B+ tree.** Qualified flat B+ binary/count/AVX2-count/ordered-mask
+  node prototypes under the full query contract, with RAM/build and linked-code
+  accounting. Research retained without default adoption.
+  [Results](benches/flat_btree/RESULTS.md).
 - [ ] **P1-05 Traversal.** Measure prefetching and branchless traversal separately
   and together.
 - [ ] **P1-06 Adaptive search.** Choose routing/search strategies under an explicit
@@ -434,7 +436,7 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-04 flat B+ tree / PlanB-inspired node search**,
+Next in priority order: **P1-05 traversal / prefetch / branchless ablations**,
 preserving complete all-match semantics and prior comparators.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
@@ -546,7 +548,8 @@ SETB/LEA child calculation and NOT/TZCNT/shift recovery, with loop/rank-check
 branches. Static counts are not runtime counter evidence; matching WSL perf
 tooling is unavailable. P1-05 owns prefetch/traversal/alignment experiments; P1-06
 can evaluate directory-preserving forests, computed rank maps and bounded cache
-selection. Next: P1-04 flat B+ tree node search under the full query contract.
+selection. Follow-through: P1-04 flat B+ tree node search under the full query
+contract.
 
 Verification: post-recovery root formatting, default/all-feature all-target Clippy
 with warnings denied, default tests, all-feature tests including ignored cases,
@@ -555,3 +558,71 @@ harness/fragment formatting passed. Thirteen generated-core tests and generated
 lib/test Clippy passed after recovery. Python/JSON parsing, local links and full
 receipt/source reconstruction passed. Local packaging is checked on this checkpoint;
 hosted CI is tracked separately on the publishing commit. No registry release.
+
+## P1-04 flat B+ node search - 2026-11-04
+
+Completed as a qualified research experiment, without a library-default/API/format
+change. [Results](benches/flat_btree/RESULTS.md) and
+[reproduction](benches/flat_btree/README.md) link the primary matrix, fresh repeats,
+linked assembly and source/evidence verification receipts. No registry release.
+
+The prototype stores sorted leaves and flat bottom-up child-maximum levels:
+16 u32 ASNs or four u128 IP fences per logical 64-byte node. Leaf positions
+restore original rows/blocks without per-key rank maps. It compares binary,
+scalar-count, detected AVX2 count and ordered AVX2 prefix-mask search against
+ordinary/prior SIMD, sorted-copy and Eytzinger controls. Full lookup semantics,
+duplicates, original IDs/targets, borrowed payload pointers and callback-error
+prefixes remain intact. Interval/broad-route paths retain existing visitors.
+All mirrors search global fences; original IPv4 paths keep their directory.
+
+Thirty-two final primary processes and six fresh repeats passed, producing
+2,240 timings. All original assertions and complete independent query oracles,
+partial/empty/mixed-family batches and forced scalar controls pass. Fifteen
+generated-core tests cover lower/upper bounds, duplicate separators, incomplete
+levels through 4097, unsigned u32/u128 halves, alignment and allocation accounting.
+Fresh shadow preparation reproduces the frozen sources; input/executable/raw-log
+hashes, header-derived capacities and exact timing/checksum coordinates agree.
+
+Observed four-trial median ns/query in fresh 20M cases:
+
+- Default IPv6 uniform: B+ count 238.3, ordinary 289.9, sorted 264.7,
+  prior SIMD112 155.1. Hot: B+ count 75.2 versus ordinary 41.2.
+- Default IPv4 uniform: B+ count 195.7 versus ordinary 144.0 and SIMD108 98.1;
+  hot 71.1 versus ordinary 38.6. No directory-aware B+ claim follows.
+- SIMD-build ASN uniform: ordered mask 158.5, AVX2 count 190.3, ordinary 285.3
+  and SIMD108 127.1. Hot: ordered mask 32.8 versus ordinary 22.2.
+  Default ASN uniform instead regresses: best B+ count 218.1 versus ordinary 171.2.
+
+B+ capacity is 1.590 MiB for each 20M packed-IP case and 81.380 MiB for 20M ASNs,
+including level-range elements. With sorted/Eytzinger comparison arrays retained,
+combined capacities are 4.272/310.262 MiB, within the checked 512 MiB logical budget.
+Combined-cache construction spans 1.123-1.726 ms for large IP cases and
+119.829-239.408 ms for ASNs across primary/repeats. These are allocated capacities
+and all-layout build times, not RSS or candidate-only startup.
+
+Assembly inspection motivated ordered-mask404 after exploratory count kernels
+showed software population-count arithmetic. Every final primary/repeat process
+was rerun with404 included; exploratory timings are not mixed into receipts.
+Linked ordered kernels use comparisons/movemasks and TZCNT-encoded prefix rank.
+Complete bound/count/rank helpers, an outlined dispatch closure and four ISA
+wrappers are retained. Static code observations do not establish runtime costs;
+matching WSL perf counters are unavailable. Ordered masks also add early exit,
+so their comparison does not isolate a single instruction. Portable Vec alignment,
+unpadded level starts, runtime dispatch and per-node feature checks remain
+explicit limits; no prefetch or PlanB LPM/AVX-512 reproduction is claimed.
+
+Decision: retain the candidate for further controlled experiments. Mixed uniform
+results, repeat drift, hot-query regressions and extra memory prevent automatic
+adoption. Synthetic warm fixed corpora, four trials and host uncertainty do not
+prove significance, cold/>RAM/native-provider capacity or universal superiority.
+Next: **P1-05 traversal/prefetch/branchless ablations**, including dispatch
+specialization/inlining, hoisted ISA checks and physical alignment. P1-06 owns
+optional memory-budgeted selection, native-width IPv4 fences and directory-aware
+forests; each needs separate measurements before deployment.
+
+Verification: root formatting, default/all-feature all-target Clippy with warnings
+denied, default tests, all-feature tests including ignored cases and warnings-denied
+docs passed. Final standalone default/SIMD release Clippy, harness/fragment
+formatting, 15 generated-core tests and lib/test Clippy passed. Python parsing,
+JSON/source/receipt reconstruction and local documentation links passed. Packaging
+is checked on the publishing checkpoint; hosted CI is tracked separately.

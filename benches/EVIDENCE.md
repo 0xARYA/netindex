@@ -79,3 +79,12 @@ linear tree-boundary oracles, fresh source reconstruction and header-derived
 capacity accounting pass. Interrupted pre-recovery timings are not merged into
 accepted receipts. Two linked key-width search helpers are inspected; hardware
 counters remain unavailable. Research is retained without default adoption.
+
+[P1-04 flat B+ nodes](flat_btree/RESULTS.md) adds 38 processes / 2,240
+measurements, four node-search methods, sorted/Eytzinger/prior SIMD controls
+and a full rerun after adding an assembly-motivated ordered-mask variant.
+Exploratory timings are not mixed with final receipts. Fifteen generated-core
+tests, complete oracle/borrowed-pointer/error checks, fresh source reconstruction
+and header-derived allocation accounting qualify the prototype. All comparator
+caches coexist; capacity/build measurements are distinct from RSS/candidate-only
+startup. Linked node helpers and counter availability are recorded separately.

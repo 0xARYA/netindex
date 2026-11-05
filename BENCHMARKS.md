@@ -354,3 +354,13 @@ SIMD. [Results](benches/eytzinger/RESULTS.md) report lookup, construction and
 allocated-capacity costs separately, including global-fence versus IPv4-directory
 scope. Complete post-recovery runs replace an interrupted I/O-failed matrix.
 No default or format change is adopted.
+
+### Flat B+ node search (P1-04)
+
+[Study and reproduction](benches/flat_btree/README.md) compare original/prior
+SIMD, sorted/Eytzinger mirrors and four flat B+ node methods: binary, count,
+AVX2 count and ordered AVX2 mask rank. [Results](benches/flat_btree/RESULTS.md)
+include fresh-process repeats, cache capacities/build costs, complete original
+query/payload/error checks, linked assembly and retained integrity receipts.
+These warm RAM-layout measurements do not establish cold-file behavior, universal
+performance or a library-default decision. P1-05 owns traversal/prefetch ablations.
