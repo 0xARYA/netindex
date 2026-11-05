@@ -74,7 +74,7 @@ not complete the broader experiments below.
   IPv4/ASN and eligible normalized 64-bit IPv6 keys, with exact correction and
   full-search recovery. Retain workload-specific research; no default adoption.
   [Results](benches/learned/RESULTS.md).
-- [ ] **P1-08 Architectures.** Evaluate AVX-512 and NEON on actual hardware while
+- [ ] **P1-08 Architectures (in progress).** Evaluate AVX-512 and NEON on actual hardware while
   retaining portable fallbacks. Compile-only checks do not establish performance.
 
 ## P1: storage and construction
@@ -880,3 +880,12 @@ published through Git without a registry release.
 Inspection retains non-inlined estimate/search boundaries, so call/result-record
 costs are included. Inlining/specialization is an unmeasured follow-up; timings
 do not establish the best possible implementation of the learned approach.
+
+### P1-08 native architecture qualification - 2026-11-05
+
+Isolated AVX-512F/BW (including full-width u128) and NEON (1/2/4/8-byte;
+16-byte scalar fallback) tails are implemented under benches/architectures.
+Runtime guards, forced portable fallbacks, unsigned/alignment/kernel checks and
+the frozen complete-contract P1-01 oracle precede measurement. Native local
+AVX-512 and GitHub ARM64 qualification are in progress; no performance or
+production adoption claim is made before both receipts are reviewed.

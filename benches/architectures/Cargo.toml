@@ -1,0 +1,22 @@
+[package]
+name = "netindex-architectures-study"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[features]
+simd = ["netindex/simd"]
+
+[profile.release]
+codegen-units = 1
+
+[dependencies]
+netindex = { package = "netindex-architectures-core", path = "../../target/architectures/library", features = ["mmap"] }
+libc = "=0.2.190"
+serde_json = "=1.0.151"
+
+[[bin]]
+name = "netindex-architectures-study"
+path = "../../target/architectures/main.rs"

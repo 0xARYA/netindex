@@ -1,0 +1,28 @@
+name: Native architecture qualification
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  neon:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.95.0
+          components: rustfmt, clippy
+      - run: python3 benches/architectures/prepare.py
+      - run: python3 benches/architectures/run.py --output "$RUNNER_TEMP/neon" --fixtures "$RUNNER_TEMP/fixtures"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-neon-qualification
+          path: |
+            ${{ runner.temp }}/neon/*.json*
+            ${{ runner.temp }}/neon/*.txt
+            ${{ runner.temp }}/neon/*.log
+            ${{ runner.temp }}/neon/study.disasm
+            ${{ runner.temp }}/neon/prepared.json
+          retention-days: 30
