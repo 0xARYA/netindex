@@ -88,3 +88,13 @@ tests, complete oracle/borrowed-pointer/error checks, fresh source reconstructio
 and header-derived allocation accounting qualify the prototype. All comparator
 caches coexist; capacity/build measurements are distinct from RSS/candidate-only
 startup. Linked node helpers and counter availability are recorded separately.
+
+[P1-05 traversal/prefetch/alignment](traversal/RESULTS.md) adds 38 processes /
+3,808 timings across the full 2x2x2 Eytzinger design and specialized B+ walks.
+Every process preserves original assertion/query/payload/error checks; 17 core
+tests, fresh prepared-source reconstruction, header-derived capacities and actual
+pointer alignment qualify the evidence. Both comparison mirrors coexist within
+a 512 MiB logical budget; capacity/build costs are distinct from RSS/candidate-only
+startup. Linked factor walks verify eight prefetched specializations per build;
+specialized AVX2 walks inline node comparisons. Hardware counters are unavailable.
+Mixed workload results retain research candidates without a default-policy change.

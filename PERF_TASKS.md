@@ -61,8 +61,10 @@ not complete the broader experiments below.
   node prototypes under the full query contract, with RAM/build and linked-code
   accounting. Research retained without default adoption.
   [Results](benches/flat_btree/RESULTS.md).
-- [ ] **P1-05 Traversal.** Measure prefetching and branchless traversal separately
-  and together.
+- [x] **P1-05 Traversal.** Qualified 2x2x2 arithmetic-child/prefetch/alignment
+  factors and specialized B+ count/AVX2 walks, with physical-alignment, capacity
+  and linked-code checks. Research candidates retained without default adoption.
+  [Results](benches/traversal/RESULTS.md).
 - [ ] **P1-06 Adaptive search.** Choose routing/search strategies under an explicit
   memory budget, extending the current packed/interval split.
 - [ ] **P1-07 Learned fences.** Start with IPv4/64-bit keys and exact bounded
@@ -436,7 +438,7 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-05 traversal / prefetch / branchless ablations**,
+Next in priority order: **P1-06 adaptive search under an explicit memory budget**,
 preserving complete all-match semantics and prior comparators.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
@@ -615,7 +617,7 @@ Decision: retain the candidate for further controlled experiments. Mixed uniform
 results, repeat drift, hot-query regressions and extra memory prevent automatic
 adoption. Synthetic warm fixed corpora, four trials and host uncertainty do not
 prove significance, cold/>RAM/native-provider capacity or universal superiority.
-Next: **P1-05 traversal/prefetch/branchless ablations**, including dispatch
+Follow-through: **P1-05 traversal/prefetch/branchless ablations**, including dispatch
 specialization/inlining, hoisted ISA checks and physical alignment. P1-06 owns
 optional memory-budgeted selection, native-width IPv4 fences and directory-aware
 forests; each needs separate measurements before deployment.
@@ -626,3 +628,80 @@ docs passed. Final standalone default/SIMD release Clippy, harness/fragment
 formatting, 15 generated-core tests and lib/test Clippy passed. Python parsing,
 JSON/source/receipt reconstruction and local documentation links passed. Packaging
 is checked on the publishing checkpoint; hosted CI is tracked separately.
+
+## P1-05 traversal, prefetch and alignment - 2026-11-04
+
+Completed as a qualified research study; no production default, API or encoding
+change. [Results](benches/traversal/RESULTS.md) and
+[reproduction](benches/traversal/README.md) link primary/repeat/assembly/verification
+receipts. Thirty-two primary processes and six fresh repeats pass, producing
+3,808 timings across 17 methods. All original assertions, complete independent
+query oracles, ordered IDs/targets, duplicates, payload bytes/pointers, mixed/
+partial/empty batches, broad-route fallback and typed callback-error prefixes pass.
+Seventeen generated-core tests add linear-oracle checks for every new traversal
+factor and specialized scalar/AVX2 walk, incomplete trees through 4097, unsigned
+boundaries and allocation/alignment guarantees. Source reconstruction, hashes,
+raw-log coordinates and header-derived capacity accounting pass.
+
+The Eytzinger factorial holds grouped accessors, key density and original-rank
+mapping fixed while varying candidate tracking/arithmetic child selection,
+software T0 prefetch and natural/64-byte alignment separately and together.
+Prefetch targets a valid 64-byte descendant group four ASN/two IP levels ahead;
+checked/clipped arithmetic precedes pointer formation. Natural controls record
+actual alignment: default large ASN has base mod64=16, IPv4=32 and IPv6=0,
+while all aligned arrays have mod64=0. An already-aligned natural control cannot
+establish a pure physical-alignment effect. Legacy Eytzinger controls also change
+accessor/specialization structure, so they are not single-factor comparisons.
+
+Fresh default 20M medians (ns/query), with matching primary results in the tables:
+
+- IPv4 arithmetic, natural/no-prefetch501 171.3; aligned/no-prefetch505 174.3;
+  aligned/prefetch507 137.9; ordinary 163.4 and prior SIMD108 127.9.
+  Hot aligned arithmetic/prefetch costs 66.6 versus ordinary 38.0.
+- IPv6 arithmetic, natural/no-prefetch501 193.7; aligned/no-prefetch505 189.4;
+  aligned/prefetch507 122.4; ordinary 200.9 and prior SIMD108 105.7.
+  Hot aligned arithmetic/prefetch costs 67.3 versus ordinary 39.8.
+- ASN aligned candidate/no-prefetch504 costs 17.4 for hot queries versus
+  ordinary 22.1; enabling prefetch506 costs 24.5. Uniform candidate504 costs
+  215.9, while prefetched candidate506 costs 335.6. Alignment/prefetch do not
+  combine into a universal improvement.
+
+B+520 specializes scalar counting. B+521 specializes the ordered AVX2 walk,
+hoists detection outside node loops and makes direct node helpers inline-capable.
+These form a combined dispatch/inlining/ISA intervention, not isolated causal
+estimates. Fresh default ASN uniform521 102.8 versus legacy ordered404 156.0,
+ordinary 259.0 and prior SIMD108 105.7; primary521 127.2 versus404 169.9.
+Hot521 still costs 29.0 versus ordinary 22.1. Other family/build results remain
+mixed; no significance or universal dominance follows from four-trial medians.
+
+The two added group mirrors consume 2.385 MiB per large packed-IP case and
+152.588 MiB for 20M ASNs. Combined comparison capacities are 6.656/462.850 MiB,
+within the checked 512 MiB logical budget. All-layout construction spans
+1.645-2.240 ms for large IP cases and 156.190-341.219 ms for ASNs across runs.
+Capacities include array/group padding and level-range elements, exclude allocator/
+object overhead and RSS; construction excludes original mapping/validation and
+does not isolate candidate-only startup. All caches coexist during all timings.
+
+Assembly retains 16 two-width Eytzinger factor walks per executable, exactly eight
+with a T0 site, and four specialized B+ walks. Direct AVX2 comparisons are inlined;
+all specialized B+ walks have no calls before normal return, with three remaining
+call sites in bounds-failure blocks. Arithmetic source does not imply a wholly
+branch-free compiled algorithm: loop/rank/prefetch guards remain. Static code
+observations establish mechanisms, not causal runtime savings; matching WSL
+hardware counters remain unavailable. No prefetch-distance/hint sweep, B+ prefetch,
+PGO/LTO, cold/>RAM/native-provider capacity or other-architecture result is claimed.
+
+Decision: retain prefetched arithmetic IP traversal, aligned candidate hot-ASN
+and specialized B+ paths as workload-specific candidates. Regressions, extra RAM,
+repeat drift, synthetic warm corpora and host uncertainty prevent automatic
+adoption. Next: **P1-06 adaptive search under an explicit memory budget**, with
+native-width IPv4 fences, directory-aware forests and measured selection policy.
+Post-hoc fastest variants are comparison references, not an implemented policy.
+
+Verification: root formatting, default/all-feature all-target Clippy with warnings
+denied, default tests, all-feature tests including ignored cases and warnings-denied
+docs passed. Standalone default/SIMD release Clippy, harness/fragment formatting,
+17 generated-core tests and lib/test Clippy passed. Receipt reconstruction,
+Python/JSON parsing and local documentation links pass. Local package verification
+is checked on this checkpoint; hosted CI is tracked on the publishing commit.
+No registry release.

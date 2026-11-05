@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-04",
+  "verified_processes": 38,
+  "verified_measurements": 3808,
+  "receipt_sha256": {
+    "2026-11-04-traversal.json": "46af27a59360e35fc50ffb39e23cdb3831d5bd7ec804ded1f6f4be16e9f54c13",
+    "2026-11-04-traversal-repeat.json": "ff723a111739532d61b38f311b260f1ad6ac62fc3dfcd58bb6202e2f1b754b6e",
+    "2026-11-04-traversal-asm.json": "d4ab232cc6a22c91db79e4775d418ccdd69b4701563ab118937813fbb502b51e"
+  },
+  "verifier_sha256": "96eef40e24ba311089e2c270676511249c5bf09f2e20ff2b1dc96adc5a9cd36d",
+  "source_sha256_lf": {
+    "benches/traversal/reader.inc.rs": "681048973eacdcb9f500abdf3b9ef670427a893251675db203ffde1d8d13723d",
+    "benches/traversal/packed.inc.rs": "0be90cd53c5f6748de5a59b778d0d4adc6d730d657f51eb7b90ad2ce4fa884cc",
+    "benches/traversal/eytzinger.inc.rs": "6fabf9881164e99ac00fe79fe005bd460aae5d5303a545222dedf039c33981a0",
+    "benches/traversal/btree.inc.rs": "88ca144791c2e77105b434c172d3d9e6bd6df22cadb6c3f979ecab40f24df618",
+    "benches/flat_btree/study_flat_btree.rs": "6c5e84cc0b4c316c0f1d76d09acb2e3f265e6dadab56ac17357c7433bf86df4f",
+    "benches/traversal/prepare.py": "1f5755ad8855ab8d026887e4a50a3267a9174908abd8064c26286ac5fcf2af0b",
+    "benches/traversal/run.py": "59ba802a6c6cf081e2f174c25e56cc03a679cee9b976b6baacb3dea31a8a6c95",
+    "benches/traversal/Cargo.toml": "9528d57ad3ece60c4185f4b027cbaf6e0f2b3439abbf438c178a52c5491025a1",
+    "benches/traversal/Cargo.lock": "ba2173be385faa70b577d1b9ac692db70275db3d032185479b8301bd0cd8fcd2",
+    "benches/interleaved/src/main.rs": "a13935c30408a1f77ab76ae9473808ea486a0cdff5125d389a3a9b9198fd1f46",
+    "benches/interleaved/reader.inc.rs": "4f09d19061f5437fe1ab896b3d407434c2d4624569aac559e9605d05ecde7ee0",
+    "benches/interleaved/packed.inc.rs": "dfc2bb58aa0075432dcd45eab6edf4d866af3cf19508cac0e1750755cf8935dc",
+    "benches/eytzinger/study_eytzinger.rs": "44a06f37019dc8b21e94ce333214470b3b63b6c568f06aaa092e78854118389a",
+    "benches/cross_query/reader.inc.rs": "7594fdaa1a58c29b8e8a175348eb5ddb07e7dffe90b9609d0c943faa5628eecc",
+    "benches/cross_query/packed.inc.rs": "9ac345ee274c2268fe56474ab6405f2abfc38be3486bc013823e31b903e83390",
+    "benches/cross_query/study_simd.rs": "722d487dab8afe41cda6af13b66a88f2c5ef2a54b7c17a3562c68c8d7cf444f7"
+  },
+  "checks": "Original/prepared source hashes and full fresh shadow-checkout reproduction; all benchmark/runner/dependency-lock/executable/input/raw-log hashes; header-derived cache capacity accounting/budget; exact measurement coordinates and checked matches/checksums scaled by repetitions; derived ns/query; repeat and assembly linkage. Fresh prepared Cargo.lock generated for unit tests is build auxiliary output outside the recorded source snapshot. LF-normalized benchmark source hashes support Git checkout comparisons; raw measurement hashes remain in primary receipt.",
+  "limits": "Verifies retained local evidence integrity and internal consistency; does not rerun benchmark executables, independently establish timing accuracy, validate all possible queries or generalize to other machines/workloads."
+}

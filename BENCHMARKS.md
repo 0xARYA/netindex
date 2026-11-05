@@ -364,3 +364,13 @@ include fresh-process repeats, cache capacities/build costs, complete original
 query/payload/error checks, linked assembly and retained integrity receipts.
 These warm RAM-layout measurements do not establish cold-file behavior, universal
 performance or a library-default decision. P1-05 owns traversal/prefetch ablations.
+
+### Traversal, prefetch and alignment (P1-05)
+
+[Study/reproduction](benches/traversal/README.md) measures the complete 2x2x2
+arithmetic-child / software-prefetch / physical-alignment design with matched
+group accessors, plus specialized B+ count/ordered walks.
+[Results](benches/traversal/RESULTS.md) retain primary/fresh-process evidence,
+actual pointer alignment, capacity/build accounting and bounded hot-path assembly.
+These warm RAM experiments preserve full result/payload/error semantics; optional
+memory-budgeted deployment and directory-aware routing remain P1-06 work.
