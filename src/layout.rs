@@ -343,6 +343,16 @@ impl Layout {
         Ok(layout)
     }
 
+    // The enclosing format has already verified that the complete base slice fits.
+    pub(crate) fn rebase(&mut self, offset: usize) {
+        self.v4.offset += offset;
+        self.v6.offset += offset;
+        self.asns.offset += offset;
+        self.slots += offset;
+        self.payloads += offset;
+        self.bytes += offset;
+    }
+
     pub(crate) fn payload<'a>(&self, bytes: &'a [u8], id: u32) -> Result<&'a [u8], Error> {
         let (offset, length) = self.span(bytes, id)?;
 

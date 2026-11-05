@@ -198,6 +198,21 @@ writer can leave partial output on failure. Stage output, check success, and
 validate your payloads before publishing. File synchronization and release
 activation belong to your application.
 
+### Shared IPv4 aliases
+
+For an index whose complete IPv4 network section is repeated under explicit
+IPv6 prefixes, `Reader::write_shared_aliases` can wrap the base in a format-5
+artifact. The reader projects targets, shares borrowed payloads and preserves
+logical insertion IDs without copying the IPv4 rows. Windows must be disjoint
+from each other and from native IPv6 targets; overlaps and duplicates among
+source IPv4 networks still produce separate matches. The source IPv4 IDs must
+start at zero in sorted order. See [the format rules](FORMAT.md#shared-ipv4-aliases-format-5).
+
+This is opt-in. Ordinary builders still write formats 3/4, and readers that
+predate format 5 cannot open the shared artifact. The `share_aliases` example
+folds explicitly declared windows from an existing file only after verifying
+the projected targets, IDs, and payloads against the originals.
+
 ## Shared values
 
 Enable `shared-values` to share strings or byte values across records.

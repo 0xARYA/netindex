@@ -1,8 +1,9 @@
-use std::{fmt, net::IpAddr};
+use std::{fmt, io::Write, net::IpAddr};
 
 use crate::{
-    Coverage, Error, Limits, Target,
-    layout::{Encoding, HEADER, Layout, Section, slice, u32_at},
+    Coverage, Error, Limits, SharedAlias, Target,
+    aliases::{self, Aliases},
+    layout::{Encoding, Layout, MAGIC, Section, slice, u32_at},
     packed,
     routing::BroadRoutes,
     search::Search,
@@ -40,6 +41,7 @@ pub struct Reader<B: AsRef<[u8]>> {
     ipv4_directory: Option<packed::Directory>,
     coverage: Coverage,
     broad_routes: Option<BroadRoutes>,
+    aliases: Option<Aliases>,
 }
 
 impl<B: AsRef<[u8]>> Reader<B> {
@@ -70,7 +72,9 @@ impl<B: AsRef<[u8]>> Reader<B> {
 
     /// Number of assertions, including duplicates.
     pub fn len(&self) -> usize {
-        self.layout.records
+        self.aliases
+            .as_ref()
+            .map_or(self.layout.records, |aliases| aliases.records)
     }
 
     /// Whether the index contains no assertions.
@@ -83,7 +87,11 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// # Errors
     /// Fails if changed backing storage makes the metadata bounds invalid.
     pub fn metadata(&self) -> Result<&[u8], Error> {
-        slice(self.bytes.as_ref(), HEADER, self.layout.metadata)
+        slice(
+            self.bytes.as_ref(),
+            self.layout.v4.offset - self.layout.metadata,
+            self.layout.metadata,
+        )
     }
 
     /// Return conservative coverage cached during validation.
@@ -142,6 +150,27 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// # Errors
     /// Stops on invalid backing data or a visitor error, preserving its type.
     pub fn visit_ip<'a, E: From<Error>>(
+        &'a self,
+        address: IpAddr,
+        mut emit: impl FnMut(Match<'a>) -> Result<(), E>,
+    ) -> Result<(), E> {
+        if let Some(aliases) = &self.aliases {
+            if let IpAddr::V6(ip) = address
+                && let Some(window) = aliases.lookup(u128::from(ip))
+            {
+                return self.visit_physical_ip(window.query(u128::from(ip)).into(), |row| {
+                    emit(window.matched(row)?)
+                });
+            }
+            return self.visit_physical_ip(address, |mut row| {
+                row.id = aliases.logical(row.id);
+                emit(row)
+            });
+        }
+        self.visit_physical_ip(address, emit)
+    }
+
+    fn visit_physical_ip<'a, E: From<Error>>(
         &'a self,
         address: IpAddr,
         mut emit: impl FnMut(Match<'a>) -> Result<(), E>,
@@ -234,7 +263,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
             let id = u32_at(row, 4)?;
 
             emit(Match {
-                id,
+                id: self.logical_id(id),
                 target: Target::Asn(number),
                 payload: self.layout.payload(bytes, id)?,
             })?;
@@ -253,29 +282,29 @@ impl<B: AsRef<[u8]>> Reader<B> {
     ) -> Result<(), E> {
         let bytes = self.bytes.as_ref();
 
-        for (section, ipv6) in [(self.layout.v4, false), (self.layout.v6, true)] {
-            let mut visit = |entry: Entry| -> Result<(), E> {
-                emit(Match {
-                    id: entry.id,
-                    target: entry.target(ipv6)?,
-                    payload: self.layout.payload(bytes, entry.id)?,
-                })?;
+        aliases::visit(self.layout.v4, bytes, |entry| {
+            emit(self.physical_match(entry, false)?)
+        })?;
 
-                Ok(())
-            };
-
-            if section.encoding == Encoding::Packed {
-                packed::visit_entries(
-                    slice(bytes, section.offset, section.length)?,
-                    section.count,
-                    ipv6,
-                    &mut visit,
-                )?;
-            } else {
-                for position in 0..section.count {
-                    visit(section.entry(bytes, position)?)?;
+        let mut windows = self
+            .aliases
+            .as_ref()
+            .into_iter()
+            .flat_map(|aliases| aliases.windows.iter())
+            .peekable();
+        aliases::visit(self.layout.v6, bytes, |entry| {
+            while windows
+                .peek()
+                .is_some_and(|window| window.end() < entry.start)
+            {
+                if let Some(&window) = windows.next() {
+                    self.visit_alias(window, &mut emit)?;
                 }
             }
+            emit(self.physical_match(entry, true)?)
+        })?;
+        for &window in windows {
+            self.visit_alias(window, &mut emit)?;
         }
 
         for position in 0..self.layout.asns.count {
@@ -283,7 +312,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
             let id = u32_at(row, 4)?;
 
             emit(Match {
-                id,
+                id: self.logical_id(id),
                 target: Target::Asn(u32_at(row, 0)?),
                 payload: self.layout.payload(bytes, id)?,
             })?;
@@ -292,14 +321,90 @@ impl<B: AsRef<[u8]>> Reader<B> {
         Ok(())
     }
 
+    /// Write an opt-in format-5 artifact over this plain format-3 or format-4 index.
+    ///
+    /// Windows must be sorted by address and disjoint from each other and from
+    /// native IPv6 assertions. The physical IPv4 section must contain networks
+    /// with IDs starting at zero in sorted row order. Each window receives a
+    /// contiguous ID block, or one window may interleave odd IDs with IPv4.
+    /// Remaining physical IDs fill the remaining logical IDs in order.
+    ///
+    /// # Errors
+    /// Fails on invalid windows, incompatible base indexes, resource limits or
+    /// output I/O. I/O failure may leave partial output.
+    pub fn write_shared_aliases(
+        &self,
+        windows: &[SharedAlias],
+        output: impl Write,
+        limits: Limits,
+    ) -> Result<(), Error> {
+        if self.aliases.is_some() {
+            return Err(Error::Invalid("nested shared aliases"));
+        }
+        let data = self.bytes.as_ref();
+        if Aliases::total_bytes(windows, data.len())? > limits.bytes {
+            return Err(Error::Limit("artifact bytes"));
+        }
+        Aliases::validate(windows, data, self.layout, limits)?;
+        Aliases::write(windows, output, data)
+    }
+
+    fn logical_id(&self, id: u32) -> u32 {
+        self.aliases
+            .as_ref()
+            .map_or(id, |aliases| aliases.logical(id))
+    }
+
+    fn physical_match(&self, entry: Entry, ipv6: bool) -> Result<Match<'_>, Error> {
+        Ok(Match {
+            id: self.logical_id(entry.id),
+            target: entry.target(ipv6)?,
+            payload: self.layout.payload(self.bytes.as_ref(), entry.id)?,
+        })
+    }
+
+    fn visit_alias<'a, E: From<Error>>(
+        &'a self,
+        window: SharedAlias,
+        emit: &mut impl FnMut(Match<'a>) -> Result<(), E>,
+    ) -> Result<(), E> {
+        let bytes = self.bytes.as_ref();
+        aliases::visit(self.layout.v4, bytes, |entry| {
+            emit(window.matched(Match {
+                id: entry.id,
+                target: entry.target(false)?,
+                payload: self.layout.payload(bytes, entry.id)?,
+            })?)
+        })
+    }
+
     fn open_inner(bytes: B, limits: Limits, broad_routes: bool) -> Result<Self, Error> {
-        let data = bytes.as_ref();
-        let layout = Layout::read(data, limits)?;
-
-        let (coverage, broad_routes) = validate(data, layout, broad_routes)?;
-
+        let full = bytes.as_ref();
+        if full.len() > limits.bytes {
+            return Err(Error::Limit("artifact bytes"));
+        }
+        let (windows, offset) = if full.starts_with(MAGIC) && u32_at(full, 8)? == aliases::VERSION {
+            Aliases::read(full)?
+        } else {
+            (Vec::new(), 0)
+        };
+        let data = full
+            .get(offset..)
+            .ok_or(Error::Invalid("shared alias base"))?;
+        let mut layout = Layout::read(data, limits)?;
+        let (mut coverage, broad_routes) = validate(data, layout, broad_routes)?;
         let bounds = [ip_bounds(data, layout.v4)?, ip_bounds(data, layout.v6)?];
         let ipv4_directory = ip_directory(data, layout.v4, bounds[0])?;
+        let aliases = if offset == 0 {
+            None
+        } else {
+            let aliases = Aliases::validate(&windows, data, layout, limits)?;
+            for window in &aliases.windows {
+                coverage.insert(window.start(), window.end(), true);
+            }
+            layout.rebase(offset);
+            Some(aliases)
+        };
 
         Ok(Self {
             bytes,
@@ -309,6 +414,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
             ipv4_directory,
             coverage,
             broad_routes,
+            aliases,
         })
     }
 
@@ -358,7 +464,7 @@ impl<B: AsRef<[u8]>> fmt::Debug for Reader<B> {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("Reader")
-            .field("records", &self.layout.records)
+            .field("records", &self.len())
             .field("artifact_bytes", &self.layout.bytes)
             .finish()
     }

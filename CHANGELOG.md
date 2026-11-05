@@ -15,6 +15,11 @@ External builds account additional temporary reference files and larger disk
 cells against their existing disk limit. See FORMAT.md for exact selection and
 validation rules. This release has not been published to the registry.
 
+Explicit IPv6 alias windows can share the IPv4 network table through
+`Reader::write_shared_aliases`. Format 5 preserves logical targets, insertion
+IDs and all matches. Upgrade readers before using it. Ordinary builder output
+remains format 3 or 4.
+
 ## 2.1.0 - 2026-11-04
 
 Deduplicate every external-builder payload, including values outside the memory

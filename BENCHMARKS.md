@@ -441,3 +441,12 @@ about twice as fast; warm opaque lookups are about 1.4-5.2% slower against
 2.1.0 on the retained workloads. IPtoASN construction is also slower. Explicit
 legacy output remains available. No native conversion/application decoding
 or universal MMDB performance claim is included.
+
+## Shared aliases - 2026-11-05
+
+P1-11 adds an opt-in production format that shares an IPv4 network table
+across explicit IPv6 windows. [Results and replay](benches/shared_aliases/README.md):
+retained City drops from 164.8 to 62.4 MB and warm mmap open from 419 to
+161 ms. Sampled hits are roughly unchanged; uniform mixed lookup is about
+4% slower. The measurements compare the same logical assertions in netindex
+and do not qualify native provider readers or every input shape.

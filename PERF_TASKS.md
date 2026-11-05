@@ -8,7 +8,7 @@ experiment alone does not complete an implementation task.
 
 Historical P1-01 through P1-08 completions record qualification, not shipped
 features. Their source is [archived](benches/ARCHIVE.md); their measurements and
-decisions remain below. P1-10 implements and qualifies compact references; P1-11 is next.
+decisions remain below. P1-11 implements opt-in shared aliases; P1-12 is next.
 
 Statuses: `[ ]` queued; `[-]` active; `[x]` completed; `[!]` waiting on a named
 dependency. Existing 2.1.0 results are in [PERFORMANCE.md](PERFORMANCE.md); they do
@@ -96,8 +96,10 @@ not complete the broader experiments below.
   Breaking 3.0.0 default; format-3 reading and explicit legacy output retained.
   City saves 94.52 MiB; opening about 2x faster, warm lookup 1-5% slower.
   [Implementation and measurements](benches/compact_references/RESULTS.md).
-- [ ] **P1-11 Shared aliases.** Design logical target/ID mappings that preserve
-  duplicate assertions, overlaps and all-match results.
+- [x] **P1-11 Shared aliases.** Opt-in format 5 shares the IPv4 network
+  table across declared, disjoint IPv6 windows while preserving logical
+  targets, IDs, duplicate and overlapping source assertions, and match order.
+  City saves 97.73 MiB (62.17%). [Results](benches/shared_aliases/README.md).
 - [ ] **P1-12 Disk-table cache.** Benchmark a bounded page cache and account its RAM.
 - [ ] **P1-13 Grouped metadata.** Reduce probe work while keeping exact equality.
 - [ ] **P1-14 Partitioned dedup.** Compare sequential spill/merge against random I/O.
@@ -1024,3 +1026,26 @@ application decoding, minimum-size or universal-MMDB-win claim is made.
 [raw source/input/binary hashes and samples](benches/results/2026-11-05-compact-references.json).
 Next priority: P1-11 shared aliases, preserving logical assertions and all-match
 semantics while reducing physical target expansion.
+
+### P1-11 implementation and qualification - 2026-11-05
+
+Adopted explicit format-5 aliases; ordinary builders still write formats 3/4.
+The new reader reads all three formats. Deploy it before using the opt-in
+writer. This records the P1-16 decision for P1-11; P1-15 is still open.
+
+Two byte-identical retained City replays remove 14,531,024 physical copies
+while keeping all 20,255,722 logical assertions. Each checks every ID, target,
+payload and metadata plus 150,000 queries. Artifact size falls from
+164,836,510 to 62,361,614 bytes. Warm mmap open falls from 418.76 to 160.50 ms
+and open RSS from 145,452 to 45,448 KiB. Sampled hits remain about 128 ns;
+uniform mixed lookup rises from 54.04 to 56.34 ns. Plain format-4 City
+and IPtoASN controls also record small timing shifts; see the results.
+
+The caller supplies full-table windows; native IPv6 must not intersect them.
+Unqualified datasets can use materialized rows. Keep payload schemas and
+provider alias inference outside the library.
+
+[Method, measurements and migration](benches/shared_aliases/README.md),
+[raw receipt](benches/results/2026-11-05-shared-aliases.json).
+Next priority: **P1-12 disk-table cache**, starting with a bounded RAM budget
+and the unchanged exact-byte comparison path.

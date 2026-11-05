@@ -7,8 +7,9 @@ uses the header and encoded contents.
 
 All integers are little-endian. Offsets and lengths are unsigned; target addresses
 are numeric IP values, independent of host byte order. No native Rust structs or
-pointers are serialized. A file contains an 80-byte header followed immediately
-by metadata, IPv4 section, IPv6 section, ASN rows, payload slots, and payload bytes.
+pointers are serialized. A format-3 or format-4 file contains an 80-byte header
+followed immediately by metadata, IPv4 section, IPv6 section, ASN rows, payload
+slots, and payload bytes.
 Empty sections consume no bytes; trailing data is rejected.
 
 | Header offset | Width | Field |
@@ -115,6 +116,48 @@ header, section and validation rules are identical. Readers accept both formats.
 Netindex 2.x rejects format 4. Netindex 3.x builders select the smaller encoding
 by default; `Builder::into_legacy_bytes`, `Builder::write_legacy_to`, and
 `ExternalBuilder::new_legacy` preserve format-3 output for older consumers.
+
+## Shared IPv4 aliases (format 5)
+
+Format 5 is an opt-in envelope around one complete, unmodified format-3 or
+format-4 file. It starts with ASCII `NETINDEX`, version `5` as `u32`, then the
+descriptor count as `u32` (1 through 64). The descriptors follow immediately;
+each is 24 bytes:
+
+| Relative offset | Width | Field |
+| ---: | ---: | --- |
+| 0 | 16 | Canonical IPv6 window address as `u128` |
+| 16 | 4 | Logical ID of the first projected assertion |
+| 20 | 1 | Window prefix length, 0 through 96 |
+| 21 | 1 | ID stride, 1 or 2 |
+| 22 | 2 | Reserved zero bytes |
+
+The embedded file starts at byte `16 + 24 * descriptor_count` and runs to EOF.
+Its offsets and validation rules are unchanged. Envelopes cannot nest. The
+complete envelope counts toward the byte limit. Format-3/4 readers reject it;
+ordinary builders continue to emit formats 3/4.
+
+A descriptor projects the entire nonempty IPv4 section into its window. That
+section must contain only networks, with physical IDs 0 through `N-1` in sorted
+row order. The 32 bits immediately after the window prefix select the source
+IPv4 query, and any trailing bits are ignored. A source network of prefix length
+`p` becomes an IPv6 network of length `window_prefix + p`. Payloads are borrowed
+from the source row. IPv4 overlaps and duplicates project independently. The
+windows are sorted by address, mutually disjoint and disjoint from every
+physical IPv6 assertion, including any ranges that cross a window boundary.
+
+Normally the source IPv4 IDs are unchanged and each descriptor reserves a
+contiguous block of `N` logical IDs. One descriptor may instead have stride 2
+and first ID 1: source IPv4 rows then receive IDs `2*i`, and that window receives
+`2*i+1`. Contiguous blocks must start at or above the end of the source (or
+interleaved pair), may not overlap, and must fit within the logical count.
+Other physical IDs fill the unreserved logical IDs in increasing order.
+The record limit applies to `physical_count + N * descriptor_count`.
+
+IP visits return only assertions in the queried family, in the same target/ID
+order as a materialized file. Whole-index visits merge windows into IPv6 target
+order. ASN keys and metadata are unchanged. Readers do not infer alias windows
+or apply provider-specific address translation.
 
 ## Validation
 

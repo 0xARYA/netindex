@@ -47,3 +47,7 @@ is `[1, 1, 0, 0, 0, 0]`: presence bit, true boolean, and string ID zero.
   three variable-length shared payloads (empty, `a`, `xyz`). The borrowed span
   directory contains `(0,0)`, `(0,1)`, `(1,3)` and one-byte ordinals
   `[0,1,1,0,2,1]`. Independently assembled with integer fields; no library writer.
+
+- `shared-alias.nidx`: independent format-5 envelope with one stride-1
+  `2002::/16` window over a format-3 index holding one IPv4 `/0` with payload
+  `x`. The logical IPv4 and IPv6 IDs are 0 and 1.

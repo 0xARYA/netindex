@@ -12,6 +12,7 @@ described in [BENCHMARKS.md](../BENCHMARKS.md).
 | `native_city/` | Application-owned native/conversion comparison |
 | [Payload distribution](payload_distribution/README.md) | Evidence and verification for compact-reference implementation |
 | [Compact references](compact_references/README.md) | Production format-4 qualification, independent verification and migration tradeoffs |
+| [Shared aliases](shared_aliases/README.md) | Exact City replay and warm format-5 qualification |
 | `results/` | Immutable measurement and verification receipts |
 
 The completed P1-01–P1-08 prototype code is [archived](ARCHIVE.md). Their report

@@ -2,6 +2,7 @@
 
 use std::{collections::TryReserveError, io};
 
+pub use aliases::SharedAlias;
 pub use builder::Builder;
 pub use coverage::{Coverage, CoverageRouter};
 #[cfg(feature = "external-sort")]
@@ -10,6 +11,7 @@ pub use reader::{Match, Reader};
 pub use reader_set::ReaderSet;
 pub use target::Target;
 
+mod aliases;
 mod builder;
 #[cfg(feature = "codec")]
 pub mod codec;
