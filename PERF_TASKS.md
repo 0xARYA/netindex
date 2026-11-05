@@ -8,7 +8,7 @@ experiment alone does not complete an implementation task.
 
 Historical P1-01 through P1-08 completions record qualification, not shipped
 features. Their source is [archived](benches/ARCHIVE.md); their measurements and
-decisions remain below. P1-11 implements opt-in shared aliases; P1-12 is next.
+decisions remain below. P1-12 implements an opt-in disk-table cache; P1-13 is next.
 
 Statuses: `[ ]` queued; `[-]` active; `[x]` completed; `[!]` waiting on a named
 dependency. Existing 2.1.0 results are in [PERFORMANCE.md](PERFORMANCE.md); they do
@@ -100,7 +100,9 @@ not complete the broader experiments below.
   table across declared, disjoint IPv6 windows while preserving logical
   targets, IDs, duplicate and overlapping source assertions, and match order.
   City saves 97.73 MiB (62.17%). [Results](benches/shared_aliases/README.md).
-- [ ] **P1-12 Disk-table cache.** Benchmark a bounded page cache and account its RAM.
+- [x] **P1-12 Disk-table cache.** Optional bounded write-back cache; a
+  4.125 MiB page charge reduced median build time by 11-15% on three inputs.
+  [Measurements](benches/disk_table_cache/README.md).
 - [ ] **P1-13 Grouped metadata.** Reduce probe work while keeping exact equality.
 - [ ] **P1-14 Partitioned dedup.** Compare sequential spill/merge against random I/O.
 - [ ] **P1-15 Bitpacking.** Measure block decoding versus direct packed access.
@@ -1049,3 +1051,23 @@ provider alias inference outside the library.
 [raw receipt](benches/results/2026-11-05-shared-aliases.json).
 Next priority: **P1-12 disk-table cache**, starting with a bounded RAM budget
 and the unchanged exact-byte comparison path.
+
+### P1-12 implementation and qualification - 2026-11-05
+
+Adopted an opt-in write-back cache for the external builder's temporary
+payload table. Its RAM budget includes pages and tags, separate from the
+payload-key and temporary-file limits. Existing builds still default to
+uncached table I/O. Exact equality and artifact bytes are unchanged.
+
+At an 8 MiB requested budget (4.125 MiB charged RAM), median builds took
+17.86 to 15.18 s for materialized City, 3.48 to 3.09 s for the canonical
+City base, and 362.86 to 311.63 ms for IPtoASN. The 32 MiB budget charged
+16.5 MiB and showed no clear overall time advantage. Separate counter runs
+found 56% fewer positioned reads on materialized City and 81% fewer on
+IPtoASN. All 43 rebuilds were byte-identical and checked every assertion
+and 100,005 queries each. Results are warm-input WSL2/ext4 measurements.
+
+[Method and results](benches/disk_table_cache/README.md),
+[raw receipt](benches/results/2026-11-05-disk-table-cache.json).
+Next priority: **P1-13 grouped metadata**; measure probe work without
+changing full payload equality.

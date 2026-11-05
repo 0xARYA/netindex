@@ -20,6 +20,10 @@ Explicit IPv6 alias windows can share the IPv4 network table through
 IDs and all matches. Upgrade readers before using it. Ordinary builder output
 remains format 3 or 4.
 
+External builds can opt into a separately bounded write-back cache for the
+temporary payload table. This can reduce random I/O without changing the
+artifact or the default memory budget.
+
 ## 2.1.0 - 2026-11-04
 
 Deduplicate every external-builder payload, including values outside the memory

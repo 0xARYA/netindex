@@ -186,6 +186,9 @@ fn disk_deduplication_matches_first_seen_spans_across_growth_and_overlaps() {
                 },
             )
             .unwrap();
+            let disk_cache_budget = 4096;
+            actual.set_disk_table_cache(disk_cache_budget).unwrap();
+            assert_eq!(actual.disk_table_cache_bytes(), 0);
             let mut assertions = Vec::new();
             for id in 0..1200usize {
                 let key = (id % 300) as u32;
@@ -204,6 +207,11 @@ fn disk_deduplication_matches_first_seen_spans_across_growth_and_overlaps() {
                 assertions.push((id as u32, target, payload));
             }
 
+            assert!((1..=disk_cache_budget).contains(&actual.disk_table_cache_bytes()));
+            assert!(matches!(
+                actual.set_disk_table_cache(0),
+                Err(Error::Invalid("configure disk table cache before pushing"))
+            ));
             let expected = expected.into_bytes(b"metadata").unwrap();
             let mut bytes = Cursor::new(Vec::new());
             let stats = actual.write_to(&mut bytes, b"metadata").unwrap();

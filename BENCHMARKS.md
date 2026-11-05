@@ -450,3 +450,13 @@ retained City drops from 164.8 to 62.4 MB and warm mmap open from 419 to
 161 ms. Sampled hits are roughly unchanged; uniform mixed lookup is about
 4% slower. The measurements compare the same logical assertions in netindex
 and do not qualify native provider readers or every input shape.
+
+## Bounded disk-table cache - 2026-11-05
+
+[P1-12 results](benches/disk_table_cache/README.md) qualify an opt-in
+write-back cache for the external builder's temporary payload table. An
+8 MiB requested limit charged 4.125 MiB and reduced median build time by
+11-15% on retained City and IPtoASN replays, with byte-identical output and
+unchanged temporary-disk charges. The measurement includes the canonical
+City base from P1-11. Separate syscall counts show fewer positioned reads
+and writes. Native Windows performance and cold storage were not measured.

@@ -210,6 +210,29 @@ impl ExternalBuilder {
         })
     }
 
+    /// Enable a write-back cache for the temporary payload table, before pushing rows.
+    ///
+    /// The cache is allocated only if the table is needed. The limit covers page
+    /// storage and tags, separately from the payload-key cache and temporary disk
+    /// budget. It excludes allocator overhead and the operating system's file cache.
+    /// Zero (the default) uses uncached positioned I/O.
+    ///
+    /// # Errors
+    /// Fails if a row has already been pushed or the builder is invalid.
+    /// A later push reports cache allocation or I/O failures.
+    pub fn set_disk_table_cache(&mut self, bytes: usize) -> Result<(), Error> {
+        if self.records != 0 || self.failed {
+            return Err(Error::Invalid("configure disk table cache before pushing"));
+        }
+        self.disk_table.set_cache_budget(bytes);
+        Ok(())
+    }
+
+    /// Memory reserved for disk-table cache pages and tags so far.
+    pub fn disk_table_cache_bytes(&self) -> usize {
+        self.disk_table.cache_bytes()
+    }
+
     /// Append an unsorted assertion. Payload bytes are copied to disk or a bounded cache.
     ///
     /// Any failed push invalidates the builder: subsequent pushes and finalization

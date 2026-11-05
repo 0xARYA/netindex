@@ -193,6 +193,12 @@ complete deduplication. Table growth charges both old and new tables against the
 temporary-byte limit; builds may require a larger disk budget than earlier versions.
 Discard the builder after a failed push.
 
+Call `ExternalBuilder::set_disk_table_cache(bytes)` before pushing rows to
+optionally cache the temporary table. This budget includes cache pages and
+tags, separate from the payload-key and disk limits. The cache is off by
+default; `disk_table_cache_bytes()` reports what was allocated. It does not
+change output bytes or skip complete payload comparisons.
+
 The external writer requires empty, seekable output at position zero. Either
 writer can leave partial output on failure. Stage output, check success, and
 validate your payloads before publishing. File synchronization and release

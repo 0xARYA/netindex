@@ -1,5 +1,5 @@
 //! Replay an immutable index through the external builder, retaining every assertion.
-//! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|memory|memory-legacy]. Files must remain immutable while mapped.
+//! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|memory|memory-legacy] [DISK_CACHE_BYTES]. Files must remain immutable while mapped.
 
 #[cfg(all(feature = "external-sort", feature = "mmap"))]
 #[expect(
@@ -18,13 +18,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let arguments: Vec<_> = env::args_os().skip(1).collect();
     let [input, output, temporary, ..] = arguments.as_slice() else {
-        return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|memory|memory-legacy]".into());
+        return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|memory|memory-legacy] [DISK_CACHE_BYTES]".into());
     };
     let mode = arguments
         .get(3)
         .and_then(|arg| arg.to_str())
         .unwrap_or("external");
-    if arguments.len() > 4
+    let disk_budget = arguments
+        .get(4)
+        .map(|arg| {
+            arg.to_str()
+                .ok_or("invalid disk cache budget")?
+                .parse::<usize>()
+                .map_err(|_| "invalid disk cache budget")
+        })
+        .transpose()?
+        .unwrap_or(0);
+    if arguments.len() > 5
+        || (disk_budget != 0 && !mode.starts_with("external"))
         || !matches!(
             mode,
             "external" | "external-legacy" | "memory" | "memory-legacy"
@@ -71,16 +82,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .create_new(true)
         .open(output)?;
     let started = Instant::now();
-    let stats = if mode.starts_with("external") {
+    let (stats, cache_bytes) = if mode.starts_with("external") {
         let mut builder = if mode == "external-legacy" {
             ExternalBuilder::new_legacy(directory.path(), limits, options)?
         } else {
             ExternalBuilder::new(directory.path(), limits, options)?
         };
+        builder.set_disk_table_cache(disk_budget)?;
         for row in &assertions {
             builder.push(row.target, row.payload)?;
         }
-        Some(builder.write_to(&mut output_file, original.metadata()?)?)
+        let reserved = builder.disk_table_cache_bytes();
+        (
+            Some(builder.write_to(&mut output_file, original.metadata()?)?),
+            reserved,
+        )
     } else {
         let mut builder = Builder::new(limits);
         for row in &assertions {
@@ -91,7 +107,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else {
             builder.write_to(&mut output_file, original.metadata()?)?;
         }
-        None
+        (None, 0)
     };
     let artifact_bytes = output_file.metadata()?.len();
     let build_ms = started.elapsed().as_secs_f64() * 1000.0;
@@ -101,6 +117,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         serde_json::json!({"phase":"built", "build_ms":build_ms,
         "mode":mode,"records":assertions.len(),"artifact_bytes":artifact_bytes,
         "temporary_peak_bytes":stats.map(|stats| stats.temporary_peak_bytes),
+        "disk_cache_budget":disk_budget,"disk_cache_bytes":cache_bytes,
         "payload_cache_bytes":stats.map(|stats| stats.payload_cache_bytes)})
     );
 

@@ -13,6 +13,8 @@ use crate::Error;
 use super::{DiskBudget, positioned, temporary};
 
 const CELL_BYTES: u64 = 24;
+const PAGE_CELLS: u64 = 16;
+const PAGE_BYTES: usize = PAGE_CELLS as usize * 32;
 
 /// An on-disk open-addressed table for values that do not fit in the key cache.
 /// Hashes only select candidates; equality always compares the complete bytes.
@@ -22,6 +24,7 @@ pub(super) struct DiskTable {
     entries: u64,
     state: RandomState,
     cell_bytes: u64,
+    pages: PageCache,
 }
 
 impl DiskTable {
@@ -32,6 +35,7 @@ impl DiskTable {
             entries: 0,
             state: RandomState::new(),
             cell_bytes: CELL_BYTES,
+            pages: PageCache::default(),
         }
     }
 
@@ -40,6 +44,14 @@ impl DiskTable {
             cell_bytes: 32,
             ..Self::new()
         }
+    }
+
+    pub(super) fn set_cache_budget(&mut self, budget: usize) {
+        self.pages.budget = budget;
+    }
+
+    pub(super) fn cache_bytes(&self) -> usize {
+        self.pages.slots.capacity() * size_of::<Page>()
     }
 
     pub(super) fn hash(&self, payload: &[u8]) -> u64 {
@@ -74,7 +86,9 @@ impl DiskTable {
 
         let mut position = hash & (self.capacity - 1);
         for _ in 0..self.capacity {
-            let cell = Cell::at(file.as_file_mut(), position, self.cell_bytes)?;
+            let cell = self
+                .pages
+                .read(file.as_file_mut(), position, self.cell_bytes)?;
             if cell.length_plus_one == 0 {
                 return Ok(None);
             }
@@ -122,13 +136,20 @@ impl DiskTable {
                 .ok_or(Error::Limit("payload length"))?,
         };
         let file = self.file.as_mut().ok_or(Error::Invalid("payload table"))?;
-        place(file.as_file_mut(), self.capacity, cell, self.cell_bytes)?;
+        place(
+            file.as_file_mut(),
+            self.capacity,
+            cell,
+            self.cell_bytes,
+            &mut self.pages,
+        )?;
         self.entries += 1;
 
         Ok(())
     }
 
     pub(super) fn close(mut self, budget: &mut DiskBudget) -> Result<(), Error> {
+        // The temporary table is no longer consulted, so dirty pages can be discarded.
         if let Some(file) = self.file.take() {
             file.close().map_err(temporary("remove payload table"))?;
             budget.release(self.capacity * self.cell_bytes)?;
@@ -153,7 +174,11 @@ impl DiskTable {
             .set_len(bytes)
             .map_err(temporary("size payload table"))?;
 
+        self.pages.allocate()?;
         if let Some(previous) = self.file.as_mut() {
+            // Rehash reads the old table sequentially; the cache then belongs to the new file.
+            self.pages
+                .flush_and_invalidate(previous.as_file_mut(), self.cell_bytes)?;
             previous
                 .as_file_mut()
                 .seek(SeekFrom::Start(0))
@@ -162,7 +187,13 @@ impl DiskTable {
             for _ in 0..self.capacity {
                 let cell = Cell::read(&mut input, self.cell_bytes)?;
                 if cell.length_plus_one != 0 {
-                    place(file.as_file_mut(), capacity, cell, self.cell_bytes)?;
+                    place(
+                        file.as_file_mut(),
+                        capacity,
+                        cell,
+                        self.cell_bytes,
+                        &mut self.pages,
+                    )?;
                 }
             }
         }
@@ -232,7 +263,7 @@ impl Cell {
         })
     }
 
-    fn write(self, file: &mut File, position: u64, cell_bytes: u64) -> Result<(), Error> {
+    fn encode(self) -> [u8; 32] {
         let mut bytes = [0; 32];
         for (chunk, value) in bytes.chunks_exact_mut(8).zip([
             self.hash,
@@ -242,6 +273,11 @@ impl Cell {
         ]) {
             chunk.copy_from_slice(&value.to_le_bytes());
         }
+        bytes
+    }
+
+    fn write(self, file: &mut File, position: u64, cell_bytes: u64) -> Result<(), Error> {
+        let bytes = self.encode();
         positioned::write_all(
             file,
             bytes
@@ -254,11 +290,147 @@ impl Cell {
     }
 }
 
-fn place(file: &mut File, capacity: u64, cell: Cell, cell_bytes: u64) -> Result<(), Error> {
+#[derive(Clone)]
+struct Page {
+    number: u64,
+    dirty: bool,
+    bytes: [u8; PAGE_BYTES],
+}
+
+impl Page {
+    fn flush(&mut self, file: &File, width: usize) -> Result<(), Error> {
+        if self.dirty {
+            positioned::write_all(
+                file,
+                self.bytes
+                    .get(..width)
+                    .ok_or(Error::Invalid("payload table page"))?,
+                self.number * width as u64,
+            )
+            .map_err(temporary("write payload table page"))?;
+            self.dirty = false;
+        }
+        Ok(())
+    }
+}
+
+#[derive(Default)]
+struct PageCache {
+    slots: Vec<Page>,
+    budget: usize,
+}
+
+impl PageCache {
+    fn allocate(&mut self) -> Result<(), Error> {
+        let slots = self.budget / size_of::<Page>();
+        if slots == 0 || !self.slots.is_empty() {
+            return Ok(());
+        }
+        let slots = 1 << slots.ilog2();
+        let mut pages = Vec::new();
+        pages.try_reserve_exact(slots)?;
+        if pages.capacity() > self.budget / size_of::<Page>() {
+            return Err(Error::Limit("disk table cache bytes"));
+        }
+        pages.resize(
+            slots,
+            Page {
+                number: u64::MAX,
+                dirty: false,
+                bytes: [0; PAGE_BYTES],
+            },
+        );
+        self.slots = pages;
+        Ok(())
+    }
+
+    fn page(&mut self, file: &File, position: u64, cell_bytes: u64) -> Result<&mut Page, Error> {
+        let number = position / PAGE_CELLS;
+        let width = (PAGE_CELLS * cell_bytes) as usize;
+        let at = number as usize & (self.slots.len() - 1);
+        let slot = self
+            .slots
+            .get_mut(at)
+            .ok_or(Error::Invalid("payload table page"))?;
+        if slot.number != number {
+            slot.flush(file, width)?;
+            slot.number = u64::MAX;
+            positioned::read_exact(
+                file,
+                slot.bytes
+                    .get_mut(..width)
+                    .ok_or(Error::Invalid("payload table page"))?,
+                number * width as u64,
+            )
+            .map_err(temporary("read payload table page"))?;
+            slot.number = number;
+        }
+        Ok(slot)
+    }
+
+    fn read(&mut self, file: &mut File, position: u64, cell_bytes: u64) -> Result<Cell, Error> {
+        if self.slots.is_empty() {
+            return Cell::at(file, position, cell_bytes);
+        }
+        let start = ((position % PAGE_CELLS) * cell_bytes) as usize;
+        let page = self.page(file, position, cell_bytes)?;
+        let mut bytes = [0; 32];
+        bytes
+            .get_mut(..cell_bytes as usize)
+            .ok_or(Error::Invalid("payload table cell"))?
+            .copy_from_slice(
+                page.bytes
+                    .get(start..start + cell_bytes as usize)
+                    .ok_or(Error::Invalid("payload table page cell"))?,
+            );
+        Cell::decode(bytes)
+    }
+
+    fn write(
+        &mut self,
+        file: &mut File,
+        position: u64,
+        cell_bytes: u64,
+        cell: Cell,
+    ) -> Result<(), Error> {
+        if self.slots.is_empty() {
+            return cell.write(file, position, cell_bytes);
+        }
+        let start = ((position % PAGE_CELLS) * cell_bytes) as usize;
+        let page = self.page(file, position, cell_bytes)?;
+        page.bytes
+            .get_mut(start..start + cell_bytes as usize)
+            .ok_or(Error::Invalid("payload table page cell"))?
+            .copy_from_slice(
+                cell.encode()
+                    .get(..cell_bytes as usize)
+                    .ok_or(Error::Invalid("payload table cell"))?,
+            );
+        page.dirty = true;
+        Ok(())
+    }
+
+    fn flush_and_invalidate(&mut self, file: &File, cell_bytes: u64) -> Result<(), Error> {
+        let width = (PAGE_CELLS * cell_bytes) as usize;
+        for slot in &mut self.slots {
+            slot.flush(file, width)?;
+            slot.number = u64::MAX;
+        }
+        Ok(())
+    }
+}
+
+fn place(
+    file: &mut File,
+    capacity: u64,
+    cell: Cell,
+    cell_bytes: u64,
+    pages: &mut PageCache,
+) -> Result<(), Error> {
     let mut position = cell.hash & (capacity - 1);
     for _ in 0..capacity {
-        if Cell::at(file, position, cell_bytes)?.length_plus_one == 0 {
-            return cell.write(file, position, cell_bytes);
+        if pages.read(file, position, cell_bytes)?.length_plus_one == 0 {
+            return pages.write(file, position, cell_bytes, cell);
         }
         position = (position + 1) & (capacity - 1);
     }
@@ -346,6 +518,7 @@ mod tests {
         let mut pool = BufWriter::new(payload_file.reopen().unwrap());
         let reader = payload_file.reopen().unwrap();
         let mut table = DiskTable::new();
+        table.set_cache_budget(size_of::<Page>());
         let mut budget = DiskBudget {
             used: 0,
             peak: 0,
@@ -395,6 +568,7 @@ mod tests {
         let mut pool = BufWriter::new(payload_file.reopen().unwrap());
         let reader = payload_file.reopen().unwrap();
         let mut table = DiskTable::with_references();
+        table.set_cache_budget(size_of::<Page>());
         let mut budget = DiskBudget {
             used: 0,
             peak: 0,
@@ -454,6 +628,29 @@ mod tests {
         assert_eq!(budget.used, 3072);
         table.close(&mut budget).unwrap();
         assert_eq!(budget.used, 0);
+    }
+
+    #[test]
+    fn dirty_page_eviction_preserves_the_write_error() {
+        let file = NamedTempFile::new().unwrap();
+        file.as_file().set_len(2 * PAGE_CELLS * CELL_BYTES).unwrap();
+        let mut cache = PageCache {
+            budget: size_of::<Page>(),
+            ..PageCache::default()
+        };
+        cache.allocate().unwrap();
+        cache.page(file.as_file(), 0, CELL_BYTES).unwrap().dirty = true;
+        let read_only = File::open(file.path()).unwrap();
+
+        assert!(matches!(
+            cache.page(&read_only, PAGE_CELLS, CELL_BYTES),
+            Err(Error::TemporaryIo {
+                operation: "write payload table page",
+                ..
+            })
+        ));
+        assert!(cache.page(file.as_file(), 0, CELL_BYTES).unwrap().dirty);
+        cache.page(file.as_file(), PAGE_CELLS, CELL_BYTES).unwrap();
     }
 
     #[test]
