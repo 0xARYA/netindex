@@ -429,3 +429,15 @@ The three-byte-ID plus distinct-span-directory arithmetic estimate motivates
 P1-10; it is not an implemented format or measured lookup/build improvement.
 Raw provider records remain private. Locality counts describe construction
 order and distinguish payload-only reuse from the actual cache admission charge.
+
+## Compact payload references - 2026-11-05
+
+P1-10 is implemented in the production reader and both builders for 3.0.0.
+[Results](benches/compact_references/RESULTS.md) and
+[reproduction](benches/compact_references/README.md) record unchanged-input
+qualification, source/binary hashes, exact semantic verification and migration.
+City saves 94.52 MiB (37.55%), IPtoASN 2.77 MiB (9.44%). Full validation is
+about twice as fast; warm opaque lookups are about 1.4-5.2% slower against
+2.1.0 on the retained workloads. IPtoASN construction is also slower. Explicit
+legacy output remains available. No native conversion/application decoding
+or universal MMDB performance claim is included.

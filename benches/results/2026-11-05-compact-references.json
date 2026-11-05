@@ -1,0 +1,2143 @@
+{
+  "schema": "netindex-compact-references-v1",
+  "date": "2026-11-05",
+  "baseline_revision": "552ab08",
+  "environment": {
+    "platform": "Linux-6.6.114.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu": "AMD Ryzen 9 9950X3D2 16-Core Processor",
+    "pinned_cpu": 20,
+    "rust": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "features": "all",
+    "profile": "release; codegen-units=1; no PGO/LTO/custom CPU flags",
+    "page_cache": "warmed before each lookup process; no cache dropping",
+    "build_environment_overrides": {
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "CARGO_PROFILE_RELEASE_LTO": null,
+      "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": null
+    }
+  },
+  "scope": {
+    "build": "opaque insertion-order replay; excludes preparation, native decoding and fsync; process peak RSS includes retained replay assertions and verification",
+    "lookup": "scalar query loop with runtime SIMD search enabled; callback consumes ID, length, first and last payload byte; sampled target starts and uniform mixed IPv4/IPv6; no application decoding",
+    "open": "full mmap validation; process RSS immediately after open; filesystem cache excluded from RSS; warm file cache"
+  },
+  "sources": {
+    "source/Cargo.toml": {
+      "bytes": 2732,
+      "sha256": "557a0c9e6ba553e06b97bc9e4710c4a219e3d6d9c86308f876bbfcf26f91eb5a"
+    },
+    "source/Cargo.lock": {
+      "bytes": 30010,
+      "sha256": "3591c57e8eb0d06ae967d43c4b457eb0cfe708e66d0187faf22e13d045fe1bdd"
+    },
+    "source/src/builder.rs": {
+      "bytes": 12833,
+      "sha256": "45b96901258b01a82cbf9acb132e47cb72ec0b8dd87804e970c3fff61bfc9df2"
+    },
+    "source/src/codec.rs": {
+      "bytes": 23336,
+      "sha256": "f408bae0e1399fb0ad84bbed687fa925e8d4bc8395790fb3849e993b961f1a78"
+    },
+    "source/src/coverage.rs": {
+      "bytes": 4266,
+      "sha256": "df254824a5dd4fc2b0058a8dc0a631ffa9c02ab63cdcd59d44fa41c1fe11da95"
+    },
+    "source/src/external/dedup.rs": {
+      "bytes": 15484,
+      "sha256": "d1433e9ad45a6f68d80904df655472cb2e1c62b040b659d761c584bd614aaa6f"
+    },
+    "source/src/external/encode.rs": {
+      "bytes": 5595,
+      "sha256": "c29b4d997695181c11f0a92e560917497d50268a0a0333fbacb781216f4c252b"
+    },
+    "source/src/external/mod.rs": {
+      "bytes": 24627,
+      "sha256": "2940152c71b1fc8880ed5a88351cf5094df82bf8418dcafbf12f7627a03c18b4"
+    },
+    "source/src/external/positioned.rs": {
+      "bytes": 4223,
+      "sha256": "14bd6893e4bf80694d65e897cd48ca6871cffe450f09b679ec897efa1089aeec"
+    },
+    "source/src/external/runs.rs": {
+      "bytes": 11372,
+      "sha256": "b29408500ff71970268186cab65b24a447ad939faa2cd08e294c133618cd2330"
+    },
+    "source/src/layout.rs": {
+      "bytes": 12404,
+      "sha256": "dbb3f7977070316d8a83b2006894ac70cc32a8b7a69f477fe85c0f53532af0a2"
+    },
+    "source/src/lib.rs": {
+      "bytes": 3527,
+      "sha256": "4ce86573dace4d4696f3ed1b4380b243ac860ae77c081839d72da74023413343"
+    },
+    "source/src/mmap.rs": {
+      "bytes": 3121,
+      "sha256": "e9bd07df627fbcb1e83bf0452f8db371146788e71b1108ee5c4d0ce42a53842c"
+    },
+    "source/src/mmdb.rs": {
+      "bytes": 4564,
+      "sha256": "21ee1f012baa1bef96c66f4060c5d6d37b9cb6e3f5283145626e4c538f7b4852"
+    },
+    "source/src/packed.rs": {
+      "bytes": 13727,
+      "sha256": "9fb0e97e3d7637170e102782838fe040571e1a664d53c8908fa0a77c616b8b68"
+    },
+    "source/src/payload.rs": {
+      "bytes": 10406,
+      "sha256": "801bf45efed10deb8377f4a068f532ce45bdc77f542583826a1aae311327f589"
+    },
+    "source/src/reader.rs": {
+      "bytes": 19841,
+      "sha256": "a9b2abf690df98b72ffefb437e0feeb4109176133b485126dce4b38fdf2f70a9"
+    },
+    "source/src/reader_set.rs": {
+      "bytes": 7571,
+      "sha256": "83aaf562445033e4a8a50eaae13dd10a1fe90e5761b41765a7fd5b3d1605b733"
+    },
+    "source/src/routing.rs": {
+      "bytes": 6240,
+      "sha256": "b03592061760cb29e2af976a23afbf5ac9934d361b3c84d5dd31192627cae0de"
+    },
+    "source/src/search.rs": {
+      "bytes": 8942,
+      "sha256": "de332a1b206329045b41dbd052a3d5ff14dfd75c9cf065470a717da2ade374c2"
+    },
+    "source/src/target.rs": {
+      "bytes": 7325,
+      "sha256": "557bf305a791d5bd392344197697baf9f5eddeba64b30c3c540a2154e7cc908b"
+    },
+    "source/src/values.rs": {
+      "bytes": 11232,
+      "sha256": "d42fdef38f253673aefe54f81d5e4ba526b735f60ca2cb166886c12bcd8a701a"
+    },
+    "source/examples/reference_lookup.rs": {
+      "bytes": 4969,
+      "sha256": "093a7c3f56bfcab0ac01f6cce195ba9e88d047721a7de8cee8c84b201c29e4e6"
+    },
+    "baseline/Cargo.toml": {
+      "bytes": 2732,
+      "sha256": "0efad62fd86f6c4029d4be945bc012d4b227ac09b8a5690d37054f1c355bedc0"
+    },
+    "baseline/Cargo.lock": {
+      "bytes": 30010,
+      "sha256": "fa7d474302bbf0079a6c715223b8249aa21ac532070fa83be69e4254b62da599"
+    },
+    "baseline/src/builder.rs": {
+      "bytes": 10097,
+      "sha256": "3f12bed018980008f98e7ca97658bc29fdb2a7703899c630e71db10508fad687"
+    },
+    "baseline/src/codec.rs": {
+      "bytes": 23336,
+      "sha256": "f408bae0e1399fb0ad84bbed687fa925e8d4bc8395790fb3849e993b961f1a78"
+    },
+    "baseline/src/coverage.rs": {
+      "bytes": 4266,
+      "sha256": "df254824a5dd4fc2b0058a8dc0a631ffa9c02ab63cdcd59d44fa41c1fe11da95"
+    },
+    "baseline/src/external/dedup.rs": {
+      "bytes": 13072,
+      "sha256": "c1411990886d3b2477280ded166a67c4ab697d9fc4dd8b792800fe11eb7a460e"
+    },
+    "baseline/src/external/encode.rs": {
+      "bytes": 5595,
+      "sha256": "c29b4d997695181c11f0a92e560917497d50268a0a0333fbacb781216f4c252b"
+    },
+    "baseline/src/external/mod.rs": {
+      "bytes": 17995,
+      "sha256": "70f78e7ceaeb096e64365b3b9b26f4f0dca9f8a78cbbe89df65264d72ff24319"
+    },
+    "baseline/src/external/positioned.rs": {
+      "bytes": 4352,
+      "sha256": "4bbbc0936f111891c3fa799a377eb91ac23beba64225d40e2267accf1f3b8129"
+    },
+    "baseline/src/external/runs.rs": {
+      "bytes": 11372,
+      "sha256": "b29408500ff71970268186cab65b24a447ad939faa2cd08e294c133618cd2330"
+    },
+    "baseline/src/layout.rs": {
+      "bytes": 12205,
+      "sha256": "036e36a8d1fe692e65a6f9bfe026f8dc8cefe5b958b6361b4227b5edeb2b03d9"
+    },
+    "baseline/src/lib.rs": {
+      "bytes": 3527,
+      "sha256": "4ce86573dace4d4696f3ed1b4380b243ac860ae77c081839d72da74023413343"
+    },
+    "baseline/src/mmap.rs": {
+      "bytes": 3121,
+      "sha256": "e9bd07df627fbcb1e83bf0452f8db371146788e71b1108ee5c4d0ce42a53842c"
+    },
+    "baseline/src/mmdb.rs": {
+      "bytes": 4564,
+      "sha256": "21ee1f012baa1bef96c66f4060c5d6d37b9cb6e3f5283145626e4c538f7b4852"
+    },
+    "baseline/src/packed.rs": {
+      "bytes": 13727,
+      "sha256": "9fb0e97e3d7637170e102782838fe040571e1a664d53c8908fa0a77c616b8b68"
+    },
+    "baseline/src/payload.rs": {
+      "bytes": 6615,
+      "sha256": "4ec64cc9ca90a5a478011a8c72290c6f6808285cf33a7209898cdfbd1c334a07"
+    },
+    "baseline/src/reader.rs": {
+      "bytes": 19294,
+      "sha256": "418f1c23bf72598d8937321d034c73c411a4ad7b4599f0cc087e6a99df8e717f"
+    },
+    "baseline/src/reader_set.rs": {
+      "bytes": 7571,
+      "sha256": "83aaf562445033e4a8a50eaae13dd10a1fe90e5761b41765a7fd5b3d1605b733"
+    },
+    "baseline/src/routing.rs": {
+      "bytes": 6240,
+      "sha256": "b03592061760cb29e2af976a23afbf5ac9934d361b3c84d5dd31192627cae0de"
+    },
+    "baseline/src/search.rs": {
+      "bytes": 9197,
+      "sha256": "099ee34d60073787889245b75eeea1268b647f085e029f14235eb41017d96c7c"
+    },
+    "baseline/src/target.rs": {
+      "bytes": 7325,
+      "sha256": "557bf305a791d5bd392344197697baf9f5eddeba64b30c3c540a2154e7cc908b"
+    },
+    "baseline/src/values.rs": {
+      "bytes": 11232,
+      "sha256": "d42fdef38f253673aefe54f81d5e4ba526b735f60ca2cb166886c12bcd8a701a"
+    },
+    "baseline/examples/reference_lookup.rs": {
+      "bytes": 4969,
+      "sha256": "093a7c3f56bfcab0ac01f6cce195ba9e88d047721a7de8cee8c84b201c29e4e6"
+    },
+    "source/examples/rebuild.rs": {
+      "bytes": 6726,
+      "sha256": "b6abd91c7d90732ceea2092b81579083035e98f58554772eeceba9ca41f8b9bf"
+    }
+  },
+  "binaries": {
+    "source/target/release/examples/rebuild": {
+      "bytes": 820064,
+      "sha256": "a785d9a57a4e22c801735a30dbefd21b445c12db057afeb375853e691a88d0b3"
+    },
+    "source/target/release/examples/reference_lookup": {
+      "bytes": 607480,
+      "sha256": "1465d6ed0ae7afc55ba2e89ea3bbef0523b4096d778673a9409ab9a062811e69"
+    },
+    "baseline/target/release/examples/reference_lookup": {
+      "bytes": 604976,
+      "sha256": "64a822a7cbe1c5026f1c970c10f7e00c292f721e251282795d8c601b471b28f3"
+    }
+  },
+  "inputs": {
+    "city": {
+      "bytes": 263944912,
+      "sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    },
+    "asn": {
+      "bytes": 30741317,
+      "sha256": "9009875a044190b725c0352c917daf5bf33403ed7f07879372986fea14f799e1"
+    }
+  },
+  "outputs": {
+    "city-external-legacy-r4": {
+      "bytes": 263944912,
+      "sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    },
+    "city-external-legacy-r5": {
+      "bytes": 263944912,
+      "sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    },
+    "city-external-r4": {
+      "bytes": 164836510,
+      "sha256": "348b657507936b6b8953eb8bc83dcf2e5147c220c7c685da9a734d2d7a1717dd"
+    },
+    "city-external-r5": {
+      "bytes": 164836510,
+      "sha256": "348b657507936b6b8953eb8bc83dcf2e5147c220c7c685da9a734d2d7a1717dd"
+    },
+    "city-memory-legacy-r4": {
+      "bytes": 263944912,
+      "sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    },
+    "city-memory-legacy-r5": {
+      "bytes": 263944912,
+      "sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    },
+    "city-memory-r4": {
+      "bytes": 164836510,
+      "sha256": "348b657507936b6b8953eb8bc83dcf2e5147c220c7c685da9a734d2d7a1717dd"
+    },
+    "city-memory-r5": {
+      "bytes": 164836510,
+      "sha256": "348b657507936b6b8953eb8bc83dcf2e5147c220c7c685da9a734d2d7a1717dd"
+    },
+    "asn-external-legacy-r4": {
+      "bytes": 30741317,
+      "sha256": "9009875a044190b725c0352c917daf5bf33403ed7f07879372986fea14f799e1"
+    },
+    "asn-external-legacy-r5": {
+      "bytes": 30741317,
+      "sha256": "9009875a044190b725c0352c917daf5bf33403ed7f07879372986fea14f799e1"
+    },
+    "asn-external-r4": {
+      "bytes": 27840796,
+      "sha256": "7e5095968be43d8537ca76a9039fede4227c48fd7ec215e55d31f9f921cb9acf"
+    },
+    "asn-external-r5": {
+      "bytes": 27840796,
+      "sha256": "7e5095968be43d8537ca76a9039fede4227c48fd7ec215e55d31f9f921cb9acf"
+    },
+    "asn-memory-legacy-r4": {
+      "bytes": 30741317,
+      "sha256": "9009875a044190b725c0352c917daf5bf33403ed7f07879372986fea14f799e1"
+    },
+    "asn-memory-legacy-r5": {
+      "bytes": 30741317,
+      "sha256": "9009875a044190b725c0352c917daf5bf33403ed7f07879372986fea14f799e1"
+    },
+    "asn-memory-r4": {
+      "bytes": 27840796,
+      "sha256": "7e5095968be43d8537ca76a9039fede4227c48fd7ec215e55d31f9f921cb9acf"
+    },
+    "asn-memory-r5": {
+      "bytes": 27840796,
+      "sha256": "7e5095968be43d8537ca76a9039fede4227c48fd7ec215e55d31f9f921cb9acf"
+    }
+  },
+  "builds": [
+    {
+      "key": "city-external-legacy-r4",
+      "dataset": "city",
+      "mode": "external-legacy",
+      "round": 4,
+      "phases": [
+        {
+          "input_open_ms": 1007.203257,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2803.495813,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 263944912,
+          "build_ms": 14930.839608,
+          "mode": "external-legacy",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1961276003
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 957.8261719999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1770.308665
+        }
+      ],
+      "maximum_rss_kib": 1653780,
+      "user_seconds": 11.63,
+      "system_seconds": 7.53
+    },
+    {
+      "key": "city-external-legacy-r5",
+      "dataset": "city",
+      "mode": "external-legacy",
+      "round": 5,
+      "phases": [
+        {
+          "input_open_ms": 879.4983,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2470.594203,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 263944912,
+          "build_ms": 14903.551809,
+          "mode": "external-legacy",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1961276003
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 911.815283,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1666.97432
+        }
+      ],
+      "maximum_rss_kib": 1653012,
+      "user_seconds": 11.67,
+      "system_seconds": 7.03
+    },
+    {
+      "key": "city-external-r4",
+      "dataset": "city",
+      "mode": "external",
+      "round": 4,
+      "phases": [
+        {
+          "input_open_ms": 906.215935,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2424.815409,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14920.199827999999,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 514.400398,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1312.211532
+        }
+      ],
+      "maximum_rss_kib": 1556240,
+      "user_seconds": 11.76,
+      "system_seconds": 6.59
+    },
+    {
+      "key": "city-external-r5",
+      "dataset": "city",
+      "mode": "external",
+      "round": 5,
+      "phases": [
+        {
+          "input_open_ms": 830.9809849999999,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2264.708436,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 14996.822891000002,
+          "mode": "external",
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 513.772107,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1780.9147759999998
+        }
+      ],
+      "maximum_rss_kib": 1556240,
+      "user_seconds": 12.14,
+      "system_seconds": 6.63
+    },
+    {
+      "key": "city-memory-legacy-r4",
+      "dataset": "city",
+      "mode": "memory-legacy",
+      "round": 4,
+      "phases": [
+        {
+          "input_open_ms": 813.243739,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2323.8024729999997,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 263944912,
+          "build_ms": 2734.217799,
+          "mode": "memory-legacy",
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 816.954019,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1741.79205
+        }
+      ],
+      "maximum_rss_kib": 2828464,
+      "user_seconds": 5.44,
+      "system_seconds": 1.22
+    },
+    {
+      "key": "city-memory-legacy-r5",
+      "dataset": "city",
+      "mode": "memory-legacy",
+      "round": 5,
+      "phases": [
+        {
+          "input_open_ms": 884.7925009999999,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2311.3823770000004,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 263944912,
+          "build_ms": 2356.050323,
+          "mode": "memory-legacy",
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 815.9238359999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1633.6573730000002
+        }
+      ],
+      "maximum_rss_kib": 2828464,
+      "user_seconds": 5.05,
+      "system_seconds": 1.14
+    },
+    {
+      "key": "city-memory-r4",
+      "dataset": "city",
+      "mode": "memory",
+      "round": 4,
+      "phases": [
+        {
+          "input_open_ms": 841.1242,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2532.568906,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 2679.5926,
+          "mode": "memory",
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 425.709577,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1177.036342
+        }
+      ],
+      "maximum_rss_kib": 2830000,
+      "user_seconds": 5.28,
+      "system_seconds": 1.09
+    },
+    {
+      "key": "city-memory-r5",
+      "dataset": "city",
+      "mode": "memory",
+      "round": 5,
+      "phases": [
+        {
+          "input_open_ms": 825.126071,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2192.664039,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 164836510,
+          "build_ms": 2536.6899150000004,
+          "mode": "memory",
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 419.321767,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1176.947925
+        }
+      ],
+      "maximum_rss_kib": 2830004,
+      "user_seconds": 4.87,
+      "system_seconds": 1.03
+    },
+    {
+      "key": "asn-external-legacy-r4",
+      "dataset": "asn",
+      "mode": "external-legacy",
+      "round": 4,
+      "phases": [
+        {
+          "input_open_ms": 64.169831,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 84.280575,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 30741317,
+          "build_ms": 330.114758,
+          "mode": "external-legacy",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 73204454
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 32.407229,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 120.237664
+        }
+      ],
+      "maximum_rss_kib": 107020,
+      "user_seconds": 0.4,
+      "system_seconds": 0.1
+    },
+    {
+      "key": "asn-external-legacy-r5",
+      "dataset": "asn",
+      "mode": "external-legacy",
+      "round": 5,
+      "phases": [
+        {
+          "input_open_ms": 40.718976,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 60.643113,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 30741317,
+          "build_ms": 328.787035,
+          "mode": "external-legacy",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 73204454
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 33.486606,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 120.904148
+        }
+      ],
+      "maximum_rss_kib": 107020,
+      "user_seconds": 0.37,
+      "system_seconds": 0.13
+    },
+    {
+      "key": "asn-external-r4",
+      "dataset": "asn",
+      "mode": "external",
+      "round": 4,
+      "phases": [
+        {
+          "input_open_ms": 33.910849999999996,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 53.440315000000005,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 452.23175599999996,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 15.713114000000001,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 107.004022
+        }
+      ],
+      "maximum_rss_kib": 102936,
+      "user_seconds": 0.36,
+      "system_seconds": 0.11
+    },
+    {
+      "key": "asn-external-r5",
+      "dataset": "asn",
+      "mode": "external",
+      "round": 5,
+      "phases": [
+        {
+          "input_open_ms": 33.229618,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 53.332063,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 456.867454,
+          "mode": "external",
+          "payload_cache_bytes": 4194300,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": 74594886
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 16.048410999999998,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 104.87977699999999
+        }
+      ],
+      "maximum_rss_kib": 102936,
+      "user_seconds": 0.34,
+      "system_seconds": 0.14
+    },
+    {
+      "key": "asn-memory-legacy-r4",
+      "dataset": "asn",
+      "mode": "memory-legacy",
+      "round": 4,
+      "phases": [
+        {
+          "input_open_ms": 37.616348,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 57.627986,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 30741317,
+          "build_ms": 56.709091,
+          "mode": "memory-legacy",
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 32.742967,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 123.090628
+        }
+      ],
+      "maximum_rss_kib": 114300,
+      "user_seconds": 0.22,
+      "system_seconds": 0.01
+    },
+    {
+      "key": "asn-memory-legacy-r5",
+      "dataset": "asn",
+      "mode": "memory-legacy",
+      "round": 5,
+      "phases": [
+        {
+          "input_open_ms": 34.903459999999995,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 55.368206,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 30741317,
+          "build_ms": 62.297159,
+          "mode": "memory-legacy",
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 34.179515,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 125.389351
+        }
+      ],
+      "maximum_rss_kib": 114304,
+      "user_seconds": 0.22,
+      "system_seconds": 0.02
+    },
+    {
+      "key": "asn-memory-r4",
+      "dataset": "asn",
+      "mode": "memory",
+      "round": 4,
+      "phases": [
+        {
+          "input_open_ms": 34.684168,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 54.566756,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 73.971391,
+          "mode": "memory",
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 17.585320000000003,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 115.404087
+        }
+      ],
+      "maximum_rss_kib": 114308,
+      "user_seconds": 0.23,
+      "system_seconds": 0.01
+    },
+    {
+      "key": "asn-memory-r5",
+      "dataset": "asn",
+      "mode": "memory",
+      "round": 5,
+      "phases": [
+        {
+          "input_open_ms": 34.31372399999999,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 54.646951,
+          "records": 719149,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 27840796,
+          "build_ms": 68.022593,
+          "mode": "memory",
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 719149,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 719149,
+          "output_open_ms": 15.663004,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 105.310314
+        }
+      ],
+      "maximum_rss_kib": 114304,
+      "user_seconds": 0.21,
+      "system_seconds": 0.01
+    }
+  ],
+  "lookups": [
+    {
+      "key": "lookup-city-old-v3-r6",
+      "dataset": "city",
+      "variant": "old-v3",
+      "round": 6,
+      "phases": [
+        {
+          "file_bytes": 263944912,
+          "open_ns": 809436167,
+          "open_rss_kib": 244264,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            123.14904022216797,
+            123.41608428955078,
+            123.429443359375,
+            299.0331802368164,
+            123.24540710449219,
+            122.73954010009766,
+            122.696044921875,
+            124.26172637939453,
+            124.03404235839844
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260268
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            54.62574005126953,
+            54.01366424560547,
+            54.71012878417969,
+            55.681800842285156,
+            56.87727355957031,
+            54.604454040527344,
+            53.72364044189453,
+            53.40448760986328,
+            53.29438781738281
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260268
+        }
+      ],
+      "maximum_rss_kib": 260368,
+      "user_seconds": 1.43,
+      "system_seconds": 0.01
+    },
+    {
+      "key": "lookup-city-old-v3-r7",
+      "dataset": "city",
+      "variant": "old-v3",
+      "round": 7,
+      "phases": [
+        {
+          "file_bytes": 263944912,
+          "open_ns": 835843323,
+          "open_rss_kib": 244284,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            146.56755828857422,
+            129.59518432617188,
+            127.59513092041016,
+            126.41393280029297,
+            140.25191497802734,
+            127.26505279541016,
+            127.82777404785156,
+            131.80169677734375,
+            130.0506134033203
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260284
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            53.88777160644531,
+            56.18677520751953,
+            54.396995544433594,
+            53.3018798828125,
+            53.18634796142578,
+            55.27033233642578,
+            54.003143310546875,
+            54.48436737060547,
+            53.73235321044922
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260284
+        }
+      ],
+      "maximum_rss_kib": 260368,
+      "user_seconds": 1.47,
+      "system_seconds": 0.01
+    },
+    {
+      "key": "lookup-city-old-v3-r8",
+      "dataset": "city",
+      "variant": "old-v3",
+      "round": 8,
+      "phases": [
+        {
+          "file_bytes": 263944912,
+          "open_ns": 859164167,
+          "open_rss_kib": 244288,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            126.61367797851562,
+            137.1130142211914,
+            125.06755828857422,
+            124.58821868896484,
+            123.69413757324219,
+            124.03541564941406,
+            125.29869079589844,
+            124.76174926757812,
+            124.89852142333984
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260288
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            57.02777099609375,
+            55.65503692626953,
+            54.042022705078125,
+            54.18383026123047,
+            54.19114685058594,
+            54.170021057128906,
+            55.56433868408203,
+            57.124351501464844,
+            56.808013916015625
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260288
+        }
+      ],
+      "maximum_rss_kib": 260368,
+      "user_seconds": 1.49,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-city-new-v4-r6",
+      "dataset": "city",
+      "variant": "new-v4",
+      "round": 6,
+      "phases": [
+        {
+          "file_bytes": 164836510,
+          "open_ns": 418522447,
+          "open_rss_kib": 145444,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            133.03404235839844,
+            130.14020538330078,
+            130.14165496826172,
+            134.34746551513672,
+            130.82805633544922,
+            131.138671875,
+            133.58362579345703,
+            129.75748443603516,
+            130.3827667236328
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 162220
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            55.31465148925781,
+            55.328392028808594,
+            54.91545104980469,
+            57.58259582519531,
+            56.05835723876953,
+            65.08036804199219,
+            55.613059997558594,
+            55.37852478027344,
+            55.26666259765625
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 162220
+        }
+      ],
+      "maximum_rss_kib": 161928,
+      "user_seconds": 1.08,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-city-new-v4-r7",
+      "dataset": "city",
+      "variant": "new-v4",
+      "round": 7,
+      "phases": [
+        {
+          "file_bytes": 164836510,
+          "open_ns": 426055803,
+          "open_rss_kib": 145448,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            141.33008575439453,
+            133.36553192138672,
+            131.75050354003906,
+            133.07308197021484,
+            132.92200469970703,
+            130.85489654541016,
+            131.35313415527344,
+            131.59690856933594,
+            132.18158721923828
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 162224
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            55.3529052734375,
+            55.83831787109375,
+            55.927284240722656,
+            55.29383850097656,
+            54.813926696777344,
+            54.88685607910156,
+            54.71129608154297,
+            55.084556579589844,
+            66.23126983642578
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 162224
+        }
+      ],
+      "maximum_rss_kib": 161920,
+      "user_seconds": 1.1,
+      "system_seconds": 0.01
+    },
+    {
+      "key": "lookup-city-new-v4-r8",
+      "dataset": "city",
+      "variant": "new-v4",
+      "round": 8,
+      "phases": [
+        {
+          "file_bytes": 164836510,
+          "open_ns": 416618853,
+          "open_rss_kib": 145468,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            130.07249450683594,
+            131.23126983642578,
+            128.73673248291016,
+            131.0375518798828,
+            131.6052703857422,
+            131.39010620117188,
+            191.4603500366211,
+            132.29417419433594,
+            133.28643035888672
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 162244
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            56.17833709716797,
+            67.97991943359375,
+            58.821311950683594,
+            58.800628662109375,
+            57.93739318847656,
+            57.423980712890625,
+            57.72016906738281,
+            55.97356414794922,
+            54.318870544433594
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 162244
+        }
+      ],
+      "maximum_rss_kib": 161924,
+      "user_seconds": 1.08,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-city-new-v3-r6",
+      "dataset": "city",
+      "variant": "new-v3",
+      "round": 6,
+      "phases": [
+        {
+          "file_bytes": 263944912,
+          "open_ns": 842405634,
+          "open_rss_kib": 244288,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            125.25324249267578,
+            125.82770538330078,
+            124.0892105102539,
+            133.9648208618164,
+            124.46171569824219,
+            125.04814910888672,
+            124.33497619628906,
+            126.3180923461914,
+            124.18092346191406
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260288
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            55.05653381347656,
+            53.80475616455078,
+            55.60285186767578,
+            53.578529357910156,
+            53.449195861816406,
+            53.45171356201172,
+            53.87693786621094,
+            54.29925537109375,
+            53.42913055419922
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260288
+        }
+      ],
+      "maximum_rss_kib": 260372,
+      "user_seconds": 1.46,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-city-new-v3-r7",
+      "dataset": "city",
+      "variant": "new-v3",
+      "round": 7,
+      "phases": [
+        {
+          "file_bytes": 263944912,
+          "open_ns": 825846129,
+          "open_rss_kib": 244316,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            136.16612243652344,
+            124.88363647460938,
+            134.34880828857422,
+            125.4490966796875,
+            125.27706909179688,
+            134.6579360961914,
+            126.91213989257812,
+            125.6988754272461,
+            124.8530502319336
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260316
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            56.354652404785156,
+            54.648109436035156,
+            53.67542266845703,
+            54.33387756347656,
+            53.91466522216797,
+            64.38687896728516,
+            57.23626708984375,
+            57.4603271484375,
+            55.944358825683594
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260316
+        }
+      ],
+      "maximum_rss_kib": 260368,
+      "user_seconds": 1.47,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-city-new-v3-r8",
+      "dataset": "city",
+      "variant": "new-v3",
+      "round": 8,
+      "phases": [
+        {
+          "file_bytes": 263944912,
+          "open_ns": 827630684,
+          "open_rss_kib": 244320,
+          "phase": "open",
+          "records": 20255722
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            125.68922424316406,
+            126.6529541015625,
+            127.31362915039062,
+            126.17048645019531,
+            126.45736694335938,
+            134.9400634765625,
+            125.95913696289062,
+            125.43565368652344,
+            126.93644714355469
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260320
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 56704,
+          "ns_per_query": [
+            55.00245666503906,
+            54.32720947265625,
+            54.944236755371094,
+            53.966400146484375,
+            53.960594177246094,
+            60.81800079345703,
+            54.52009582519531,
+            55.250343322753906,
+            54.42381286621094
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 260320
+        }
+      ],
+      "maximum_rss_kib": 260368,
+      "user_seconds": 1.45,
+      "system_seconds": 0.01
+    },
+    {
+      "key": "lookup-asn-old-v3-r6",
+      "dataset": "asn",
+      "variant": "old-v3",
+      "round": 6,
+      "phases": [
+        {
+          "file_bytes": 30741317,
+          "open_ns": 34580381,
+          "open_rss_kib": 28332,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            245.84325408935547,
+            248.79866790771484,
+            249.52854919433594,
+            245.4016342163086,
+            249.57418060302734,
+            303.9234085083008,
+            297.91661071777344,
+            251.22783660888672,
+            255.15760040283203
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32884
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            256.1642303466797,
+            284.77549743652344,
+            275.0727996826172,
+            255.10808563232422,
+            264.8452835083008,
+            253.48296356201172,
+            261.50691986083984,
+            267.80433654785156,
+            260.0564956665039
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32884
+        }
+      ],
+      "maximum_rss_kib": 32776,
+      "user_seconds": 0.72,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-asn-old-v3-r7",
+      "dataset": "asn",
+      "variant": "old-v3",
+      "round": 7,
+      "phases": [
+        {
+          "file_bytes": 30741317,
+          "open_ns": 33744576,
+          "open_rss_kib": 28376,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            275.1030807495117,
+            250.45992279052734,
+            250.64715576171875,
+            249.2784881591797,
+            248.59003448486328,
+            291.56702423095703,
+            319.04129791259766,
+            399.2131042480469,
+            339.56776428222656
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32928
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            254.17031860351562,
+            257.78250885009766,
+            294.13733673095703,
+            274.5740280151367,
+            261.4308395385742,
+            294.50323486328125,
+            262.4504852294922,
+            289.8196105957031,
+            295.2868881225586
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32928
+        }
+      ],
+      "maximum_rss_kib": 32780,
+      "user_seconds": 0.8,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-asn-old-v3-r8",
+      "dataset": "asn",
+      "variant": "old-v3",
+      "round": 8,
+      "phases": [
+        {
+          "file_bytes": 30741317,
+          "open_ns": 33591044,
+          "open_rss_kib": 28356,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            247.20989227294922,
+            251.6094970703125,
+            249.8543243408203,
+            243.59113311767578,
+            243.62295532226562,
+            243.37445831298828,
+            251.60765838623047,
+            249.04410552978516,
+            243.59487915039062
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32908
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            251.49473571777344,
+            258.4694061279297,
+            257.9552307128906,
+            257.69879150390625,
+            253.41043853759766,
+            253.1439971923828,
+            252.90130615234375,
+            252.53460693359375,
+            253.03253173828125
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32908
+        }
+      ],
+      "maximum_rss_kib": 32776,
+      "user_seconds": 0.7,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-asn-new-v4-r6",
+      "dataset": "asn",
+      "variant": "new-v4",
+      "round": 6,
+      "phases": [
+        {
+          "file_bytes": 27840796,
+          "open_ns": 16008507,
+          "open_rss_kib": 25528,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            275.21446228027344,
+            250.3387222290039,
+            295.8903503417969,
+            250.1949920654297,
+            254.8650894165039,
+            250.62046813964844,
+            252.38672637939453,
+            432.02429962158203,
+            257.6081771850586
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 30200
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            281.50846099853516,
+            284.3916778564453,
+            290.1882781982422,
+            286.58738708496094,
+            281.22313690185547,
+            274.41387939453125,
+            255.97159576416016,
+            263.3172607421875,
+            258.67835998535156
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 29876
+        }
+      ],
+      "maximum_rss_kib": 29952,
+      "user_seconds": 0.73,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-asn-new-v4-r7",
+      "dataset": "asn",
+      "variant": "new-v4",
+      "round": 7,
+      "phases": [
+        {
+          "file_bytes": 27840796,
+          "open_ns": 16239699,
+          "open_rss_kib": 25504,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            319.75587463378906,
+            256.6445999145508,
+            266.02613830566406,
+            293.1291046142578,
+            283.9071044921875,
+            274.1751251220703,
+            264.7572708129883,
+            256.3239059448242,
+            250.48505401611328
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 30176
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            277.51904296875,
+            289.9874267578125,
+            265.21321868896484,
+            261.06715393066406,
+            270.55574798583984,
+            268.5541687011719,
+            265.2653350830078,
+            260.5604476928711,
+            263.11534881591797
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 29852
+        }
+      ],
+      "maximum_rss_kib": 29952,
+      "user_seconds": 0.74,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-asn-new-v4-r8",
+      "dataset": "asn",
+      "variant": "new-v4",
+      "round": 8,
+      "phases": [
+        {
+          "file_bytes": 27840796,
+          "open_ns": 15483206,
+          "open_rss_kib": 25488,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            247.910888671875,
+            247.83179473876953,
+            250.18521881103516,
+            254.4973907470703,
+            248.3910675048828,
+            250.12388610839844,
+            257.71527099609375,
+            253.65406799316406,
+            246.859375
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 30160
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            259.5444564819336,
+            255.00965881347656,
+            254.92481231689453,
+            256.54203033447266,
+            260.7225799560547,
+            263.04610443115234,
+            260.66138458251953,
+            264.59991455078125,
+            259.2223129272461
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 29836
+        }
+      ],
+      "maximum_rss_kib": 29952,
+      "user_seconds": 0.69,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-asn-new-v3-r6",
+      "dataset": "asn",
+      "variant": "new-v3",
+      "round": 6,
+      "phases": [
+        {
+          "file_bytes": 30741317,
+          "open_ns": 37604191,
+          "open_rss_kib": 28380,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            246.6537628173828,
+            277.98358154296875,
+            244.76828002929688,
+            246.5840606689453,
+            252.05023193359375,
+            248.11131286621094,
+            278.60774993896484,
+            245.70145416259766,
+            246.88937377929688
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32932
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            257.0380859375,
+            259.19457244873047,
+            274.2413635253906,
+            260.5896224975586,
+            256.7497100830078,
+            258.1983871459961,
+            262.25748443603516,
+            257.8276138305664,
+            261.6543273925781
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32932
+        }
+      ],
+      "maximum_rss_kib": 32776,
+      "user_seconds": 0.73,
+      "system_seconds": 0.0
+    },
+    {
+      "key": "lookup-asn-new-v3-r7",
+      "dataset": "asn",
+      "variant": "new-v3",
+      "round": 7,
+      "phases": [
+        {
+          "file_bytes": 30741317,
+          "open_ns": 36523688,
+          "open_rss_kib": 28360,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            254.79625701904297,
+            268.4817810058594,
+            246.97360229492188,
+            248.93505859375,
+            250.96658325195312,
+            247.48898315429688,
+            247.7473373413086,
+            243.26204681396484,
+            257.57774353027344
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32912
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            258.77359771728516,
+            263.4203414916992,
+            264.9672393798828,
+            257.2028121948242,
+            262.5150451660156,
+            257.8059616088867,
+            258.1853256225586,
+            260.75938415527344,
+            268.8805847167969
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32912
+        }
+      ],
+      "maximum_rss_kib": 32772,
+      "user_seconds": 0.71,
+      "system_seconds": 0.01
+    },
+    {
+      "key": "lookup-asn-new-v3-r8",
+      "dataset": "asn",
+      "variant": "new-v3",
+      "round": 8,
+      "phases": [
+        {
+          "file_bytes": 30741317,
+          "open_ns": 34587945,
+          "open_rss_kib": 28368,
+          "phase": "open",
+          "records": 719149
+        },
+        {
+          "digest": 0,
+          "matches_per_sample": 131072,
+          "ns_per_query": [
+            248.44790649414062,
+            244.1564178466797,
+            251.97740173339844,
+            246.20115661621094,
+            243.5994415283203,
+            242.90070343017578,
+            242.62237548828125,
+            242.9508285522461,
+            242.27932739257812
+          ],
+          "pattern": "sampled-target-hits",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32920
+        },
+        {
+          "digest": 9339199863205280652,
+          "matches_per_sample": 123000,
+          "ns_per_query": [
+            253.3735809326172,
+            252.9849853515625,
+            252.94562530517578,
+            258.62154388427734,
+            254.06827545166016,
+            253.99365234375,
+            253.1767349243164,
+            253.69723510742188,
+            254.06529998779297
+          ],
+          "pattern": "uniform-mixed-ip",
+          "phase": "lookup",
+          "queries_per_sample": 131072,
+          "rss_kib": 32920
+        }
+      ],
+      "maximum_rss_kib": 32772,
+      "user_seconds": 0.7,
+      "system_seconds": 0.0
+    }
+  ],
+  "independent": {
+    "city": {
+      "assertions": 20255722,
+      "directory_values": 271275,
+      "reference_width": 3,
+      "old_reference_bytes": 162045776,
+      "new_reference_bytes": 62937374,
+      "saved_bytes": 99108402,
+      "metadata_targets_ids_order_and_pool_byte_identical": true,
+      "every_insertion_id_selects_identical_span": true,
+      "first_seen_ordinals_and_directory_verified": true
+    },
+    "asn": {
+      "assertions": 719149,
+      "directory_values": 86902,
+      "reference_width": 3,
+      "old_reference_bytes": 5753192,
+      "new_reference_bytes": 2852671,
+      "saved_bytes": 2900521,
+      "metadata_targets_ids_order_and_pool_byte_identical": true,
+      "every_insertion_id_selects_identical_span": true,
+      "first_seen_ordinals_and_directory_verified": true
+    }
+  },
+  "summary": {
+    "city": {
+      "old-v3": {
+        "open_ms": [
+          809.436167,
+          835.843323,
+          859.164167
+        ],
+        "open_rss_kib": [
+          244264,
+          244284,
+          244288
+        ],
+        "lookup_ns": {
+          "sampled-target-hits": [
+            123.41608428955078,
+            129.59518432617188,
+            124.89852142333984
+          ],
+          "uniform-mixed-ip": [
+            54.604454040527344,
+            54.003143310546875,
+            55.56433868408203
+          ]
+        }
+      },
+      "new-v4": {
+        "open_ms": [
+          418.522447,
+          426.055803,
+          416.618853
+        ],
+        "open_rss_kib": [
+          145444,
+          145448,
+          145468
+        ],
+        "lookup_ns": {
+          "sampled-target-hits": [
+            130.82805633544922,
+            132.18158721923828,
+            131.39010620117188
+          ],
+          "uniform-mixed-ip": [
+            55.37852478027344,
+            55.29383850097656,
+            57.72016906738281
+          ]
+        }
+      },
+      "new-v3": {
+        "open_ms": [
+          842.405634,
+          825.846129,
+          827.630684
+        ],
+        "open_rss_kib": [
+          244288,
+          244316,
+          244320
+        ],
+        "lookup_ns": {
+          "sampled-target-hits": [
+            125.04814910888672,
+            125.6988754272461,
+            126.45736694335938
+          ],
+          "uniform-mixed-ip": [
+            53.80475616455078,
+            55.944358825683594,
+            54.52009582519531
+          ]
+        }
+      }
+    },
+    "asn": {
+      "old-v3": {
+        "open_ms": [
+          34.580381,
+          33.744576,
+          33.591044
+        ],
+        "open_rss_kib": [
+          28332,
+          28376,
+          28356
+        ],
+        "lookup_ns": {
+          "sampled-target-hits": [
+            249.57418060302734,
+            275.1030807495117,
+            247.20989227294922
+          ],
+          "uniform-mixed-ip": [
+            261.50691986083984,
+            274.5740280151367,
+            253.1439971923828
+          ]
+        }
+      },
+      "new-v4": {
+        "open_ms": [
+          16.008507,
+          16.239699,
+          15.483206
+        ],
+        "open_rss_kib": [
+          25528,
+          25504,
+          25488
+        ],
+        "lookup_ns": {
+          "sampled-target-hits": [
+            254.8650894165039,
+            266.02613830566406,
+            250.12388610839844
+          ],
+          "uniform-mixed-ip": [
+            281.22313690185547,
+            265.2653350830078,
+            259.5444564819336
+          ]
+        }
+      },
+      "new-v3": {
+        "open_ms": [
+          37.604191,
+          36.523688,
+          34.587945
+        ],
+        "open_rss_kib": [
+          28380,
+          28360,
+          28368
+        ],
+        "lookup_ns": {
+          "sampled-target-hits": [
+            246.88937377929688,
+            248.93505859375,
+            243.5994415283203
+          ],
+          "uniform-mixed-ip": [
+            259.19457244873047,
+            260.75938415527344,
+            253.69723510742188
+          ]
+        }
+      }
+    }
+  },
+  "old_reader_rejects_format4": "Error: Version(4)",
+  "disassembly": {
+    "bytes": 6600571,
+    "sha256": "2485609fa54e338bb5d0da1bd8cc74477adc396692907cdda56fb2c17eaf0a26"
+  },
+  "production_snapshot_matches_workspace": true,
+  "collector": {
+    "bytes": 10343,
+    "sha256": "04db41169bc7bcb4697ec962b8c5ca7c575e5fc9f17006c8e81f06f937ea0c37"
+  },
+  "checks": [
+    {
+      "check": "fmt",
+      "exit_code": 0
+    },
+    {
+      "check": "clippy-default",
+      "exit_code": 0
+    },
+    {
+      "check": "clippy-all",
+      "exit_code": 0
+    },
+    {
+      "check": "test-default",
+      "exit_code": 0
+    },
+    {
+      "check": "test-all",
+      "exit_code": 0
+    },
+    {
+      "check": "doc",
+      "exit_code": 0
+    },
+    {
+      "check": "package",
+      "exit_code": 0
+    }
+  ],
+  "fuzz_smoke": {
+    "reader": {
+      "runs": 20097303,
+      "seconds": 61,
+      "sanitizer": "address",
+      "log": {
+        "bytes": 92268,
+        "sha256": "dc4d72ab1c8f0e6305215a5a21cd7484eaef388f6be77877f5933c251a013d12"
+      }
+    },
+    "final_writer": {
+      "runs": 163692,
+      "seconds": 61,
+      "sanitizer": "address",
+      "log": {
+        "bytes": 45556,
+        "sha256": "979037801c6137f30a69ab5942555a2fdb6321333ce2830d44934635aea20274"
+      }
+    }
+  }
+}

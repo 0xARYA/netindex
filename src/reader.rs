@@ -479,6 +479,39 @@ fn validate(
 
     drop(seen);
 
+    if let crate::payload::Slots::Indexed { values, .. } = layout.slot_encoding {
+        let mut end = 0;
+        for ordinal in 0..values {
+            let (start, length) = crate::payload::directory_span(
+                bytes,
+                crate::layout::add(layout.slots, 8)?,
+                ordinal,
+            )?;
+            if start != end {
+                return Err(Error::Invalid("payload directory order"));
+            }
+            end = crate::layout::add(start, length)?;
+        }
+        if end != layout.bytes - layout.payloads {
+            return Err(Error::Invalid("payload length"));
+        }
+
+        let mut next = 0;
+        for id in 0..layout.records {
+            let ordinal = layout.slot_encoding.ordinal(bytes, layout.slots, id)?;
+            if ordinal > next {
+                return Err(Error::Invalid("payload reference order"));
+            }
+            if ordinal == next {
+                next += 1;
+            }
+        }
+        if next != values {
+            return Err(Error::Invalid("unused payload directory entry"));
+        }
+        return Ok((coverage, routes.filter(|routes| !routes.is_empty())));
+    }
+
     if matches!(layout.slot_encoding, crate::payload::Slots::Fixed { .. }) {
         let mut end = 0;
 

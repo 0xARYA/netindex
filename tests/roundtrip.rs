@@ -334,7 +334,7 @@ fn identical_and_empty_payloads_share_bytes_without_merging_assertions() {
     let mut bytes = Vec::new();
     builder.write_to(&mut bytes, b"").unwrap();
 
-    assert_eq!(bytes.len(), 80 + 4 * 8 + 4 * 8 + 6);
+    assert_eq!(bytes.len(), 80 + 4 * 8 + 8 + 2 * 8 + 4 + 6);
 
     let reader = Reader::open(bytes, Limits::default()).unwrap();
 

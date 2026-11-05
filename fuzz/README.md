@@ -5,8 +5,8 @@ This separate package pins fuzz dependencies and keeps libFuzzer out of the libr
 `read` validates bounded arbitrary file bytes, then compares IP and ASN searches
 against a linear scan of accepted assertions. It checks assertion endpoints,
 address extrema, additional queries derived from input bytes, and conservative
-coverage and optional broad-network routing. Fixed interval, packed IPv4, packed IPv6, and mixed fixtures
-seed the corpus.
+coverage and optional broad-network routing. Fixed interval, packed IPv4, packed IPv6, mixed, and format-4 indexed-payload
+fixtures seed the corpus.
 
 `encode` generates up to 128 mixed targets with arbitrary canonical prefix lengths,
 IPv4/IPv6 inclusive ranges, and shared payloads. It checks insertion IDs, targets,

@@ -71,13 +71,72 @@ impl Builder {
 
     /// Sort and encode the index into the caller's writer.
     ///
+    /// Chooses compact shared-value references when smaller, emitting format 4.
+    /// Other layouts retain format 3. Encoding temporarily buffers one span per
+    /// distinct value. Use [`Self::write_legacy_to`] for netindex 2.x readers.
     /// Metadata is opaque and stored once. Output is buffered and flushed. Failure
     /// may leave partial output; the caller must stage and synchronize before publishing.
     ///
     /// # Errors
     /// Fails if metadata or file size exceeds limits, or writing or flushing fails.
-    pub fn write_to(mut self, output: impl Write, metadata: &[u8]) -> Result<(), Error> {
-        drop(self.hashes);
+    pub fn write_to(self, output: impl Write, metadata: &[u8]) -> Result<(), Error> {
+        self.encode(output, metadata, true)
+    }
+
+    /// Return format-3 bytes readable by netindex 2.x.
+    ///
+    /// # Errors
+    /// Fails on exceeded limits, failed allocations, or output errors.
+    pub fn into_legacy_bytes(self, metadata: &[u8]) -> Result<Vec<u8>, Error> {
+        let mut output = MemoryWriter(Vec::new());
+        self.write_legacy_to(&mut output, metadata)?;
+        Ok(output.0)
+    }
+
+    /// Encode format-3 bytes readable by netindex 2.x.
+    /// Output failure may leave partial bytes.
+    ///
+    /// # Errors
+    /// Fails on exceeded limits, failed allocations, or output errors.
+    pub fn write_legacy_to(self, output: impl Write, metadata: &[u8]) -> Result<(), Error> {
+        self.encode(output, metadata, false)
+    }
+
+    fn encode(mut self, output: impl Write, metadata: &[u8], compact: bool) -> Result<(), Error> {
+        let length = self
+            .slots
+            .first()
+            .map(|&(_, length)| length as usize)
+            .filter(|&length| self.slots.iter().all(|&(_, value)| value == length as u64));
+        let slot_encoding = Slots::select(self.slots.len(), self.payloads.len(), length)?;
+        let slot_encoding = if compact {
+            slot_encoding.indexed(self.slots.len(), self.payloads.len(), self.hashes.len())?
+        } else {
+            slot_encoding
+        };
+        let mut directory = Vec::new();
+        if matches!(slot_encoding, Slots::Indexed { .. }) {
+            directory.try_reserve_exact(self.hashes.len())?;
+            directory.extend(self.hashes.iter().map(|row| row.1));
+            directory.sort_unstable();
+        }
+        let references = if matches!(slot_encoding, Slots::Indexed { .. }) {
+            // Reuse the deduplication allocation for span-to-ordinal lookup.
+            // This builder is consumed, so payload hashes are no longer needed.
+            let mut references = self.hashes;
+            references.clear();
+            for (ordinal, &span) in directory.iter().enumerate() {
+                references.insert_unique(
+                    self.hash_state.hash_one(span),
+                    (ordinal as u64, span),
+                    |row| self.hash_state.hash_one(row.1),
+                );
+            }
+            Some(references)
+        } else {
+            drop(self.hashes);
+            None
+        };
 
         self.v4
             .sort_unstable_by_key(|entry| (entry.start, entry.end, entry.id));
@@ -88,12 +147,6 @@ impl Builder {
         let packed_v4 = packed::size(&self.v4).filter(|&size| size < self.v4.len() * 20);
         let packed_v6 = packed::size(&self.v6).filter(|&size| size < self.v6.len() * 56);
 
-        let length = self
-            .slots
-            .first()
-            .map(|&(_, length)| length as usize)
-            .filter(|&length| self.slots.iter().all(|&(_, value)| value == length as u64));
-        let slot_encoding = Slots::select(self.slots.len(), self.payloads.len(), length)?;
         let layout = Layout::with_packed(
             [self.v4.len(), self.v6.len(), self.asns.len()],
             metadata.len(),
@@ -137,9 +190,26 @@ impl Builder {
             output.write_all(&id.to_le_bytes())?;
         }
 
-        let mut slots = SlotWriter::new(&mut output, slot_encoding)?;
-        for &(offset, length) in &self.slots {
-            slots.push(offset, length)?;
+        if let Slots::Indexed { values, width } = slot_encoding {
+            output.write_all(&(values as u32).to_le_bytes())?;
+            output.write_all(&[width, 0, 0, 0])?;
+            for &(offset, length) in &directory {
+                crate::payload::write_directory(&mut output, offset, length)?;
+            }
+            for span in &self.slots {
+                let ordinal = references
+                    .as_ref()
+                    .and_then(|references| {
+                        references.find(self.hash_state.hash_one(span), |row| row.1 == *span)
+                    })
+                    .ok_or(Error::Invalid("payload directory"))?;
+                crate::payload::write_ordinal(&mut output, ordinal.0 as u32, width)?;
+            }
+        } else {
+            let mut slots = SlotWriter::new(&mut output, slot_encoding)?;
+            for &(offset, length) in &self.slots {
+                slots.push(offset, length)?;
+            }
         }
 
         output.write_all(&self.payloads)?;

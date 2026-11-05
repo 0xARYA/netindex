@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.0.0 - Unreleased
+
+Choose indexed shared-payload references by default when they reduce artifact
+size. Both builders and the reader support format 4, while readers continue to
+accept format 3. Payload bytes, metadata, assertion IDs, original targets and
+all-match ordering are preserved. Indexed validation borrows the span directory
+and needs no distinct-value allocation.
+
+This changes writer compatibility: 2.x readers reject format-4 output. Upgrade
+readers before rebuilding, or use `Builder::into_legacy_bytes`,
+`Builder::write_legacy_to`, or `ExternalBuilder::new_legacy` for format 3.
+External builds account additional temporary reference files and larger disk
+cells against their existing disk limit. See FORMAT.md for exact selection and
+validation rules. This release has not been published to the registry.
+
 ## 2.1.0 - 2026-11-04
 
 Deduplicate every external-builder payload, including values outside the memory

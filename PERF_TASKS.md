@@ -8,7 +8,7 @@ experiment alone does not complete an implementation task.
 
 Historical P1-01 through P1-08 completions record qualification, not shipped
 features. Their source is [archived](benches/ARCHIVE.md); their measurements and
-decisions remain below. P1-10 should implement and qualify compact references.
+decisions remain below. P1-10 implements and qualifies compact references; P1-11 is next.
 
 Statuses: `[ ]` queued; `[-]` active; `[x]` completed; `[!]` waiting on a named
 dependency. Existing 2.1.0 results are in [PERFORMANCE.md](PERFORMANCE.md); they do
@@ -91,8 +91,11 @@ not complete the broader experiments below.
   duplicate bytes, insertion-order gaps/distinct-byte reuse and cache admission
   qualified on retained real City and independent IPtoASN snapshots.
   [Results](benches/payload_distribution/RESULTS.md).
-- [ ] **P1-10 Compact references.** Payload IDs plus a distinct span directory;
-  establish the break-even point for variable-length records.
+- [x] **P1-10 Compact references.** Production reader and both builders implement
+  format-4 IDs plus a borrowed span directory, selected only when smaller.
+  Breaking 3.0.0 default; format-3 reading and explicit legacy output retained.
+  City saves 94.52 MiB; opening about 2x faster, warm lookup 1-5% slower.
+  [Implementation and measurements](benches/compact_references/RESULTS.md).
 - [ ] **P1-11 Shared aliases.** Design logical target/ID mappings that preserve
   duplicate assertions, overlaps and all-match results.
 - [ ] **P1-12 Disk-table cache.** Benchmark a bounded page cache and account its RAM.
@@ -985,3 +988,39 @@ recovery links pass. Production sources, root Cargo files, FORMAT.md, the main
 Rust workflow and all measurement JSON/result reports are unchanged. Documented
 fmt/Clippy/tests/docs/package checks and the production SIMD packed-width
 benchmark correctness smoke pass. No benchmark timings were collected.
+
+### P1-10 implementation and qualification - 2026-11-05
+
+Adopted in production. Preparing 3.0.0 as requested: compact output by default
+when smaller, format-3 reading retained, and explicit legacy-output methods.
+Format-4 compatibility and migration decisions satisfy P1-16 for this change;
+future alias/bitpacking encodings still need their own decisions. No registry
+publication yet.
+
+Both public builders produce identical files. City: 263,944,912 to 164,836,510
+bytes (94.52 MiB / 37.55% saved); IPtoASN: 30,741,317 to 27,840,796 bytes
+(2.77 MiB / 9.44% saved). Full mmap validation is about 50% and 53% faster
+against the unchanged 2.1.0 reader. Warm lookup is about 1.4-5.2% slower on the
+measured workloads. City construction is similar within observed ranges;
+IPtoASN construction is slower. Legacy output is available for that tradeoff.
+
+The external writer reuses its existing 16-byte slot spill for IDs, with a
+wide-length escape, and charges disk directories/table growth to its budget.
+The memory writer reuses its payload-dedup table for direct span-to-ID lookup.
+Readers borrow directories and validate first-seen ordinals without a heap
+value table. Fixed lengths, ties, unshared values and wide pools retain their
+smaller existing encodings.
+
+Sixteen final rebuilds validated every assertion plus 100,005 queries each.
+Independent Python verification checked all 20,974,871 IDs and exact target,
+metadata and payload-pool bytes. Three-process lookup comparisons retain
+old-reader/old-file, new-reader/old-file and new-reader/new-file results.
+Disassembly confirms bounded 3-byte loads without memcpy or allocation.
+All seven documented checks, analyzer tests/clippy, benchmark prechecks and
+ASan read/encode smoke campaigns passed. No native-provider conversion,
+application decoding, minimum-size or universal-MMDB-win claim is made.
+
+[Measured results and limitations](benches/compact_references/RESULTS.md),
+[raw source/input/binary hashes and samples](benches/results/2026-11-05-compact-references.json).
+Next priority: P1-11 shared aliases, preserving logical assertions and all-match
+semantics while reducing physical target expansion.

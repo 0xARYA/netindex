@@ -42,3 +42,8 @@ It contains IPv4 and IPv6 records, including IPv4-mapped and 6to4 aliases.
 `codec.bin` independently encodes a required boolean and optional string `x`,
 with a one-byte metadata-length prefix for the codec fuzz target. Its record
 is `[1, 1, 0, 0, 0, 0]`: presence bit, true boolean, and string ID zero.
+
+- `indexed-payloads.nidx`: format 4, six ASN assertions, metadata `meta`, and
+  three variable-length shared payloads (empty, `a`, `xyz`). The borrowed span
+  directory contains `(0,0)`, `(0,1)`, `(1,3)` and one-byte ordinals
+  `[0,1,1,0,2,1]`. Independently assembled with integer fields; no library writer.

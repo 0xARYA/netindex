@@ -14,8 +14,8 @@ Empty sections consume no bytes; trailing data is rejected.
 | Header offset | Width | Field |
 | ---: | ---: | --- |
 | 0 | 8 | ASCII `NETINDEX` |
-| 8 | 4 | Format identifier: 3 |
-| 12 | 4 | Flags: bit 0 packed IPv4, bit 1 packed IPv6, bit 2 compact payload slots, bit 3 fixed-length payload references |
+| 8 | 4 | Format identifier: 3 or 4 |
+| 12 | 4 | Flags: bit 0 packed IPv4, bit 1 packed IPv6, bit 2 compact payload slots, bit 3 fixed-length payload references, bit 4 indexed payload references |
 | 16 | 8 | Total assertion count |
 | 24 | 8 | IPv4 row count |
 | 32 | 8 | IPv6 row count |
@@ -50,10 +50,10 @@ by `(ASN, ID)`. They do not map IPs to ASNs.
 
 ## Payloads
 
-Each assertion has a payload slot in insertion order: offset relative to the
-payload section and length. Compact slots are two `u32` fields (8 bytes) and
+Span slots appear in insertion order and contain an offset relative to the
+payload section and a length. Compact slots are two `u32` fields (8 bytes) and
 require a payload pool no larger than `u32::MAX`; otherwise slots are two `u64`
-fields (16 bytes). Bits 2 and 3 cannot both be set. Slots may reuse a span for
+fields (16 bytes). At most one of bits 2, 3 and 4 may be set. Slots may reuse a span for
 identical payloads; duplicate bytes in distinct spans are also valid.
 Both current builders reuse the first-seen span for identical payloads. The
 external builder uses a bounded memory cache with a disk-backed fallback; older
@@ -79,8 +79,42 @@ The first distinct ordinal must be zero; subsequent first-seen ordinals increase
 by one, and every pool value must be referenced. Repeated ordinals share borrowed
 bytes. Validation checks these rules without an auxiliary span directory.
 
-Variable-length payloads retain offset/length slots. This encoding assumes no
-payload schema and requires no per-value reader directory.
+### Indexed shared-payload references (format 4)
+
+When smaller than the format-3 slot encoding, both builders select a shared span
+directory with insertion-order payload IDs. The payload-slot section contains:
+
+| Relative offset | Width | Field |
+| ---: | ---: | --- |
+| 0 | 4 | Number of directory entries, `U`, as `u32` |
+| 4 | 1 | Reference width, `w` |
+| 5 | 3 | Reserved zero bytes |
+| 8 | `8 * U` | Directory entries: payload-relative offset and length as two `u32` fields |
+| `8 + 8 * U` | `w * N` | One little-endian directory ordinal per insertion-order assertion |
+
+The pool must fit in `u32::MAX`. `1 <= U <= N`, and `w` is the minimum whole-byte
+width for `U - 1` (zero through four). The first directory offset is zero; each
+next offset equals the previous offset plus length, and the final span ends
+exactly at the pool length. Empty spans are valid. Every reference is less than
+`U`; first-seen ordinals occur as 0, 1, ..., `U - 1`, with no unused entries.
+Duplicate bytes in distinct directory entries remain valid.
+
+Validation needs no heap directory or visited-value set: the borrowed span table
+is validated once, then references are checked against the next unseen ordinal.
+Lookup reads the assertion's ordinal and then its borrowed span. Payload bytes,
+metadata, targets, assertion IDs and all-match ordering are unchanged. No schema
+is required. Directory bytes count against the artifact-byte limit.
+
+Reference bytes total `8 + 8*U + w*N`; writers select this encoding only when
+strictly smaller than the best format-3 representation. Fixed-length references
+remain preferable for uniform lengths, and unshared variable-length values retain
+span slots. Values beyond the compact pool limit retain format-3 wide spans.
+
+Format 4 requires bit 4, with bits 2 and 3 clear. Format 3 forbids bit 4. Other
+header, section and validation rules are identical. Readers accept both formats.
+Netindex 2.x rejects format 4. Netindex 3.x builders select the smaller encoding
+by default; `Builder::into_legacy_bytes`, `Builder::write_legacy_to`, and
+`ExternalBuilder::new_legacy` preserve format-3 output for older consumers.
 
 ## Validation
 

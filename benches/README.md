@@ -11,6 +11,7 @@ described in [BENCHMARKS.md](../BENCHMARKS.md).
 | `memory/` | Memory-pressure and working-set qualification |
 | `native_city/` | Application-owned native/conversion comparison |
 | [Payload distribution](payload_distribution/README.md) | Evidence and verification for compact-reference implementation |
+| [Compact references](compact_references/README.md) | Production format-4 qualification, independent verification and migration tradeoffs |
 | `results/` | Immutable measurement and verification receipts |
 
 The completed P1-01–P1-08 prototype code is [archived](ARCHIVE.md). Their report

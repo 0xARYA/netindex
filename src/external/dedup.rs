@@ -21,6 +21,7 @@ pub(super) struct DiskTable {
     capacity: u64,
     entries: u64,
     state: RandomState,
+    cell_bytes: u64,
 }
 
 impl DiskTable {
@@ -30,6 +31,14 @@ impl DiskTable {
             capacity: 0,
             entries: 0,
             state: RandomState::new(),
+            cell_bytes: CELL_BYTES,
+        }
+    }
+
+    pub(super) fn with_references() -> Self {
+        Self {
+            cell_bytes: 32,
+            ..Self::new()
         }
     }
 
@@ -37,7 +46,8 @@ impl DiskTable {
         self.state.hash_one(payload)
     }
 
-    pub(super) fn find(
+    #[cfg(test)]
+    fn find(
         &mut self,
         hash: u64,
         payload: &[u8],
@@ -45,13 +55,26 @@ impl DiskTable {
         reader: &File,
         end: u64,
     ) -> Result<Option<(u64, u64)>, Error> {
+        Ok(self
+            .find_reference(hash, payload, pool, reader, end)?
+            .map(|(offset, length, _)| (offset, length)))
+    }
+
+    pub(super) fn find_reference(
+        &mut self,
+        hash: u64,
+        payload: &[u8],
+        pool: &mut BufWriter<File>,
+        reader: &File,
+        end: u64,
+    ) -> Result<Option<(u64, u64, u32)>, Error> {
         let Some(file) = self.file.as_mut() else {
             return Ok(None);
         };
 
         let mut position = hash & (self.capacity - 1);
         for _ in 0..self.capacity {
-            let cell = Cell::at(file.as_file_mut(), position)?;
+            let cell = Cell::at(file.as_file_mut(), position, self.cell_bytes)?;
             if cell.length_plus_one == 0 {
                 return Ok(None);
             }
@@ -60,7 +83,7 @@ impl DiskTable {
                 && length == payload.len() as u64
                 && equals(pool, reader, end, cell.offset, payload)?
             {
-                return Ok(Some((cell.offset, length)));
+                return Ok(Some((cell.offset, length, cell.ordinal as u32)));
             }
             position = (position + 1) & (self.capacity - 1);
         }
@@ -68,10 +91,21 @@ impl DiskTable {
         Err(Error::Invalid("full payload table"))
     }
 
-    pub(super) fn insert(
+    #[cfg(test)]
+    fn insert(
         &mut self,
         hash: u64,
         span: (u64, u64),
+        directory: &Path,
+        budget: &mut DiskBudget,
+    ) -> Result<(), Error> {
+        self.insert_reference(hash, (span.0, span.1, 0), directory, budget)
+    }
+
+    pub(super) fn insert_reference(
+        &mut self,
+        hash: u64,
+        span: (u64, u64, u32),
         directory: &Path,
         budget: &mut DiskBudget,
     ) -> Result<(), Error> {
@@ -80,6 +114,7 @@ impl DiskTable {
         }
         let cell = Cell {
             hash,
+            ordinal: u64::from(span.2),
             offset: span.0,
             length_plus_one: span
                 .1
@@ -87,7 +122,7 @@ impl DiskTable {
                 .ok_or(Error::Limit("payload length"))?,
         };
         let file = self.file.as_mut().ok_or(Error::Invalid("payload table"))?;
-        place(file.as_file_mut(), self.capacity, cell)?;
+        place(file.as_file_mut(), self.capacity, cell, self.cell_bytes)?;
         self.entries += 1;
 
         Ok(())
@@ -96,7 +131,7 @@ impl DiskTable {
     pub(super) fn close(mut self, budget: &mut DiskBudget) -> Result<(), Error> {
         if let Some(file) = self.file.take() {
             file.close().map_err(temporary("remove payload table"))?;
-            budget.release(self.capacity * CELL_BYTES)?;
+            budget.release(self.capacity * self.cell_bytes)?;
         }
 
         Ok(())
@@ -109,7 +144,7 @@ impl DiskTable {
             .checked_mul(2)
             .ok_or(Error::Limit("payload table bytes"))?;
         let bytes = capacity
-            .checked_mul(CELL_BYTES)
+            .checked_mul(self.cell_bytes)
             .ok_or(Error::Limit("payload table bytes"))?;
         budget.reserve(bytes)?;
         let mut file =
@@ -125,9 +160,9 @@ impl DiskTable {
                 .map_err(temporary("rewind payload table"))?;
             let mut input = BufReader::new(previous.as_file_mut());
             for _ in 0..self.capacity {
-                let cell = Cell::read(&mut input)?;
+                let cell = Cell::read(&mut input, self.cell_bytes)?;
                 if cell.length_plus_one != 0 {
-                    place(file.as_file_mut(), capacity, cell)?;
+                    place(file.as_file_mut(), capacity, cell, self.cell_bytes)?;
                 }
             }
         }
@@ -135,7 +170,7 @@ impl DiskTable {
             previous
                 .close()
                 .map_err(temporary("remove payload table"))?;
-            budget.release(self.capacity * CELL_BYTES)?;
+            budget.release(self.capacity * self.cell_bytes)?;
         }
         self.file = Some(file);
         self.capacity = capacity;
@@ -147,28 +182,39 @@ impl DiskTable {
 #[derive(Clone, Copy)]
 struct Cell {
     hash: u64,
+    ordinal: u64,
     offset: u64,
     // Zero denotes a vacant cell, including when the payload itself is empty.
     length_plus_one: u64,
 }
 
 impl Cell {
-    fn at(file: &mut File, position: u64) -> Result<Self, Error> {
-        let mut bytes = [0; CELL_BYTES as usize];
-        positioned::read_exact(file, &mut bytes, position * CELL_BYTES)
-            .map_err(temporary("read payload table"))?;
+    fn at(file: &mut File, position: u64, cell_bytes: u64) -> Result<Self, Error> {
+        let mut bytes = [0; 32];
+        positioned::read_exact(
+            file,
+            bytes
+                .get_mut(..cell_bytes as usize)
+                .ok_or(Error::Invalid("payload table cell"))?,
+            position * cell_bytes,
+        )
+        .map_err(temporary("read payload table"))?;
         Self::decode(bytes)
     }
 
-    fn read(input: &mut impl Read) -> Result<Self, Error> {
-        let mut bytes = [0; CELL_BYTES as usize];
+    fn read(input: &mut impl Read, cell_bytes: u64) -> Result<Self, Error> {
+        let mut bytes = [0; 32];
         input
-            .read_exact(&mut bytes)
+            .read_exact(
+                bytes
+                    .get_mut(..cell_bytes as usize)
+                    .ok_or(Error::Invalid("payload table cell"))?,
+            )
             .map_err(temporary("read payload table"))?;
         Self::decode(bytes)
     }
 
-    fn decode(bytes: [u8; CELL_BYTES as usize]) -> Result<Self, Error> {
+    fn decode(bytes: [u8; 32]) -> Result<Self, Error> {
         let mut words = bytes.chunks_exact(8);
         let mut word = || {
             let bytes = words.next().ok_or(Error::Invalid("payload table cell"))?;
@@ -182,29 +228,37 @@ impl Cell {
             hash: word()?,
             offset: word()?,
             length_plus_one: word()?,
+            ordinal: word()?,
         })
     }
 
-    fn write(self, file: &mut File, position: u64) -> Result<(), Error> {
-        let mut bytes = [0; CELL_BYTES as usize];
-        for (chunk, value) in
-            bytes
-                .chunks_exact_mut(8)
-                .zip([self.hash, self.offset, self.length_plus_one])
-        {
+    fn write(self, file: &mut File, position: u64, cell_bytes: u64) -> Result<(), Error> {
+        let mut bytes = [0; 32];
+        for (chunk, value) in bytes.chunks_exact_mut(8).zip([
+            self.hash,
+            self.offset,
+            self.length_plus_one,
+            self.ordinal,
+        ]) {
             chunk.copy_from_slice(&value.to_le_bytes());
         }
-        positioned::write_all(file, &bytes, position * CELL_BYTES)
-            .map_err(temporary("write payload table"))?;
+        positioned::write_all(
+            file,
+            bytes
+                .get(..cell_bytes as usize)
+                .ok_or(Error::Invalid("payload table cell"))?,
+            position * cell_bytes,
+        )
+        .map_err(temporary("write payload table"))?;
         Ok(())
     }
 }
 
-fn place(file: &mut File, capacity: u64, cell: Cell) -> Result<(), Error> {
+fn place(file: &mut File, capacity: u64, cell: Cell, cell_bytes: u64) -> Result<(), Error> {
     let mut position = cell.hash & (capacity - 1);
     for _ in 0..capacity {
-        if Cell::at(file, position)?.length_plus_one == 0 {
-            return cell.write(file, position);
+        if Cell::at(file, position, cell_bytes)?.length_plus_one == 0 {
+            return cell.write(file, position, cell_bytes);
         }
         position = (position + 1) & (capacity - 1);
     }
@@ -332,6 +386,43 @@ mod tests {
         table.close(&mut budget).unwrap();
         assert_eq!(budget.used, 0);
         assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
+    }
+
+    #[test]
+    fn reference_ids_survive_collisions_and_growth_without_entering_payload_bytes() {
+        let directory = tempfile::tempdir().unwrap();
+        let payload_file = NamedTempFile::new().unwrap();
+        let mut pool = BufWriter::new(payload_file.reopen().unwrap());
+        let reader = payload_file.reopen().unwrap();
+        let mut table = DiskTable::with_references();
+        let mut budget = DiskBudget {
+            used: 0,
+            peak: 0,
+            limit: 1 << 20,
+        };
+        for id in 0..160u32 {
+            let payload = id.to_le_bytes();
+            table
+                .insert_reference(
+                    7,
+                    (u64::from(id) * 4, 4, id * 3),
+                    directory.path(),
+                    &mut budget,
+                )
+                .unwrap();
+            pool.write_all(&payload).unwrap();
+        }
+        for id in (0..160u32).rev() {
+            assert_eq!(
+                table
+                    .find_reference(7, &id.to_le_bytes(), &mut pool, &reader, 640)
+                    .unwrap(),
+                Some((u64::from(id) * 4, 4, id * 3))
+            );
+        }
+        assert_eq!(budget.used, 512 * 32);
+        table.close(&mut budget).unwrap();
+        assert_eq!(budget.used, 0);
     }
 
     #[test]

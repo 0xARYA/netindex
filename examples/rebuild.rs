@@ -1,5 +1,5 @@
 //! Replay an immutable index through the external builder, retaining every assertion.
-//! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY. Files must remain immutable while mapped.
+//! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|memory|memory-legacy]. Files must remain immutable while mapped.
 
 #[cfg(all(feature = "external-sort", feature = "mmap"))]
 #[expect(
@@ -14,12 +14,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         time::Instant,
     };
 
-    use netindex::{ExternalBuilder, ExternalOptions, Limits, MappedReader};
+    use netindex::{Builder, ExternalBuilder, ExternalOptions, Limits, MappedReader};
 
     let arguments: Vec<_> = env::args_os().skip(1).collect();
-    let [input, output, temporary] = arguments.as_slice() else {
-        return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY".into());
+    let [input, output, temporary, ..] = arguments.as_slice() else {
+        return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|memory|memory-legacy]".into());
     };
+    let mode = arguments
+        .get(3)
+        .and_then(|arg| arg.to_str())
+        .unwrap_or("external");
+    if arguments.len() > 4
+        || !matches!(
+            mode,
+            "external" | "external-legacy" | "memory" | "memory-legacy"
+        )
+    {
+        return Err("invalid build mode".into());
+    }
     let limits = Limits {
         records: 30_000_000,
         bytes: 2 * 1024 * 1024 * 1024,
@@ -54,24 +66,42 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     let directory = tempfile::tempdir_in(temporary)?;
-    let mut builder = ExternalBuilder::new(directory.path(), limits, options)?;
     let mut output_file = OpenOptions::new()
         .write(true)
         .create_new(true)
         .open(output)?;
     let started = Instant::now();
-    for row in &assertions {
-        builder.push(row.target, row.payload)?;
-    }
-    let stats = builder.write_to(&mut output_file, original.metadata()?)?;
+    let stats = if mode.starts_with("external") {
+        let mut builder = if mode == "external-legacy" {
+            ExternalBuilder::new_legacy(directory.path(), limits, options)?
+        } else {
+            ExternalBuilder::new(directory.path(), limits, options)?
+        };
+        for row in &assertions {
+            builder.push(row.target, row.payload)?;
+        }
+        Some(builder.write_to(&mut output_file, original.metadata()?)?)
+    } else {
+        let mut builder = Builder::new(limits);
+        for row in &assertions {
+            builder.push(row.target, row.payload)?;
+        }
+        if mode == "memory-legacy" {
+            builder.write_legacy_to(&mut output_file, original.metadata()?)?;
+        } else {
+            builder.write_to(&mut output_file, original.metadata()?)?;
+        }
+        None
+    };
+    let artifact_bytes = output_file.metadata()?.len();
     let build_ms = started.elapsed().as_secs_f64() * 1000.0;
     drop(output_file);
     println!(
         "{}",
         serde_json::json!({"phase":"built", "build_ms":build_ms,
-        "records":stats.records,"artifact_bytes":stats.artifact_bytes,
-        "temporary_peak_bytes":stats.temporary_peak_bytes,
-        "payload_cache_bytes":stats.payload_cache_bytes})
+        "mode":mode,"records":assertions.len(),"artifact_bytes":artifact_bytes,
+        "temporary_peak_bytes":stats.map(|stats| stats.temporary_peak_bytes),
+        "payload_cache_bytes":stats.map(|stats| stats.payload_cache_bytes)})
     );
 
     let started = Instant::now();

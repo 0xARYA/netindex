@@ -1,7 +1,10 @@
 # P1-09: opaque payload distribution
 
-Standalone research; no changes to library code, format or public API. Provider
-schemas live only in this adapter. Raw provider data stays in ignored/private
+The original P1-09 measurements used the unmodified 2.1.0 library. The current
+analyzer also accepts format-4 files; the historical Python verifiers remain
+pinned to the original format-3 snapshots. Use
+[the compact-reference verifier](../compact_references/README.md) for new outputs.
+Provider schemas live only in this adapter. Raw provider data stays in ignored/private
 directories; only aggregate statistics and provenance are committed.
 
 Measure the retained real City conversion before/after full deduplication and

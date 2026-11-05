@@ -102,7 +102,8 @@ pub struct ExternalBuilder {
     slots: BufWriter<File>,
     payloads: BufWriter<File>,
     payload_reader: File,
-    cache: HashMap<Vec<u8>, (u64, u64)>,
+    cache: HashMap<Vec<u8>, (u64, u64, u32)>,
+    references: Option<References>,
     cache_bytes: usize,
     disk_table: DiskTable,
     payload_bytes: usize,
@@ -119,11 +120,37 @@ pub struct ExternalBuilder {
 
 impl ExternalBuilder {
     /// Create private temporary files beneath an existing caller-selected directory.
+    /// Chooses compact shared-value references when smaller, emitting format 4;
+    /// otherwise retains format 3. Use [`Self::new_legacy`] for 2.x readers.
+    /// Temporary IDs, directory spans, and enlarged deduplication cells are
+    /// charged to `temporary_bytes`; no distinct-value directory is held in memory.
     ///
     /// # Errors
     /// Fails on invalid run size, failed memory reservations, or temporary-file
     /// creation errors.
     pub fn new(directory: &Path, limits: Limits, options: ExternalOptions) -> Result<Self, Error> {
+        Self::create(directory, limits, options, true)
+    }
+
+    /// Build format-3 output readable by netindex 2.x.
+    /// Uses the same sorting and complete payload deduplication as [`Self::new`].
+    ///
+    /// # Errors
+    /// Fails on invalid options, failed allocations, or temporary-file errors.
+    pub fn new_legacy(
+        directory: &Path,
+        limits: Limits,
+        options: ExternalOptions,
+    ) -> Result<Self, Error> {
+        Self::create(directory, limits, options, false)
+    }
+
+    fn create(
+        directory: &Path,
+        limits: Limits,
+        options: ExternalOptions,
+        compact: bool,
+    ) -> Result<Self, Error> {
         if options.run_records == 0 {
             return Err(Error::Invalid("external run size"));
         }
@@ -148,7 +175,14 @@ impl ExternalBuilder {
         let payload_reader = File::open(directory.path().join("payloads"))
             .map_err(temporary("open payload comparison handle"))?;
 
+        let references = if compact {
+            Some(References::new(directory.path())?)
+        } else {
+            None
+        };
+
         Ok(Self {
+            references,
             directory,
             sorter: Some(sorter),
             slots: BufWriter::new(slots),
@@ -156,7 +190,11 @@ impl ExternalBuilder {
             payload_reader,
             cache: HashMap::new(),
             cache_bytes: 0,
-            disk_table: DiskTable::new(),
+            disk_table: if compact {
+                DiskTable::with_references()
+            } else {
+                DiskTable::new()
+            },
             payload_bytes: 0,
             fixed_length: None,
             counts: [0; 3],
@@ -228,6 +266,14 @@ impl ExternalBuilder {
 
         let packed = encode::sizes(run.file(), self.counts)?;
         let slot_encoding = Slots::select(self.records, self.payload_bytes, self.fixed_length)?;
+        let slot_encoding = match &self.references {
+            Some(references) => slot_encoding.indexed(
+                self.records,
+                self.payload_bytes,
+                references.values as usize,
+            )?,
+            None => slot_encoding,
+        };
         let layout = Layout::with_packed(
             self.counts,
             metadata.len(),
@@ -246,24 +292,28 @@ impl ExternalBuilder {
         output.write_all(metadata)?;
         encode::write_sections(run.file(), &mut output, self.counts, packed)?;
 
+        if let Slots::Indexed { values, width } = slot_encoding {
+            self.references
+                .as_mut()
+                .ok_or(Error::Invalid("payload reference files"))?
+                .write(&mut output, values, width)?;
+        }
         self.slots
             .get_mut()
             .seek(SeekFrom::Start(0))
             .map_err(temporary("rewind payload slots"))?;
-
         let mut slots = BufReader::new(self.slots.get_mut());
-        let mut encoded = SlotWriter::new(&mut output, slot_encoding)?;
-
-        for _ in 0..self.records {
-            let mut bytes = [0; 16];
-            slots
-                .read_exact(&mut bytes)
-                .map_err(temporary("read payload slots"))?;
-
-            encoded.push(
-                crate::layout::usize_at(&bytes, 0)? as u64,
-                crate::layout::usize_at(&bytes, 8)? as u64,
-            )?;
+        if let Slots::Indexed { width, .. } = slot_encoding {
+            for _ in 0..self.records {
+                let (_, _, ordinal) = read_slot(&mut slots, true)?;
+                crate::payload::write_ordinal(&mut output, ordinal, width)?;
+            }
+        } else {
+            let mut encoded = SlotWriter::new(&mut output, slot_encoding)?;
+            for _ in 0..self.records {
+                let (offset, length, _) = read_slot(&mut slots, self.references.is_some())?;
+                encoded.push(offset, length)?;
+            }
         }
 
         self.payloads
@@ -313,7 +363,7 @@ impl ExternalBuilder {
         let hash = self.disk_table.hash(payload);
         let existing = match self.cache.get(payload).copied() {
             Some(span) => Some(span),
-            None => self.disk_table.find(
+            None => self.disk_table.find_reference(
                 hash,
                 payload,
                 &mut self.payloads,
@@ -328,7 +378,17 @@ impl ExternalBuilder {
             .ok_or(Error::Limit("payload bytes"))?;
         Layout::new(counts, 0, payload_bytes, self.limits)?;
 
-        self.budget.reserve(16 + added as u64)?;
+        let reference_bytes = if self.references.is_some() {
+            (if existing.is_none() { 16 } else { 0 })
+                + if payload.len() >= u32::MAX as usize {
+                    8
+                } else {
+                    0
+                }
+        } else {
+            0
+        };
+        self.budget.reserve(16 + added as u64 + reference_bytes)?;
 
         let charge = payload
             .len()
@@ -356,23 +416,29 @@ impl ExternalBuilder {
             .ok_or(Error::Invalid("finished external builder"))?
             .push(row, self.directory.path(), &mut self.budget)?;
 
-        let span = existing.unwrap_or((self.payload_bytes as u64, payload.len() as u64));
+        let ordinal = self
+            .references
+            .as_ref()
+            .map_or(0, |references| references.values);
+        let span = existing.unwrap_or((self.payload_bytes as u64, payload.len() as u64, ordinal));
         if existing.is_none() {
             if cache_key.is_none() {
-                self.disk_table
-                    .insert(hash, span, self.directory.path(), &mut self.budget)?;
+                self.disk_table.insert_reference(
+                    hash,
+                    span,
+                    self.directory.path(),
+                    &mut self.budget,
+                )?;
             }
             self.payloads
                 .write_all(payload)
                 .map_err(temporary("write payload pool"))?;
         }
 
-        self.slots
-            .write_all(&span.0.to_le_bytes())
-            .map_err(temporary("write payload slots"))?;
-        self.slots
-            .write_all(&span.1.to_le_bytes())
-            .map_err(temporary("write payload slots"))?;
+        write_slot(&mut self.slots, span, self.references.is_some())?;
+        if let Some(references) = &mut self.references {
+            references.push(span, existing.is_none())?;
+        }
 
         if let Some(key) = cache_key {
             self.cache.insert(key, span);
@@ -388,6 +454,113 @@ impl ExternalBuilder {
         self.payload_bytes = payload_bytes;
         self.records += 1;
 
+        Ok(())
+    }
+}
+
+fn write_slot(output: &mut impl Write, span: (u64, u64, u32), compact: bool) -> Result<(), Error> {
+    output
+        .write_all(&span.0.to_le_bytes())
+        .map_err(temporary("write payload slots"))?;
+    if compact {
+        let length = u32::try_from(span.1).unwrap_or(u32::MAX);
+        output
+            .write_all(&length.to_le_bytes())
+            .map_err(temporary("write payload slots"))?;
+        output
+            .write_all(&span.2.to_le_bytes())
+            .map_err(temporary("write payload slots"))?;
+        if length == u32::MAX {
+            output
+                .write_all(&span.1.to_le_bytes())
+                .map_err(temporary("write payload slots"))?;
+        }
+    } else {
+        output
+            .write_all(&span.1.to_le_bytes())
+            .map_err(temporary("write payload slots"))?;
+    }
+    Ok(())
+}
+
+// Compact builds reuse the 16-byte slot spill for offset, u32 length and u32
+// ordinal. The sentinel length escapes to u64 so wide payloads retain support.
+fn read_slot(input: &mut impl Read, compact: bool) -> Result<(u64, u64, u32), Error> {
+    let mut bytes = [0; 16];
+    input
+        .read_exact(&mut bytes)
+        .map_err(temporary("read payload slots"))?;
+    let offset = crate::layout::usize_at(&bytes, 0)? as u64;
+    if !compact {
+        return Ok((offset, crate::layout::usize_at(&bytes, 8)? as u64, 0));
+    }
+    let length = crate::layout::u32_at(&bytes, 8)?;
+    let ordinal = crate::layout::u32_at(&bytes, 12)?;
+    let length = if length == u32::MAX {
+        let mut word = [0; 8];
+        input
+            .read_exact(&mut word)
+            .map_err(temporary("read wide payload slot"))?;
+        u64::from_le_bytes(word)
+    } else {
+        u64::from(length)
+    };
+    Ok((offset, length, ordinal))
+}
+
+struct References {
+    directory: BufWriter<File>,
+    values: u32,
+}
+
+impl References {
+    fn new(directory: &Path) -> Result<Self, Error> {
+        Ok(Self {
+            directory: BufWriter::new(
+                tempfile::tempfile_in(directory).map_err(temporary("create payload directory"))?,
+            ),
+            values: 0,
+        })
+    }
+
+    fn push(&mut self, span: (u64, u64, u32), new: bool) -> Result<(), Error> {
+        if new {
+            self.directory
+                .write_all(&span.0.to_le_bytes())
+                .map_err(temporary("write payload directory"))?;
+            self.directory
+                .write_all(&span.1.to_le_bytes())
+                .map_err(temporary("write payload directory"))?;
+            self.values = self
+                .values
+                .checked_add(1)
+                .ok_or(Error::Limit("payload values"))?;
+        }
+        Ok(())
+    }
+
+    fn write(&mut self, output: &mut impl Write, values: usize, width: u8) -> Result<(), Error> {
+        self.directory
+            .flush()
+            .map_err(temporary("flush payload directory"))?;
+        self.directory
+            .get_mut()
+            .seek(SeekFrom::Start(0))
+            .map_err(temporary("rewind payload directory"))?;
+        output.write_all(&(values as u32).to_le_bytes())?;
+        output.write_all(&[width, 0, 0, 0])?;
+        let mut directory = BufReader::new(self.directory.get_mut());
+        for _ in 0..values {
+            let mut span = [0; 16];
+            directory
+                .read_exact(&mut span)
+                .map_err(temporary("read payload directory"))?;
+            crate::payload::write_directory(
+                output,
+                crate::layout::usize_at(&span, 0)? as u64,
+                crate::layout::usize_at(&span, 8)? as u64,
+            )?;
+        }
         Ok(())
     }
 }
@@ -534,5 +707,39 @@ mod tests {
         ));
 
         assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
+    }
+}
+
+#[cfg(test)]
+mod reference_tests {
+    use super::*;
+    #[test]
+    fn temporary_slots_preserve_wide_lengths_and_ids_with_exact_framing() {
+        for length in [
+            0,
+            1,
+            u64::from(u32::MAX) - 1,
+            u64::from(u32::MAX),
+            u64::from(u32::MAX) + 1,
+        ] {
+            let mut bytes = Vec::new();
+            write_slot(&mut bytes, (8, length, 513), true).unwrap();
+            assert_eq!(
+                bytes.len(),
+                if length >= u64::from(u32::MAX) {
+                    24
+                } else {
+                    16
+                }
+            );
+            write_slot(&mut bytes, (12, 1, 9), true).unwrap();
+            let mut input = bytes.as_slice();
+            assert_eq!(read_slot(&mut input, true).unwrap(), (8, length, 513));
+            assert_eq!(read_slot(&mut input, true).unwrap(), (12, 1, 9));
+            assert!(input.is_empty());
+            for end in 0..bytes.len() - 16 {
+                assert!(read_slot(&mut &bytes[..end], true).is_err());
+            }
+        }
     }
 }

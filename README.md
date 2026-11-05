@@ -46,7 +46,7 @@ Licensed under [MIT](https://github.com/0xARYA/netindex/blob/main/LICENSE-MIT) o
 
 ```toml
 [dependencies]
-netindex = "2"
+netindex = "3"
 ```
 
 ```rust
@@ -131,7 +131,7 @@ mapping, validates the index, and owns the mapping independently of the file han
 
 ```toml
 [dependencies]
-netindex = { version = "2", features = ["mmap"] }
+netindex = { version = "3", features = ["mmap"] }
 ```
 
 ```rust,ignore,no_run
@@ -166,6 +166,22 @@ is opt-in because its additional check can slow narrow-network queries.
 
 [`Builder::into_bytes`] returns owned bytes; [`Builder::write_to`] writes to a
 caller-owned output. Metadata is stored once as opaque bytes.
+
+Version 3 chooses compact shared-payload references when they save space. The
+new format-4 encoding keeps targets, insertion IDs and borrowed opaque payloads
+unchanged; readers also accept existing format-3 files. **2.x readers cannot open
+format-4 files.** Upgrade readers before rebuilding artifacts, or use
+`Builder::into_legacy_bytes`, `Builder::write_legacy_to`, or
+`ExternalBuilder::new_legacy` to continue producing format 3. Uniform-length and
+unshared values retain their smaller existing representation. See [FORMAT.md](FORMAT.md).
+The in-memory writer temporarily sorts one span per distinct value when selecting
+the new encoding. The external builder keeps its directory and IDs on disk; it
+reuses its existing slot spill for value IDs, charging sixteen temporary bytes
+per distinct value and 32-byte disk-table cells instead of 24-byte cells to the
+temporary-byte budget. Individual payloads at least `u32::MAX` bytes need an
+additional eight temporary bytes per assertion for a wide-length escape.
+These are construction costs; readers borrow the directory without allocating a
+second copy.
 
 Enable `external-sort` for `ExternalBuilder` when buffering all assertions would
 exceed your budget. `ExternalOptions` bounds sorted runs, the payload cache, and
@@ -235,7 +251,7 @@ Declare fields once, then encode records with that schema:
 
 ```toml
 [dependencies]
-netindex = { version = "2", features = ["codec"] }
+netindex = { version = "3", features = ["codec"] }
 ```
 
 ```rust,ignore

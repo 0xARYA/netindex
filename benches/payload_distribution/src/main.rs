@@ -121,6 +121,7 @@ struct Columns<'a> {
     pool_bytes: usize,
     slot_width: usize,
     fixed: Option<(usize, usize)>,
+    indexed: Option<(usize, usize)>,
     metadata_bytes: usize,
     index_bytes: usize,
 }
@@ -128,7 +129,7 @@ impl<'a> Columns<'a> {
     fn new(bytes: &'a [u8]) -> Result<Self, Failure> {
         if bytes.len() < 80
             || &bytes[..8] != b"NETINDEX"
-            || u32::from_le_bytes(bytes[8..12].try_into()?) != 3
+            || !matches!(u32::from_le_bytes(bytes[8..12].try_into()?), 3 | 4)
         {
             return Err("unsupported file header".into());
         }
@@ -172,7 +173,28 @@ impl<'a> Columns<'a> {
         } else {
             None
         };
-        let slot_bytes = if let Some((_, width)) = fixed {
+        let indexed = if flags & 16 != 0 {
+            let header = bytes
+                .get(slots..slots.checked_add(8).ok_or("indexed header")?)
+                .ok_or("indexed header")?;
+            Some((
+                u32::from_le_bytes(header[..4].try_into()?) as usize,
+                usize::from(header[4]),
+            ))
+        } else {
+            None
+        };
+        let slot_bytes = if let Some((values, width)) = indexed {
+            if width > 4 {
+                return Err("indexed width".into());
+            }
+            values.checked_mul(8).and_then(|directory| {
+                count
+                    .checked_mul(width)?
+                    .checked_add(directory)?
+                    .checked_add(8)
+            })
+        } else if let Some((_, width)) = fixed {
             if width > 4 {
                 return Err("fixed width".into());
             }
@@ -193,6 +215,7 @@ impl<'a> Columns<'a> {
             pool_bytes,
             slot_width,
             fixed,
+            indexed,
             metadata_bytes,
             index_bytes,
         })
@@ -201,7 +224,20 @@ impl<'a> Columns<'a> {
         if id >= self.count {
             return Err("payload ID".into());
         }
-        let (offset, length) = if let Some((length, width)) = self.fixed {
+        let (offset, length) = if let Some((values, width)) = self.indexed {
+            let start = self.slots + 8 + values * 8 + id * width;
+            let mut word = [0u8; 4];
+            word[..width].copy_from_slice(&self.bytes[start..start + width]);
+            let ordinal = u32::from_le_bytes(word) as usize;
+            if ordinal >= values {
+                return Err("indexed ordinal".into());
+            }
+            let start = self.slots + 8 + ordinal * 8;
+            (
+                u32::from_le_bytes(self.bytes[start..start + 4].try_into()?) as usize,
+                u32::from_le_bytes(self.bytes[start + 4..start + 8].try_into()?) as usize,
+            )
+        } else if let Some((length, width)) = self.fixed {
             let start = self.slots + 8 + id * width;
             let mut ordinal = [0u8; 4];
             ordinal[..width].copy_from_slice(&self.bytes[start..start + width]);

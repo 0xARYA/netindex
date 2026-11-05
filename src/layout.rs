@@ -229,10 +229,16 @@ impl Layout {
                 Slots::Spans(8) => 4,
                 Slots::Spans(_) => 0,
                 Slots::Fixed { .. } => 8,
+                Slots::Indexed { .. } => 16,
             };
 
         output.write_all(MAGIC)?;
-        output.write_all(&VERSION.to_le_bytes())?;
+        let version = if matches!(self.slot_encoding, Slots::Indexed { .. }) {
+            4
+        } else {
+            VERSION
+        };
+        output.write_all(&version.to_le_bytes())?;
         output.write_all(&flags.to_le_bytes())?;
 
         for value in [
@@ -261,12 +267,16 @@ impl Layout {
         }
 
         let version = u32_at(bytes, 8)?;
-        if version != VERSION {
+        if version != VERSION && version != 4 {
             return Err(Error::Version(version));
         }
 
         let flags = u32_at(bytes, 12)?;
-        if flags & !15 != 0 || flags & 12 == 12 {
+        if flags & !31 != 0
+            || (flags & 28).count_ones() > 1
+            || (version == VERSION && flags & 16 != 0)
+            || (version == 4 && flags & 16 == 0)
+        {
             return Err(Error::Invalid("reserved header fields"));
         }
 
@@ -292,7 +302,7 @@ impl Layout {
             usize_at(bytes, 40)?,
         ];
         let metadata = usize_at(bytes, 48)?;
-        let slot_encoding = if flags & 8 != 0 {
+        let slot_encoding = if flags & 24 != 0 {
             let start = add(HEADER, metadata)?;
             let v4 = match packed[0] {
                 Some(length) => length,
@@ -306,7 +316,16 @@ impl Layout {
             let start = add(start, v6)?;
             let start = add(start, multiply(counts[2], 8)?)?;
 
-            Slots::read(bytes, start, payloads)?
+            if flags & 16 != 0 {
+                Slots::read_indexed(
+                    bytes,
+                    start,
+                    add(add(counts[0], counts[1])?, counts[2])?,
+                    payloads,
+                )?
+            } else {
+                Slots::read(bytes, start, payloads)?
+            }
         } else {
             if flags & 4 != 0 && payloads > u32::MAX as usize {
                 return Err(Error::Invalid("compact payload length"));
