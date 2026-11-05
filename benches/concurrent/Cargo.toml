@@ -1,0 +1,16 @@
+[package]
+name = "netindex-concurrent-study"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[profile.release]
+codegen-units = 1
+
+[dependencies]
+netindex = { path = "../..", features = ["mmap"] }
+memmap2 = "=0.9.11"
+libc = "=0.2.190"
+serde_json = "=1.0.151"

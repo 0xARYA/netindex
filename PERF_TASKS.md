@@ -33,8 +33,12 @@ not complete the broader experiments below.
   Qualified on Linux/WSL using private files, zero-residency cold controls and
   32 MiB cgroup memory with 82.5/200 MB inputs; host/device cache is uncontrolled.
   [Results](benches/results/2026-11-04-memory.json).
-- [ ] **P0-07 Concurrency.** Throughput and p50/p95/p99 at increasing reader counts.
-- [ ] **P0-08 Replacement.** Replace snapshots under active readers.
+- [x] **P0-07 Concurrency.** Throughput and sampled p50/p95/p99 at 1/2/4/8/16
+  readers, two reversed-order trials across 1M/20M IPv4/IPv6/ASN inputs.
+  [Results](benches/results/2026-11-04-concurrent.json).
+- [x] **P0-08 Replacement.** 1/4/16 readers, coarse/fine routing, two trials;
+  600 publications, 120 rejected candidates, exact query and mapping-lifetime checks.
+  [Results](benches/results/2026-11-04-replacement.json).
 - [ ] **P0-09 Competitors.** Equivalent geography with MMDB, prefix selection
   with routing indexes, and membership with bitmap formats.
 - [-] **P0-10 Evidence.** Standardize hashes, pinned-core serial runs, build
@@ -326,3 +330,50 @@ Linux memory release build/Clippy; Python parsing; and source/fixture receipt
 integrity checks. Native adapters built for both released versions and passed
 full output validation and parity. Remote checks are tracked in GitHub Actions
 for the publishing commit; the earlier checkpoint's CI limitation is historical.
+
+
+## 2026-11-04 concurrent readers and snapshot replacement
+
+P0-07 and P0-08 completed with the [standalone Linux harness](benches/concurrent/README.md).
+No lookup implementation or encoded format changed. This baseline uses mmap
+without optional SIMD, LTO or PGO; optimization comparisons remain separate.
+
+At 20M assertions, one-worker throughput spans 3.43–3.85M IPv4, 3.26–3.28M IPv6,
+and 2.59–2.73M ASN queries/s. Sixteen workers span 90.11–95.30M, 70.40–71.84M
+and 53.49–56.04M respectively. Every timed query passes its exact independent
+oracle before measurement; timed checksums match. Histograms include sampled
+query p50/p95/p99 and clock controls. Guest CPU pinning does not isolate host
+scheduling, and superlinear results must not be extrapolated as service capacity.
+
+Replacement covers changes to IPv4/IPv6/ASN targets and payloads, duplicates,
+unchanged source identity, retained old requests and borrowed payloads. Each
+worker observes both generations; all query results preserve source positions,
+IDs, targets, bytes and multiplicity. All twelve cases release 49 retired mappings
+while initial/final snapshots remain alive and all 51 once those owners drop.
+The portable regression repeats publication while workers hold borrowed answers.
+
+Median candidate construction spans 4.59–6.24 us for coarse routing versus
+4.22–4.56 ms for fine routing on 196,672 assertions. Fine routing rebuilds its
+routing information; mapping and validation are excluded. Publication p99 spans
+0.06–4.26 us coarse and 0.12–3.29 us fine, including lock waits; each case has
+only fifty publications, so this percentile includes the slowest event and is
+sensitive to scheduling. Sampled checked 32-query batch p99 spans 4.30–9.35 us.
+An [earlier exploratory repeat](benches/results/2026-11-04-replacement-exploratory.json)
+observed a 270 us publication outlier. Its exact build hashes were not retained;
+the receipt preserves metrics and the raw-output hash as supplemental evidence.
+This reinforces that the final two trials do not bound scheduling tails.
+These are small warm synthetic files and one application-owned RwLock publication
+policy, not per-query latency, deployment atomicity or a production SLO.
+
+Next in priority order: **P0-09 matched-contract competitors**. P0-10 remains
+active while the comparison suite is being extended.
+
+
+Verification passed for this checkpoint: Rust 1.95 formatting, default/all-feature
+all-target Clippy with warnings denied, default/all-feature tests including
+ignored cases, documentation with warnings denied and all-feature package
+verification. The new publication regression passed on Windows and Linux.
+Both standalone release binaries passed Linux Clippy and the final full matrices;
+source/executable/fixture hashes and result counts were checked. No version bump
+is needed for benchmark, documentation and test additions. Remote CI is tracked
+on the publishing commit separately from these local checks.

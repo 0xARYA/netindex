@@ -3,6 +3,25 @@
 The ordered [performance work queue](PERF_TASKS.md) tracks experiments, acceptance
 criteria, measurements and decisions. New results should update that queue.
 
+## Concurrent readers and replacement (2026-11-04)
+
+The [Linux harness](benches/concurrent/README.md) records 1/2/4/8/16 shared
+readers on 1M/20M IPv4/IPv6/ASN inputs, including sampled latency histograms,
+clock controls, two reversed-order trials and exact-query prechecks.
+[Scaling results](benches/results/2026-11-04-concurrent.json) show substantial
+throughput growth and some superlinear cases on WSL. Shared caches and host
+scheduling prevent interpreting these as per-core service capacity.
+
+[Replacement results](benches/results/2026-11-04-replacement.json) cover coarse
+and fine routing at 1/4/16 workers: 600 successful publications and 120 rejected
+candidates, with original-target result checks and mapping reclamation proofs.
+Median candidate construction is 4.59–6.24 us coarse versus 4.22–4.56 ms fine
+for this 196,672-assertion fixture. Mapping and validation are preloaded; fine
+routing rebuilds routing data. Batch percentiles include 32 queries and caller
+snapshot acquisition; publication metrics include lock waiting, with only fifty
+samples per case. See the queue and receipts for ranges and scheduling outliers.
+No library publication API or lookup optimization is introduced by this study.
+
 ## City replay and size scaling (2026-11-04)
 
 The [City replay](benches/results/2026-11-04-city-replay.json) reproduces the exact
