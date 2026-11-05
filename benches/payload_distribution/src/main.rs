@@ -274,6 +274,7 @@ fn analyze(bytes: &[u8]) -> Result<Value, Failure> {
     let mut digest = Sha256::new();
     digest.update(b"netindex-payload-stream-v1\0");
     let (mut admission_charge, mut cache_hits, mut cache_misses) = (0usize, 0u64, 0u64);
+    let mut cache_miss_payload_bytes = 0u64;
     let mut cache_saturated_at = None;
     for id in 0..columns.count {
         let (offset, length) = columns.span(id)?;
@@ -335,6 +336,7 @@ fn analyze(bytes: &[u8]) -> Result<Value, Failure> {
             cache_hits += 1;
         } else {
             cache_misses += 1;
+            cache_miss_payload_bytes += length as u64;
         }
         if new_span {
             state.physical += 1;
@@ -416,7 +418,8 @@ fn analyze(bytes: &[u8]) -> Result<Value, Failure> {
             "distinct_intervening_histogram":distinct_gap.json(),"distinct_byte_footprint_histogram":byte_footprint.json(),
             "within_byte_budget":BYTE_BUDGETS.into_iter().zip(within_bytes).collect::<BTreeMap<_,_>>()},
         "first_seen_4mib_cache_model":{"charge_bytes":admission_charge,"first_failed_admission_id":cache_saturated_at,
-            "hits":cache_hits,"misses":cache_misses,"includes_key_plus_64_byte_charge":true,"eviction":false},
+            "hits":cache_hits,"misses":cache_misses,"miss_payload_bytes":cache_miss_payload_bytes,
+            "includes_key_plus_64_byte_charge":true,"eviction":false},
         "reference_model":{"minimum_whole_byte_id_width":index_width,
             "id_array_plus_u32_span_directory_bytes":columns.count as u64*index_width as u64+values.len() as u64*8,
             "excludes_headers_validation_memory_and_lookup_cost":true},
@@ -481,7 +484,7 @@ fn ingest(rows: &Path, output: &Path, temp: &Path) -> Result<(), Failure> {
         .create_new(true)
         .open(output)?;
     builder.write_to(&output, b"payload-distribution-asn-v1")?;
-    // SAFETY: this process owns the closed writer's immutable output contents.
+    // SAFETY: this process exclusively owns the output and does not mutate it while mapped.
     let mapping = unsafe { memmap2::Mmap::map(&output) }?;
     let reader = Reader::open(
         &mapping,
@@ -569,6 +572,10 @@ mod tests {
         assert_eq!(actual["payloads"]["unique_bytes"], 6);
         assert_eq!(actual["payloads"]["logical_bytes"], 14);
         assert_eq!(actual["first_seen_4mib_cache_model"]["hits"], 6);
+        assert_eq!(
+            actual["first_seen_4mib_cache_model"]["miss_payload_bytes"],
+            6
+        );
         assert_eq!(actual["payloads"]["duplicate_stored_bytes"], 0);
         Ok(())
     }
