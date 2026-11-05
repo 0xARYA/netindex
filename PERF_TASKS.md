@@ -39,10 +39,13 @@ not complete the broader experiments below.
 - [x] **P0-08 Replacement.** 1/4/16 readers, coarse/fine routing, two trials;
   600 publications, 120 rejected candidates, exact query and mapping-lifetime checks.
   [Results](benches/results/2026-11-04-replacement.json).
-- [ ] **P0-09 Competitors.** Equivalent geography with MMDB, prefix selection
-  with routing indexes, and membership with bitmap formats.
-- [-] **P0-10 Evidence.** Standardize hashes, pinned-core serial runs, build
-  provenance, repeated trials and independent correctness oracles for new harnesses.
+- [x] **P0-09 Competitors.** Equivalent geography with MMDB, prefix selection
+  with ip_network_table, and membership with default/optimized Roaring.
+  42 Linux processes, 1,032 timed measurements; independent original-input checks.
+  [Results and decisions](benches/competitors/RESULTS.md).
+- [x] **P0-10 Evidence.** Standardized hashes, pinned-core serial runs, build
+  provenance, repeated trials and independent correctness oracles for the P0 suite.
+  [Evidence standard and inventory](benches/EVIDENCE.md); apply to every new prototype.
 
 ## P1: lookup architecture
 
@@ -377,3 +380,67 @@ Both standalone release binaries passed Linux Clippy and the final full matrices
 source/executable/fixture hashes and result counts were checked. No version bump
 is needed for benchmark, documentation and test additions. Remote CI is tracked
 on the publishing commit separately from these local checks.
+
+
+## 2026-11-04 matched-contract competitors and P0 evidence completion
+
+P0-09 completed with [reproduction](benches/competitors/README.md),
+[measurements/decisions](benches/competitors/RESULTS.md) and the
+[hashed receipt](benches/results/2026-11-04-competitors.json). P0-10 now has a
+shared [evidence standard and result inventory](benches/EVIDENCE.md).
+
+New dependencies remain in a standalone benchmark workspace: ip_network_table
+0.2.0 (treebitmap backend), ip_network 0.4.1 and Roaring 0.12.0. No library, format,
+public API, application schema or default build setting changed. Geography uses
+existing owned-record City comparisons and 108,123-query parity, under its own
+Windows timing/memory boundary; it is not pooled with the new Linux timings.
+
+The Linux matrix has 1K/100K/1M leaves or keys, IPv4/IPv6 disjoint/overlapping
+prefixes, dense/sparse/clustered ASN membership and uniform/hot corpora. Every
+case runs default and SIMD executables with byte-identical serialized inputs and
+corpora. Four prefix trials alternate engine order; six membership trials cover
+all engine-order permutations. All 42 processes and 1,032 timing measurements
+passed. All original prefix boundaries/endpoints and neighbouring addresses, or
+keys and neighbouring integers, pass the independent HashMap/HashSet oracles;
+each complete timed corpus is prechecked and every timed checksum matches.
+
+At 1M uniform IPv4 leaves, default/SIMD netindex is 82.1/67.4 ns/query versus
+45.3 ns for the trie. With overlapping IPv4 prefixes it is 606.7/647.4 versus
+51.5 ns. With hot disjoint IPv6 it is 41.6/45.4 versus 108.2 ns. At 1M ASN keys,
+dense membership is 46.0/49.2 ns versus 4.5–4.8 ns for Roaring. Sparse SIMD
+membership is 47.6 versus 51.9–52.2 ns; default is 51.1 versus 53.5–54.6 ns. These are
+median aggregate observations, not significant speedup claims or query tails.
+The complete table retains both builds, traffic patterns and Roaring variants.
+
+Dense membership encodes to 8,000,109 bytes in netindex, 131,208 bytes in default
+Roaring and 230 bytes with run compression. Sparse bitmap bytes are 2,524,296;
+clustered optimized bytes are 4,540. These narrower Boolean representations do
+not preserve insertion IDs, duplicates or payloads. Their sizes are serialized
+bytes, not heap/RSS. Run compression can trade lookup speed for size. Full
+netindex result semantics must survive any adoption of density-dependent layouts.
+
+Decision: retain the specialized baselines; adopt no algorithm or blanket SIMD
+policy from these observations. Prioritize P1-01/P1-02 interleaving/cross-query
+SIMD under the full all-match contract, followed by the queued routing/layout
+experiments. Carry density/run ideas into P1-06/P1-15 and retain the native-MMDB
+size gap as motivation for P1-10/P1-11. No universal winner is demonstrated.
+Two rejected fixture-development passes (zero ASN and insufficient parent-prefix
+budget) produced no accepted result receipt. The final positive-ASN fixture uses
+a two-million-assertion budget to include overlapping parents and was rebuilt
+and remeasured in full.
+
+Next in priority order: **P1-01 interleaving independent query memory accesses**.
+P2 assembly/counters/PGO/build qualification still applies to promising variants;
+P0 completion does not complete the full optimization queue.
+
+
+Verification passed: Rust 1.95 formatting, default/all-feature all-target Clippy
+with warnings denied, default/all-feature tests including ignored cases,
+documentation with warnings denied and all-feature package verification. Both
+standalone release profiles passed Clippy and the entire matrix. The receipt
+verifier checked all source/executable/input/raw-log hashes, trial coordinates,
+checksums and histogram percentiles; it retains measured working-copy hashes and
+adds LF-normalized source hashes for Git checkout comparisons. Python parsing and
+local documentation-link checks passed. The preceding publishing commit's Windows,
+Linux and fuzz CI completed successfully; this checkpoint's CI is tracked on its
+own publishing commit. No version bump or registry publication is needed.

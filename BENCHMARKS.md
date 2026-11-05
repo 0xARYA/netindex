@@ -3,6 +3,23 @@
 The ordered [performance work queue](PERF_TASKS.md) tracks experiments, acceptance
 criteria, measurements and decisions. New results should update that queue.
 
+## Matched-contract competitors (2026-11-04)
+
+The [comparison harness](benches/competitors/README.md) measures longest-prefix
+selection against ip_network_table and unique-ASN Boolean membership against
+Roaring, with default/SIMD netindex builds at 1K/100K/1M leaves or keys.
+[Results and decisions](benches/competitors/RESULTS.md) retain wins, regressions,
+serialized sizes, scope and limitations. The complete matrix has 42 processes
+and 1,032 timed measurements with independently verified corpora and checksums.
+The existing native City adapter supplies equivalent owned geography results
+separately; Windows and Linux observations are not pooled.
+
+Specialized indexes win important cases; netindex wins others. A smaller Boolean
+bitmap or faster longest-prefix lookup does not establish preservation of the
+full assertion contract. These results change no algorithm, format or default
+build policy. The [evidence standard](benches/EVIDENCE.md) inventories the P0 suite
+and defines the qualification needed for subsequent optimization prototypes.
+
 ## Concurrent readers and replacement (2026-11-04)
 
 The [Linux harness](benches/concurrent/README.md) records 1/2/4/8/16 shared
