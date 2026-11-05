@@ -81,7 +81,7 @@ not complete the broader experiments below.
 
 ## P1: storage and construction
 
-- [ ] **P1-09 Payload distribution.** Cardinality, lengths, duplicate bytes and
+- [ ] **P1-09 Payload distribution (in progress).** Cardinality, lengths, duplicate bytes and
   repeat distance on real inputs.
 - [ ] **P1-10 Compact references.** Payload IDs plus a distinct span directory;
   establish the break-even point for variable-length records.
@@ -912,3 +912,11 @@ warm virtualized-host measurements, without PMU or bare-metal isolation. Intel,
 Apple, other ARM cores, SVE/SVE2 and cross-query AVX-512/NEON remain unmeasured.
 [Detailed results and reproducible evidence](benches/architectures/RESULTS.md).
 Next: **P1-09 payload distribution**.
+
+### P1-09 payload distribution started - 2026-11-05
+
+Analyzing retained real City old/current output plus a public IPtoASN combined
+IPv4/IPv6 snapshot. Exact byte equality, logical/physical duplication, length and
+frequency distributions, insertion-order reuse and conservative workspace/RSS
+accounting are isolated under benches/payload_distribution. Four independent
+small-fixture tests and study Clippy pass. Raw provider records stay local.
