@@ -70,8 +70,10 @@ not complete the broader experiments below.
   Rejected the tested selector for production after measured regressions; budget
   enforcement and negative evidence remain reproducible research.
   [Results](benches/adaptive/RESULTS.md).
-- [ ] **P1-07 Learned fences.** Start with IPv4/64-bit keys and exact bounded
-  search; evaluate RadixSpline-style prediction with a correctness fallback.
+- [x] **P1-07 Learned fences.** Qualified guarded affine/radix models for native
+  IPv4/ASN and eligible normalized 64-bit IPv6 keys, with exact correction and
+  full-search recovery. Retain workload-specific research; no default adoption.
+  [Results](benches/learned/RESULTS.md).
 - [ ] **P1-08 Architectures.** Evaluate AVX-512 and NEON on actual hardware while
   retaining portable fallbacks. Compile-only checks do not establish performance.
 
@@ -441,9 +443,9 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-07 learned fences with exact bounded search and
-correctness fallback**, preserving complete all-match semantics. P1-06 qualified
-explicit budgets and rejected the tested cache-presence/prefix policy.
+Next in priority order: **P1-08 AVX-512/NEON qualification on actual hardware**,
+retaining portable fallbacks. P1-07 qualified guarded learned prediction as
+workload-specific research; compile-only architecture checks are not timings.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
 
@@ -773,8 +775,8 @@ variants, so those examples do not establish width-only effects.
 Static counts establish emitted mechanisms, not runtime cost or causality;
 matching WSL hardware counters are unavailable. More representative sampling,
 batch sizes, admission economics, startup amortization and RSS/cold qualification
-are needed before a production selector. Next: **P1-07 learned fences** under
-exact bounded search and correctness fallback. P2 profiling/PGO qualification
+are needed before a production selector. Follow-through: P1-07 qualified learned
+fences under exact correction and correctness fallback. P2 profiling/PGO qualification
 remains distinct from this no-PGO portable-release experiment.
 
 Verification: Rust 1.95 root formatting, default/all-feature all-target Clippy
@@ -786,3 +788,95 @@ receipt reconstruction and diff checks passed. Local checks are distinct from
 remote CI; hardware counter profiling remains unavailable in this WSL kernel.
 Library version remains 2.1.0; this checkpoint publishes research through Git,
 without a registry release or public behavior change.
+
+
+### 2026-11-04: P1-07 learned fences with guarded exact correction
+
+[Study/reproduction/reference](benches/learned/README.md),
+[results](benches/learned/RESULTS.md),
+[primary](benches/results/2026-11-04-learned.json),
+[fresh repeats](benches/results/2026-11-04-learned-repeat.json),
+[assembly](benches/results/2026-11-04-learned-asm.json), and
+[verification/fixture reproduction](benches/results/2026-11-04-learned-verification.json).
+
+Completed the isolated experiment: 144 primary processes plus 66 fresh repeats,
+5,280 timings. Fit a greedy affine slope corridor to upper-CDF ranks for native
+u32 IPv4 fences/ASN keys and normalized u64 IPv6 fences when their span fits 64
+bits. Error 4/32/128 settings run in separate processes. Binary/radix segment
+routing, integer subtraction before f64 conversion, end clamps and bounded local
+correction are timed. A two-neighbor global check proves the exact upper bound;
+invalid predictions fall back to full native search. Requested model error is
+not a proof for unseen gaps, duplicate jumps or floating-point rounding.
+
+This independently written Rust prototype is inspired by RadixSpline routing/
+corridors, but uses disjoint anchored affine segments rather than connected
+spline vertices. It is not an upstream port, upstream performance comparison or
+full RadixSpline/PGM qualification. No upstream code is vendored. Single-segment
+models bypass routing and allocate no radix; otherwise bits adapt to segment
+count up to 12. Scalar/native correction retains existing packed delta search;
+no new explicit SIMD kernel, trained selector or PGO is adopted.
+
+Compare ordinary, prior cross-query AVX2, global native sorted cache, learned
+binary routing and learned radix routing. Reuse all original fixtures/corpora
+unchanged and add eight 65,536-record curved/clustered IPv4/IPv6 shared/unique
+fixtures, with independent original-target scan oracles and 63 extra clustered
+gap queries. IPv6 exercises almost full-width u64 deltas under a high 64-bit base.
+All 20M exact and all nonlinear cases repeat in fresh processes. Timings use
+CPU 20 portable release/codegen-units=1, four forward/reverse trials with a warmup
+before each measurement; only uniform/hot exact traffic and uniform shapes are
+claimed. Early lint-failed preparation attempts produce no accepted timings.
+
+Decision: retain guarded prediction as a workload-specific research candidate,
+without a production/default/API/encoding change. Fixing error 4/radix route 702
+across primary/repeat and default/SIMD 20M processes, uniform ASN is 6.41-10.70x
+faster than ordinary and 2.97-4.21x than the fastest observed fixed-control median
+(ordinary/prior SIMD/native sorted). Hot ASN is 1.85-1.91x faster than ordinary.
+Uniform IPv6 is 1.37-2.69x faster than ordinary, but hot IPv4 ratios are 0.88-0.91x
+and hot IPv6 can regress. Small nonlinear cases expose routing/correction
+overhead; do not infer a universal winner. Same-process medians and their
+optimistic minimum comparator do not establish statistical significance.
+
+All large original cases fit one segment because keys are evenly spaced.
+Nonlinear cases have only 256 packed fences; large nonlinear/native-provider
+behavior remains unmeasured. Normal probes require zero full-search recoveries
+across 4,738,704 primary and 2,373,156 repeat eligible model queries; binary/radix
+probe results agree. Forced rank-zero and NaN-slope tests establish recovery,
+not fallback-heavy throughput or latency. Interval/broad/wider-than-u64 IPv6
+cases keep ordinary fallback and do not qualify learned acceleration.
+
+Aggregate additional cache vector capacity is bounded by 128 MiB. Actual 20M
+IPv4/IPv6/ASN capacities are 312,580/625,080/80,000,080 bytes, including spare
+segment capacity. Error 4 construction ranges are 0.366-0.571/0.416-0.627/
+74.386-83.468 ms across four processes per family, after normal reader validation.
+Native mirrors are shared by all comparators and remain resident; model-only
+metadata is not the full memory cost. Mapping/validation, existing directory,
+objects, allocator overhead and RSS are excluded. Before production adoption,
+measure large nonlinear/provider inputs, startup amortization, zero-copy/strided
+correction, cold/>RAM/RSS, fallback-heavy traffic and other hosts.
+
+All original assertion/query oracles pass with full ordered IDs/targets,
+duplicates, borrowed bytes/pointers, partial/empty/mixed batches, broad routes
+and typed callback-error prefixes. Fifteen generated-core tests and lib/test
+Clippy pass. Fresh shadow preparation reproduces every recorded source; all
+eight new inputs regenerate byte-for-byte. Header-derived native widths/domain
+eligibility, segment/radix capacities, aggregate budgets, probes, coordinates,
+checksums and source/input/executable/raw-log/repeat/assembly linkage pass.
+Frozen earlier study sources and production code remain unchanged.
+
+Assembly retains two native-width guarded-search bodies (498/520 bytes) and
+two 605-byte estimate bodies per executable. Estimates use one floating multiply
+and no floating division; bounds, conversions and routing branches remain.
+Static counts do not establish runtime costs or causality. Matching WSL perf
+counters remain unavailable. Root formatting, default/all-feature all-target
+Clippy, serial default/all-feature tests including ignored and warning-denied
+all-feature docs pass; standalone release builds and fragments pass formatting/
+Clippy. Final packaging/link/integrity checks accompany the checkpoint.
+
+Next: **P1-08 actual-hardware AVX-512/NEON qualification**, preserving portable
+fallbacks. P2 profiling/counters/PGO/build work remains distinct from these
+portable no-PGO warm measurements. Library version remains 2.1.0; research is
+published through Git without a registry release.
+
+Inspection retains non-inlined estimate/search boundaries, so call/result-record
+costs are included. Inlining/specialization is an unmeasured follow-up; timings
+do not establish the best possible implementation of the learned approach.

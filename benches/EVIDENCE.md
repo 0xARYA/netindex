@@ -109,3 +109,16 @@ RSS memory. Linked chooser/planner/ASN bodies and inlined-search summaries and u
 counters are recorded. Reject the tested cache-presence/prefix selector for
 production; larger budgets did not imply faster queries. Earlier frozen studies
 and production source/API/encoding remain unchanged.
+
+[P1-07 learned fences](learned/RESULTS.md) adds 210 processes / 5,280 timings for
+guarded native u32/u64 affine rank prediction with binary/radix routing and
+errors 4/32/128. All original assertion/query/payload/error checks, forced bad
+predictions, NaN-slope recovery, 15 core tests, fresh source reconstruction,
+header-derived model/cache dimensions/budgets and probes pass. Eight additional
+curved/clustered files reproduce byte-for-byte; all large and nonlinear cases
+repeat. Actual native-array/model costs exclude ordinary reader/allocator/RSS.
+Retain promising favorable-distribution results as research; hot/small nonlinear
+regressions and missing large nonlinear/provider/cold qualification prevent
+production adoption. Linked learned-estimate/guarded-search bodies retain
+floating and bounds work; counters remain unavailable. Earlier studies remain
+frozen and production source/API/encoding is unchanged.

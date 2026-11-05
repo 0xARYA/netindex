@@ -384,3 +384,14 @@ timings, fresh-process repeats, actual capacities/build costs, complete output/
 error checks and linked policy/native-search assembly. The tested cache-presence/
 prefix selector is rejected for production after measured regressions. The budget
 covers additional vector element capacity, not total reader memory or RSS.
+
+### Learned fences with guarded exact correction (P1-07)
+
+[Study/reproduction](benches/learned/README.md) compares native sorted caches,
+binary/radix-routed affine prediction, prior SIMD and ordinary visitors at
+errors 4/32/128. [Results](benches/learned/RESULTS.md) retain 210 processes / 5,280
+timings, fresh large/nonlinear repeats, exact-result/guard recovery checks,
+actual cache/build costs, byte-for-byte new fixture reproduction and linked
+model assembly. Large uniformly spaced keys benefit; small nonlinear/hot cases
+and unmeasured large nonlinear/provider behavior prevent default adoption.
+The 128 MiB bound covers additional vector capacities, not total reader/RSS.
