@@ -329,3 +329,10 @@ then repeat with `--features simd` before the benchmark separator. The timed
 workload uses 65,536 address assertions and 1,024 queries per batch, half hits
 and half misses. It checks original targets, IDs, payload bytes, and the actual
 encoded width before timing. CI runs both variants without collecting timings.
+
+## Fixed-group query interleaving (2026-11-04)
+
+The [P1-01 study](benches/interleaved/README.md) compares ordinary visitors with
+1/4/8/16-lane research kernels in an isolated core copy. Its
+[results](benches/interleaved/RESULTS.md) include fresh-process repeats, linked-code
+inspection and an explicit decision to retain the prototype without adoption.

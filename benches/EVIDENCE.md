@@ -56,3 +56,11 @@ The P0 inventory does not finish P1/P2 qualification. Promising algorithm/build
 variants still require complete correctness checks, generated-code inspection,
 available hardware counters, representative held-out PGO evaluation and an
 explicit adoption decision under the same workload contract.
+
+## P1 result inventory (2026-11-04)
+
+[P1-01 results](interleaved/RESULTS.md) link the primary matrix, fresh-process
+repeats, assembly inspection and local integrity verification. The study preserves
+ordinary scalar controls and original-input checks in an isolated generated core.
+Large uniform gains coexist with hot/small regressions; no default or public API
+change is adopted. Later variants still require their own qualification.

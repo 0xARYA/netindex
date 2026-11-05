@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-04",
+  "primary_sha256": "fc81d3bd2a2809147c52d75166febc209569626e2d463d0dd9f05b179a20dcc5",
+  "tool": "GNU objdump (GNU Binutils for Ubuntu) 2.42",
+  "inspection_source_sha256": "c9a322cf9cd22f8f38c1a1eb6c22a6f3251d5c0a8fdafd1dd9c06b1e18ae2376",
+  "role": "Addresses selected by inspecting main: call inside timed repetition loop, with hit-count/checksum accumulator pointers, between Instant now and elapsed calls. All lane variants share this dispatch specialization; it is not the direct scalar library method alone.",
+  "conclusions": "The timed dispatch specialization is about 25 KiB and reserves 6920 bytes of stack before saved registers. Fixed arrays/state and ordinary packed-tail calls remain visible. Conditional moves/jumps and stack-addressing counts describe the whole static dispatcher, including unused variants; they are not runtime counters or spill/hotspot measurements. Scalar baseline shares the dispatcher frame once per entire corpus call. This supports investigating lower-overhead family-specific kernels; it does not prove the cause of gains/regressions or establish hardware memory-level parallelism.",
+  "rows": [
+    {
+      "profile": "default",
+      "executable_sha256": "ff19df81ef29de5b0678d48e97600ea8140e685926fb7cbc5a69a8320dd7889d",
+      "disassembly_sha256": "70b46f544be712fcf9e548484173a3e714eed9c93e0420e7fd17952423befb41",
+      "symbol": "0000000000032800 0000000000006390 t netindex_interleaved_study::execute",
+      "symbol_bytes": 25488,
+      "stack_reservation_bytes": 6920,
+      "prologue": [
+        "   32800:\tpush   rbp",
+        "   32801:\tpush   r15",
+        "   32803:\tpush   r14",
+        "   32805:\tpush   r13",
+        "   32807:\tpush   r12",
+        "   32809:\tpush   rbx",
+        "   3280a:\tsub    rsp,0x1000",
+        "   32811:\tmov    QWORD PTR [rsp],0x0",
+        "   32819:\tsub    rsp,0xb08",
+        "   32820:\tmov    QWORD PTR [rsp+0x30],rsi",
+        "   32825:\tmov    QWORD PTR [rsp+0x270],r8",
+        "   3282d:\tmov    QWORD PTR [rsp+0x278],r9",
+        "   32835:\tcmp    rcx,0x10",
+        "   32839:\tja     32904 <netindex_interleaved_study::execute+0x104>",
+        "   3283f:\tmov    r15,r9"
+      ],
+      "packed_search_calls": [
+        "34f86:\tcall   23b20 <netindex_interleave_core::packed::study_interleaved>",
+        "350d0:\tcall   23b20 <netindex_interleave_core::packed::study_interleaved>",
+        "35dc5:\tcall   24230 <netindex_interleave_core::packed::study_interleaved>",
+        "35f0f:\tcall   24230 <netindex_interleave_core::packed::study_interleaved>",
+        "36d05:\tcall   24a40 <netindex_interleave_core::packed::study_interleaved>",
+        "36e4f:\tcall   24a40 <netindex_interleave_core::packed::study_interleaved>",
+        "37a97:\tcall   25220 <netindex_interleave_core::packed::study_interleaved>",
+        "37bcf:\tcall   25220 <netindex_interleave_core::packed::study_interleaved>"
+      ],
+      "conditional_move_instructions": 36,
+      "conditional_jump_instructions": 304,
+      "stack_addressing_instructions": 2106
+    },
+    {
+      "profile": "simd",
+      "executable_sha256": "63795dd413b38c450380e2cc7af3b186702a1da5a6b2b9a80b8066f692b4bfee",
+      "disassembly_sha256": "0e4a1438c64552f092cb9473bc156034b1678e9b3a2d3d8a49ad36e5ca95179e",
+      "symbol": "000000000003f1a0 000000000000649f t netindex_interleaved_study::execute",
+      "symbol_bytes": 25759,
+      "stack_reservation_bytes": 6920,
+      "prologue": [
+        "   3f1a0:\tpush   rbp",
+        "   3f1a1:\tpush   r15",
+        "   3f1a3:\tpush   r14",
+        "   3f1a5:\tpush   r13",
+        "   3f1a7:\tpush   r12",
+        "   3f1a9:\tpush   rbx",
+        "   3f1aa:\tsub    rsp,0x1000",
+        "   3f1b1:\tmov    QWORD PTR [rsp],0x0",
+        "   3f1b9:\tsub    rsp,0xb08",
+        "   3f1c0:\tmov    QWORD PTR [rsp+0x30],rsi",
+        "   3f1c5:\tmov    QWORD PTR [rsp+0x270],r8",
+        "   3f1cd:\tmov    QWORD PTR [rsp+0x278],r9",
+        "   3f1d5:\tcmp    rcx,0x10",
+        "   3f1d9:\tja     3f2a4 <netindex_interleaved_study::execute+0x104>",
+        "   3f1df:\tmov    r15,r9"
+      ],
+      "packed_search_calls": [
+        "41992:\tcall   25560 <netindex_interleave_core::packed::study_interleaved>",
+        "41ae7:\tcall   25560 <netindex_interleave_core::packed::study_interleaved>",
+        "4280d:\tcall   24d40 <netindex_interleave_core::packed::study_interleaved>",
+        "42962:\tcall   24d40 <netindex_interleave_core::packed::study_interleaved>",
+        "4376d:\tcall   23f20 <netindex_interleave_core::packed::study_interleaved>",
+        "438c2:\tcall   23f20 <netindex_interleave_core::packed::study_interleaved>",
+        "44527:\tcall   24710 <netindex_interleave_core::packed::study_interleaved>",
+        "44663:\tcall   24710 <netindex_interleave_core::packed::study_interleaved>"
+      ],
+      "conditional_move_instructions": 36,
+      "conditional_jump_instructions": 304,
+      "stack_addressing_instructions": 2130
+    }
+  ]
+}

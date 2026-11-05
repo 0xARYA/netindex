@@ -49,7 +49,8 @@ not complete the broader experiments below.
 
 ## P1: lookup architecture
 
-- [ ] **P1-01 Interleaving.** Overlap independent query memory accesses.
+- [x] **P1-01 Interleaving.** Measured fixed-group prototype; retained as research,
+  with large-uniform gains and hot/small regressions. [Results](benches/interleaved/RESULTS.md).
 - [ ] **P1-02 SIMD across queries.** Compare with existing SIMD tail search.
 - [ ] **P1-03 Eytzinger.** Compare fence layouts with the sorted baseline.
 - [ ] **P1-04 Flat B+ tree.** Prototype PlanB-inspired node search; preserve the
@@ -429,7 +430,8 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-01 interleaving independent query memory accesses**.
+Next in priority order: **P1-02 SIMD across queries**, including lower-overhead
+lane state and hot/partial-batch controls from P1-01.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
 
@@ -444,3 +446,28 @@ adds LF-normalized source hashes for Git checkout comparisons. Python parsing an
 local documentation-link checks passed. The preceding publishing commit's Windows,
 Linux and fuzz CI completed successfully; this checkpoint's CI is tracked on its
 own publishing commit. No version bump or registry publication is needed.
+
+### P1-01 completed: fixed-group query interleaving (2026-11-04)
+
+[Study and decision](benches/interleaved/RESULTS.md): 32 primary processes plus two
+fresh-process repeats, 960 measurements, original-input/full-output/borrowed-pointer
+checks and typed visitor failures. Research methods live only in an ignored core
+copy. No tracked library source, encoding, public API or release policy changes.
+
+Four-lane through sixteen-lane ASN lower bounds and packed-IP fence probes interleave
+independent searches; packed tails, decoding and interval fallbacks remain serial.
+One lane controls for kernel/setup changes. Hot/small regressions rule out blanket
+adoption; aggregate costs are not per-query tail latency or production capacity.
+Linked-code inspection records the timed dispatchers and their stack reservations,
+without attributing effects to unmeasured hardware counters. P2-05 remains open
+for future promising variants; P2-07/P2-08 still own representative application PGO
+and build-setting evaluation. Next: P1-02 cross-query SIMD and cheaper lane state.
+
+Verification: root formatting, default/all-feature all-target Clippy with warnings
+denied, default tests, all-feature tests including ignored cases, warnings-denied
+documentation and local packaging passed. Standalone default/SIMD release Clippy,
+fragment/harness formatting, ten generated-core unit tests, generated-core Clippy,
+Python parsing, JSON parsing and local documentation links passed. The integrity
+receipt verifies all 34 local processes and 960 measurements against retained
+source/executable/input/log hashes and checked totals. CI is tracked separately
+on the publishing commit. No version bump or registry publication is needed.

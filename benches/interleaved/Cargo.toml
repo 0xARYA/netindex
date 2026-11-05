@@ -1,0 +1,18 @@
+[package]
+name = "netindex-interleaved-study"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[features]
+simd = ["netindex/simd"]
+
+[profile.release]
+codegen-units = 1
+
+[dependencies]
+netindex = { package = "netindex-interleave-core", path = "../../target/interleaved/library", features = ["mmap"] }
+libc = "=0.2.190"
+serde_json = "=1.0.151"
