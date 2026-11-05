@@ -47,6 +47,18 @@ name = "search"
 harness = false
 
 [[bench]]
+name = "scale"
+harness = false
+
+[[bench]]
+name = "traffic"
+harness = false
+
+[[bench]]
+name = "shapes"
+harness = false
+
+[[bench]]
 name = "mmdb"
 harness = false
 required-features = ["codec", "mmdb", "mmap", "external-sort"]

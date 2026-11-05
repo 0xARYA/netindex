@@ -39,6 +39,16 @@ jobs:
         run: cargo +1.95.0 bench --locked --bench search -- --test
       - name: Check every packed search width with SIMD dispatch
         run: cargo +1.95.0 bench --locked --features simd --bench search -- --test
+      - name: Check scale benchmark correctness
+        run: cargo +1.95.0 bench --locked --bench scale -- --test
+      - name: Check traffic benchmark correctness
+        run: cargo +1.95.0 bench --locked --bench traffic -- --test
+      - name: Check shapes and batch correctness
+        run: cargo +1.95.0 bench --locked --bench shapes -- --test
+      - name: Check traffic and shapes with SIMD dispatch
+        run: |
+          cargo +1.95.0 bench --locked --features simd --bench traffic -- --test
+          cargo +1.95.0 bench --locked --features simd --bench shapes -- --test
       - name: Run Tokio example
         run: cargo +1.95.0 run --locked --example tokio
       - name: Run compio example

@@ -1,0 +1,1249 @@
+{
+  "date": "2026-11-04",
+  "revision": "6efec832 plus standalone benchmark adapter",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "platform": "Windows x86_64 MSVC",
+  "cpu": "AMD Ryzen 9 9950X3D2",
+  "affinity_mask": 1048576,
+  "profile": "release, codegen-units=1; external-sort/mmdb/mmap/shared-values/simd; no custom RUSTFLAGS, PGO or LTO",
+  "native_sha256": "d6ff9368ab19a13b096fd6392f752aa6c0890f2c92752d09253fab9e50501e46",
+  "original_component_sha256": "83d775f419696a224b5f57a114ec42ea5f1289b5ea86d4ae171d00218b3d2f18",
+  "native_bytes": 49899266,
+  "application_metadata": {
+    "version": 3,
+    "native": {
+      "source": "maxmind_city",
+      "bytes": 49899266,
+      "build_epoch": 1793725896,
+      "database_type": "GeoLite2-City",
+      "ip_version": 6,
+      "networks": 5724698
+    },
+    "native_sha256": "d6ff9368ab19a13b096fd6392f752aa6c0890f2c92752d09253fab9e50501e46",
+    "records": 20255722
+  },
+  "scope": "Full native structural and canonical-record validation, expanded alias traversal, original application normalization and payload encoder, external construction, and full normalized application payload validation. Both baseline artifacts reproduce the original byte for byte; both candidates reproduce the independently verified opaque replay. Conversion excludes download, gzip, application orchestration, explicit fsync and atomic publication.",
+  "serving_scope": "Separate processes. Native owned bytes plus application decoder versus immutable mapped converted files, fully validated before timing. Identical 100005-query mixed IPv4/IPv6 corpus, 256-query warmup, 42802 hits. Owned normalized records allocated and dropped; no JSON/network work. Reported process peak working set includes opening and serving. Not cold I/O, >RAM, concurrent load or deployed-service capacity.",
+  "latency_limitation": "Per-query Instant timing is quantized in 100ns ticks on this host and includes clock overhead. Two sequential descriptive trials do not establish significant latency gains or production percentiles.",
+  "parity_scope": "108123 queries: 100005 fixed edge/random queries plus every 4096th canonical network endpoints and IPv4-compatible, mapped and 6to4 endpoints. Serialized owned geo records compare exactly. This complements complete assertion/payload replay verification; it does not exhaust the address space.",
+  "dependencies": {
+    "2.0.2": [
+      {
+        "name": "bitflags",
+        "version": "2.13.2",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
+      },
+      {
+        "name": "block-buffer",
+        "version": "0.10.4",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71",
+        "dependencies": [
+          "generic-array"
+        ]
+      },
+      {
+        "name": "cfg-if",
+        "version": "1.0.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+      },
+      {
+        "name": "cpufeatures",
+        "version": "0.2.17",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280",
+        "dependencies": [
+          "libc"
+        ]
+      },
+      {
+        "name": "crypto-common",
+        "version": "0.1.7",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a",
+        "dependencies": [
+          "generic-array",
+          "typenum"
+        ]
+      },
+      {
+        "name": "digest",
+        "version": "0.10.7",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292",
+        "dependencies": [
+          "block-buffer",
+          "crypto-common"
+        ]
+      },
+      {
+        "name": "errno",
+        "version": "0.3.14",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb",
+        "dependencies": [
+          "libc",
+          "windows-sys"
+        ]
+      },
+      {
+        "name": "fastrand",
+        "version": "2.5.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
+      },
+      {
+        "name": "generic-array",
+        "version": "0.14.7",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a",
+        "dependencies": [
+          "typenum",
+          "version_check"
+        ]
+      },
+      {
+        "name": "getrandom",
+        "version": "0.4.3",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099",
+        "dependencies": [
+          "cfg-if",
+          "libc",
+          "r-efi"
+        ]
+      },
+      {
+        "name": "hashbrown",
+        "version": "0.17.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+      },
+      {
+        "name": "ip-intel-format",
+        "version": "0.0.0",
+        "dependencies": [
+          "ipnet",
+          "memmap2",
+          "netindex",
+          "serde",
+          "serde_json",
+          "thiserror"
+        ]
+      },
+      {
+        "name": "ipnet",
+        "version": "2.12.2",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "791930b43c0d5973160d90a8f3894509f2b273430f5c5c73b668636d0287c5c0",
+        "dependencies": [
+          "serde"
+        ]
+      },
+      {
+        "name": "ipnetwork",
+        "version": "0.21.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "cf370abdafd54d13e54a620e8c3e1145f28e46cc9d704bc6d94414559df41763"
+      },
+      {
+        "name": "itoa",
+        "version": "1.0.18",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+      },
+      {
+        "name": "libc",
+        "version": "0.2.191",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+      },
+      {
+        "name": "linux-raw-sys",
+        "version": "0.12.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+      },
+      {
+        "name": "maxminddb",
+        "version": "0.32.0",
+        "dependencies": [
+          "ipnetwork",
+          "memchr",
+          "serde",
+          "thiserror"
+        ]
+      },
+      {
+        "name": "memchr",
+        "version": "2.8.3",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+      },
+      {
+        "name": "memmap2",
+        "version": "0.9.12",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "6b0ca1155a9ecc25aa12e8313a119f32edf0255fea2f44839c4ac0a12b2ac157",
+        "dependencies": [
+          "libc"
+        ]
+      },
+      {
+        "name": "native-city-audit",
+        "version": "0.0.0",
+        "dependencies": [
+          "ip-intel-format",
+          "ipnet",
+          "maxminddb",
+          "memmap2",
+          "netindex",
+          "serde",
+          "serde_json",
+          "sha2",
+          "tempfile",
+          "thiserror"
+        ]
+      },
+      {
+        "name": "netindex",
+        "version": "2.0.2",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "74d239eed6911bc99dc6e3a59965b9ca9cababeeb68b977d65c4930ee2ef2928",
+        "dependencies": [
+          "hashbrown",
+          "maxminddb",
+          "memmap2",
+          "simdutf8",
+          "tempfile",
+          "thiserror"
+        ]
+      },
+      {
+        "name": "once_cell",
+        "version": "1.21.4",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+      },
+      {
+        "name": "proc-macro2",
+        "version": "1.0.107",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9",
+        "dependencies": [
+          "unicode-ident"
+        ]
+      },
+      {
+        "name": "quote",
+        "version": "1.0.47",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001",
+        "dependencies": [
+          "proc-macro2"
+        ]
+      },
+      {
+        "name": "r-efi",
+        "version": "6.0.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
+      },
+      {
+        "name": "rustix",
+        "version": "1.1.6",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa",
+        "dependencies": [
+          "bitflags",
+          "errno",
+          "libc",
+          "linux-raw-sys",
+          "windows-sys"
+        ]
+      },
+      {
+        "name": "serde",
+        "version": "1.0.229",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba",
+        "dependencies": [
+          "serde_core",
+          "serde_derive"
+        ]
+      },
+      {
+        "name": "serde_core",
+        "version": "1.0.229",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "67dca2c9c51e58a4791a4b1ed58308b39c64224d349a935ab5039aa360942a48",
+        "dependencies": [
+          "serde_derive"
+        ]
+      },
+      {
+        "name": "serde_derive",
+        "version": "1.0.229",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348",
+        "dependencies": [
+          "proc-macro2",
+          "quote",
+          "syn"
+        ]
+      },
+      {
+        "name": "serde_json",
+        "version": "1.0.154",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6",
+        "dependencies": [
+          "itoa",
+          "memchr",
+          "serde",
+          "serde_core",
+          "zmij"
+        ]
+      },
+      {
+        "name": "sha2",
+        "version": "0.10.9",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+        "dependencies": [
+          "cfg-if",
+          "cpufeatures",
+          "digest"
+        ]
+      },
+      {
+        "name": "simdutf8",
+        "version": "0.1.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
+      },
+      {
+        "name": "syn",
+        "version": "3.0.9",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b",
+        "dependencies": [
+          "proc-macro2",
+          "quote",
+          "unicode-ident"
+        ]
+      },
+      {
+        "name": "tempfile",
+        "version": "3.27.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd",
+        "dependencies": [
+          "fastrand",
+          "getrandom",
+          "once_cell",
+          "rustix",
+          "windows-sys"
+        ]
+      },
+      {
+        "name": "thiserror",
+        "version": "2.0.21",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e",
+        "dependencies": [
+          "thiserror-impl"
+        ]
+      },
+      {
+        "name": "thiserror-impl",
+        "version": "2.0.21",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524",
+        "dependencies": [
+          "proc-macro2",
+          "quote",
+          "syn"
+        ]
+      },
+      {
+        "name": "typenum",
+        "version": "1.20.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+      },
+      {
+        "name": "unicode-ident",
+        "version": "1.0.27",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
+      },
+      {
+        "name": "version_check",
+        "version": "0.9.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+      },
+      {
+        "name": "windows-link",
+        "version": "0.2.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+      },
+      {
+        "name": "windows-sys",
+        "version": "0.61.2",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc",
+        "dependencies": [
+          "windows-link"
+        ]
+      },
+      {
+        "name": "zmij",
+        "version": "1.0.23",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
+      }
+    ],
+    "2.1.0": [
+      {
+        "name": "bitflags",
+        "version": "2.13.2",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
+      },
+      {
+        "name": "block-buffer",
+        "version": "0.10.4",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71",
+        "dependencies": [
+          "generic-array"
+        ]
+      },
+      {
+        "name": "cfg-if",
+        "version": "1.0.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+      },
+      {
+        "name": "cpufeatures",
+        "version": "0.2.17",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280",
+        "dependencies": [
+          "libc"
+        ]
+      },
+      {
+        "name": "crypto-common",
+        "version": "0.1.7",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a",
+        "dependencies": [
+          "generic-array",
+          "typenum"
+        ]
+      },
+      {
+        "name": "digest",
+        "version": "0.10.7",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292",
+        "dependencies": [
+          "block-buffer",
+          "crypto-common"
+        ]
+      },
+      {
+        "name": "errno",
+        "version": "0.3.14",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb",
+        "dependencies": [
+          "libc",
+          "windows-sys"
+        ]
+      },
+      {
+        "name": "fastrand",
+        "version": "2.5.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
+      },
+      {
+        "name": "generic-array",
+        "version": "0.14.7",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a",
+        "dependencies": [
+          "typenum",
+          "version_check"
+        ]
+      },
+      {
+        "name": "getrandom",
+        "version": "0.4.3",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099",
+        "dependencies": [
+          "cfg-if",
+          "libc",
+          "r-efi"
+        ]
+      },
+      {
+        "name": "hashbrown",
+        "version": "0.17.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+      },
+      {
+        "name": "ip-intel-format",
+        "version": "0.0.0",
+        "dependencies": [
+          "ipnet",
+          "memmap2",
+          "netindex",
+          "serde",
+          "serde_json",
+          "thiserror"
+        ]
+      },
+      {
+        "name": "ipnet",
+        "version": "2.12.2",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "791930b43c0d5973160d90a8f3894509f2b273430f5c5c73b668636d0287c5c0",
+        "dependencies": [
+          "serde"
+        ]
+      },
+      {
+        "name": "ipnetwork",
+        "version": "0.21.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "cf370abdafd54d13e54a620e8c3e1145f28e46cc9d704bc6d94414559df41763"
+      },
+      {
+        "name": "itoa",
+        "version": "1.0.18",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+      },
+      {
+        "name": "libc",
+        "version": "0.2.191",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+      },
+      {
+        "name": "linux-raw-sys",
+        "version": "0.12.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+      },
+      {
+        "name": "maxminddb",
+        "version": "0.32.0",
+        "dependencies": [
+          "ipnetwork",
+          "memchr",
+          "serde",
+          "thiserror"
+        ]
+      },
+      {
+        "name": "memchr",
+        "version": "2.8.3",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+      },
+      {
+        "name": "memmap2",
+        "version": "0.9.12",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "6b0ca1155a9ecc25aa12e8313a119f32edf0255fea2f44839c4ac0a12b2ac157",
+        "dependencies": [
+          "libc"
+        ]
+      },
+      {
+        "name": "native-city-audit",
+        "version": "0.0.0",
+        "dependencies": [
+          "ip-intel-format",
+          "ipnet",
+          "maxminddb",
+          "memmap2",
+          "netindex",
+          "serde",
+          "serde_json",
+          "sha2",
+          "tempfile",
+          "thiserror"
+        ]
+      },
+      {
+        "name": "netindex",
+        "version": "2.1.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "bf634a0dfb58076bd055ebb7d8a3858f1cf93c48191bb19b7d03334c1883515c",
+        "dependencies": [
+          "hashbrown",
+          "maxminddb",
+          "memmap2",
+          "simdutf8",
+          "tempfile",
+          "thiserror"
+        ]
+      },
+      {
+        "name": "once_cell",
+        "version": "1.21.4",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+      },
+      {
+        "name": "proc-macro2",
+        "version": "1.0.107",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9",
+        "dependencies": [
+          "unicode-ident"
+        ]
+      },
+      {
+        "name": "quote",
+        "version": "1.0.47",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001",
+        "dependencies": [
+          "proc-macro2"
+        ]
+      },
+      {
+        "name": "r-efi",
+        "version": "6.0.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
+      },
+      {
+        "name": "rustix",
+        "version": "1.1.6",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa",
+        "dependencies": [
+          "bitflags",
+          "errno",
+          "libc",
+          "linux-raw-sys",
+          "windows-sys"
+        ]
+      },
+      {
+        "name": "serde",
+        "version": "1.0.229",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba",
+        "dependencies": [
+          "serde_core",
+          "serde_derive"
+        ]
+      },
+      {
+        "name": "serde_core",
+        "version": "1.0.229",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "67dca2c9c51e58a4791a4b1ed58308b39c64224d349a935ab5039aa360942a48",
+        "dependencies": [
+          "serde_derive"
+        ]
+      },
+      {
+        "name": "serde_derive",
+        "version": "1.0.229",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348",
+        "dependencies": [
+          "proc-macro2",
+          "quote",
+          "syn"
+        ]
+      },
+      {
+        "name": "serde_json",
+        "version": "1.0.154",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6",
+        "dependencies": [
+          "itoa",
+          "memchr",
+          "serde",
+          "serde_core",
+          "zmij"
+        ]
+      },
+      {
+        "name": "sha2",
+        "version": "0.10.9",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+        "dependencies": [
+          "cfg-if",
+          "cpufeatures",
+          "digest"
+        ]
+      },
+      {
+        "name": "simdutf8",
+        "version": "0.1.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
+      },
+      {
+        "name": "syn",
+        "version": "3.0.9",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b",
+        "dependencies": [
+          "proc-macro2",
+          "quote",
+          "unicode-ident"
+        ]
+      },
+      {
+        "name": "tempfile",
+        "version": "3.27.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd",
+        "dependencies": [
+          "fastrand",
+          "getrandom",
+          "once_cell",
+          "rustix",
+          "windows-sys"
+        ]
+      },
+      {
+        "name": "thiserror",
+        "version": "2.0.21",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e",
+        "dependencies": [
+          "thiserror-impl"
+        ]
+      },
+      {
+        "name": "thiserror-impl",
+        "version": "2.0.21",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524",
+        "dependencies": [
+          "proc-macro2",
+          "quote",
+          "syn"
+        ]
+      },
+      {
+        "name": "typenum",
+        "version": "1.20.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+      },
+      {
+        "name": "unicode-ident",
+        "version": "1.0.27",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
+      },
+      {
+        "name": "version_check",
+        "version": "0.9.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+      },
+      {
+        "name": "windows-link",
+        "version": "0.2.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+      },
+      {
+        "name": "windows-sys",
+        "version": "0.61.2",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc",
+        "dependencies": [
+          "windows-link"
+        ]
+      },
+      {
+        "name": "zmij",
+        "version": "1.0.23",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
+      }
+    ]
+  },
+  "source_sha256": {
+    "2.0.2": {
+      "Cargo.toml": "1f88860d0321f57c0d7400901acf4b647c5c97eb8c86b85c22077429b731cf3e",
+      "format\\Cargo.toml": "4c2755d8f3a6661ccf18b97f2d5dd454196836561b16e1a5bcf60a0cddd1f832",
+      "maxminddb\\.cargo_vcs_info.json": "a77c03fc450edc575087d16cfa1ed373c05f29e2cfc91ecee2b689b49cac4481",
+      "maxminddb\\Cargo.lock": "0afd82b091ebacfa836cac10c714b1a4d725cd3a083ce2b7f6c4432207cf12d3",
+      "maxminddb\\Cargo.toml": "7c2e755fed0d1def80f0682000198de478b5aaca65450e9f486a3a8f5ecbbba8",
+      "maxminddb\\Cargo.toml.orig": "105b3c01855a3f62106790f67e58c4d31bce63db9ca425474c17e671459e47b9",
+      "maxminddb\\LICENSE": "798ec93a28c76d881f412b285b07a2cbeb8c03ca29c25da9d46aa147448d5741",
+      "maxminddb\\PATCHES.md": "90bc317237223c68c4360826e8452006e75b15908bb5dfb66446d1e185434580",
+      "maxminddb\\README.md": "24440bbf145df55218d289abfe89cf3c6b165919a252b254636144f0da58385b",
+      "maxminddb\\UPGRADING.md": "57f73c99078737e1855ce7fcb7be6db3285073586946fe7cf29747f3ba293f9b",
+      "src\\main.rs": "5e43f57afd57d3ad4ee6ec6ed3ff147c9d7e4bc18a65bd510ae2e362f2d6c14a",
+      "format\\src\\asn.rs": "be15c479d7fbc068b6b90dbaeed6ef2c54367152e1110dcc7e924e2e42d72b6c",
+      "format\\src\\definition.rs": "4e68722a12800dbc4f3e45e020d112bcb8efa9a6befc3983e95b8a7b6f6419b8",
+      "format\\src\\definitions.rs": "fb397131f9ce972b1dfd95646672253949eba6ad77183ca0da211305624a2a4a",
+      "format\\src\\geo.rs": "12c06393f2cab4ed07086b0e1d7d6602662cd91f34d3ed1b35d7f70d8b83f905",
+      "format\\src\\lib.rs": "b87ed332e722bbde074a6d3940b0d19eda29744f36cedabcb5a8b947c66fb76a",
+      "format\\src\\limits.rs": "6f46db4774c6c08d6fc450c84638605288cd8755fd095c8c4b14d8796da92620",
+      "format\\src\\native.rs": "be760cf7c75566a96cb68727c47faeef0710dc91d5ca28f80425b71e89d6168a",
+      "format\\src\\native_component.rs": "62d706ca53defb37627e59879120550770f909cb585649c1e83fca4972d7c0e3",
+      "format\\src\\release.rs": "440793d2ad7a6303c9f807eb0d19faae2873afefb16b8f2bcb5a8362fb32c499",
+      "format\\src\\release_set.rs": "502306d75699217c0eb6b1a7778f75e51cceb866ce1ed0d23fec88f8e2428533",
+      "format\\src\\source.rs": "b12cf0c00e8215c8d86791f114b10036cfadd8e3912e8abe08095c06697b7f2d",
+      "format\\src\\membership\\component.rs": "6480d81f18bac46271d48297dcb9a432d81ba7c089a4daea7798710ed849cd7f",
+      "format\\src\\membership\\mod.rs": "5f268d98a2ebd088b821782fe244f1f764b115965b9f495b66d8540e71f874e6",
+      "format\\src\\membership\\model.rs": "89814408e8a64714d024392441f0fde55343b1eab6cfe8d853e56eea40b5b513",
+      "format\\src\\membership\\payload.rs": "97f8e46f61bdc7097a26e4663dd4a30a61013d7db5315695d8bbe7c5cbf2565a",
+      "format\\src\\native_component\\payload.rs": "6bde2549c63c13d9d938000d717c3c1e2482f2842117b3797c33b3b00ef043c7",
+      "maxminddb\\benches\\common.rs": "2873f6b9ec43d864dc6aeb3285abdfaa55ec7e9c3a243fe588cd58911165ecb7",
+      "maxminddb\\benches\\lookup.rs": "e3546979281240fe943362f8f1c1641b0fb835ea06a515bf8adb2bed41a2c02b",
+      "maxminddb\\benches\\metadata.rs": "a1555bebe37db0dcc6e2bd3e1284dd2dc78a6076716301a84939c97cd3544f0e",
+      "maxminddb\\benches\\raw_strings.rs": "aae4d06f6d24caf54a9630400c0dc5dd13036bdfc72df357962c18736b1dd6af",
+      "maxminddb\\benches\\serde_usage.rs": "054a384659da78248aa5659da8c354c7cbe6297359fc1dcfe930f3abe9201b0e",
+      "maxminddb\\benches\\within.rs": "4ee1d0fb6bec105107169b78c0004665f86914b57520570e8a4c1f372160b4eb",
+      "maxminddb\\src\\decoder.rs": "32fbfbf6f4c929d8ecba02bad774637f885a5572c24c696193dd6bb25354aea9",
+      "maxminddb\\src\\error.rs": "fdc3fac624ec9d255fb3c88f6ead1e634b50c434130c8a48f97d576a359c591e",
+      "maxminddb\\src\\geoip2.rs": "2f29e2cf5d81f37607c9562e4d1309628ac64a9b96ce2138bc203f54ae312003",
+      "maxminddb\\src\\lib.rs": "b99cd251803cbc3883c112e9a0832d9831abb758be5f083bd77e69c5b8a25b4f",
+      "maxminddb\\src\\metadata.rs": "41352d847b1320e0a14b706f6907098499e933abf8eca76551806a41adfec70a",
+      "maxminddb\\src\\reader.rs": "2b5fc56828af8cb8320211707bdfa97d892ee8d8f4cbf32f30291b3575553a91",
+      "maxminddb\\src\\reader_test.rs": "bc983593dea68a0d1040bc613d1e2c8a91e133bf94bf15aedc90b5a7c84d20b1",
+      "maxminddb\\src\\result.rs": "4341834f421939e617692ddaf7479a4f49fc091f3a2ed38577d52a5a0236728b",
+      "maxminddb\\src\\within.rs": "03f1d886e10c2ed8c85d56a3d2fdfae00be91b9cee7548ee0e1c2a756511a3e0",
+      "maxminddb\\src\\decoder\\key.rs": "f5050b3a00f414442477d714ab69ca3e036e5ff8413814466c597626da114e79",
+      "maxminddb\\src\\decoder\\verification.rs": "49e795dcac88ac3a2d8a8bcf740ecccaa99c91988a1d93c7f1d875ffc01a8470",
+      "src\\mmdb\\database.rs": "fe4abd64fb26ff130216f873be0bb8cb52ef230dabce278282e790cbf95db1d4",
+      "src\\sources\\geo\\model.rs": "55918ef0f169b113bf817f2c9607066546b2adbc6455f1c66ab87ebe835dbf20",
+      "src\\sources\\geo\\schema.rs": "c5aff1df3dce796b2aff21e0eed65e33586d5b5fd56133710f5faf5c82aa6a6f",
+      "src\\sources\\native_component\\payload.rs": "adb51e15baea0c03aeba93eb4ec13bff151c9108d818c6fff53b99fc21a57c7f"
+    },
+    "2.1.0": {
+      "Cargo.toml": "70282b7efc2ec2337fcfd441abc28f5dcefc58cb03a1a2f5fac16b9bb5781c54",
+      "format\\Cargo.toml": "726a21cdeb0e1fd6d639f06773894bc6bb013e253b2c3153b84461bbc1de8918",
+      "maxminddb\\.cargo_vcs_info.json": "a77c03fc450edc575087d16cfa1ed373c05f29e2cfc91ecee2b689b49cac4481",
+      "maxminddb\\Cargo.lock": "0afd82b091ebacfa836cac10c714b1a4d725cd3a083ce2b7f6c4432207cf12d3",
+      "maxminddb\\Cargo.toml": "7c2e755fed0d1def80f0682000198de478b5aaca65450e9f486a3a8f5ecbbba8",
+      "maxminddb\\Cargo.toml.orig": "105b3c01855a3f62106790f67e58c4d31bce63db9ca425474c17e671459e47b9",
+      "maxminddb\\LICENSE": "798ec93a28c76d881f412b285b07a2cbeb8c03ca29c25da9d46aa147448d5741",
+      "maxminddb\\PATCHES.md": "90bc317237223c68c4360826e8452006e75b15908bb5dfb66446d1e185434580",
+      "maxminddb\\README.md": "24440bbf145df55218d289abfe89cf3c6b165919a252b254636144f0da58385b",
+      "maxminddb\\UPGRADING.md": "57f73c99078737e1855ce7fcb7be6db3285073586946fe7cf29747f3ba293f9b",
+      "src\\main.rs": "5e43f57afd57d3ad4ee6ec6ed3ff147c9d7e4bc18a65bd510ae2e362f2d6c14a",
+      "format\\src\\asn.rs": "be15c479d7fbc068b6b90dbaeed6ef2c54367152e1110dcc7e924e2e42d72b6c",
+      "format\\src\\definition.rs": "4e68722a12800dbc4f3e45e020d112bcb8efa9a6befc3983e95b8a7b6f6419b8",
+      "format\\src\\definitions.rs": "fb397131f9ce972b1dfd95646672253949eba6ad77183ca0da211305624a2a4a",
+      "format\\src\\geo.rs": "12c06393f2cab4ed07086b0e1d7d6602662cd91f34d3ed1b35d7f70d8b83f905",
+      "format\\src\\lib.rs": "b87ed332e722bbde074a6d3940b0d19eda29744f36cedabcb5a8b947c66fb76a",
+      "format\\src\\limits.rs": "6f46db4774c6c08d6fc450c84638605288cd8755fd095c8c4b14d8796da92620",
+      "format\\src\\native.rs": "be760cf7c75566a96cb68727c47faeef0710dc91d5ca28f80425b71e89d6168a",
+      "format\\src\\native_component.rs": "62d706ca53defb37627e59879120550770f909cb585649c1e83fca4972d7c0e3",
+      "format\\src\\release.rs": "440793d2ad7a6303c9f807eb0d19faae2873afefb16b8f2bcb5a8362fb32c499",
+      "format\\src\\release_set.rs": "502306d75699217c0eb6b1a7778f75e51cceb866ce1ed0d23fec88f8e2428533",
+      "format\\src\\source.rs": "b12cf0c00e8215c8d86791f114b10036cfadd8e3912e8abe08095c06697b7f2d",
+      "format\\src\\membership\\component.rs": "6480d81f18bac46271d48297dcb9a432d81ba7c089a4daea7798710ed849cd7f",
+      "format\\src\\membership\\mod.rs": "5f268d98a2ebd088b821782fe244f1f764b115965b9f495b66d8540e71f874e6",
+      "format\\src\\membership\\model.rs": "89814408e8a64714d024392441f0fde55343b1eab6cfe8d853e56eea40b5b513",
+      "format\\src\\membership\\payload.rs": "97f8e46f61bdc7097a26e4663dd4a30a61013d7db5315695d8bbe7c5cbf2565a",
+      "format\\src\\native_component\\payload.rs": "6bde2549c63c13d9d938000d717c3c1e2482f2842117b3797c33b3b00ef043c7",
+      "maxminddb\\benches\\common.rs": "2873f6b9ec43d864dc6aeb3285abdfaa55ec7e9c3a243fe588cd58911165ecb7",
+      "maxminddb\\benches\\lookup.rs": "e3546979281240fe943362f8f1c1641b0fb835ea06a515bf8adb2bed41a2c02b",
+      "maxminddb\\benches\\metadata.rs": "a1555bebe37db0dcc6e2bd3e1284dd2dc78a6076716301a84939c97cd3544f0e",
+      "maxminddb\\benches\\raw_strings.rs": "aae4d06f6d24caf54a9630400c0dc5dd13036bdfc72df357962c18736b1dd6af",
+      "maxminddb\\benches\\serde_usage.rs": "054a384659da78248aa5659da8c354c7cbe6297359fc1dcfe930f3abe9201b0e",
+      "maxminddb\\benches\\within.rs": "4ee1d0fb6bec105107169b78c0004665f86914b57520570e8a4c1f372160b4eb",
+      "maxminddb\\src\\decoder.rs": "32fbfbf6f4c929d8ecba02bad774637f885a5572c24c696193dd6bb25354aea9",
+      "maxminddb\\src\\error.rs": "fdc3fac624ec9d255fb3c88f6ead1e634b50c434130c8a48f97d576a359c591e",
+      "maxminddb\\src\\geoip2.rs": "2f29e2cf5d81f37607c9562e4d1309628ac64a9b96ce2138bc203f54ae312003",
+      "maxminddb\\src\\lib.rs": "b99cd251803cbc3883c112e9a0832d9831abb758be5f083bd77e69c5b8a25b4f",
+      "maxminddb\\src\\metadata.rs": "41352d847b1320e0a14b706f6907098499e933abf8eca76551806a41adfec70a",
+      "maxminddb\\src\\reader.rs": "2b5fc56828af8cb8320211707bdfa97d892ee8d8f4cbf32f30291b3575553a91",
+      "maxminddb\\src\\reader_test.rs": "bc983593dea68a0d1040bc613d1e2c8a91e133bf94bf15aedc90b5a7c84d20b1",
+      "maxminddb\\src\\result.rs": "4341834f421939e617692ddaf7479a4f49fc091f3a2ed38577d52a5a0236728b",
+      "maxminddb\\src\\within.rs": "03f1d886e10c2ed8c85d56a3d2fdfae00be91b9cee7548ee0e1c2a756511a3e0",
+      "maxminddb\\src\\decoder\\key.rs": "f5050b3a00f414442477d714ab69ca3e036e5ff8413814466c597626da114e79",
+      "maxminddb\\src\\decoder\\verification.rs": "49e795dcac88ac3a2d8a8bcf740ecccaa99c91988a1d93c7f1d875ffc01a8470",
+      "src\\mmdb\\database.rs": "fe4abd64fb26ff130216f873be0bb8cb52ef230dabce278282e790cbf95db1d4",
+      "src\\sources\\geo\\model.rs": "55918ef0f169b113bf817f2c9607066546b2adbc6455f1c66ab87ebe835dbf20",
+      "src\\sources\\geo\\schema.rs": "c5aff1df3dce796b2aff21e0eed65e33586d5b5fd56133710f5faf5c82aa6a6f",
+      "src\\sources\\native_component\\payload.rs": "adb51e15baea0c03aeba93eb4ec13bff151c9108d818c6fff53b99fc21a57c7f"
+    }
+  },
+  "conversion_runs": [
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.0.2\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "10a0b5b2ec89ab2514dc24bb60e2ea61bebeb91c3a691b8e052f583870de62c1",
+      "arguments": [
+        "convert",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.0.2-rust195-1.nidx",
+        "target/native-city"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 36089.8617,
+      "peak_working_set_bytes": 810848256,
+      "exit_code": 0,
+      "rows": [
+        {
+          "artifact_bytes": 750594180,
+          "encode_build_ms": 29077.7843,
+          "native_validation_ms": 2618.2031,
+          "normalized_output_validation_ms": 4286.6223,
+          "payload_cache_bytes": 4194267,
+          "phase": "converted",
+          "records": 20255722,
+          "temporary_peak_bytes": 2447925271,
+          "total_ms": 35983.3693
+        }
+      ],
+      "raw_log_sha256": "80de7ef1d8b2669071150fe8a0a847318346c1af07a449cf807d759e2e46e0d5",
+      "version": "2.0.2",
+      "trial": 1,
+      "artifact_sha256": "83d775f419696a224b5f57a114ec42ea5f1289b5ea86d4ae171d00218b3d2f18"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.0.2\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "10a0b5b2ec89ab2514dc24bb60e2ea61bebeb91c3a691b8e052f583870de62c1",
+      "arguments": [
+        "convert",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.0.2-rust195-2.nidx",
+        "target/native-city"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 35733.3671,
+      "peak_working_set_bytes": 810852352,
+      "exit_code": 0,
+      "rows": [
+        {
+          "artifact_bytes": 750594180,
+          "encode_build_ms": 28732.2934,
+          "native_validation_ms": 2614.2293,
+          "normalized_output_validation_ms": 4304.6545,
+          "payload_cache_bytes": 4194267,
+          "phase": "converted",
+          "records": 20255722,
+          "temporary_peak_bytes": 2447925271,
+          "total_ms": 35651.878099999994
+        }
+      ],
+      "raw_log_sha256": "cb1985b7e5cfebb27bd77361d73ffef00085504fc734a3e57ac946267f6cd966",
+      "version": "2.0.2",
+      "trial": 2,
+      "artifact_sha256": "83d775f419696a224b5f57a114ec42ea5f1289b5ea86d4ae171d00218b3d2f18"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.1.0\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "01d25abd99f65e2be4d65a31e6a60d68f754a4b38be1870d89b1df85e4330ee9",
+      "arguments": [
+        "convert",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.1.0-rust195-1.nidx",
+        "target/native-city"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 60264.5709,
+      "peak_working_set_bytes": 325124096,
+      "exit_code": 0,
+      "rows": [
+        {
+          "artifact_bytes": 263944912,
+          "encode_build_ms": 53374.1821,
+          "native_validation_ms": 2584.6598,
+          "normalized_output_validation_ms": 4063.5684,
+          "payload_cache_bytes": 4194267,
+          "phase": "converted",
+          "records": 20255722,
+          "temporary_peak_bytes": 1961276003,
+          "total_ms": 60023.165400000005
+        }
+      ],
+      "raw_log_sha256": "4cece00406523b0137aeb19324258fbd4196a5e5ac38ade6941ebfad9b63da86",
+      "version": "2.1.0",
+      "trial": 1,
+      "artifact_sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.1.0\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "01d25abd99f65e2be4d65a31e6a60d68f754a4b38be1870d89b1df85e4330ee9",
+      "arguments": [
+        "convert",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.1.0-rust195-2.nidx",
+        "target/native-city"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 60633.4531,
+      "peak_working_set_bytes": 324198400,
+      "exit_code": 0,
+      "rows": [
+        {
+          "artifact_bytes": 263944912,
+          "encode_build_ms": 53799.9561,
+          "native_validation_ms": 2632.0016,
+          "normalized_output_validation_ms": 4149.2081,
+          "payload_cache_bytes": 4194267,
+          "phase": "converted",
+          "records": 20255722,
+          "temporary_peak_bytes": 1961276003,
+          "total_ms": 60581.8614
+        }
+      ],
+      "raw_log_sha256": "4c9aa4ae8a297e4e50a87aa1630261bf414cf8d1adb5d3698d1782498a2df597",
+      "version": "2.1.0",
+      "trial": 2,
+      "artifact_sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    }
+  ],
+  "parity_runs": [
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.0.2\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "10a0b5b2ec89ab2514dc24bb60e2ea61bebeb91c3a691b8e052f583870de62c1",
+      "arguments": [
+        "parity",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.0.2-rust195-1.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7313.3689,
+      "peak_working_set_bytes": 878059520,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "parity",
+          "open_ms": 6929.318,
+          "phase": "opened"
+        },
+        {
+          "mismatches": 0,
+          "phase": "parity",
+          "queries": 108123
+        }
+      ],
+      "raw_log_sha256": "bfe13573e6bf5c85c5d7e150b82b78611cb8a02f2e81b07776d8733771b5baf2"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.1.0\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "01d25abd99f65e2be4d65a31e6a60d68f754a4b38be1870d89b1df85e4330ee9",
+      "arguments": [
+        "parity",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.1.0-rust195-1.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7223.078,
+      "peak_working_set_bytes": 391479296,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "parity",
+          "open_ms": 6887.5342,
+          "phase": "opened"
+        },
+        {
+          "mismatches": 0,
+          "phase": "parity",
+          "queries": 108123
+        }
+      ],
+      "raw_log_sha256": "05b70f63eda1d83031b128643045540a3289805616bb27507af48e3cd61677e5"
+    }
+  ],
+  "serving_runs": [
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.1.0\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "01d25abd99f65e2be4d65a31e6a60d68f754a4b38be1870d89b1df85e4330ee9",
+      "arguments": [
+        "native",
+        "target/city-study/city.mmdb"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 3012.5574,
+      "peak_working_set_bytes": 92733440,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "native",
+          "open_ms": 2639.8232,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1100,
+          "p99_ns": 1300,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "raw_log_sha256": "091ba4053032d9c51c0a75e5f9f721d3e87199a32550dbbeac09463953fbc0e7"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.0.2\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "10a0b5b2ec89ab2514dc24bb60e2ea61bebeb91c3a691b8e052f583870de62c1",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.0.2-rust195-1.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 4757.592,
+      "peak_working_set_bytes": 763162624,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 4309.832,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1000,
+          "p99_ns": 1300,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "raw_log_sha256": "e53e6d96564400ab222e2de4c2d05f2d6d2d1017eed470596dc648d754f9d3c6"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.1.0\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "01d25abd99f65e2be4d65a31e6a60d68f754a4b38be1870d89b1df85e4330ee9",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.1.0-rust195-1.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 4468.2336,
+      "peak_working_set_bytes": 276471808,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 4065.3439000000003,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 900,
+          "p99_ns": 1100,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "raw_log_sha256": "2122dfd46c52ef1eac4f1a98ecb0a57c5665629ca638c3852b2d4e19f0de7cfc"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.1.0\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "01d25abd99f65e2be4d65a31e6a60d68f754a4b38be1870d89b1df85e4330ee9",
+      "arguments": [
+        "native",
+        "target/city-study/city.mmdb"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 2991.4201,
+      "peak_working_set_bytes": 92729344,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "native",
+          "open_ms": 2613.9224,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1000,
+          "p99_ns": 1200,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "raw_log_sha256": "18dfb7e52a72ab55682e2dbecaf62f4126a46049229f1612bbcedcb933338ae9"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.0.2\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "10a0b5b2ec89ab2514dc24bb60e2ea61bebeb91c3a691b8e052f583870de62c1",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.0.2-rust195-1.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 4684.3665,
+      "peak_working_set_bytes": 763113472,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 4218.5014,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1000,
+          "p99_ns": 1300,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "raw_log_sha256": "4cd6c1e0f6f2aaf565c080aefacf02caa84f38125d503c32c6065c2d5fb059c8"
+    },
+    {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\native-city\\2.1.0\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "01d25abd99f65e2be4d65a31e6a60d68f754a4b38be1870d89b1df85e4330ee9",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/native-city/native-2.1.0-rust195-1.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 4716.8974,
+      "peak_working_set_bytes": 276484096,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 4315.7364,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 900,
+          "p99_ns": 1100,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "raw_log_sha256": "f5623b9ecdafee7494606e16b594ee0051f9bb5a3b49259468f9439363c187de"
+    }
+  ]
+}

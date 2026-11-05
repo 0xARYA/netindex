@@ -1,0 +1,1435 @@
+{
+  "date": "2026-11-04",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "kernel": "Linux DESKTOP-OT2SHHC 6.6.114.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Dec  1 20:46:23 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux",
+  "executable_sha256": "da61f3308b441ec94c69a69ea0c45a2de8b798bc5865edfb84be460c77e8af96",
+  "source_sha256": "db3740cd4a8d8ab9d59c3bf45959ea7f651fc550388710e93a4c0875dd65f63b",
+  "manifest_sha256": "8bc5ced625bca4fd280f0373c6d81765b8288c687b99a67669772db08b375f1d",
+  "lock_sha256": "af10b2af7336b91c693ee94ba1c89869aaf5c2b8ab30c0e34352c2f5a5f5dca6",
+  "scope": "WSL2 Linux ext4 guest filesystem, isolated cgroup-v2 memory limits, no swap. Private files fsynced and evicted before child starts so page-cache charge belongs to the child. Warm: touch every mapped page after validation. Cold: discard private mapping PTEs and private-file cache after validation; mincore must report zero resident pages before timing. Pressure: 32MiB cgroup with 82.5/200.0MB inputs; no cache reset after validation. Four disjoint 8192-query passes, half hits/gaps, assert IDs/payloads and hit counts. Per-lookup correctness assertions remain in timed code. No JSON/allocation in visitor; phase metrics/output excluded from measured loops.",
+  "limitations": "Guest cache state is controlled; host VHD/device caches are not. This is not physical-media cold latency. Linux/WSL results are not directly comparable to native Windows Criterion results. Memory pressure includes file cache and child memory, not whole host RAM. Default mmap advice and no readahead override.",
+  "rows": [
+    {
+      "name": "v4-warm-1",
+      "family": "v4",
+      "mode": "warm",
+      "trial": 1,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "9e061e69b48d38308c8fe76fddeb01f5af544f6fb2ad5696927076f6e72c6761",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 489536797,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 83779584,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 83054592\nkernel 425984\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 83050496\nactive_file 4096\nunevictable 0\nslab_reclaimable 195112\nslab_unreclaimable 5720\nslab 200832\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 2581\npgmajfault 7\npgrefill 0\npgactivate 1\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v4",
+          "mode": "warm",
+          "open_ms": 445.754656,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 20146,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 2464737,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 300.8712158203125,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 2337527,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 285.3426513671875,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 2334331,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 284.9525146484375,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 2371419,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 289.4798583984375,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 20146,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v4-cold-1",
+      "family": "v4",
+      "mode": "cold",
+      "trial": 1,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "9e061e69b48d38308c8fe76fddeb01f5af544f6fb2ad5696927076f6e72c6761",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 729513284,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 83292160,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 82518016\nkernel 417792\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 82518016\nactive_file 0\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 5456\nslab 198200\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 4690\npgmajfault 965\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v4",
+          "mode": "cold",
+          "open_ms": 433.07804,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 0,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 265537970,
+          "hits": 4096,
+          "major_faults": 1379,
+          "minor_faults": 440,
+          "ns_per_query": 32414.302978515625,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 3103894,
+          "hits": 4096,
+          "major_faults": 230,
+          "minor_faults": 14,
+          "ns_per_query": 378.893310546875,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 2714316,
+          "hits": 4096,
+          "major_faults": 28,
+          "minor_faults": 17,
+          "ns_per_query": 331.33740234375,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 2694544,
+          "hits": 4096,
+          "major_faults": 5,
+          "minor_faults": 0,
+          "ns_per_query": 328.923828125,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 20146,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v4-pressure-1",
+      "family": "v4",
+      "mode": "pressure",
+      "trial": 1,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "9e061e69b48d38308c8fe76fddeb01f5af544f6fb2ad5696927076f6e72c6761",
+      "memory_max_bytes": 33554432,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 14451685462,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 33808384,
+      "memory_events": "low 0\nhigh 0\nmax 24811\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 32698368\nkernel 425984\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 22220800\nactive_file 10477568\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 3872\nslab 196616\nworkingset_refault_anon 0\nworkingset_refault_file 1193379\nworkingset_activate_anon 0\nworkingset_activate_file 153576\nworkingset_restore_anon 0\nworkingset_restore_file 22909\nworkingset_nodereclaim 0\npgscan 1747831\npgsteal 1205542\npgscan_kswapd 0\npgscan_direct 1747831\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 1205542\npgsteal_khugepaged 0\npgfault 54175\npgmajfault 47377\npgrefill 154042\npgactivate 3024\npgdeactivate 154042\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v4",
+          "mode": "pressure",
+          "open_ms": 482.293967,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 8035,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 3692481537,
+          "hits": 4096,
+          "major_faults": 11950,
+          "minor_faults": 408,
+          "ns_per_query": 450742.3751220703,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 3365007738,
+          "hits": 4096,
+          "major_faults": 11578,
+          "minor_faults": 997,
+          "ns_per_query": 410767.5461425781,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 3327322430,
+          "hits": 4096,
+          "major_faults": 12132,
+          "minor_faults": 795,
+          "ns_per_query": 406167.2888183594,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 3443860187,
+          "hits": 4096,
+          "major_faults": 12108,
+          "minor_faults": 858,
+          "ns_per_query": 420393.08923339844,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 7983,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v6-warm-1",
+      "family": "v6",
+      "mode": "warm",
+      "trial": 1,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "d459da32213175a536a48e3c7d712f167bb7540b59dc5e280e67bd0ef596eabd",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 505169336,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 83234816,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 82518016\nkernel 421888\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 82518016\nactive_file 0\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 5720\nslab 198464\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 2573\npgmajfault 4\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v6",
+          "mode": "warm",
+          "open_ms": 471.329504,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 20146,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 3517320,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 429.3603515625,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 2995500,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 365.66162109375,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 2945569,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 359.5665283203125,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 2921185,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 356.5899658203125,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 20146,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v6-cold-1",
+      "family": "v6",
+      "mode": "cold",
+      "trial": 1,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "d459da32213175a536a48e3c7d712f167bb7540b59dc5e280e67bd0ef596eabd",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 749566834,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 83283968,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 82518016\nkernel 417792\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 82518016\nactive_file 0\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 5456\nslab 198200\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 4671\npgmajfault 968\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v6",
+          "mode": "cold",
+          "open_ms": 452.95223400000003,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 0,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 261105153,
+          "hits": 4096,
+          "major_faults": 1373,
+          "minor_faults": 430,
+          "ns_per_query": 31873.187622070312,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 3707561,
+          "hits": 4096,
+          "major_faults": 230,
+          "minor_faults": 14,
+          "ns_per_query": 452.5831298828125,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 3016963,
+          "hits": 4096,
+          "major_faults": 28,
+          "minor_faults": 17,
+          "ns_per_query": 368.2816162109375,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 2869169,
+          "hits": 4096,
+          "major_faults": 5,
+          "minor_faults": 0,
+          "ns_per_query": 350.2403564453125,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 20146,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v6-pressure-1",
+      "family": "v6",
+      "mode": "pressure",
+      "trial": 1,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "d459da32213175a536a48e3c7d712f167bb7540b59dc5e280e67bd0ef596eabd",
+      "memory_max_bytes": 33554432,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 14454988900,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 33554432,
+      "memory_events": "low 0\nhigh 0\nmax 24261\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 32755712\nkernel 421888\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 21471232\nactive_file 11284480\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 3872\nslab 196616\nworkingset_refault_anon 0\nworkingset_refault_file 1163746\nworkingset_activate_anon 0\nworkingset_activate_file 149445\nworkingset_restore_anon 0\nworkingset_restore_file 29866\nworkingset_nodereclaim 0\npgscan 1723438\npgsteal 1175895\npgscan_kswapd 0\npgscan_direct 1723438\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 1175895\npgsteal_khugepaged 0\npgfault 53048\npgmajfault 46520\npgrefill 159826\npgactivate 13136\npgdeactivate 159826\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v6",
+          "mode": "pressure",
+          "open_ms": 486.014471,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 8040,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 3595546266,
+          "hits": 4096,
+          "major_faults": 11727,
+          "minor_faults": 276,
+          "ns_per_query": 438909.4562988281,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 3375011279,
+          "hits": 4096,
+          "major_faults": 11551,
+          "minor_faults": 885,
+          "ns_per_query": 411988.6815185547,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 3449323832,
+          "hits": 4096,
+          "major_faults": 11908,
+          "minor_faults": 911,
+          "ns_per_query": 421060.0380859375,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 3400485874,
+          "hits": 4096,
+          "major_faults": 11478,
+          "minor_faults": 985,
+          "ns_per_query": 415098.3732910156,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 7997,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "asn-warm-1",
+      "family": "asn",
+      "mode": "warm",
+      "trial": 1,
+      "artifact_bytes": 200016480,
+      "artifact_sha256": "b3296b07fb6b83668637bab10568e1d6b6654ffcf0416440fa2269999ad4ceb4",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 239865977,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 201199616,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 200019968\nkernel 925696\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 200019968\nactive_file 0\nunevictable 0\nslab_reclaimable 462696\nslab_unreclaimable 5456\nslab 468152\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 4068\npgmajfault 3\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 200016480,
+          "family": "asn",
+          "mode": "warm",
+          "open_ms": 198.350757,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 48833,
+          "total_pages": 48833
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 4773061,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 582.6490478515625,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 4163601,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 508.2520751953125,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 3794816,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 463.234375,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 3840711,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 468.8367919921875,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 48833,
+          "total_pages": 48833
+        }
+      ]
+    },
+    {
+      "name": "asn-cold-1",
+      "family": "asn",
+      "mode": "cold",
+      "trial": 1,
+      "artifact_bytes": 200016480,
+      "artifact_sha256": "b3296b07fb6b83668637bab10568e1d6b6654ffcf0416440fa2269999ad4ceb4",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 895098815,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 201199616,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 200019968\nkernel 925696\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 200019968\nactive_file 0\nunevictable 0\nslab_reclaimable 462696\nslab_unreclaimable 4928\nslab 467624\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 8427\npgmajfault 2466\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 200016480,
+          "family": "asn",
+          "mode": "cold",
+          "open_ms": 205.73054599999998,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 0,
+          "total_pages": 48833
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 650512364,
+          "hits": 4096,
+          "major_faults": 3103,
+          "minor_faults": 689,
+          "ns_per_query": 79408.24755859375,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 5359087,
+          "hits": 4096,
+          "major_faults": 388,
+          "minor_faults": 12,
+          "ns_per_query": 654.1854248046875,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 4264875,
+          "hits": 4096,
+          "major_faults": 103,
+          "minor_faults": 18,
+          "ns_per_query": 520.6146240234375,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 3990113,
+          "hits": 4096,
+          "major_faults": 44,
+          "minor_faults": 3,
+          "ns_per_query": 487.0743408203125,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 48833,
+          "total_pages": 48833
+        }
+      ]
+    },
+    {
+      "name": "asn-pressure-1",
+      "family": "asn",
+      "mode": "pressure",
+      "trial": 1,
+      "artifact_bytes": 200016480,
+      "artifact_sha256": "b3296b07fb6b83668637bab10568e1d6b6654ffcf0416440fa2269999ad4ceb4",
+      "memory_max_bytes": 33554432,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 40801773494,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 33779712,
+      "memory_events": "low 0\nhigh 0\nmax 71389\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 32305152\nkernel 925696\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 27119616\nactive_file 5185536\nunevictable 0\nslab_reclaimable 462696\nslab_unreclaimable 3872\nslab 466568\nworkingset_refault_anon 0\nworkingset_refault_file 3486582\nworkingset_activate_anon 0\nworkingset_activate_file 11272\nworkingset_restore_anon 0\nworkingset_restore_file 936\nworkingset_nodereclaim 0\npgscan 5693341\npgsteal 3527528\npgscan_kswapd 0\npgscan_direct 5693341\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 3527528\npgsteal_khugepaged 0\npgfault 145492\npgmajfault 130570\npgrefill 11506\npgactivate 1500\npgdeactivate 11506\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 200016480,
+          "family": "asn",
+          "mode": "pressure",
+          "open_ms": 475.65532,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 7896,
+          "total_pages": 48833
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 10952978594,
+          "hits": 4096,
+          "major_faults": 34288,
+          "minor_faults": 2188,
+          "ns_per_query": 1337033.5197753906,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 9504709024,
+          "hits": 4096,
+          "major_faults": 32184,
+          "minor_faults": 2253,
+          "ns_per_query": 1160242.80078125,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 9460803715,
+          "hits": 4096,
+          "major_faults": 32651,
+          "minor_faults": 2229,
+          "ns_per_query": 1154883.265991211,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 9496527278,
+          "hits": 4096,
+          "major_faults": 32246,
+          "minor_faults": 2230,
+          "ns_per_query": 1159244.0524902344,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 7887,
+          "total_pages": 48833
+        }
+      ]
+    },
+    {
+      "name": "v4-pressure-2",
+      "family": "v4",
+      "mode": "pressure",
+      "trial": 2,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "9e061e69b48d38308c8fe76fddeb01f5af544f6fb2ad5696927076f6e72c6761",
+      "memory_max_bytes": 33554432,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 14426953168,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 33554432,
+      "memory_events": "low 0\nhigh 0\nmax 24761\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 32808960\nkernel 425984\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 20865024\nactive_file 11943936\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 3872\nslab 196616\nworkingset_refault_anon 0\nworkingset_refault_file 1181247\nworkingset_activate_anon 0\nworkingset_activate_file 154556\nworkingset_restore_anon 0\nworkingset_restore_file 28745\nworkingset_nodereclaim 0\npgscan 1734019\npgsteal 1193383\npgscan_kswapd 0\npgscan_direct 1734019\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 1193383\npgsteal_khugepaged 0\npgfault 53082\npgmajfault 45819\npgrefill 154597\npgactivate 2957\npgdeactivate 154597\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v4",
+          "mode": "pressure",
+          "open_ms": 490.95568899999995,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 8043,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 3652755607,
+          "hits": 4096,
+          "major_faults": 11848,
+          "minor_faults": 399,
+          "ns_per_query": 445893.0184326172,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 3415365992,
+          "hits": 4096,
+          "major_faults": 11209,
+          "minor_faults": 1107,
+          "ns_per_query": 416914.7939453125,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 3376103260,
+          "hits": 4096,
+          "major_faults": 11385,
+          "minor_faults": 1110,
+          "ns_per_query": 412121.97998046875,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 3364269871,
+          "hits": 4096,
+          "major_faults": 11766,
+          "minor_faults": 910,
+          "ns_per_query": 410677.4744873047,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 8010,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v4-cold-2",
+      "family": "v4",
+      "mode": "cold",
+      "trial": 2,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "9e061e69b48d38308c8fe76fddeb01f5af544f6fb2ad5696927076f6e72c6761",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 795262875,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 83288064,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 82518016\nkernel 421888\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 82518016\nactive_file 0\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 5456\nslab 198200\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 4692\npgmajfault 965\npgrefill 0\npgactivate 1\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v4",
+          "mode": "cold",
+          "open_ms": 507.47881900000004,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 0,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 257214220,
+          "hits": 4096,
+          "major_faults": 1379,
+          "minor_faults": 440,
+          "ns_per_query": 31398.22021484375,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 3264132,
+          "hits": 4096,
+          "major_faults": 230,
+          "minor_faults": 14,
+          "ns_per_query": 398.45361328125,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 2667984,
+          "hits": 4096,
+          "major_faults": 28,
+          "minor_faults": 17,
+          "ns_per_query": 325.681640625,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 2561290,
+          "hits": 4096,
+          "major_faults": 5,
+          "minor_faults": 0,
+          "ns_per_query": 312.657470703125,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 20146,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v4-warm-2",
+      "family": "v4",
+      "mode": "warm",
+      "trial": 2,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "9e061e69b48d38308c8fe76fddeb01f5af544f6fb2ad5696927076f6e72c6761",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 485355434,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 83386368,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 82518016\nkernel 421888\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 82518016\nactive_file 0\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 5720\nslab 198464\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 2577\npgmajfault 4\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v4",
+          "mode": "warm",
+          "open_ms": 442.290352,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 20146,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 2509265,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 306.3067626953125,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 2487600,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 303.662109375,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 2469605,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 301.4654541015625,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 2457222,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 299.953857421875,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 20146,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v6-pressure-2",
+      "family": "v6",
+      "mode": "pressure",
+      "trial": 2,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "d459da32213175a536a48e3c7d712f167bb7540b59dc5e280e67bd0ef596eabd",
+      "memory_max_bytes": 33554432,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 14637080490,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 33558528,
+      "memory_events": "low 0\nhigh 0\nmax 24469\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 32747520\nkernel 421888\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 20307968\nactive_file 12402688\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 3872\nslab 196616\nworkingset_refault_anon 0\nworkingset_refault_file 1167536\nworkingset_activate_anon 0\nworkingset_activate_file 149809\nworkingset_restore_anon 0\nworkingset_restore_file 28210\nworkingset_nodereclaim 0\npgscan 1725301\npgsteal 1179687\npgscan_kswapd 0\npgscan_direct 1725301\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 1179687\npgsteal_khugepaged 0\npgfault 53849\npgmajfault 47330\npgrefill 159531\npgactivate 12750\npgdeactivate 159531\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v6",
+          "mode": "pressure",
+          "open_ms": 529.7441739999999,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 8029,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 3592818338,
+          "hits": 4096,
+          "major_faults": 11884,
+          "minor_faults": 306,
+          "ns_per_query": 438576.4572753906,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 3495449628,
+          "hits": 4096,
+          "major_faults": 12155,
+          "minor_faults": 866,
+          "ns_per_query": 426690.62841796875,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 3342124400,
+          "hits": 4096,
+          "major_faults": 11610,
+          "minor_faults": 980,
+          "ns_per_query": 407974.169921875,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 3541809870,
+          "hits": 4096,
+          "major_faults": 11821,
+          "minor_faults": 901,
+          "ns_per_query": 432349.8376464844,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 7995,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v6-cold-2",
+      "family": "v6",
+      "mode": "cold",
+      "trial": 2,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "d459da32213175a536a48e3c7d712f167bb7540b59dc5e280e67bd0ef596eabd",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 776528849,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 83288064,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 82518016\nkernel 417792\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 82518016\nactive_file 0\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 5456\nslab 198200\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 4670\npgmajfault 968\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v6",
+          "mode": "cold",
+          "open_ms": 465.87072,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 0,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 280384255,
+          "hits": 4096,
+          "major_faults": 1373,
+          "minor_faults": 430,
+          "ns_per_query": 34226.59362792969,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 3630662,
+          "hits": 4096,
+          "major_faults": 230,
+          "minor_faults": 14,
+          "ns_per_query": 443.196044921875,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 3004685,
+          "hits": 4096,
+          "major_faults": 28,
+          "minor_faults": 17,
+          "ns_per_query": 366.7828369140625,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 2968425,
+          "hits": 4096,
+          "major_faults": 5,
+          "minor_faults": 0,
+          "ns_per_query": 362.3565673828125,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 20146,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "v6-warm-2",
+      "family": "v6",
+      "mode": "warm",
+      "trial": 2,
+      "artifact_bytes": 82516480,
+      "artifact_sha256": "d459da32213175a536a48e3c7d712f167bb7540b59dc5e280e67bd0ef596eabd",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 533406370,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 83234816,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 82518016\nkernel 430080\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 82518016\nactive_file 0\nunevictable 0\nslab_reclaimable 192744\nslab_unreclaimable 5456\nslab 198200\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 2574\npgmajfault 4\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 82516480,
+          "family": "v6",
+          "mode": "warm",
+          "open_ms": 498.440703,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 20146,
+          "total_pages": 20146
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 3115325,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 380.2886962890625,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 2843021,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 347.0484619140625,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 2821094,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 344.371826171875,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 2732126,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 333.511474609375,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 20146,
+          "total_pages": 20146
+        }
+      ]
+    },
+    {
+      "name": "asn-pressure-2",
+      "family": "asn",
+      "mode": "pressure",
+      "trial": 2,
+      "artifact_bytes": 200016480,
+      "artifact_sha256": "b3296b07fb6b83668637bab10568e1d6b6654ffcf0416440fa2269999ad4ceb4",
+      "memory_max_bytes": 33554432,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 35714334211,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 33558528,
+      "memory_events": "low 0\nhigh 0\nmax 64780\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 32370688\nkernel 917504\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 27570176\nactive_file 4800512\nunevictable 0\nslab_reclaimable 462696\nslab_unreclaimable 3872\nslab 466568\nworkingset_refault_anon 0\nworkingset_refault_file 3144405\nworkingset_activate_anon 0\nworkingset_activate_file 3263\nworkingset_restore_anon 0\nworkingset_restore_file 143\nworkingset_nodereclaim 0\npgscan 5164494\npgsteal 3185335\npgscan_kswapd 0\npgscan_direct 5164494\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 3185335\npgsteal_khugepaged 0\npgfault 135676\npgmajfault 118085\npgrefill 2817\npgactivate 726\npgdeactivate 2817\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 200016480,
+          "family": "asn",
+          "mode": "pressure",
+          "open_ms": 244.44749900000002,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 7893,
+          "total_pages": 48833
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 10314717678,
+          "hits": 4096,
+          "major_faults": 33914,
+          "minor_faults": 2167,
+          "ns_per_query": 1259120.8103027344,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 8596281217,
+          "hits": 4096,
+          "major_faults": 29383,
+          "minor_faults": 2543,
+          "ns_per_query": 1049350.7344970703,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 8217751041,
+          "hits": 4096,
+          "major_faults": 28243,
+          "minor_faults": 2781,
+          "ns_per_query": 1003143.4376220703,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 7884819571,
+          "hits": 4096,
+          "major_faults": 27449,
+          "minor_faults": 2898,
+          "ns_per_query": 962502.3890380859,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 7903,
+          "total_pages": 48833
+        }
+      ]
+    },
+    {
+      "name": "asn-cold-2",
+      "family": "asn",
+      "mode": "cold",
+      "trial": 2,
+      "artifact_bytes": 200016480,
+      "artifact_sha256": "b3296b07fb6b83668637bab10568e1d6b6654ffcf0416440fa2269999ad4ceb4",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 874709452,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 201199616,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 200019968\nkernel 921600\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 200019968\nactive_file 0\nunevictable 0\nslab_reclaimable 462696\nslab_unreclaimable 4928\nslab 467624\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 8428\npgmajfault 2466\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 200016480,
+          "family": "asn",
+          "mode": "cold",
+          "open_ms": 214.505764,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 0,
+          "total_pages": 48833
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 611965827,
+          "hits": 4096,
+          "major_faults": 3103,
+          "minor_faults": 689,
+          "ns_per_query": 74702.85974121094,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 5259973,
+          "hits": 4096,
+          "major_faults": 388,
+          "minor_faults": 12,
+          "ns_per_query": 642.0865478515625,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 4573333,
+          "hits": 4096,
+          "major_faults": 103,
+          "minor_faults": 18,
+          "ns_per_query": 558.2681884765625,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 4048694,
+          "hits": 4096,
+          "major_faults": 44,
+          "minor_faults": 3,
+          "ns_per_query": 494.225341796875,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 48833,
+          "total_pages": 48833
+        }
+      ]
+    },
+    {
+      "name": "asn-warm-2",
+      "family": "asn",
+      "mode": "warm",
+      "trial": 2,
+      "artifact_bytes": 200016480,
+      "artifact_sha256": "b3296b07fb6b83668637bab10568e1d6b6654ffcf0416440fa2269999ad4ceb4",
+      "memory_max_bytes": 1073741824,
+      "swap_max_bytes": 0,
+      "affinity_cpus": [
+        20
+      ],
+      "wall_ns": 257125302,
+      "exit_code": 0,
+      "cgroup_memory_peak_bytes": 201199616,
+      "memory_events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "memory_stat": "anon 0\nfile 200019968\nkernel 921600\nkernel_stack 0\npagetables 0\nsec_pagetables 0\npercpu 544\nsock 0\nvmalloc 0\nshmem 0\nfile_mapped 0\nfile_dirty 0\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 0\nshmem_thp 0\ninactive_anon 0\nactive_anon 0\ninactive_file 200019968\nactive_file 0\nunevictable 0\nslab_reclaimable 462696\nslab_unreclaimable 5456\nslab 468152\nworkingset_refault_anon 0\nworkingset_refault_file 0\nworkingset_activate_anon 0\nworkingset_activate_file 0\nworkingset_restore_anon 0\nworkingset_restore_file 0\nworkingset_nodereclaim 0\npgscan 0\npgsteal 0\npgscan_kswapd 0\npgscan_direct 0\npgscan_khugepaged 0\npgsteal_kswapd 0\npgsteal_direct 0\npgsteal_khugepaged 0\npgfault 4065\npgmajfault 3\npgrefill 0\npgactivate 0\npgdeactivate 0\npglazyfree 0\npglazyfreed 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\n",
+      "rows": [
+        {
+          "artifact_bytes": 200016480,
+          "family": "asn",
+          "mode": "warm",
+          "open_ms": 223.397044,
+          "phase": "opened",
+          "records": 20000000,
+          "resident_pages_before_queries": 48833,
+          "total_pages": 48833
+        },
+        {
+          "checksum": 40815938560,
+          "elapsed_ns": 4735678,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 578.085693359375,
+          "pass": 0,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 41005138432,
+          "elapsed_ns": 4070506,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 496.887939453125,
+          "pass": 1,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40994338304,
+          "elapsed_ns": 3626258,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 442.658447265625,
+          "pass": 2,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "checksum": 40778505472,
+          "elapsed_ns": 3570135,
+          "hits": 4096,
+          "major_faults": 0,
+          "minor_faults": 0,
+          "ns_per_query": 435.8074951171875,
+          "pass": 3,
+          "phase": "queries",
+          "queries": 8192
+        },
+        {
+          "phase": "finished",
+          "resident_pages_after_queries": 48833,
+          "total_pages": 48833
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,95 @@
 # Benchmarks
 
+The ordered [performance work queue](PERF_TASKS.md) tracks experiments, acceptance
+criteria, measurements and decisions. New results should update that queue.
+
+## City replay and size scaling (2026-11-04)
+
+The [City replay](benches/results/2026-11-04-city-replay.json) reproduces the exact
+750,594,180-byte retained component with 2.0.2, then rebuilds the same assertions
+with 2.1.0 into 263,944,912 bytes. Both pairs preserve every ID, target, payload,
+metadata byte and sampled all-match query result. Building takes about 2.2x as
+long; logical temporary use falls from 2,447,925,271 to 1,961,276,003 bytes.
+This is opaque assertion replay, not complete native-provider conversion.
+
+```powershell
+cargo +1.95.0 build --locked --release --features external-sort,mmap --example rebuild
+& target/release/examples/rebuild.exe INPUT.nidx NEW-OUTPUT.nidx EXISTING-TEMP-DIRECTORY
+```
+
+Keep input and output immutable while mapped. The output must not exist. The
+example reconstructs original insertion order and verifies all assertions plus
+100,005 edge/random IP query results. Options are 16,384-row runs, a 4 MiB key
+cache and an 8 GiB temporary budget. Hash cached inputs and outputs externally.
+To reproduce the old version, compile the unchanged example in a standalone
+crate using netindex `=2.0.2`, the same dependency versions/features, and release
+codegen-units=1. Pin and run baseline/candidate serially in alternating order.
+The result file records the resolved baseline dependencies. Whole-process memory
+includes the replay oracle and both mappings; it is not service or builder-only RAM.
+
+The [native adapter](benches/native_city/README.md) separately measures native
+validation, normalization/encoding, construction, normalized payload validation
+and owned-record serving. [Results](benches/results/2026-11-04-native-city.json)
+qualify the old path against the original artifact hash and compare 108,123
+normalized answers per version. Complete conversion takes about 1.7x as long
+with 2.1.0 and uses about 60% less peak process memory. Native MMDB still wins
+file size, opening and memory here; see the queue for phase timings and limits.
+
+The [size baseline](benches/results/2026-11-04-scale.json) covers 1K through 20M
+exact-address/ASN assertions, with 50% hits and gaps and four-byte pooled payloads.
+The default small cases are suitable for correctness checks:
+
+```powershell
+cargo +1.95.0 bench --locked --bench scale -- --test
+$env:NETINDEX_BENCH_SIZES = '1000,100000,1000000,20000000'
+cargo +1.95.0 bench --locked --bench scale -- --save-baseline NAME
+Remove-Item Env:NETINDEX_BENCH_SIZES
+```
+
+Generated files are retained under ignored `target/scale-fixtures/` for hashing.
+This repeats a fixed warm 1,024-query corpus; it is a dataset-size baseline,
+not a cold-memory, concurrency, overlap, provider-decoding or JSON comparison.
+
+## Traffic, shapes and caller batches (2026-11-04)
+
+```powershell
+cargo +1.95.0 bench --locked --bench traffic -- --test
+cargo +1.95.0 bench --locked --bench shapes -- --test
+cargo +1.95.0 bench --locked --features simd --bench traffic -- --test
+cargo +1.95.0 bench --locked --features simd --bench shapes -- --test
+$env:NETINDEX_BENCH_SIZES = '1000000,20000000'
+cargo +1.95.0 bench --locked --bench traffic -- --save-baseline NAME
+Remove-Item Env:NETINDEX_BENCH_SIZES
+cargo +1.95.0 bench --locked --bench shapes -- --save-baseline NAME
+```
+
+Traffic defaults to 100K assertions. It uses 16,384 queries: uniform, mostly
+hits/misses, approximately 90% on 16 hot IDs, and 32-query locality runs. Shape
+cases use 65,536 assertions: dense/sparse ASN, full-width sparse IPv6, up to 65
+nested IPv6 prefixes, and 64 duplicate IPv4 assertions per key. Shared and fully
+unique eight-byte payloads are checked against original-target scans. Caller
+batches 1/8/32/256 rotate through the same corpus; `NETINDEX_BENCH_BATCHES` can
+select a subset. This is the existing scalar-query visitor API, not a new batch
+API. Timed loops exclude JSON and allocation.
+
+Paired [traffic](benches/results/2026-11-04-traffic.json) and
+[shape/batch](benches/results/2026-11-04-shapes-batches.json) results retain
+original samples, mean confidence intervals, executable and fixture hashes.
+Use the process controls in `benches/native_city/run.ps1 -TextOutput` for serial
+pinned executables. Run `python benches/collect_matrix.py traffic|shapes
+RUN_DIRECTORY OUTPUT_JSON` after both `KIND-20261104-1/2` baselines are saved.
+These baseline measurements use default dispatch, not optional SIMD; SIMD
+correctness is checked separately. Repeated warm corpora do not establish
+cold-file performance, concurrent tails or deployed-service capacity.
+
+The [Linux memory package](benches/memory/README.md) qualifies warm residency,
+private-file cold cache and inputs exceeding a 32 MiB cgroup limit. Its
+[18-process result](benches/results/2026-11-04-memory.json) records page faults
+and memory events. It requires a private Linux filesystem and an already enabled
+cgroup-v2 memory controller; it does not flush global caches. WSL host/device
+caching remains outside its controls, and its timed correctness assertions and
+platform differ from the Windows Criterion suite.
+
 ## External payload deduplication
 
 Measured on 4 November 2026: Ryzen 9 9950X3D2, Windows x86_64 MSVC, Rust 1.95.0,

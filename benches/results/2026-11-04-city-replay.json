@@ -1,0 +1,347 @@
+{
+  "date": "2026-11-04",
+  "status": "Completed opaque assertion replay; native conversion and application serving qualification remain pending",
+  "revision": "6efec832d3f41874db9f999e13f891e550c3fd9f",
+  "platform": "Windows x86_64 MSVC",
+  "cpu": "AMD Ryzen 9 9950X3D2",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "affinity_mask": 1048576,
+  "run_order": [
+    "2.0.2-1",
+    "2.1.0-1",
+    "2.1.0-2",
+    "2.0.2-2"
+  ],
+  "profile": "release, codegen-units=1, no SIMD, no custom RUSTFLAGS",
+  "options": {
+    "run_records": 16384,
+    "payload_cache_bytes": 4194304,
+    "temporary_bytes": 8589934592
+  },
+  "limits": {
+    "records": 30000000,
+    "bytes": 2147483648
+  },
+  "input": {
+    "native_bytes": 49899266,
+    "native_sha256": "d6ff9368ab19a13b096fd6392f752aa6c0890f2c92752d09253fab9e50501e46",
+    "component_bytes": 750594180,
+    "component_sha256": "83d775f419696a224b5f57a114ec42ea5f1289b5ea86d4ae171d00218b3d2f18",
+    "source": "Retained GeoLite2-City normalized component payload version3, native build epoch1793725896; application metadata and opaque records preserved"
+  },
+  "source_sha256": {
+    "examples/rebuild.rs": "1572919066dda7c1ecb9dfd3e3ffa12b94ac0e61a04c10af3633f9e294f84b0f",
+    "baseline_main.rs": "1572919066dda7c1ecb9dfd3e3ffa12b94ac0e61a04c10af3633f9e294f84b0f",
+    "Cargo.lock": "1930c8c1e4bceb54f0e658950ca6b15dd736a4817536590fb0d35873099a85f1",
+    "baseline_Cargo.lock": "a5424eeab003bfddd4916222ea9a9cc840cec327056800c27a33a9c1ba4f11d5"
+  },
+  "baseline_packages": [
+    {
+      "name": "bitflags",
+      "version": "2.13.2"
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.5"
+    },
+    {
+      "name": "city-replay-baseline",
+      "version": "0.0.0"
+    },
+    {
+      "name": "errno",
+      "version": "0.3.14"
+    },
+    {
+      "name": "fastrand",
+      "version": "2.5.0"
+    },
+    {
+      "name": "getrandom",
+      "version": "0.4.3"
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.17.1"
+    },
+    {
+      "name": "itoa",
+      "version": "1.0.18"
+    },
+    {
+      "name": "libc",
+      "version": "0.2.190"
+    },
+    {
+      "name": "linux-raw-sys",
+      "version": "0.12.1"
+    },
+    {
+      "name": "memchr",
+      "version": "2.8.3"
+    },
+    {
+      "name": "memmap2",
+      "version": "0.9.11"
+    },
+    {
+      "name": "netindex",
+      "version": "2.0.2"
+    },
+    {
+      "name": "once_cell",
+      "version": "1.21.4"
+    },
+    {
+      "name": "proc-macro2",
+      "version": "1.0.107"
+    },
+    {
+      "name": "quote",
+      "version": "1.0.47"
+    },
+    {
+      "name": "r-efi",
+      "version": "6.0.0"
+    },
+    {
+      "name": "rustix",
+      "version": "1.1.5"
+    },
+    {
+      "name": "serde",
+      "version": "1.0.229"
+    },
+    {
+      "name": "serde_core",
+      "version": "1.0.229"
+    },
+    {
+      "name": "serde_derive",
+      "version": "1.0.229"
+    },
+    {
+      "name": "serde_json",
+      "version": "1.0.151"
+    },
+    {
+      "name": "syn",
+      "version": "3.0.6"
+    },
+    {
+      "name": "tempfile",
+      "version": "3.27.0"
+    },
+    {
+      "name": "thiserror",
+      "version": "2.0.21"
+    },
+    {
+      "name": "thiserror-impl",
+      "version": "2.0.21"
+    },
+    {
+      "name": "unicode-ident",
+      "version": "1.0.26"
+    },
+    {
+      "name": "windows-link",
+      "version": "0.2.1"
+    },
+    {
+      "name": "windows-sys",
+      "version": "0.61.2"
+    },
+    {
+      "name": "zmij",
+      "version": "1.0.23"
+    }
+  ],
+  "executables": {
+    "2.0.2": {
+      "bytes": 381952,
+      "sha256": "b2e9e9ffd9d1bdf078ad3ace4d499e2fd566a1d712d2b4ff5b7875c2989e35cf"
+    },
+    "2.1.0": {
+      "bytes": 392704,
+      "sha256": "04b91189425d8caf0e899ff0fa927a2aab5f6877186cef7ffa05b636aeca3082"
+    }
+  },
+  "command": "rebuild-VERSION.exe target/city-study/original.ipidx target/city-study/rebuilt-VERSION-TRIAL.nidx target/city-study",
+  "measurement": "Two serial paired trials, reversed order in second pair, pinned CPU20, no concurrent compilation or profiling. Live desktop, filesystem cache uncontrolled. Build timer includes push and finish, excludes preparation, opening, oracle, fsync and hashing. Peak working set is the OS process peak observed every250ms using Process.PeakWorkingSet64; includes source/output mappings, assertion-order oracle and verification storage. No native decoding/conversion, application payload validation, standalone serving RSS, cold I/O or production tail measurements. Descriptive timings, not statistical generalization.",
+  "correctness": "All20255722 output assertions checked exactly once by ID with exact target/payload equality and identical metadata.100005 deterministic edge/random IP queries compared complete result lists including ordering. Baseline both output hashes exactly match original; candidate hashes repeat exactly.",
+  "before_sections": {
+    "flags": 7,
+    "records": 20255722,
+    "v4_records": 3632756,
+    "v6_records": 16622966,
+    "asn_records": 0,
+    "metadata_bytes": 1593475,
+    "ipv4_bytes": 14730020,
+    "ipv6_bytes": 68848870,
+    "reference_bytes": 162045776,
+    "payload_bytes": 503375959,
+    "artifact_bytes": 750594180
+  },
+  "after_sections": {
+    "flags": 7,
+    "records": 20255722,
+    "v4_records": 3632756,
+    "v6_records": 16622966,
+    "asn_records": 0,
+    "metadata_bytes": 1593475,
+    "ipv4_bytes": 14730020,
+    "ipv6_bytes": 68848870,
+    "reference_bytes": 162045776,
+    "payload_bytes": 16726691,
+    "artifact_bytes": 263944912
+  },
+  "size_change_percent": -64.83520402463019,
+  "new_to_native_size_ratio": 5.289555000668748,
+  "trials": [
+    {
+      "version": "2.0.2",
+      "trial": 1,
+      "wall_seconds": 27.3236585,
+      "peak_working_set_bytes": 2662694912,
+      "exit_code": 0,
+      "phases": [
+        {
+          "input_open_ms": 868.2197,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2331.8294,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 750594180,
+          "build_ms": 22514.6262,
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 2447925271
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 983.5083999999999,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1821.0719
+        }
+      ],
+      "output_sha256": "83d775f419696a224b5f57a114ec42ea5f1289b5ea86d4ae171d00218b3d2f18"
+    },
+    {
+      "version": "2.1.0",
+      "trial": 1,
+      "wall_seconds": 52.8983756,
+      "peak_working_set_bytes": 2176000000,
+      "exit_code": 0,
+      "phases": [
+        {
+          "input_open_ms": 1052.1422,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2483.1285,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 263944912,
+          "build_ms": 48402.99310000001,
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1961276003
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 907.5254,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1629.9715999999999
+        }
+      ],
+      "output_sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    },
+    {
+      "version": "2.1.0",
+      "trial": 2,
+      "wall_seconds": 51.2476927,
+      "peak_working_set_bytes": 2176053248,
+      "exit_code": 0,
+      "phases": [
+        {
+          "input_open_ms": 966.1995,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2351.8623000000002,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 263944912,
+          "build_ms": 46901.313700000006,
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 1961276003
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 909.6018,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1630.0628000000002
+        }
+      ],
+      "output_sha256": "1be3a0505fd8eb3dd7ce2b7f807d1744541a86e553cb7c1be78bc95ad65c72a7"
+    },
+    {
+      "version": "2.0.2",
+      "trial": 2,
+      "wall_seconds": 25.3794991,
+      "peak_working_set_bytes": 2662670336,
+      "exit_code": 0,
+      "phases": [
+        {
+          "input_open_ms": 877.9621,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 2265.0186,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 750594180,
+          "build_ms": 20890.5508,
+          "payload_cache_bytes": 4194267,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": 2447925271
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 892.2144,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1748.4406
+        }
+      ],
+      "output_sha256": "83d775f419696a224b5f57a114ec42ea5f1289b5ea86d4ae171d00218b3d2f18"
+    }
+  ],
+  "metadata_and_indexes_sha256": "ece1ee3d5c5557fe605dfce04c98c7a05ad09b4acf215ec3c76a47074bc11166",
+  "baseline_manifest": "[package]\nname = \"city-replay-baseline\"\nversion = \"0.0.0\"\nedition = \"2024\"\n[workspace]\n[features]\ndefault = [\"external-sort\", \"mmap\"]\nexternal-sort = []\nmmap = []\n[profile.release]\ncodegen-units = 1\n[dependencies]\nnetindex = { version = \"=2.0.2\", features = [\"external-sort\", \"mmap\"] }\ntempfile = \"3\"\nserde_json = \"1\"\n",
+  "baseline_build_command": "cargo +1.95.0 build --locked --release --manifest-path target/city-study/baseline/Cargo.toml",
+  "candidate_build_command": "cargo +1.95.0 build --locked --release --features external-sort,mmap --example rebuild"
+}
