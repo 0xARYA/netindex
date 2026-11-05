@@ -24,6 +24,12 @@ External builds can opt into a separately bounded write-back cache for the
 temporary payload table. This can reduce random I/O without changing the
 artifact or the default memory budget.
 
+`ExternalBuilder::new_partitioned` adds opt-in hash-partitioned deduplication.
+It reuses a bounded payload-key cache across partitions and preserves exact
+artifact bytes, at the cost of additional sequential passes and temporary disk.
+It can reduce random I/O without additional table-cache pages; ordinary builders
+remain unchanged. Cumulative artifact limits may fail at finalization.
+
 ## 2.1.0 - 2026-11-04
 
 Deduplicate every external-builder payload, including values outside the memory

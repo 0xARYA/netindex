@@ -469,3 +469,15 @@ filter used another 128-512 KiB within an unchanged 8 MiB limit, increased
 median build time by 1.7-4.1%, and reduced positioned reads by less than 0.6%.
 Candidate source remains archived; production retains P1-12. Input/output
 identity, scalar/SIMD paths, CPU instructions and syscall counts are recorded.
+
+## Partitioned payload deduplication - 2026-11-05
+
+[P1-14 results](benches/partitioned_dedup/README.md) qualify the explicit
+`ExternalBuilder::new_partitioned` constructor. At the same 4 MiB key cap with
+no table-cache pages, native Windows/NTFS IPtoASN median construction changed
+from 2,399.49 to 1,078.17 ms. Wide ranges and mixed cached controls keep this
+opt-in. It trades extra sequential passes and temporary disk for fewer random
+table operations; City temporary peak increased by 35.9%. All 81 replays retained
+identical bytes and verified every assertion plus 100,005 queries. The report
+contains timed ranges, native/WSL measurements, resource accounting, instruction
+and syscall counters, source snapshots and limitations.

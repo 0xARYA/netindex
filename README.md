@@ -199,6 +199,17 @@ tags, separate from the payload-key and disk limits. The cache is off by
 default; `disk_table_cache_bytes()` reports what was allocated. It does not
 change output bytes or skip complete payload comparisons.
 
+`ExternalBuilder::new_partitioned(directory, limits, options, partitions)` is an
+opt-in alternative when extra table-cache memory is unavailable. It stages values
+into 1-64 power-of-two partitions, reuses the payload-key budget for one partition
+at a time, and restores first-seen payload order and insertion IDs. Complete byte
+comparisons remain the fallback when a partition exceeds the key budget. Extra
+sequential passes and temporary disk can make this slower than the ordinary
+builder; measure both. Fixed I/O buffers and open-file counts grow with the
+partition count outside the key budget. Nonzero table caches are unsupported,
+and cumulative artifact-byte limits can fail during finalization before output.
+See [partitioned-build measurements](benches/partitioned_dedup/README.md).
+
 The external writer requires empty, seekable output at position zero. Either
 writer can leave partial output on failure. Stage output, check success, and
 validate your payloads before publishing. File synchronization and release

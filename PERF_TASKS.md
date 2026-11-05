@@ -8,7 +8,7 @@ experiment alone does not complete an implementation task.
 
 Historical P1-01 through P1-08 completions record qualification, not shipped
 features. Their source is [archived](benches/ARCHIVE.md); their measurements and
-decisions remain below. P1-13 rejects the measured grouped filters; P1-14 is next.
+decisions remain below. P1-14 adds opt-in partitioned builds; P1-15 is next.
 
 Statuses: `[ ]` queued; `[-]` active; `[x]` completed; `[!]` waiting on a named
 dependency. Existing 2.1.0 results are in [PERFORMANCE.md](PERFORMANCE.md); they do
@@ -107,7 +107,11 @@ not complete the broader experiments below.
   resident filters. The revised candidate was 1.7-4.1% slower while avoiding
   less than 0.6% of positioned reads. Keep P1-12's production cache.
   [Measurements and recovery](benches/grouped_metadata/README.md).
-- [ ] **P1-14 Partitioned dedup.** Compare sequential spill/merge against random I/O.
+- [x] **P1-14 Partitioned dedup.** Added explicit `new_partitioned` builds with
+  bounded partition-local keys, exact disk fallback and first-seen-order merges.
+  Native Windows uncached IPtoASN median: 2,399.49 to 1,078.17 ms; cached controls
+  show no consistent general win. Extra temporary disk is explicit.
+  [Measurements and scope](benches/partitioned_dedup/README.md).
 - [ ] **P1-15 Bitpacking.** Measure block decoding versus direct packed access.
 - [ ] **P1-16 Compatibility.** Record format and migration decisions before
   adopting encoding changes; required by P1-10, P1-11 and P1-15 if layout changes.
@@ -1101,3 +1105,42 @@ positioned-I/O counters, timing ranges, and qualification limitations.
 [raw receipt](benches/results/2026-11-05-grouped-metadata.json).
 Next priority: **P1-14 partitioned deduplication**, comparing sequential
 spill/merge with the unchanged exact-equality random-I/O builder.
+
+### P1-14 implementation and qualification - 2026-11-05
+
+Added `ExternalBuilder::new_partitioned` as an opt-in resource strategy. It
+stages values into 1-64 power-of-two hash partitions and reuses the payload-key
+budget for each partition, with full-byte disk fallback for oversized or
+uncached keys. Final merges preserve first-seen payload order, assertion IDs
+and exact artifact bytes. Ordinary constructors and cache defaults stay intact.
+Nonzero table caches are unsupported on the partitioned path; fixed buffers
+and open files grow with the partition count outside the key budget. Cumulative
+artifact limits can be reported at finalization before output is written.
+
+With the same 4 MiB payload-key cap and no table-cache pages, 16 partitions
+changed native Windows/NTFS IPtoASN median construction from 2,399.49 to
+1,078.17 ms. Three-round ranges were 2,037.32-2,654.87 and 872.23-2,103.45 ms.
+WSL2/ext4 medians were 591.68 to 420.45 ms for IPtoASN, 5,606.74 to 5,338.40 ms
+for canonical City and 23,271.76 to 21,783.03 ms for materialized City. Timing
+ranges overlap and host contention was substantial; no universal speedup is
+established. Comparisons against the separately cached builder do not justify
+replacing it. Partitioning remains an explicit resource choice.
+
+Separate whole-process profiles reduced positioned reads from 8,121,114 to 4
+and positioned writes from 260,364 to 0 on materialized City, but raised CPU
+instructions from 219.470 to 225.065 billion. Sequential calls increased, and
+temporary peak grew from 1,965,616,403 to 2,671,943,208 bytes (+35.9%). Charged
+payload keys fell to about 2.05 MiB for City or 0.59 MiB for IPtoASN at 16
+partitions; these are key charges rather than total builder RAM.
+
+All 81 rebuilds were byte-identical and checked every assertion plus 100,005
+queries. Focused tests cover complete-hash collisions, large last-byte
+differences, mixed targets, empty input/payloads, disabled/saturated caches,
+limits, poisoning, cleanup and I/O causes. AddressSanitizer passed 16 external
+unit tests and 3 partitioned integration tests. All seven documented repository
+checks passed, including ignored tests and local package verification.
+
+[Results and reproduction](benches/partitioned_dedup/README.md),
+[raw receipt](benches/results/2026-11-05-partitioned-dedup.json).
+Next priority: **P1-15 bitpacking**, retaining explicit format/migration review
+if an encoding change is proposed.
