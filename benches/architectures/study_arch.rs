@@ -9,13 +9,13 @@ pub fn study_available(mode: u8) -> bool {
         2 => std::is_x86_feature_detected!("avx512f")
             && std::is_x86_feature_detected!("avx512bw"),
         #[cfg(all(target_arch = "aarch64", target_endian = "little"))]
-        3 => std::arch::is_aarch64_feature_detected!("neon"),
+        3 | 4 => std::arch::is_aarch64_feature_detected!("neon"),
         _ => false,
     }
 }
 
 pub fn study_kernel(bytes: &[u8], width: usize, target: u128, mode: u8) -> Result<usize, Error> {
-    if mode > 3 { return Err(Error::Invalid("study mode")); }
+    if mode > 4 { return Err(Error::Invalid("study mode")); }
     Search::study(mode).upper_bound(bytes, width, target)
 }
 
@@ -33,13 +33,17 @@ pub(crate) fn upper(bytes: &[u8], width: usize, target: u128, mode: u8) -> Resul
         } };
     }
     #[cfg(all(target_arch = "aarch64", target_endian = "little"))]
-    if mode == 3 && study_available(3) && width <= 8 && bytes.len() >= 16 {
+    if matches!(mode, 3 | 4) && study_available(mode) && width <= 8 && bytes.len() >= 16 {
         // SAFETY: NEON detected; Search validated width and complete vector length.
-        return unsafe { match width {
-            1 => neon::<1>(bytes, target),
-            2 => neon::<2>(bytes, target),
-            4 => neon::<4>(bytes, target),
-            8 => neon::<8>(bytes, target),
+        return unsafe { match (width, mode == 4) {
+            (1, false) => neon::<1, false>(bytes, target),
+            (2, false) => neon::<2, false>(bytes, target),
+            (4, false) => neon::<4, false>(bytes, target),
+            (8, false) => neon::<8, false>(bytes, target),
+            (1, true) => neon::<1, true>(bytes, target),
+            (2, true) => neon::<2, true>(bytes, target),
+            (4, true) => neon::<4, true>(bytes, target),
+            (8, true) => neon::<8, true>(bytes, target),
             _ => Err(Error::Invalid("packed integer width")),
         } };
     }
@@ -92,7 +96,7 @@ unsafe fn avx512<const W: usize>(bytes: &[u8], target: u128) -> Result<usize, Er
 
 #[cfg(all(target_arch = "aarch64", target_endian = "little"))]
 #[target_feature(enable = "neon")]
-unsafe fn neon<const W: usize>(bytes: &[u8], target: u128) -> Result<usize, Error> {
+unsafe fn neon<const W: usize, const PACKED: bool>(bytes: &[u8], target: u128) -> Result<usize, Error> {
     use std::arch::aarch64::*;
     let lanes = 16 / W;
     let first = start::<W>(bytes, target, lanes)?;
@@ -105,6 +109,12 @@ unsafe fn neon<const W: usize>(bytes: &[u8], target: u128) -> Result<usize, Erro
         8 => vreinterpretq_u8_u64(vcgtq_u64(vreinterpretq_u64_u8(values), vdupq_n_u64(target as u64))),
         _ => return Err(Error::Invalid("packed integer width")),
     };
+    if PACKED {
+        // Each all-zero/all-one byte becomes four bits in the narrowed word.
+        // A zero word has 64 trailing zeros, yielding the one-past-vector index.
+        let mask = vget_lane_u64::<0>(vreinterpret_u64_u8(vshrn_n_u16::<4>(vreinterpretq_u16_u8(greater))));
+        return Ok(first + mask.trailing_zeros() as usize / (4 * W));
+    }
     // AArch64 is little endian on the qualified runner. Store masks in lane order;
     // this explicit reduction avoids assuming a non-existent NEON movemask.
     let mut mask = [0u8; 16];

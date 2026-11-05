@@ -25,4 +25,7 @@ jobs:
             ${{ runner.temp }}/neon/*.log
             ${{ runner.temp }}/neon/study.disasm
             ${{ runner.temp }}/neon/prepared.json
+            ${{ runner.temp }}/neon/study
+            ${{ runner.temp }}/neon/core-Cargo.lock
+            ${{ runner.temp }}/neon/inputs/*.nidx
           retention-days: 30

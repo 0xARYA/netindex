@@ -27,14 +27,14 @@ pub fn run() -> Result<(), Failure> {
     for width in [1usize, 2, 4, 8, 16] {
         let max = u128::MAX >> (128-width*8);
         for count in [0usize,1,2,3,4,7,8,15,16,31,32,33,63,64,65,127,128,129,511] {
-            let values: Vec<_> = (0..count).map(|i| max / (count.max(1) as u128) * (i/3) as u128).collect();
+            let values: Vec<_> = (0..count).map(|i| spread(i/3, count.div_ceil(3), max)).collect();
             for alignment in 0..64 {
                 let mut bytes = vec![0xa5; alignment];
                 for value in &values { bytes.extend_from_slice(&value.to_le_bytes()[..width]); }
                 for q in values.iter().copied().chain([0, max/2, max/2+1, max, u128::MAX])
                     .flat_map(|q| [q.saturating_sub(1), q, q.saturating_add(1)]) {
                     let expected = values.partition_point(|&v| v <= q);
-                    for mode in 0..=3 {
+                    for mode in 0..=4 {
                         assert_eq!(study_kernel(&bytes[alignment..], width, q, mode)?, expected,
                             "width={width}, count={count}, alignment={alignment}, mode={mode}");
                         checks += 1;
@@ -43,7 +43,7 @@ pub fn run() -> Result<(), Failure> {
             }
         }
     }
-    for mode in 0..=3 {
+    for mode in 0..=4 {
         for width in [0,3,5,6,7,9,17,usize::MAX] { assert!(study_kernel(&[0;32], width,0,mode).is_err()); }
         for width in [2,4,8,16] { assert!(study_kernel(&[0;31],width,0,mode).is_err()); }
     }
@@ -53,7 +53,7 @@ pub fn run() -> Result<(), Failure> {
     for width in [1usize,2,4,8,16] {
         let max = u128::MAX >> (128-width*8);
         for count in [32usize,256,4096,65536,1048576] {
-            let values: Vec<u128> = (0..count).map(|i| max/(count as u128)*i as u128).collect();
+            let values: Vec<u128> = (0..count).map(|i| spread(i,count,max)).collect();
             let mut storage = vec![0xa5];
             for value in &values { storage.extend_from_slice(&value.to_le_bytes()[..width]); }
             let bytes = &storage[1..];
@@ -82,4 +82,11 @@ pub fn run() -> Result<(), Failure> {
         }
     }
     Ok(())
+}
+
+// Quotient/remainder form spans the full unsigned domain without u128 overflow.
+fn spread(index: usize, count: usize, max: u128) -> u128 {
+    let denominator = count.saturating_sub(1).max(1) as u128;
+    let index = index as u128;
+    (max / denominator) * index + ((max % denominator) * index) / denominator
 }

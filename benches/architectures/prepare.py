@@ -32,7 +32,7 @@ marker = '        #[cfg(all(feature = "simd", target_arch = "x86_64"))]\n       
 assert source.count(marker) == 1
 source = source.replace(marker, '''        match self.study_mode {
             1 => return binary(bytes, width, target),
-            2 | 3 => return crate::study_arch::upper(bytes, width, target, self.study_mode),
+            2 | 3 | 4 => return crate::study_arch::upper(bytes, width, target, self.study_mode),
             _ => {}
         }
 ''' + marker)
@@ -61,7 +61,7 @@ main = (here.parent / 'interleaved/src/main.rs').read_text()
 main = main.replace('const VARIANTS: [usize; 5] = [0, 1, 4, 8, 16];', '''#[cfg(target_arch = "x86_64")]
 const VARIANTS: [usize; 4] = [0, 8, 800, 801];
 #[cfg(target_arch = "aarch64")]
-const VARIANTS: [usize; 4] = [0, 8, 800, 802];
+const VARIANTS: [usize; 5] = [0, 8, 800, 802, 803];
 mod kernels;
 ''')
 main = main.replace('    let args: Vec<_> = std::env::args().collect();', '''    let args: Vec<_> = std::env::args().collect();
@@ -79,7 +79,7 @@ main = main.replace('                    reader.visit_ip(q, |row| emit(index, ro
                         reader.visit_ip(q, |row| emit(index, row))?;
                     }''', 1)
 # Exercise the unavailable architecture's portable fallback in every precheck too.
-main = main.replace('for variant in VARIANTS {', 'for variant in VARIANTS.into_iter().chain([800, 801, 802]) {')
+main = main.replace('for variant in VARIANTS {', 'for variant in VARIANTS.into_iter().chain([800, 801, 802, 803]) {')
 main = main.replace('libc::CPU_SET(20, &mut set);', '''let cpu: usize = std::env::var("NETINDEX_CPU").unwrap_or_else(|_| "20".into()).parse().map_err(std::io::Error::other)?;
         if cpu >= libc::CPU_SETSIZE as usize { return Err(std::io::Error::other("CPU outside mask")); }
         libc::CPU_SET(cpu, &mut set);''')

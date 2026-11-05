@@ -18,12 +18,14 @@ alternating-order trials and a per-method warmup. No PGO, custom target flags,
 LTO, cache flushing or page-dropping is used. Results describe warm operation.
 
 Variants: 0 ordinary visitor, 8 existing interleaving, 800 scalar packed search,
-801 AVX-512 tail, 802 NEON tail. The host-native variant is timed; both native
+801 AVX-512 tail, 802 NEON byte-mask scan, 803 NEON packed-mask tail. The host-native variants are timed; both native
 and unavailable-ISA fallback variants participate in correctness checks.
 ASN and overlapping targets retain existing lookup paths. No cache is added.
 The AVX-512 tail uses unsigned mask comparisons for widths 1/2/4/8, and paired
 64-bit comparisons for width 16. NEON uses unsigned comparisons for widths
-1/2/4/8 and a scalar fallback for width 16. The generated visitor changes only
+1/2/4/8 and a scalar fallback for width 16. The packed-mask version narrows
+comparison bytes into four-bit masks, then uses trailing-zero count to select
+the first greater element. The generated visitor changes only
 the packed-search argument. Full targets, IDs and borrowed payloads are checked
 against original input formulas before any timing; mixed families, duplicate
 records, broad routes, empty/partial input and callback failures are checked too.
