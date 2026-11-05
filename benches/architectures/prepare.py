@@ -1,5 +1,6 @@
 """Generate an isolated architecture study; never modify production sources."""
 import hashlib
+import argparse
 import json
 import pathlib
 import shutil
@@ -7,7 +8,9 @@ import subprocess
 
 here = pathlib.Path(__file__).resolve().parent
 repo = here.parents[1]
-out = repo / 'target/architectures'
+parser = argparse.ArgumentParser()
+parser.add_argument('--output', type=pathlib.Path, default=repo / 'target/architectures')
+out = parser.parse_args().output.resolve()
 core = out / 'library'
 core.mkdir(parents=True, exist_ok=False)
 shutil.copytree(repo / 'src', core / 'src')

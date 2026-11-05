@@ -74,8 +74,10 @@ not complete the broader experiments below.
   IPv4/ASN and eligible normalized 64-bit IPv6 keys, with exact correction and
   full-search recovery. Retain workload-specific research; no default adoption.
   [Results](benches/learned/RESULTS.md).
-- [ ] **P1-08 Architectures (in progress).** Evaluate AVX-512 and NEON on actual hardware while
-  retaining portable fallbacks. Compile-only checks do not establish performance.
+- [x] **P1-08 Architectures.** Qualified AVX-512F/BW on Ryzen 9 9950X3D2
+  and NEON on native Neoverse-N2 hardware. Keep workload-dependent tails as
+  research; packed NEON is promising for hot IP lookups. Portable fallbacks pass.
+  [Results](benches/architectures/RESULTS.md).
 
 ## P1: storage and construction
 
@@ -443,9 +445,8 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-08 AVX-512/NEON qualification on actual hardware**,
-retaining portable fallbacks. P1-07 qualified guarded learned prediction as
-workload-specific research; compile-only architecture checks are not timings.
+Next in priority order: **P1-09 payload distribution**. P1-08 completed native
+AVX-512/NEON qualification; results remain workload-specific research.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
 
@@ -872,7 +873,7 @@ Clippy, serial default/all-feature tests including ignored and warning-denied
 all-feature docs pass; standalone release builds and fragments pass formatting/
 Clippy. Final packaging/link/integrity checks accompany the checkpoint.
 
-Next: **P1-08 actual-hardware AVX-512/NEON qualification**, preserving portable
+At the P1-07 checkpoint, next was **P1-08 actual-hardware AVX-512/NEON qualification**, preserving portable
 fallbacks. P2 profiling/counters/PGO/build work remains distinct from these
 portable no-PGO warm measurements. Library version remains 2.1.0; research is
 published through Git without a registry release.
@@ -881,11 +882,33 @@ Inspection retains non-inlined estimate/search boundaries, so call/result-record
 costs are included. Inlining/specialization is an unmeasured follow-up; timings
 do not establish the best possible implementation of the learned approach.
 
-### P1-08 native architecture qualification - 2026-11-05
+### P1-08 native architecture qualification - 2026-11-05 UTC
 
-Isolated AVX-512F/BW (including full-width u128) and NEON (1/2/4/8-byte;
-16-byte scalar fallback) tails are implemented under benches/architectures.
-Runtime guards, forced portable fallbacks, unsigned/alignment/kernel checks and
-the frozen complete-contract P1-01 oracle precede measurement. Native local
-AVX-512 and GitHub ARM64 qualification are in progress; no performance or
-production adoption claim is made before both receipts are reviewed.
+Completed native execution on Ryzen 9 9950X3D2 (WSL2, AVX-512F/BW, CPU 20)
+and Neoverse-N2 (GitHub ubuntu-24.04-arm, NEON/ASIMD, CPU 3). The ARM run
+[passed](https://github.com/0xARYA/netindex/actions/runs/41988692543).
+Both receipts identify 707ddb1; 25 generated files and 15 original sources per
+host reconstruct independently, with source line endings normalized. All 16
+native input hashes also match the frozen P1 exact-key/shape fixtures.
+
+68 final processes produced 4,384 timing rows, 88 full-contract prechecks and
+25,612,800 kernel comparisons. Runtime guards, unavailable-ISA and 16-byte NEON
+scalar fallbacks, unsigned boundaries, all 64 alignments, malformed columns,
+full IDs/targets/borrowed payloads, callback order/errors and mixed/empty/partial
+cases pass. Both hosts passed ten core unit tests and study Clippy. Repository
+fmt, both Clippy configurations, default/all-feature tests including ignored,
+warning-denied docs and all-feature package verification pass.
+
+AVX-512 ordinary/candidate medians: 20M uniform IPv4 176.67/142.89 ns (1.24x),
+20M uniform IPv6 291.60/318.15 ns (0.92x); the latter varies 1.01x to 0.87x by
+process. Untouched ASN control variation limits exact percentage claims.
+Packed NEON hot IP cases improve 1.14-1.16x with repeat agreement; byte scanning
+is weaker there, but faster on 20M uniform IPv6. No universal winning policy.
+Disassembly confirms unsigned vector comparisons; packed NEON reduces code
+from 292-648 to 172-196 bytes using narrowing and trailing-zero reduction.
+
+Retain research, without production/API/encoding/version changes. These are
+warm virtualized-host measurements, without PMU or bare-metal isolation. Intel,
+Apple, other ARM cores, SVE/SVE2 and cross-query AVX-512/NEON remain unmeasured.
+[Detailed results and reproducible evidence](benches/architectures/RESULTS.md).
+Next: **P1-09 payload distribution**.

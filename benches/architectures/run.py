@@ -15,6 +15,7 @@ p.add_argument('--fixtures', required=True)
 p.add_argument('--cpu', type=int)
 p.add_argument('--repeats', type=int, default=2)
 args = p.parse_args()
+started_at = time.time()
 repo = pathlib.Path(__file__).resolve().parents[2]
 out = pathlib.Path(args.output).resolve()
 out.mkdir(parents=True, exist_ok=False)
@@ -58,7 +59,7 @@ run(['lscpu'], 'lscpu.txt')
 run(['uname','-a'], 'uname.txt')
 receipt = {'revision':subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip(),
     'platform':platform.platform(),'machine':platform.machine(),'allowed_cpus':allowed,'cpu':cpu,
-    'repeats':args.repeats,'rustflags':env.get('RUSTFLAGS',''),'started_at':time.time(),
+    'repeats':args.repeats,'rustflags':env.get('RUSTFLAGS',''),'started_at':started_at,'completed_at':time.time(),
     'files':{path.relative_to(out).as_posix():hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(out.rglob('*')) if path.is_file() and 'build' not in path.relative_to(out).parts}}
 shutil.copyfile(repo/'target/architectures/prepared.json',out/'prepared.json')

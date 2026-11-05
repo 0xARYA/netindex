@@ -12,7 +12,8 @@ python3 benches/architectures/run.py --output /tmp/native-study --fixtures /tmp/
 ```
 
 Select a permitted CPU with `--cpu`; otherwise the last permitted CPU is used.
-Output and fixture directories must be fresh. Each file is privately copied
+The output directory must be fresh; fixtures are created when missing and can
+be reused. Each file is privately copied
 before mapping. Two separate processes repeat every case, each with four
 alternating-order trials and a per-method warmup. No PGO, custom target flags,
 LTO, cache flushing or page-dropping is used. Results describe warm operation.
@@ -44,4 +45,16 @@ the NEON study on `ubuntu-24.04-arm`, asserts runtime NEON availability, and
 uploads logs and receipts. Runner timings are observations on a virtualized
 host; compare controls within a host, not raw times between hosts.
 
-Status: implementation qualification in progress. The task list is authoritative.
+Native qualification is complete; see [results and limitations](RESULTS.md).
+Validate and summarize retained evidence with:
+
+```sh
+python3 benches/architectures/report.py /tmp/native-study --output /tmp/measurements.json
+python3 benches/architectures/verify_source.py /tmp/native-study
+python3 benches/architectures/inspect_asm.py /tmp/native-study --output /tmp/instructions.json
+```
+
+With the earlier `target/traffic-fixtures` and `target/shape-fixtures` retained,
+`verify_inputs.py NATIVE_OUTPUT [SECOND_NATIVE_OUTPUT]` also checks that both
+hosts used precisely the earlier P1 bytes. Reproduce against the study revision
+in the results; later production-source changes invalidate its snapshot.

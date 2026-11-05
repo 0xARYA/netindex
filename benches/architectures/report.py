@@ -22,6 +22,7 @@ kernel = collections.defaultdict(lambda: collections.defaultdict(list))
 coordinates = set()
 for path in sorted(root.glob('*.jsonl')):
     repeat = int(path.stem.rsplit('-r',1)[1])
+    prechecks = {}
     for line in path.read_text().splitlines():
         row = json.loads(line)
         phase = row['phase']
@@ -29,11 +30,17 @@ for path in sorted(root.glob('*.jsonl')):
             assert row['full_assertions_checked'] == row['records']
             assert row['borrowed_pointer_parity'] and row['partial_and_empty_batches']
             checks.append(row)
+            prechecks[row['traffic']] = row
         elif phase == 'kernel_checked':
             assert row['alignments'] == 64 and row['forced_portable_fallback']
             assert row['avx512'] if receipt['machine']=='x86_64' else row['neon']
             kernel_checks.append(row)
         elif phase == 'measure':
+            checked = prechecks[row['traffic']]
+            passes = 256 if checked['records']==65536 else 16
+            assert row['queries']==checked['corpus_queries']*passes
+            assert row['matches']==checked['matches']*passes
+            assert row['checksum']==(checked['checksum']*passes) % (1<<64)
             key = (row['scenario'], int(path.stem.rsplit('-r',1)[0].rsplit('-',1)[1]), row['traffic'])
             coordinate = (phase, repeat, key, row['trial'],row['lanes'])
             assert coordinate not in coordinates
@@ -61,7 +68,8 @@ for variants in kernel.values():
     assert set(variants)==expected_modes
     assert all(len(values)==4*receipt['repeats'] for values in variants.values())
 def table(groups):
-    return [{'case':list(key),'variants':{str(v):{'median_ns':statistics.median(ns), 'min_ns':min(ns),'max_ns':max(ns)}
+    return [{'case':list(key),'variants':{str(v):{'median_ns':statistics.median(ns), 'min_ns':min(ns),'max_ns':max(ns),
+        'process_medians_ns':[statistics.median(ns[i:i+4]) for i in range(0,len(ns),4)]}
         for v,ns in sorted(variants.items())}} for key,variants in sorted(groups.items())]
 output = {'machine':receipt['machine'],'cpu':receipt['cpu'],'revision':receipt['revision'],
     'receipt_sha256':hashlib.sha256((root/'receipt.json').read_bytes()).hexdigest(),

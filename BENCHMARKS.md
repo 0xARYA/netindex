@@ -313,9 +313,11 @@ checks. Host activity caused timing variation; this measures string-pool opening
 not complete database startup or lookup. Run the codec benchmark with `^utf8/`,
 with and without `simd`, to reproduce. [Measurements](benches/results/2026-10-08-simd-followup.json).
 
-AVX-512 searches and an additional vectorized ordering pass did not establish
-repeatable gains. A NEON search prototype compiled for ARM64 but was not run;
-the optional UTF-8 dependency supplies ARM64 acceleration independently.
+At that checkpoint, AVX-512 searches and an additional vectorized ordering pass
+did not establish repeatable gains. The NEON search prototype was compile-only;
+the optional UTF-8 dependency supplies ARM64 acceleration independently. The
+later [P1-08 qualification](benches/architectures/RESULTS.md) executes new packed
+search prototypes on native AVX-512 and NEON hardware.
 
 ## External I/O, all packed widths, and application build tuning (2026-11-04)
 
@@ -395,3 +397,15 @@ actual cache/build costs, byte-for-byte new fixture reproduction and linked
 model assembly. Large uniformly spaced keys benefit; small nonlinear/hot cases
 and unmeasured large nonlinear/provider behavior prevent default adoption.
 The 128 MiB bound covers additional vector capacities, not total reader/RSS.
+
+### Native AVX-512 and NEON qualification (P1-08)
+
+[Study/reproduction](benches/architectures/README.md) compares runtime-guarded
+AVX-512F/BW tails and two NEON mask reductions with ordinary, scalar and
+interleaved controls. [Results](benches/architectures/RESULTS.md) retain native
+Ryzen 9 9950X3D2 and Neoverse-N2 evidence: 68 processes, 4,384 timings, unchanged
+input hashes, full result/error checks, unsigned/alignment/kernel checks and
+linked disassembly. AVX-512 has gains and regressions; packed NEON improves
+tested hot-IP cases 1.14-1.16x, with other workload tradeoffs. These warm,
+virtualized-host results remain research and do not qualify all microarchitectures
+or justify a blanket production policy.
