@@ -214,8 +214,8 @@ impl ExternalBuilder {
     /// Enable a write-back cache for the temporary payload table, before pushing rows.
     ///
     /// The cache is allocated only if the table is needed. The limit covers page
-    /// storage, tags and grouped fingerprints, separately from the payload-key cache and temporary disk
-    /// budget. It excludes allocator overhead and the operating system's file cache.
+    /// storage, tags and grouped fingerprints, separately from the payload-key
+    /// cache and temporary disk budget. It excludes allocator overhead and the operating system's file cache.
     /// Zero (the default) uses uncached positioned I/O.
     ///
     /// # Errors

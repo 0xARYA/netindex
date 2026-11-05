@@ -82,43 +82,14 @@ impl DiskTable {
         reader: &File,
         end: u64,
     ) -> Result<Option<(u64, u64, u32)>, Error> {
+        if self.groups.enabled() {
+            return self.find_grouped_reference(hash, payload, pool, reader, end);
+        }
         let Some(file) = self.file.as_mut() else {
             return Ok(None);
         };
 
         let mut position = hash & (self.capacity - 1);
-        if self.groups.enabled() {
-            let mut remaining = self.capacity;
-            while remaining > 0 {
-                let probe = self.groups.probe(position, hash)?;
-                let mut candidates = probe.candidates;
-                while candidates != 0 {
-                    let lane = candidates.trailing_zeros();
-                    candidates &= candidates - 1;
-                    let cell = self.pages.read(
-                        file.as_file_mut(),
-                        probe.base + u64::from(lane),
-                        self.cell_bytes,
-                    )?;
-                    let length = cell
-                        .length_plus_one
-                        .checked_sub(1)
-                        .ok_or(Error::Invalid("payload table fingerprint"))?;
-                    if cell.hash == hash
-                        && length == payload.len() as u64
-                        && equals(pool, reader, end, cell.offset, payload)?
-                    {
-                        return Ok(Some((cell.offset, length, cell.ordinal as u32)));
-                    }
-                }
-                if probe.empty.is_some() {
-                    return Ok(None);
-                }
-                remaining = remaining.saturating_sub(probe.count);
-                position = (probe.base + 16) & (self.capacity - 1);
-            }
-            return Err(Error::Invalid("full payload table"));
-        }
         for _ in 0..self.capacity {
             let cell = self
                 .pages
@@ -136,6 +107,49 @@ impl DiskTable {
             position = (position + 1) & (self.capacity - 1);
         }
 
+        Err(Error::Invalid("full payload table"))
+    }
+
+    #[inline(never)]
+    fn find_grouped_reference(
+        &mut self,
+        hash: u64,
+        payload: &[u8],
+        pool: &mut BufWriter<File>,
+        reader: &File,
+        end: u64,
+    ) -> Result<Option<(u64, u64, u32)>, Error> {
+        let file = self.file.as_mut().ok_or(Error::Invalid("payload table"))?;
+        let mut position = hash & (self.capacity - 1);
+        let mut remaining = self.capacity;
+        while remaining > 0 {
+            let probe = self.groups.probe(position, hash)?;
+            let mut candidates = probe.candidates;
+            while candidates != 0 {
+                let lane = candidates.trailing_zeros();
+                candidates &= candidates - 1;
+                let cell = self.pages.read(
+                    file.as_file_mut(),
+                    probe.base + u64::from(lane),
+                    self.cell_bytes,
+                )?;
+                let length = cell
+                    .length_plus_one
+                    .checked_sub(1)
+                    .ok_or(Error::Invalid("payload table fingerprint"))?;
+                if cell.hash == hash
+                    && length == payload.len() as u64
+                    && equals(pool, reader, end, cell.offset, payload)?
+                {
+                    return Ok(Some((cell.offset, length, cell.ordinal as u32)));
+                }
+            }
+            if probe.empty.is_some() {
+                return Ok(None);
+            }
+            remaining = remaining.saturating_sub(probe.count);
+            position = (position + probe.count) & (self.capacity - 1);
+        }
         Err(Error::Invalid("full payload table"))
     }
 
@@ -480,7 +494,7 @@ fn place(
                 return groups.set(position, cell.hash);
             }
             remaining = remaining.saturating_sub(probe.count);
-            position = (probe.base + 16) & (capacity - 1);
+            position = (position + probe.count) & (capacity - 1);
         }
         return Err(Error::Invalid("full payload table"));
     }
@@ -684,6 +698,68 @@ mod tests {
         assert_eq!(budget.used, 3072);
         table.close(&mut budget).unwrap();
         assert_eq!(budget.used, 0);
+    }
+
+    #[test]
+    fn grouped_collisions_wrap_grow_and_fall_back_with_exact_payload_equality() {
+        let directory = tempfile::tempdir().unwrap();
+        for cached in [false, true] {
+            for compact in [false, true] {
+                let mut table = if compact {
+                    DiskTable::with_references()
+                } else {
+                    DiskTable::new()
+                };
+                let cache_budget = if cached { size_of::<Page>() + 512 } else { 0 };
+                table.set_cache_budget(cache_budget);
+                let payload_file = NamedTempFile::new().unwrap();
+                let mut pool = BufWriter::new(payload_file.reopen().unwrap());
+                let reader = payload_file.reopen().unwrap();
+                let mut budget = DiskBudget {
+                    used: 0,
+                    peak: 0,
+                    limit: 1 << 20,
+                };
+                for id in 0..300u32 {
+                    // All hashes have the same fingerprint and initial bucket.
+                    let hash = u64::MAX - (u64::from(id % 4) << 10);
+                    let payload = id.to_le_bytes();
+                    assert_eq!(
+                        table
+                            .find_reference(hash, &payload, &mut pool, &reader, u64::from(id) * 4)
+                            .unwrap(),
+                        None
+                    );
+                    table
+                        .insert_reference(
+                            hash,
+                            (u64::from(id) * 4, 4, id),
+                            directory.path(),
+                            &mut budget,
+                        )
+                        .unwrap();
+                    pool.write_all(&payload).unwrap();
+                    assert!(table.cache_bytes() <= cache_budget);
+                    if cached && id == 200 {
+                        assert!(table.groups.enabled());
+                    }
+                }
+                // A one-page cache leaves only 512 bytes for fingerprints. At
+                // 1024 cells the directory is dropped and ordinary probing resumes.
+                assert!(!table.groups.enabled());
+                for id in (0..300u32).rev() {
+                    let hash = u64::MAX - (u64::from(id % 4) << 10);
+                    assert_eq!(
+                        table
+                            .find_reference(hash, &id.to_le_bytes(), &mut pool, &reader, 1200)
+                            .unwrap(),
+                        Some((u64::from(id) * 4, 4, if compact { id } else { 0 }))
+                    );
+                }
+                table.close(&mut budget).unwrap();
+                assert_eq!(budget.used, 0);
+            }
+        }
     }
 
     #[test]
