@@ -15,6 +15,8 @@ use super::{DiskBudget, ExternalBuilder, dedup::DiskTable, positioned, temporary
 pub(super) struct Partitioned {
     parts: Vec<Spill>,
     state: RandomState,
+    #[cfg(test)]
+    forced_hash: Option<u64>,
 }
 
 struct Spill {
@@ -103,6 +105,8 @@ impl Partitioned {
         Ok(Self {
             parts,
             state: RandomState::new(),
+            #[cfg(test)]
+            forced_hash: None,
         })
     }
 
@@ -112,7 +116,10 @@ impl Partitioned {
         payload: &[u8],
         budget: &mut DiskBudget,
     ) -> Result<(), Error> {
-        self.push_hashed(id, payload, self.state.hash_one(payload), budget)
+        let hash = self.state.hash_one(payload);
+        #[cfg(test)]
+        let hash = self.forced_hash.unwrap_or(hash);
+        self.push_hashed(id, payload, hash, budget)
     }
 
     fn push_hashed(
@@ -228,7 +235,12 @@ fn process(
             }
         } else {
             table
-                .find_file_reference(hash, (&source, position, length), &mut output, &comparison)?
+                .find_file_reference(
+                    hash,
+                    (&source, position, length),
+                    &mut output,
+                    (&comparison, end),
+                )?
                 .map(|(offset, length, ordinal)| Span {
                     offset,
                     length,
@@ -563,4 +575,54 @@ fn u64_at(bytes: &[u8], offset: usize) -> Result<u64, Error> {
         word.try_into()
             .map_err(|_| Error::Invalid("partition word"))?,
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{Builder, ExternalOptions, Limits, Target};
+    use std::io::Cursor;
+
+    #[test]
+    fn full_hash_collisions_and_large_last_byte_differences_preserve_first_seen_order() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut actual = ExternalBuilder::new_partitioned(
+            directory.path(),
+            Limits::default(),
+            ExternalOptions {
+                run_records: 3,
+                payload_cache_bytes: 0,
+                temporary_bytes: 1 << 24,
+            },
+            4,
+        )
+        .unwrap();
+        actual.partitions.as_mut().unwrap().forced_hash = Some(7);
+        let mut expected = Builder::new(Limits::default());
+        for id in 0..128u32 {
+            let key = (id % 17) as u8;
+            let mut payload = vec![0x5a; if key & 1 == 0 { 16_385 } else { 65 }];
+            *payload.last_mut().unwrap() = key;
+            let target = Target::Asn(id + 1);
+            actual.push(target, &payload).unwrap();
+            expected.push(target, &payload).unwrap();
+        }
+        let mut output = Cursor::new(Vec::new());
+        actual.write_to(&mut output, b"collision").unwrap();
+        assert_eq!(
+            output.into_inner(),
+            expected.into_bytes(b"collision").unwrap()
+        );
+        assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
+    }
+
+    #[test]
+    fn truncated_headers_and_payloads_keep_the_io_cause() {
+        assert!(
+            matches!(read_header::<20>(&mut Cursor::new(b"x")), Err(Error::TemporaryIo { operation: "read partition header", error }) if error.kind() == io::ErrorKind::UnexpectedEof)
+        );
+        assert!(
+            matches!(copy_bytes(&mut Cursor::new(b"x"), &mut Vec::new(), 2), Err(Error::TemporaryIo { operation: "read partition payload", error }) if error.kind() == io::ErrorKind::UnexpectedEof)
+        );
+    }
 }

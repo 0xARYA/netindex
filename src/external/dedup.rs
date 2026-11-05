@@ -110,7 +110,7 @@ impl DiskTable {
         hash: u64,
         source: (&File, u64, u64),
         pool: &mut BufWriter<File>,
-        reader: &File,
+        reader: (&File, u64),
     ) -> Result<Option<(u64, u64, u32)>, Error> {
         let Some(file) = self.file.as_mut() else {
             return Ok(None);
@@ -122,11 +122,14 @@ impl DiskTable {
             if cell.length_plus_one == 0 {
                 return Ok(None);
             }
-            if cell.hash == hash
-                && cell.length_plus_one - 1 == source.2
-                && file_equals(source, reader, cell.offset)?
-            {
-                return Ok(Some((cell.offset, source.2, cell.ordinal as u32)));
+            if cell.hash == hash && cell.length_plus_one - 1 == source.2 {
+                cell.offset
+                    .checked_add(source.2)
+                    .filter(|&end| end <= reader.1)
+                    .ok_or(Error::Invalid("partition comparison span"))?;
+                if file_equals(source, reader.0, cell.offset)? {
+                    return Ok(Some((cell.offset, source.2, cell.ordinal as u32)));
+                }
             }
             position = (position + 1) & (self.capacity - 1);
         }
