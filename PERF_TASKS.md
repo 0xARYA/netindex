@@ -65,8 +65,11 @@ not complete the broader experiments below.
   factors and specialized B+ count/AVX2 walks, with physical-alignment, capacity
   and linked-code checks. Research candidates retained without default adoption.
   [Results](benches/traversal/RESULTS.md).
-- [ ] **P1-06 Adaptive search.** Choose routing/search strategies under an explicit
-  memory budget, extending the current packed/interval split.
+- [x] **P1-06 Adaptive search.** Qualified candidate-only cache admission under
+  0/1/128 MiB budgets, native IPv4/directory routing and two sampled policies.
+  Rejected the tested selector for production after measured regressions; budget
+  enforcement and negative evidence remain reproducible research.
+  [Results](benches/adaptive/RESULTS.md).
 - [ ] **P1-07 Learned fences.** Start with IPv4/64-bit keys and exact bounded
   search; evaluate RadixSpline-style prediction with a correctness fallback.
 - [ ] **P1-08 Architectures.** Evaluate AVX-512 and NEON on actual hardware while
@@ -438,8 +441,9 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-06 adaptive search under an explicit memory budget**,
-preserving complete all-match semantics and prior comparators.
+Next in priority order: **P1-07 learned fences with exact bounded search and
+correctness fallback**, preserving complete all-match semantics. P1-06 qualified
+explicit budgets and rejected the tested cache-presence/prefix policy.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
 
@@ -694,7 +698,7 @@ PGO/LTO, cold/>RAM/native-provider capacity or other-architecture result is clai
 Decision: retain prefetched arithmetic IP traversal, aligned candidate hot-ASN
 and specialized B+ paths as workload-specific candidates. Regressions, extra RAM,
 repeat drift, synthetic warm corpora and host uncertainty prevent automatic
-adoption. Next: **P1-06 adaptive search under an explicit memory budget**, with
+adoption. Follow-through: P1-06 qualified explicit memory budgets, with
 native-width IPv4 fences, directory-aware forests and measured selection policy.
 Post-hoc fastest variants are comparison references, not an implemented policy.
 
@@ -705,3 +709,80 @@ docs passed. Standalone default/SIMD release Clippy, harness/fragment formatting
 Python/JSON parsing and local documentation links pass. Local package verification
 is checked on this checkpoint; hosted CI is tracked on the publishing commit.
 No registry release.
+
+
+### 2026-11-04: P1-06 adaptive search and explicit cache budgets
+
+[Study/reproduction](benches/adaptive/README.md),
+[results](benches/adaptive/RESULTS.md),
+[primary](benches/results/2026-11-04-adaptive.json),
+[fresh repeats](benches/results/2026-11-04-adaptive-repeat.json),
+[assembly](benches/results/2026-11-04-adaptive-asm.json), and
+[verification](benches/results/2026-11-04-adaptive-verification.json).
+
+Completed the isolated budget/selector experiment: 96 primary processes plus
+18 fresh 20M repeats, 6,624 timings. Budgets 0/1/128 MiB apply to aggregate
+additional cache vector element capacities. Admit native u32 IPv4 fences, u128
+IPv6 fences, then ASN B+ leaves/nodes/level ranges; skip zero/unaffordable
+candidates before allocating. Check actual capacities before publication and
+retain typed errors/idempotent same-budget preparation. No comparison mirrors
+coexist. Ordinary directory/validation, mapping, object/allocator overhead and
+RSS are outside this explicit additional-cache budget.
+
+Controls are ordinary visitor, prior cross-query AVX2, admitted global caches,
+and IPv4-directory-aware/native-width fences with count ASN nodes. A deterministic
+policy uses batch length, first 32 family/span and admitted cache presence, with
+ordinary/cross-query fallbacks. Measure whole-corpus decisions and requests of
+at most 32 queries, including sampling/dispatch/rebasing overhead. Four-trial
+forward/reverse timings preserve the original corpora and add late-wide/late-hot
+controls that reverse locality after the sampled prefix. No traffic labels or
+timing feedback inform selection. Early exploratory five-variant logs are
+excluded; final receipts contain the complete six-variant matrix and repeats.
+
+Decision: reject the tested cache-presence/prefix heuristic for production.
+Across 144 20M workload/build/budget/process combinations, whole-request policy
+was within 10% of the fastest observed fixed-control median in 73/144; request32
+policy in 111/144. Worst ratios to that optimistic fixed comparator were 3.11x
+(whole-request ASN late-wide) and 2.48x (request32 IPv4 uniform). Those medians
+are not significance claims. Cache presence does not establish benefit; a larger
+budget does not imply faster queries. Preserve the explicit budget mechanism
+and failed selector as research, with no production/API/format/default change.
+
+Large IPv4 caches use 312,500 bytes and build in 0.221-0.252 ms; large IPv6 use
+1,250,000 bytes and 0.401-0.505 ms when admitted. Large ASN uses 85,333,440 bytes
+(81.38 MiB) and 36.734-64.844 ms. The 1 MiB budget admits large IPv4 but skips
+large IPv6/ASN; the zero budget admits no arrays. Build ranges span four
+primary/repeat default/SIMD processes and exclude normal mapping/validation.
+Actual capacities satisfy every budget. These are warm one-host synthetic
+throughput/startup measurements, not cold/>RAM, RSS, native-provider, optimal
+admission or universal-win evidence.
+
+All original assertions and complete independent original-input oracles pass:
+ordered IDs/targets, duplicates, borrowed bytes/pointers, partial/empty/mixed
+batches, broad-route fallback and typed callback-error prefixes. Checks include
+31/32/33-query policy boundaries and forced scalar paths. Eighteen generated-core
+tests and lib/test Clippy pass. Fresh shadow preparation reproduces every
+recorded generated source; header-derived aggregate admission, full-request
+policy traces, coordinates, result checksums and source/input/executable/raw-log
+hashes agree. Frozen earlier studies remain unchanged.
+
+Linked assembly retains six bodies per executable: the 64-byte chooser, request
+planners and specialized scalar/AVX2 ASN walks. Five generic execute summaries
+retain scaled-access examples; inlined IP searches are not isolated from other
+variants, so those examples do not establish width-only effects.
+Static counts establish emitted mechanisms, not runtime cost or causality;
+matching WSL hardware counters are unavailable. More representative sampling,
+batch sizes, admission economics, startup amortization and RSS/cold qualification
+are needed before a production selector. Next: **P1-07 learned fences** under
+exact bounded search and correctness fallback. P2 profiling/PGO qualification
+remains distinct from this no-PGO portable-release experiment.
+
+Verification: Rust 1.95 root formatting, default/all-feature all-target Clippy
+with warnings denied, default tests and all-feature serial tests including
+ignored, warning-denied all-feature docs and all-feature package verification
+passed. Both standalone release builds passed formatting/Clippy; generated-core
+18 tests and lib/test Clippy passed. Python/JSON syntax, documentation links,
+receipt reconstruction and diff checks passed. Local checks are distinct from
+remote CI; hardware counter profiling remains unavailable in this WSL kernel.
+Library version remains 2.1.0; this checkpoint publishes research through Git,
+without a registry release or public behavior change.

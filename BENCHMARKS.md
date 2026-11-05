@@ -374,3 +374,13 @@ group accessors, plus specialized B+ count/ordered walks.
 actual pointer alignment, capacity/build accounting and bounded hot-path assembly.
 These warm RAM experiments preserve full result/payload/error semantics; optional
 memory-budgeted deployment and directory-aware routing remain P1-06 work.
+
+### Adaptive search with an explicit additional-cache budget (P1-06)
+
+[Study/reproduction](benches/adaptive/README.md) runs candidate-only caches under
+0/1/128 MiB limits, with native IPv4/directory routing and whole/request32 policy
+controls. [Results](benches/adaptive/RESULTS.md) retain 114 processes / 6,624
+timings, fresh-process repeats, actual capacities/build costs, complete output/
+error checks and linked policy/native-search assembly. The tested cache-presence/
+prefix selector is rejected for production after measured regressions. The budget
+covers additional vector element capacity, not total reader memory or RSS.

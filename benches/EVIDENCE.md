@@ -98,3 +98,14 @@ a 512 MiB logical budget; capacity/build costs are distinct from RSS/candidate-o
 startup. Linked factor walks verify eight prefetched specializations per build;
 specialized AVX2 walks inline node comparisons. Hardware counters are unavailable.
 Mixed workload results retain research candidates without a default-policy change.
+
+[P1-06 budgeted adaptive search](adaptive/RESULTS.md) adds 114 processes / 6,624
+timings with candidate-only 0/1/128 MiB budgets. Native IPv4/directory, global
+caches, prior SIMD and ordinary controls qualify whole/request32 prefix policies.
+Complete oracle/payload/error checks, 18 core tests, fresh prepared-source
+reconstruction, header-derived aggregate admission/capacity and full-request
+policy traces pass. Actual cache/build costs exclude ordinary reader/allocator/
+RSS memory. Linked chooser/planner/ASN bodies and inlined-search summaries and unavailable hardware
+counters are recorded. Reject the tested cache-presence/prefix selector for
+production; larger budgets did not imply faster queries. Earlier frozen studies
+and production source/API/encoding remain unchanged.
