@@ -1,5 +1,5 @@
 //! Replay an immutable index through the external builder, retaining every assertion.
-//! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|memory|memory-legacy] [DISK_CACHE_BYTES]. Files must remain immutable while mapped.
+//! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|partitioned|memory|memory-legacy] [CACHE_BYTES_OR_PARTITIONS]. Files must remain immutable while mapped.
 
 #[cfg(all(feature = "external-sort", feature = "mmap"))]
 #[expect(
@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let arguments: Vec<_> = env::args_os().skip(1).collect();
     let [input, output, temporary, ..] = arguments.as_slice() else {
-        return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|memory|memory-legacy] [DISK_CACHE_BYTES]".into());
+        return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|partitioned|memory|memory-legacy] [CACHE_BYTES_OR_PARTITIONS]".into());
     };
     let mode = arguments
         .get(3)
@@ -33,12 +33,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .map_err(|_| "invalid disk cache budget")
         })
         .transpose()?
-        .unwrap_or(0);
+        .unwrap_or(if mode == "partitioned" { 16 } else { 0 });
     if arguments.len() > 5
-        || (disk_budget != 0 && !mode.starts_with("external"))
+        || (disk_budget != 0 && !mode.starts_with("external") && mode != "partitioned")
         || !matches!(
             mode,
-            "external" | "external-legacy" | "memory" | "memory-legacy"
+            "external" | "external-legacy" | "partitioned" | "memory" | "memory-legacy"
         )
     {
         return Err("invalid build mode".into());
@@ -82,13 +82,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .create_new(true)
         .open(output)?;
     let started = Instant::now();
-    let (stats, cache_bytes) = if mode.starts_with("external") {
+    let (stats, cache_bytes) = if mode.starts_with("external") || mode == "partitioned" {
         let mut builder = if mode == "external-legacy" {
             ExternalBuilder::new_legacy(directory.path(), limits, options)?
+        } else if mode == "partitioned" {
+            ExternalBuilder::new_partitioned(directory.path(), limits, options, disk_budget)?
         } else {
             ExternalBuilder::new(directory.path(), limits, options)?
         };
-        builder.set_disk_table_cache(disk_budget)?;
+        if mode != "partitioned" {
+            builder.set_disk_table_cache(disk_budget)?;
+        }
         for row in &assertions {
             builder.push(row.target, row.payload)?;
         }
@@ -117,7 +121,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         serde_json::json!({"phase":"built", "build_ms":build_ms,
         "mode":mode,"records":assertions.len(),"artifact_bytes":artifact_bytes,
         "temporary_peak_bytes":stats.map(|stats| stats.temporary_peak_bytes),
-        "disk_cache_budget":disk_budget,"disk_cache_bytes":cache_bytes,
+        "disk_cache_budget":if mode == "partitioned" {0} else {disk_budget},
+        "partitions":if mode == "partitioned" {Some(disk_budget)} else {None},"disk_cache_bytes":cache_bytes,
         "payload_cache_bytes":stats.map(|stats| stats.payload_cache_bytes)})
     );
 

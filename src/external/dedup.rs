@@ -105,6 +105,34 @@ impl DiskTable {
         Err(Error::Invalid("full payload table"))
     }
 
+    pub(super) fn find_file_reference(
+        &mut self,
+        hash: u64,
+        source: (&File, u64, u64),
+        pool: &mut BufWriter<File>,
+        reader: &File,
+    ) -> Result<Option<(u64, u64, u32)>, Error> {
+        let Some(file) = self.file.as_mut() else {
+            return Ok(None);
+        };
+        pool.flush().map_err(temporary("flush partition values"))?;
+        let mut position = hash & (self.capacity - 1);
+        for _ in 0..self.capacity {
+            let cell = Cell::at(file.as_file_mut(), position, self.cell_bytes)?;
+            if cell.length_plus_one == 0 {
+                return Ok(None);
+            }
+            if cell.hash == hash
+                && cell.length_plus_one - 1 == source.2
+                && file_equals(source, reader, cell.offset)?
+            {
+                return Ok(Some((cell.offset, source.2, cell.ordinal as u32)));
+            }
+            position = (position + 1) & (self.capacity - 1);
+        }
+        Err(Error::Invalid("full payload table"))
+    }
+
     #[cfg(test)]
     fn insert(
         &mut self,
@@ -435,6 +463,30 @@ fn place(
         position = (position + 1) & (capacity - 1);
     }
     Err(Error::Invalid("full payload table"))
+}
+
+fn file_equals(source: (&File, u64, u64), pool: &File, offset: u64) -> Result<bool, Error> {
+    let mut a = [0; 8192];
+    let mut b = [0; 8192];
+    let mut position = 0;
+    while position < source.2 {
+        let count = (source.2 - position).min(a.len() as u64) as usize;
+        let a = a
+            .get_mut(..count)
+            .ok_or(Error::Invalid("partition comparison"))?;
+        let b = b
+            .get_mut(..count)
+            .ok_or(Error::Invalid("partition comparison"))?;
+        positioned::read_exact(source.0, a, source.1 + position)
+            .map_err(temporary("read staged payload"))?;
+        positioned::read_exact(pool, b, offset + position)
+            .map_err(temporary("compare partition values"))?;
+        if a != b {
+            return Ok(false);
+        }
+        position += count as u64;
+    }
+    Ok(true)
 }
 
 fn equals(

@@ -19,6 +19,7 @@ use runs::{Row, Sorter};
 
 mod dedup;
 mod encode;
+mod partitioned;
 mod positioned;
 mod runs;
 
@@ -106,6 +107,7 @@ pub struct ExternalBuilder {
     references: Option<References>,
     cache_bytes: usize,
     disk_table: DiskTable,
+    partitions: Option<partitioned::Partitioned>,
     payload_bytes: usize,
     fixed_length: Option<usize>,
     counts: [usize; 3],
@@ -143,6 +145,29 @@ impl ExternalBuilder {
         options: ExternalOptions,
     ) -> Result<Self, Error> {
         Self::create(directory, limits, options, false)
+    }
+
+    /// Stage payloads into hash partitions and deduplicate them at finalization.
+    ///
+    /// Uses the payload-key budget independently for each partition, with a disk
+    /// fallback for keys that do not fit. Accepts a power-of-two partition count
+    /// from 1 through 64. Finalization restores original IDs and first-seen payload
+    /// order. Unique-payload byte limits may be reported at finalization.
+    ///
+    /// # Errors
+    /// Returns the ordinary constructor errors or an invalid partition count.
+    pub fn new_partitioned(
+        directory: &Path,
+        limits: Limits,
+        options: ExternalOptions,
+        partitions: usize,
+    ) -> Result<Self, Error> {
+        let mut builder = Self::new(directory, limits, options)?;
+        builder.partitions = Some(partitioned::Partitioned::new(
+            builder.directory.path(),
+            partitions,
+        )?);
+        Ok(builder)
     }
 
     fn create(
@@ -195,6 +220,7 @@ impl ExternalBuilder {
             } else {
                 DiskTable::new()
             },
+            partitions: None,
             payload_bytes: 0,
             fixed_length: None,
             counts: [0; 3],
@@ -221,6 +247,9 @@ impl ExternalBuilder {
     /// Fails if a row has already been pushed or the builder is invalid.
     /// A later push reports cache allocation or I/O failures.
     pub fn set_disk_table_cache(&mut self, bytes: usize) -> Result<(), Error> {
+        if self.partitions.is_some() && bytes != 0 {
+            return Err(Error::Invalid("partitioned table cache"));
+        }
         if self.records != 0 || self.failed {
             return Err(Error::Invalid("configure disk table cache before pushing"));
         }
@@ -272,6 +301,9 @@ impl ExternalBuilder {
             return Err(Error::Invalid("failed external builder"));
         }
 
+        if let Some(partitions) = self.partitions.take() {
+            partitions.finish(&mut self)?;
+        }
         self.cache = HashMap::new();
         self.disk_table.close(&mut self.budget)?;
         self.slots
@@ -382,6 +414,23 @@ impl ExternalBuilder {
             .get_mut(usize::from(row.section))
             .ok_or(Error::Invalid("temporary section"))?;
         *count = count.checked_add(1).ok_or(Error::Limit("records"))?;
+
+        if let Some(partitions) = &mut self.partitions {
+            Layout::new(counts, 0, payload.len(), self.limits)?;
+            self.sorter
+                .as_mut()
+                .ok_or(Error::Invalid("finished external builder"))?
+                .push(row, self.directory.path(), &mut self.budget)?;
+            partitions.push(id, payload, &mut self.budget)?;
+            self.fixed_length = if self.records == 0 {
+                Some(payload.len())
+            } else {
+                self.fixed_length.filter(|&length| length == payload.len())
+            };
+            self.counts = counts;
+            self.records += 1;
+            return Ok(());
+        }
 
         let hash = self.disk_table.hash(payload);
         let existing = match self.cache.get(payload).copied() {
