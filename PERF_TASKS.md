@@ -54,7 +54,9 @@ not complete the broader experiments below.
 - [x] **P1-02 SIMD across queries.** Qualified AVX2 ASN/fence prototypes, native
   eight-lane u32 ASN, scalar fallbacks and existing tail-SIMD controls. Research
   retained without default adoption. [Results](benches/cross_query/RESULTS.md).
-- [ ] **P1-03 Eytzinger.** Compare fence layouts with the sorted baseline.
+- [x] **P1-03 Eytzinger.** Qualified sorted/Eytzinger RAM mirrors with rank maps,
+  startup/memory accounting and prior interleaving/SIMD controls. Research only.
+  [Results](benches/eytzinger/RESULTS.md).
 - [ ] **P1-04 Flat B+ tree.** Prototype PlanB-inspired node search; preserve the
   declared query contract rather than importing single-result LPM assumptions.
 - [ ] **P1-05 Traversal.** Measure prefetching and branchless traversal separately
@@ -432,8 +434,8 @@ budget) produced no accepted result receipt. The final positive-ASN fixture uses
 a two-million-assertion budget to include overlapping parents and was rebuilt
 and remeasured in full.
 
-Next in priority order: **P1-03 Eytzinger fence layouts**, retaining ordinary
-scalar, interleaving and cross-query SIMD comparators.
+Next in priority order: **P1-04 flat B+ tree / PlanB-inspired node search**,
+preserving complete all-match semantics and prior comparators.
 P2 assembly/counters/PGO/build qualification still applies to promising variants;
 P0 completion does not complete the full optimization queue.
 
@@ -497,7 +499,8 @@ Matching perf tooling is unavailable for this WSL kernel. Static inspection is
 not runtime counter evidence. Large-uniform benefits coexist with hot/small
 regressions and timing variation; retain research only, with no library source,
 format, API or release-policy change. No universal-win claim or adaptive dispatch
-policy follows. Next: P1-03 Eytzinger fence layouts; P1-06 owns adaptive selection.
+policy follows. Follow-through: P1-03 Eytzinger fence layouts; P1-06 owns
+adaptive selection.
 
 Fresh default-build four-trial medians: IPv6 vector-8 uniform 162.7 versus
 scalar 270.8 ns/query; native-u32 ASN uniform 89.8 versus 155.6. Corresponding
@@ -512,3 +515,43 @@ and warnings-denied docs passed. Standalone default/SIMD release Clippy, harness
 fragment formatting, twelve final generated-core tests, generated-core lib/test
 Clippy and receipt/shadow-source verification passed. Local packaging is checked
 on this checkpoint; hosted CI is tracked separately on its publishing commit.
+
+### P1-03 completed: Eytzinger RAM mirrors (2026-11-04)
+
+[Results and decision](benches/eytzinger/RESULTS.md): 38 processes and 1,792
+measurements compare ordinary sorted encoded visits, prior interleaving/SIMD,
+key-only sorted mirrors, candidate-tracking Eytzinger and arithmetic/path-recovery
+Eytzinger. Packed-tail/decoding semantics stay intact; sorted/heap mirrors use
+global fences while original IPv4 paths retain their directory. Comparisons with
+the sorted mirror distinguish layout from copying/density/routing changes.
+
+Fresh default 20M ASN: candidate uniform 198.4 versus sorted mirror 260.8,
+ordinary 277.8 and prior SIMD 109.1 ns/query; hot candidate 18.4 versus ordinary
+22.5. Heap keys/rank maps cost 152.588 MiB, or 228.882 MiB with the sorted control;
+combined-cache construction is about 106-215 ms across these ASN runs. Small
+ASN controls favor candidate tracking but use a fixed, reused 256-query corpus.
+Fresh SIMD IPv4 arithmetic global search is 265.1 versus ordinary 105.4 ns/query.
+Retain research only; no default, public API, file-format or release-policy change.
+
+Initial timings were interrupted by storage I/O failure/WSL shutdown and rejected.
+After recovery, the entire primary matrix and all six large fresh-process cases
+were rerun. Receipts contain post-recovery measurements only. Original assertions,
+ordered targets/IDs/payloads/pointers, duplicates, empty/partial groups and typed
+callback errors pass. Thirteen core tests include linear unsigned-boundary and
+incomplete-tree oracles. Shadow preparation, file/input/executable/log hashes,
+trial grids, derived timing/count totals and header-derived cache capacities pass.
+
+Linked-code inspection retains both key-width helper bodies: u32 arithmetic uses
+SETB/LEA child calculation and NOT/TZCNT/shift recovery, with loop/rank-check
+branches. Static counts are not runtime counter evidence; matching WSL perf
+tooling is unavailable. P1-05 owns prefetch/traversal/alignment experiments; P1-06
+can evaluate directory-preserving forests, computed rank maps and bounded cache
+selection. Next: P1-04 flat B+ tree node search under the full query contract.
+
+Verification: post-recovery root formatting, default/all-feature all-target Clippy
+with warnings denied, default tests, all-feature tests including ignored cases,
+and warnings-denied docs passed. Standalone default/SIMD release Clippy and
+harness/fragment formatting passed. Thirteen generated-core tests and generated
+lib/test Clippy passed after recovery. Python/JSON parsing, local links and full
+receipt/source reconstruction passed. Local packaging is checked on this checkpoint;
+hosted CI is tracked separately on the publishing commit. No registry release.

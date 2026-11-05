@@ -345,3 +345,12 @@ with existing tail SIMD independently enabled/disabled.
 [Results and decision](benches/cross_query/RESULTS.md) include all six large-case
 fresh-process repeats, native eight-lane u32 ASN, generated-code inspection and
 qualified hardware-counter availability. No default/API change is adopted.
+
+## Eytzinger RAM layouts (2026-11-04)
+
+The [P1-03 study](benches/eytzinger/README.md) compares key-only sorted and
+Eytzinger heap/rank mirrors with ordinary encoded visits and prior interleaving/
+SIMD. [Results](benches/eytzinger/RESULTS.md) report lookup, construction and
+allocated-capacity costs separately, including global-fence versus IPv4-directory
+scope. Complete post-recovery runs replace an interrupted I/O-failed matrix.
+No default or format change is adopted.

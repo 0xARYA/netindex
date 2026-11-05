@@ -71,3 +71,11 @@ and native eight-lane u32 ASN kernels. Complete oracle/borrowed-pointer/error
 checks include forced scalar fallback; shadow-checkout preparation reproduces
 the final source snapshot. Linked gathers/comparisons are inspected; matching
 WSL perf tooling is unavailable, so no hardware-counter claim is made.
+
+[P1-03 Eytzinger layouts](eytzinger/RESULTS.md) adds 38 processes / 1,792
+post-recovery measurements, sorted-copy layout controls, heap/rank capacity and
+combined-cache build costs. All original-result/borrowed-pointer/error checks,
+linear tree-boundary oracles, fresh source reconstruction and header-derived
+capacity accounting pass. Interrupted pre-recovery timings are not merged into
+accepted receipts. Two linked key-width search helpers are inspected; hardware
+counters remain unavailable. Research is retained without default adoption.
