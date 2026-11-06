@@ -108,7 +108,63 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
+## Batches, membership and intersections
+
+`Reader::visit_batch` accepts borrowed `Query` values and calls the visitor with
+its input query position and each borrowed match. Delivery follows input order,
+then normal per-query ordering; duplicate queries run independently. There is no
+output buffer, reordering, thread pool or automatic cross-query SIMD policy.
+`BatchError` identifies the failed query and retains the original error. Earlier
+callbacks have already run; later queries do not run. Callers own output storage
+and any rollback policy.
+
+`contains_ip` and `contains_asn` stop at the first match. The `try_visit_*` methods
+return `ControlFlow::Break(value)` for successful early termination and preserve
+visitor errors separately. `visit_intersecting` takes an address, canonical CIDR
+or inclusive range and returns whole original intersecting targets. It searches
+only that address family, preserves duplicates and sorted target order, and
+includes shared aliases. Invalid queries fail before delivery.
+
+```rust
+use std::{net::Ipv4Addr, ops::ControlFlow};
+use netindex::{Builder, Error, Limits, Query, Reader, Target};
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let address = Ipv4Addr::new(203, 0, 113, 42).into();
+    let mut builder = Builder::new(Limits::default());
+    builder.push(Target::Address(address), b"example")?;
+    let reader = Reader::open(builder.into_bytes(b"")?, Limits::default())?;
+    let queries = [Query::Ip(address), Query::Intersecting(Target::Network {
+        address: Ipv4Addr::new(203, 0, 113, 0).into(), prefix: 24,
+    })];
+    let mut results = Vec::new();
+    reader.visit_batch(&queries, |query, row| {
+        results.push((query, row));
+        Ok::<_, Error>(())
+    })?;
+    assert_eq!(results.len(), 2);
+    assert!(reader.contains_ip(address)?);
+    let first = reader.try_visit_ip(address, |row| {
+        Ok::<_, Error>(ControlFlow::Break(row.id))
+    })?;
+    assert_eq!(first, ControlFlow::Break(0));
+    assert_eq!(reader.inspect()?.records, 1);
+    Ok(())
+}
+```
+
+`Reader::inspect` reports physical/logical counts, section encodings, exact region
+sizes, bitpacked block counts and allocated routing/alias capacities. It scans
+packed descriptors, allocates nothing and never decodes payloads. Backing length,
+reader object size, auxiliary allocations and released validation scratch are
+separate measures; they are not an estimate of process RSS or mapped residency.
+
 ## Separate source files
+
+`ReaderSet` also supports batch, membership, intersection and early-stop methods.
+Batch callback positions are query then source. Each query visits sources in
+source order; interval queries search all sources because point coverage masks
+cannot safely exclude a whole range.
 
 [`ReaderSet`] shares up to 64 readers and uses IP coverage to skip files that
 cannot match. It returns every matching assertion with its source position and

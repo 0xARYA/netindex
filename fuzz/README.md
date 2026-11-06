@@ -16,6 +16,13 @@ lookups against original-input assertions, for both ordinary output and opt-in e
 compaction. Both enable runtime SIMD where available;
 core unit tests independently force scalar search even on AVX2-capable machines.
 
+Both query targets also compare query-major batches, membership, inclusive
+intersections and explicit early stopping against full expected results, and
+check inspection byte accounting. The encode oracle uses the original generated
+assertions for ordinary and bitpacked output; the read oracle uses accepted
+assertions. Dedicated integration tests cover reader-set source ordering, alias
+interleaving, callback errors and borrowed-result lifetimes.
+
 Run on Linux, including WSL, with cargo-fuzz 0.13.2 and the pinned nightly toolchain:
 
 ```sh

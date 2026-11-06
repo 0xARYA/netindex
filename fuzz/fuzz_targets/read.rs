@@ -5,6 +5,8 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use libfuzzer_sys::fuzz_target;
 use netindex::{CoverageRouter, Error, Limits, Reader, Target};
 
+mod query_oracle;
+
 fuzz_target!(|bytes: &[u8]| {
     let Ok(reader) = Reader::open_with_broad_routes(
         bytes,
@@ -25,6 +27,11 @@ fuzz_target!(|bytes: &[u8]| {
         .unwrap();
 
     assert_eq!(assertions.len(), reader.len());
+    let original: Vec<_> = assertions
+        .iter()
+        .map(|row| (row.id, row.target, row.payload))
+        .collect();
+    query_oracle::check(&reader, &original);
 
     let coverage = reader.coverage();
     let router = CoverageRouter::new(std::slice::from_ref(&coverage)).unwrap();

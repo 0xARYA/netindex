@@ -14,6 +14,12 @@ use crate::{
 #[path = "mmap.rs"]
 mod mmap;
 
+mod inspection;
+mod query;
+
+pub use inspection::{Inspection, PayloadReferences, SectionEncoding, SectionInspection};
+pub use query::{BatchError, Query};
+
 /// A matching assertion with its original target and borrowed payload.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Match<'a> {

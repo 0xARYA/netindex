@@ -16,6 +16,14 @@ impl BroadRoutes {
         }
     }
 
+    pub(crate) fn heap_bytes(&self) -> usize {
+        self.families
+            .iter()
+            .flatten()
+            .map(|rows| rows.capacity() * size_of::<u64>())
+            .sum()
+    }
+
     // The caller admits entries only from a validated disjoint packed section.
     pub(crate) fn insert(&mut self, entry: Entry, ipv6: bool) -> Result<(), Error> {
         if entry.kind != 1 || entry.prefix > BITS {

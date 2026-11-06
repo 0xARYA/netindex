@@ -1,0 +1,6 @@
+# started on Thu Nov  5 18:03:43 2026
+
+157278871,,branches,60216368,100.00,,
+831447,,branch-misses,60216368,100.00,0.53,of all branches
+6043994,,cache-references,60216368,100.00,,
+39457,,cache-misses,60216368,100.00,0.65,of all cache refs

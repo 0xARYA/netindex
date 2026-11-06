@@ -1,0 +1,352 @@
+[
+  {
+    "variant": "baseline",
+    "trial": 0,
+    "wall_ms": 54.2549,
+    "main_ready_ms": 5.3849,
+    "setup_ms": 5.1886
+  },
+  {
+    "variant": "default",
+    "trial": 0,
+    "wall_ms": 16.0783,
+    "main_ready_ms": 4.3492,
+    "setup_ms": 4.330900000000001
+  },
+  {
+    "variant": "thin",
+    "trial": 0,
+    "wall_ms": 16.6421,
+    "main_ready_ms": 4.244999999999999,
+    "setup_ms": 4.2186
+  },
+  {
+    "variant": "pgo",
+    "trial": 0,
+    "wall_ms": 17.0671,
+    "main_ready_ms": 3.9554000000000005,
+    "setup_ms": 3.9327
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 0,
+    "wall_ms": 14.9856,
+    "main_ready_ms": 3.3215,
+    "setup_ms": 3.3
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 1,
+    "wall_ms": 16.6802,
+    "main_ready_ms": 3.3046,
+    "setup_ms": 3.2848
+  },
+  {
+    "variant": "pgo",
+    "trial": 1,
+    "wall_ms": 14.0384,
+    "main_ready_ms": 3.6660999999999997,
+    "setup_ms": 3.6462
+  },
+  {
+    "variant": "thin",
+    "trial": 1,
+    "wall_ms": 14.3469,
+    "main_ready_ms": 4.1256,
+    "setup_ms": 4.1032
+  },
+  {
+    "variant": "default",
+    "trial": 1,
+    "wall_ms": 178.7083,
+    "main_ready_ms": 4.2775,
+    "setup_ms": 4.2605
+  },
+  {
+    "variant": "baseline",
+    "trial": 1,
+    "wall_ms": 14.4377,
+    "main_ready_ms": 4.3675,
+    "setup_ms": 4.3486
+  },
+  {
+    "variant": "baseline",
+    "trial": 2,
+    "wall_ms": 14.3845,
+    "main_ready_ms": 4.45,
+    "setup_ms": 4.4323
+  },
+  {
+    "variant": "default",
+    "trial": 2,
+    "wall_ms": 14.9385,
+    "main_ready_ms": 4.1785,
+    "setup_ms": 4.1611
+  },
+  {
+    "variant": "thin",
+    "trial": 2,
+    "wall_ms": 14.4703,
+    "main_ready_ms": 4.2418000000000005,
+    "setup_ms": 4.2207
+  },
+  {
+    "variant": "pgo",
+    "trial": 2,
+    "wall_ms": 13.7082,
+    "main_ready_ms": 3.5447,
+    "setup_ms": 3.5227
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 2,
+    "wall_ms": 14.091,
+    "main_ready_ms": 3.454,
+    "setup_ms": 3.4322
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 3,
+    "wall_ms": 13.3475,
+    "main_ready_ms": 3.2905,
+    "setup_ms": 3.2706
+  },
+  {
+    "variant": "pgo",
+    "trial": 3,
+    "wall_ms": 192.062,
+    "main_ready_ms": 3.8512,
+    "setup_ms": 3.8281
+  },
+  {
+    "variant": "thin",
+    "trial": 3,
+    "wall_ms": 15.1661,
+    "main_ready_ms": 4.12,
+    "setup_ms": 4.098199999999999
+  },
+  {
+    "variant": "default",
+    "trial": 3,
+    "wall_ms": 14.9129,
+    "main_ready_ms": 4.323600000000001,
+    "setup_ms": 4.305
+  },
+  {
+    "variant": "baseline",
+    "trial": 3,
+    "wall_ms": 16.9025,
+    "main_ready_ms": 4.385199999999999,
+    "setup_ms": 4.366
+  },
+  {
+    "variant": "baseline",
+    "trial": 4,
+    "wall_ms": 14.8726,
+    "main_ready_ms": 4.406000000000001,
+    "setup_ms": 4.3889000000000005
+  },
+  {
+    "variant": "default",
+    "trial": 4,
+    "wall_ms": 15.1159,
+    "main_ready_ms": 4.3959,
+    "setup_ms": 4.3787
+  },
+  {
+    "variant": "thin",
+    "trial": 4,
+    "wall_ms": 15.1073,
+    "main_ready_ms": 4.221500000000001,
+    "setup_ms": 4.1995000000000005
+  },
+  {
+    "variant": "pgo",
+    "trial": 4,
+    "wall_ms": 14.1804,
+    "main_ready_ms": 3.7058999999999997,
+    "setup_ms": 3.6821
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 4,
+    "wall_ms": 14.5197,
+    "main_ready_ms": 3.2753,
+    "setup_ms": 3.2525000000000004
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 5,
+    "wall_ms": 450.4356,
+    "main_ready_ms": 3.1933000000000002,
+    "setup_ms": 3.173
+  },
+  {
+    "variant": "pgo",
+    "trial": 5,
+    "wall_ms": 82.6794,
+    "main_ready_ms": 3.7413,
+    "setup_ms": 3.7184000000000004
+  },
+  {
+    "variant": "thin",
+    "trial": 5,
+    "wall_ms": 23.623,
+    "main_ready_ms": 4.1912,
+    "setup_ms": 4.1696
+  },
+  {
+    "variant": "default",
+    "trial": 5,
+    "wall_ms": 15.5293,
+    "main_ready_ms": 4.3269,
+    "setup_ms": 4.308
+  },
+  {
+    "variant": "baseline",
+    "trial": 5,
+    "wall_ms": 15.0943,
+    "main_ready_ms": 4.2287,
+    "setup_ms": 4.2089
+  },
+  {
+    "variant": "baseline",
+    "trial": 6,
+    "wall_ms": 15.0757,
+    "main_ready_ms": 4.4735000000000005,
+    "setup_ms": 4.4554
+  },
+  {
+    "variant": "default",
+    "trial": 6,
+    "wall_ms": 15.4098,
+    "main_ready_ms": 4.2059999999999995,
+    "setup_ms": 4.189
+  },
+  {
+    "variant": "thin",
+    "trial": 6,
+    "wall_ms": 190.5767,
+    "main_ready_ms": 4.0997,
+    "setup_ms": 4.0785
+  },
+  {
+    "variant": "pgo",
+    "trial": 6,
+    "wall_ms": 14.6751,
+    "main_ready_ms": 3.7941,
+    "setup_ms": 3.7713
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 6,
+    "wall_ms": 14.4645,
+    "main_ready_ms": 3.577,
+    "setup_ms": 3.5541
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 7,
+    "wall_ms": 13.9986,
+    "main_ready_ms": 3.2836,
+    "setup_ms": 3.2635
+  },
+  {
+    "variant": "pgo",
+    "trial": 7,
+    "wall_ms": 14.5251,
+    "main_ready_ms": 3.8198,
+    "setup_ms": 3.799
+  },
+  {
+    "variant": "thin",
+    "trial": 7,
+    "wall_ms": 14.6636,
+    "main_ready_ms": 4.4017,
+    "setup_ms": 4.378
+  },
+  {
+    "variant": "default",
+    "trial": 7,
+    "wall_ms": 14.3909,
+    "main_ready_ms": 4.5363,
+    "setup_ms": 4.5193
+  },
+  {
+    "variant": "baseline",
+    "trial": 7,
+    "wall_ms": 14.3901,
+    "main_ready_ms": 4.2614,
+    "setup_ms": 4.2426
+  },
+  {
+    "variant": "baseline",
+    "trial": 8,
+    "wall_ms": 190.5251,
+    "main_ready_ms": 4.2633,
+    "setup_ms": 4.2451
+  },
+  {
+    "variant": "default",
+    "trial": 8,
+    "wall_ms": 14.9608,
+    "main_ready_ms": 4.4307,
+    "setup_ms": 4.4136999999999995
+  },
+  {
+    "variant": "thin",
+    "trial": 8,
+    "wall_ms": 14.6042,
+    "main_ready_ms": 4.3013,
+    "setup_ms": 4.278
+  },
+  {
+    "variant": "pgo",
+    "trial": 8,
+    "wall_ms": 14.2484,
+    "main_ready_ms": 3.5369,
+    "setup_ms": 3.5152
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 8,
+    "wall_ms": 13.7582,
+    "main_ready_ms": 3.4555,
+    "setup_ms": 3.4326
+  },
+  {
+    "variant": "thin-pgo",
+    "trial": 9,
+    "wall_ms": 13.427,
+    "main_ready_ms": 3.2889999999999997,
+    "setup_ms": 3.2687
+  },
+  {
+    "variant": "pgo",
+    "trial": 9,
+    "wall_ms": 15.5332,
+    "main_ready_ms": 3.6479,
+    "setup_ms": 3.6275999999999997
+  },
+  {
+    "variant": "thin",
+    "trial": 9,
+    "wall_ms": 14.7606,
+    "main_ready_ms": 4.521100000000001,
+    "setup_ms": 4.4985
+  },
+  {
+    "variant": "default",
+    "trial": 9,
+    "wall_ms": 15.609,
+    "main_ready_ms": 4.313199999999999,
+    "setup_ms": 4.2894
+  },
+  {
+    "variant": "baseline",
+    "trial": 9,
+    "wall_ms": 178.3837,
+    "main_ready_ms": 4.2585,
+    "setup_ms": 4.2399
+  }
+]

@@ -8,7 +8,8 @@ experiment alone does not complete an implementation task.
 
 Historical P1-01 through P1-08 completions record qualification, not shipped
 features. Their source is [archived](benches/ARCHIVE.md); their measurements and
-decisions remain below. P1-15 adds opt-in bitpacking; next is P2-01 batch API.
+decisions remain below. P1-15 adds opt-in bitpacking. All P2 tasks are complete for the library and
+benchmark application; consumer production profiles remain application-owned.
 
 Statuses: `[ ]` queued; `[-]` active; `[x]` completed; `[!]` waiting on a named
 dependency. Existing 2.1.0 results are in [PERFORMANCE.md](PERFORMANCE.md); they do
@@ -123,23 +124,23 @@ not complete the broader experiments below.
 
 ## P2: query capabilities
 
-- [ ] **P2-01 Batch API.** Depends on useful P1-01/P1-02 results and defined errors,
+- [x] **P2-01 Batch API.** Depends on useful P1-01/P1-02 results and defined errors,
   ordering, output ownership and partial-batch behavior.
-- [ ] **P2-02 Membership/early stop.** Explicit termination and error handling.
-- [ ] **P2-03 Range/CIDR intersection.** Define boundaries, ordering and duplicates.
-- [ ] **P2-04 Inspection.** Explain representation choices, sizes and resource use.
+- [x] **P2-02 Membership/early stop.** Explicit termination and error handling.
+- [x] **P2-03 Range/CIDR intersection.** Define boundaries, ordering and duplicates.
+- [x] **P2-04 Inspection.** Explain representation choices, sizes and resource use.
 
 ## P2: qualification (apply relevant checks to every earlier prototype)
 
-- [ ] **P2-05 Assembly.** Inspect generated and linked code for promising variants.
-- [ ] **P2-06 Counters.** Cycles, instructions, branch and cache misses where supported.
-- [ ] **P2-07 Application PGO.** Train on representative traffic and validate on an
+- [x] **P2-05 Assembly.** Inspect generated and linked code for promising variants.
+- [x] **P2-06 Counters.** Cycles, instructions, branch and cache misses where supported.
+- [x] **P2-07 Application PGO.** Train on representative traffic and validate on an
   independent mix, outside library release policy.
-- [ ] **P2-08 Build settings.** Compare normal optimization, ThinLTO, PGO and their
+- [x] **P2-08 Build settings.** Compare normal optimization, ThinLTO, PGO and their
   combination, including binary size and startup.
-- [ ] **P2-09 Correctness.** Extend independent tests/fuzzing for layouts, batches,
+- [x] **P2-09 Correctness.** Extend independent tests/fuzzing for layouts, batches,
   architectures, malformed data and resource failures.
-- [ ] **P2-10 Decisions.** Record adoption/rejection, gains, regressions, resource
+- [x] **P2-10 Decisions.** Record adoption/rejection, gains, regressions, resource
   costs and the workloads supported by evidence for each experiment.
 
 ## Acceptance
@@ -1186,3 +1187,58 @@ CI now describe/test the opt-in path. [Raw measurements and reproduction](benche
 
 Next priority: **P2-01 batch API**, defining ordering, ownership and partial-failure
 semantics before using the qualified cross-query techniques.
+
+
+### P2 implementation and qualification started - 2026-11-05
+
+Baseline: `8d4f5b1`; working tree clean. Work in order: query-major borrowed
+batches with exact failure prefixes; typed early termination and membership;
+indexed inclusive intersections (including shared aliases); allocation-free
+representation/resource inspection; then assembly/counters, application-only PGO
+and build controls, independent fuzz/oracle coverage, and recorded decisions.
+Use the existing archived P1-01/P1-02 results to choose kernels; no automatic
+cross-query SIMD policy is justified by their mixed hot/uniform results.
+
+P2-01 through P2-04 now have production implementations awaiting qualification:
+`Query`/`BatchError`, borrowed query-major `visit_batch`, `ControlFlow` visitors,
+IP/ASN membership, indexed inclusive `visit_intersecting`, and `inspect` byte/
+allocation accounting. ReaderSet supports batches, membership and intersections
+with source ordering. Five independent tests cover original-input oracles,
+formats 3/4/5/6, alias prefixes 0/64/80/96, malformed queries, exact error/break
+prefixes, empty/partial batches, borrowing and coarse/fine reader-set routing.
+
+### 2026-11-05: P2-01 through P2-10 implemented and qualified
+
+- Shipped borrowed query batches, indexed exact-prefix errors, typed successful
+  early stopping, IP/ASN membership, inclusive intersection and representation/
+  allocation inspection. ReaderSet preserves query/source order and searches all
+  sources for intervals. No format, dependency, persistent reader allocation or
+  release-flag changes. Earlier mixed P1 SIMD results do not justify a default
+  cross-query kernel; batch semantics are useful with existing point kernels.
+- Windows: four application builds, nine samples per timing cell, 452 cells;
+  identical input hashes and 43 equivalent-result checksum groups verified.
+  Default membership reduced duplicate-ASN/overlap work by 5.43x/9.46x versus
+  visiting every match, comparable to existing manual typed-error early stopping.
+  Indexed narrow intersections avoid full scans; retained IPtoASN is 266.41 ns
+  versus 18.70 ms/query for that workaround. Whole-domain traversal remains O(N).
+- Application ThinLTO+PGO reduced held-out point medians by 10.0-54.7% across the
+  nine declared shapes/files, at 9.68% more executable bytes than default. PGO
+  alone regressed bitpacked IPv6 by 2.6%; full-scan controls also have regressions.
+  Training excludes oracles/comparison controls and uses a different locality/
+  miss mix from validation. Keep application opt-in flags and library defaults;
+  production trace/cold-storage/other-target qualification is not claimed.
+- Inspected linked Windows default/combined and Linux default kernels, including
+  body size, stack reservations, checks, calls and copies. Linux supported cycle,
+  instruction, branch and generic cache counters around controlled query kernels;
+  raw event groups report 100% scheduling. Single counter samples support work
+  accounting, not universal latency claims. The Linux corpus differs from the
+  revised Windows PGO corpus. Library source hashes match across both builds.
+- All seven documented local checks passed. AArch64 Windows library cross-check
+  passed (compile only). Linux scalar correctness passed eight shapes; ASan
+  passed 29 unit + 4 bitpacking + 8 new query tests. Both extended fuzz oracles
+  passed 61-second smokes: 10,276,652 read and 9,700 encode runs, no findings.
+  WSL became unavailable after completion; logs/binaries were recovered read-only.
+  Revised PGO results are Windows measurements, not a claimed Linux rerun.
+- [Results, costs and decisions](benches/query_capabilities/RESULTS.md),
+  [reproduction](benches/query_capabilities/README.md),
+  [measurements and provenance](benches/query_capabilities/raw).

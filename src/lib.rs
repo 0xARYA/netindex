@@ -7,7 +7,10 @@ pub use builder::Builder;
 pub use coverage::{Coverage, CoverageRouter};
 #[cfg(feature = "external-sort")]
 pub use external::{ExternalBuildStats, ExternalBuilder, ExternalOptions};
-pub use reader::{Match, Reader};
+pub use reader::{
+    BatchError, Inspection, Match, PayloadReferences, Query, Reader, SectionEncoding,
+    SectionInspection,
+};
 pub use reader_set::ReaderSet;
 pub use target::Target;
 

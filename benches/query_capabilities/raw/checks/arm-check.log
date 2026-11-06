@@ -1,0 +1,14 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling serde_core v1.0.229
+   Compiling thiserror v2.0.21
+   Compiling getrandom v0.4.3
+   Compiling serde v1.0.229
+    Checking tempfile v3.27.0
+   Compiling syn v3.0.6
+   Compiling thiserror-impl v2.0.21
+   Compiling serde_derive v1.0.229
+    Checking maxminddb v0.32.0
+    Checking netindex v3.0.0 (C:\code\0xARYA\netindex)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 58.29s

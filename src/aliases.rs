@@ -207,6 +207,11 @@ impl Aliases {
         })
     }
 
+    pub(crate) fn heap_bytes(&self) -> usize {
+        self.windows.capacity() * size_of::<SharedAlias>()
+            + self.blocks.capacity() * size_of::<usize>()
+    }
+
     pub(crate) fn logical(&self, id: u32) -> u32 {
         let mut id = id as usize;
         if id < self.source {

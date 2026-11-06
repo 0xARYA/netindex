@@ -2,6 +2,8 @@ use std::{fmt, net::IpAddr, sync::Arc};
 
 use crate::{CoverageRouter, Error, Match, Reader};
 
+mod query;
+
 /// An immutable ordered set of at most 64 readers with IP coverage routing.
 ///
 /// Source positions follow input order; record IDs remain local to each reader.

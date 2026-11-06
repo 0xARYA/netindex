@@ -265,6 +265,10 @@ impl Directory {
         }))
     }
 
+    pub(crate) fn heap_bytes(&self) -> usize {
+        self.ranges.capacity() * size_of::<(u32, u32)>()
+    }
+
     fn range(&self, query: u128) -> Result<(usize, usize), Error> {
         let bucket = query
             .checked_sub(self.start)
@@ -321,6 +325,54 @@ pub(crate) fn lookup(
     let entry = block_entry(bytes, block, local, ipv6)?;
 
     Ok((query <= entry.end).then_some(entry))
+}
+
+pub(crate) fn visit_intersecting<E: From<Error>>(
+    bytes: &[u8],
+    count: usize,
+    first: u128,
+    last: u128,
+    ipv6: bool,
+    search: Search,
+    mut emit: impl FnMut(Entry) -> Result<(), E>,
+) -> Result<(), E> {
+    let blocks = count.div_ceil(BLOCK);
+    let start = block_upper_bound(bytes, 0, blocks, first)?.saturating_sub(1);
+    for index in start..blocks {
+        let block = read_block(bytes, count, index)?;
+        if block.base > last {
+            break;
+        }
+        let local = if index == start && first >= block.base {
+            let column = slice(bytes, block.offset, block.delta_bytes())?;
+            let delta = (first - block.base) >> block.shift;
+            match block.width.bits() {
+                Some(bits) => bitpacking::upper_bound(column, block.count, bits, delta)?,
+                None => search.upper_bound(column, usize::from(block.width.bytes()), delta)?,
+            }
+            .saturating_sub(1)
+        } else {
+            0
+        };
+        for local in local..block.count {
+            let entry = block_entry(bytes, block, local, ipv6)?;
+            if entry.start > last {
+                return Ok(());
+            }
+            if entry.end >= first {
+                emit(entry)?;
+            }
+        }
+    }
+    Ok(())
+}
+
+pub(crate) fn bitpacked_blocks(bytes: &[u8], count: usize) -> Result<usize, Error> {
+    let mut selected = 0;
+    for index in 0..count.div_ceil(BLOCK) {
+        selected += usize::from(read_block(bytes, count, index)?.width.bits().is_some());
+    }
+    Ok(selected)
 }
 
 pub(crate) fn validate(bytes: &[u8], count: usize, allow_bits: bool) -> Result<(), Error> {

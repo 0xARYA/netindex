@@ -1,0 +1,72 @@
+
+target\p2-windows-final\bin\thin-pgo.exe:	file format coff-x86-64
+
+Disassembly of section .text:
+
+0000000140001000 <.text>:
+140010e30:     	pushq	%r15
+140010e32:     	pushq	%r14
+140010e34:     	pushq	%r13
+140010e36:     	pushq	%r12
+140010e38:     	pushq	%rsi
+140010e39:     	pushq	%rdi
+140010e3a:     	pushq	%rbp
+140010e3b:     	pushq	%rbx
+140010e3c:     	subq	$0x248, %rsp            # imm = 0x248
+140010e43:     	movq	%rcx, 0x28(%rsp)
+140010e48:     	testq	%r8, %r8
+140010e4b:     	je	0x140010f0a <.text+0xff0a>
+140010e51:     	movq	%r8, %rdi
+140010e54:     	movq	%rdx, %rbx
+140010e57:     	leaq	0x59(%rsp), %rbp
+140010e5c:     	leaq	0x151(%rsp), %rsi
+140010e64:     	xorl	%r13d, %r13d
+140010e67:     	leaq	0x58(%rsp), %r12
+140010e6c:     	leaq	0x150(%rsp), %r14
+140010e74:     	nopw	%cs:(%rax,%rax)
+140010e80:     	movq	%r12, %rcx
+140010e83:     	movq	%rbx, %rdx
+140010e86:     	callq	0x1400198d0 <.text+0x188d0>
+140010e8b:     	movzbl	0x58(%rsp), %r15d
+140010e91:     	cmpb	$0x3, %r15b
+140010e95:     	je	0x140010f0f <.text+0xff0f>
+140010e97:     	movups	(%rbp), %xmm0
+140010e9b:     	movups	0xf(%rbp), %xmm1
+140010e9f:     	movups	%xmm1, 0x3f(%rsp)
+140010ea4:     	movaps	%xmm0, 0x30(%rsp)
+140010ea9:     	movl	$0xd8, %r8d
+140010eaf:     	leaq	0x170(%rsp), %rcx
+140010eb7:     	leaq	0x78(%rsp), %rdx
+140010ebc:     	callq	0x14003e420 <.text+0x3d420>
+140010ec1:     	movups	0x3f(%rsp), %xmm0
+140010ec6:     	movups	%xmm0, 0xf(%rsi)
+140010eca:     	movaps	0x30(%rsp), %xmm0
+140010ecf:     	movups	%xmm0, (%rsi)
+140010ed2:     	movb	%r15b, 0x150(%rsp)
+140010eda:     	addq	0x1e8(%rsp), %r13
+140010ee2:     	decq	%rdi
+140010ee5:     	jne	0x140010e80 <.text+0xfe80>
+140010ee7:     	movq	0x28(%rsp), %rax
+140010eec:     	movq	%r13, 0x8(%rax)
+140010ef0:     	movl	$0x6, (%rax)
+140010ef6:     	addq	$0x248, %rsp            # imm = 0x248
+140010efd:     	popq	%rbx
+140010efe:     	popq	%rbp
+140010eff:     	popq	%rdi
+140010f00:     	popq	%rsi
+140010f01:     	popq	%r12
+140010f03:     	popq	%r13
+140010f05:     	popq	%r14
+140010f07:     	popq	%r15
+140010f09:     	retq
+140010f0a:     	xorl	%r13d, %r13d
+140010f0d:     	jmp	0x140010ee7 <.text+0xfee7>
+140010f0f:     	movq	0x70(%rsp), %rax
+140010f14:     	movq	%rax, 0x47(%rsp)
+140010f19:     	movups	0x60(%rsp), %xmm0
+140010f1e:     	movups	%xmm0, 0x37(%rsp)
+140010f23:     	movq	0x28(%rsp), %rcx
+140010f28:     	movq	%rax, 0x10(%rcx)
+140010f2c:     	movq	%rcx, %rax
+140010f2f:     	movups	%xmm0, (%rcx)
+140010f32:     	jmp	0x140010ef6 <.text+0xfef6>

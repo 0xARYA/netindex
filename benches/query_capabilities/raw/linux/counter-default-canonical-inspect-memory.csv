@@ -1,0 +1,6 @@
+# started on Thu Nov  5 18:04:15 2026
+
+40260904528,,branches,12544856275,100.00,,
+4116993,,branch-misses,12544856275,100.00,0.01,of all branches
+1990847717,,cache-references,12544856275,100.00,,
+22597008,,cache-misses,12544856275,100.00,1.14,of all cache refs

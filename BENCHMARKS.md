@@ -493,4 +493,16 @@ scan changes reduced aggregate process instructions by 6.5%/6.4% on ordinary fil
 Reports retain ranges, noise controls, full assertion replays, source/artifact
 hashes, CPU counters, portable/native assembly, sanitizer and fuzz evidence.
 Full-block scalar/SIMD decoding was rejected for single-query use after a native
-build control. Batch locality, PGO, cold storage and other hardware remain open.
+build control. Application PGO is qualified by P2 on declared warm workloads; cold format-6
+storage and other hardware remain open.
+
+## P2 queries and application builds
+
+[Query qualification](benches/query_capabilities/RESULTS.md) covers the shipped
+batch, membership/early-stop, inclusive intersection and inspection APIs, with
+full result checks, independent fixtures/original-input tests and fuzz oracles.
+It also compares default/ThinLTO/PGO/combined application builds, held-out query
+mixes, executable size, two startup boundaries, linked code and supported Linux
+counters. The [runner](benches/query_capabilities/README.md) and raw provenance
+are retained. Benefits are workload-specific: no default cross-query SIMD kernel
+or library PGO/release policy is adopted.

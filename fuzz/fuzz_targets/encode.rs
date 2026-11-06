@@ -5,6 +5,8 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use libfuzzer_sys::fuzz_target;
 use netindex::{Builder, Error, Limits, Reader, Target};
 
+mod query_oracle;
+
 fuzz_target!(|input: &[u8]| {
     let mut builder = Builder::new(Limits::default());
     let mut targets = Vec::new();
@@ -52,7 +54,13 @@ fuzz_target!(|input: &[u8]| {
     let mut compact = Vec::new();
     reader.write_bitpacked_to(&mut compact).unwrap();
     let compact = Reader::open(compact, Limits::default()).unwrap();
+    let original: Vec<_> = targets
+        .iter()
+        .enumerate()
+        .map(|(id, (target, payload))| (id as u32, *target, payload.as_slice()))
+        .collect();
     for reader in [&reader, &compact] {
+        query_oracle::check(reader, &original);
         assert_eq!(reader.len(), targets.len());
 
         reader
