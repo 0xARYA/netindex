@@ -5,3 +5,4 @@
 /fuzz/artifacts/
 *.pdb
 *.rs.bk
+__pycache__/

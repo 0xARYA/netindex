@@ -506,6 +506,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "whole",
         "inspect",
     ];
+
+    match phase {
+        "measure" | "membership" | "startup" | "train" | "verify" => {}
+        _ => match phase.strip_prefix("counter-") {
+            Some(method) if methods.contains(&method) => {}
+            Some(method) => return Err(format!("unknown counter method: {method}").into()),
+            None => return Err(format!("unknown query study phase: {phase}").into()),
+        },
+    }
+
     for name in names {
         let setup = Instant::now();
         let c = case(name, seed)?;

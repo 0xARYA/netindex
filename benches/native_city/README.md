@@ -93,11 +93,15 @@ Cold trials evict only that file's Linux page cache; host and device caches are
 outside this check. Warm trials read the entire input before launching.
 Lookup-only counters start after open, validation and warm-up, and stop before
 sorting timings. The ordinary adapter remains ungated. Use `layout-native FILE`
-and `layout-converted FILE` for the byte breakdown alone.
+and `layout-converted FILE` for the byte breakdown alone. Prepare with `local`
+for profiling: converted layout inspection uses the current netindex API and is
+unavailable when the adapter is built against a 2.x registry release.
 
 On a Linux deployment host, put the adapter, three immutable benchmark
 artifacts, and an approved one-IP-per-line production trace in a private
-directory. Run from that directory with a CPU available to the process:
+directory. Copy `deployment.py`, `city_files.py`, and `city_process.py` to
+the same directory, or run the scripts from a repository checkout. Run with a
+CPU available to the process:
 
 ```sh
 umask 077
@@ -106,7 +110,7 @@ python3 /path/to/deployment.py ./native-city-audit CITY.mmdb \
   CITY_FORMAT5.nidx CITY_FORMAT6.nidx trace.txt NEW_RECEIPT.json --cpu AVAILABLE_CPU
 ```
 
-`deployment.py` uses the neighboring `profile.py` and GNU `time`. It checks
+`deployment.py` uses GNU `time`. It checks
 normalized parity, then measures one fresh process per trial. It verifies
 each file's Linux page residency without dropping system-wide caches. For
 reload it primes the old file and verifies that a distinct, byte-identical

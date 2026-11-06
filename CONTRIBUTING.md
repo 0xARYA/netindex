@@ -18,6 +18,28 @@ in library code. Bound external input and allocation. Document unsafe operations
 with their safety requirements. Tests should exercise observable behavior against
 independent expectations, including failure paths.
 
+## Code organization
+
+- Keep one public path for each API. Keep file validation, querying, and artifact
+  rewriting in their respective reader modules. The physical section owns
+  entry traversal; alias projection and query policy build on it.
+- Separate in-memory construction from the external builder's temporary files.
+  Keep spill records and disk tables private. `FORMAT.md` describes published
+  bytes; temporary formats belong beside their encoders and decoders.
+- Keep coverage routing across sources distinct from direct routes within one
+  reader. Name modules after the behavior they own and introduce a helper when
+  it removes duplication, owns a resource, or makes a real boundary clearer.
+  Split files when they mix responsibilities, rather than by line count.
+- Put public contract tests in `tests/`, private unit tests beside the code, and
+  independent encoded fixtures in `tests/fixtures/`. Examples demonstrate public
+  use; benchmark harnesses and dated evidence live in `benches/`. Raw result
+  receipts under `benches/results/` stay in Git and are excluded from the crate
+  package.
+
+Review an ordinary call and a failure end to end. Check who validates, owns
+resources, and reports errors. Look for repeated logic and unnecessary layers;
+use rustfmt for layout mechanics and review statement grouping separately.
+
 ## Checks
 
 Run from the crate directory:

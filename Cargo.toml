@@ -9,6 +9,7 @@ repository = "https://github.com/0xARYA/netindex"
 license = "MIT OR Apache-2.0"
 keywords = ["ip", "cidr", "asn", "index"]
 categories = ["data-structures", "network-programming"]
+exclude = ["/benches/results/"]
 
 [package.metadata.docs.rs]
 all-features = true

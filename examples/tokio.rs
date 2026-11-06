@@ -4,7 +4,7 @@ use std::{error::Error, sync::Arc};
 
 use tokio::{runtime, task::JoinSet};
 
-mod support;
+mod async_lookup;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let runtime = runtime::Builder::new_current_thread().build()?;
@@ -12,14 +12,14 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 async fn run() -> Result<(), Box<dyn Error>> {
-    let reader = Arc::new(tokio::task::spawn_blocking(support::reader).await??);
+    let reader = Arc::new(tokio::task::spawn_blocking(async_lookup::fixture_reader).await??);
     let mut jobs = JoinSet::new();
-    let mut batches = support::batches().into_iter();
+    let mut batches = async_lookup::fixture_batches().into_iter();
 
     loop {
-        for addresses in batches.by_ref().take(2) {
+        for addresses in batches.by_ref().take(async_lookup::MAX_OUTSTANDING) {
             let reader = Arc::clone(&reader);
-            jobs.spawn_blocking(move || support::lookup_batch(&reader, &addresses));
+            jobs.spawn_blocking(move || async_lookup::check_fixture_batch(&reader, &addresses));
         }
 
         if jobs.is_empty() {

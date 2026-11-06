@@ -4,7 +4,7 @@ use std::{error::Error, sync::Arc};
 
 use compio::runtime::Runtime;
 
-mod support;
+mod async_lookup;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let runtime = Runtime::new()?;
@@ -12,14 +12,21 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 async fn run(runtime: &Runtime) -> Result<(), Box<dyn Error>> {
-    let reader = Arc::new(runtime.spawn_blocking(support::reader).await??);
-    let mut batches = support::batches().into_iter();
+    let reader = Arc::new(
+        runtime
+            .spawn_blocking(async_lookup::fixture_reader)
+            .await??,
+    );
+    let mut batches = async_lookup::fixture_batches().into_iter();
 
     loop {
         let mut jobs = Vec::new();
-        for addresses in batches.by_ref().take(2) {
+        for addresses in batches.by_ref().take(async_lookup::MAX_OUTSTANDING) {
             let reader = Arc::clone(&reader);
-            jobs.push(runtime.spawn_blocking(move || support::lookup_batch(&reader, &addresses)));
+            jobs.push(
+                runtime
+                    .spawn_blocking(move || async_lookup::check_fixture_batch(&reader, &addresses)),
+            );
         }
 
         if jobs.is_empty() {
