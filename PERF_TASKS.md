@@ -157,7 +157,7 @@ not complete the broader experiments below.
 - [x] **P3-03 Search-only membership.** Avoid constructing matches and resolving
   payloads when only existence is needed. Preserve index errors and aliases.
   Defer a dense ASN bitmap until a consumer can justify its memory budget.
-- [ ] **P3-04 Packed NEON.** Port the qualified packed search kernel behind
+- [x] **P3-04 Packed NEON.** Port the qualified packed search kernel behind
   the existing SIMD feature if native ARM comparisons justify adoption.
 - [ ] **P3-05 Remaining storage cost.** Profile the remaining City bytes and
   cache misses after consumer qualification before proposing a new layout.
@@ -1315,3 +1315,35 @@ All input digests and result checksums matched. IP membership took
 Point controls moved by at most 3.6%. A dense bitmap is not adopted: the ASN
 workload does not establish value for a real consumer or a default budget.
 [Raw samples and provenance](benches/results/2026-11-06-p3-membership.json).
+
+### 2026-11-06: P3-04 native packed NEON decision
+
+Keep scalar search on ARM64. The candidate passed the native detected-versus-
+scalar oracle for all widths, unaligned columns, boundaries, duplicates and
+tails. The release disassembly shows unsigned vector compare (CMHI) and
+narrowing (SHRN) in the production kernel. No candidate code ships.
+
+Medians in ns/query, scalar / NEON, from nine samples per cell on Neoverse N2
+(Ubuntu ARM64, CPU 3, Rust 1.95.0). Three fresh processes per binary alternate
+order; same seed, input digests and query checksums. The scalar binary disables
+the SIMD feature; differences in code generation and runner variation also
+affect control workloads.
+
+| Packed column or control | Point | Membership |
+| --- | ---: | ---: |
+| 1-byte delta | 85.61 / 83.66 | 60.71 / 63.67 |
+| 2-byte delta | 88.44 / 87.05 | 63.16 / 64.44 |
+| 4-byte delta | 85.76 / 86.58 | 63.95 / 68.26 |
+| 8-byte delta | 85.64 / 87.71 | 64.00 / 71.37 |
+| 16-byte IPv6 (scalar control) | 76.36 / 79.16 | 58.75 / 62.53 |
+| Bitpacked IPv6 | 89.89 / 90.72 | 74.52 / 76.22 |
+| Overlaps | 1994.08 / 2003.55 | 116.93 / 115.44 |
+| Aliases | 95.80 / 94.92 | 68.89 / 69.40 |
+| Mixed | 74.70 / 73.95 | 56.27 / 56.49 |
+
+The earlier hot-column kernel win does not establish a reader benefit.
+The 1- and 2-byte point gains here are under 3%; neither width improved
+membership. Wider columns showed no point benefit. Revisit with a stronger
+end-to-end result on a consumer workload.
+[Raw samples](benches/results/2026-11-06-p3-neon.json) and
+[native qualification run](https://github.com/0xARYA/netindex/actions/runs/42292016178).

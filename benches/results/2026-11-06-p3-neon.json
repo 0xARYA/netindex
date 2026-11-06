@@ -1,0 +1,568 @@
+{
+  "qualification_commit": "f09c414",
+  "actions_run": "https://github.com/0xARYA/netindex/actions/runs/42292016178",
+  "cpu": [
+    "Architecture:                            aarch64",
+    "CPU op-mode(s):                          32-bit, 64-bit",
+    "Byte Order:                              Little Endian",
+    "CPU(s):                                  4",
+    "On-line CPU(s) list:                     0-3",
+    "Vendor ID:                               ARM",
+    "Model name:                              Neoverse-N2",
+    "Model:                                   0",
+    "Thread(s) per core:                      1",
+    "Core(s) per socket:                      4",
+    "Socket(s):                               1",
+    "Stepping:                                r0p0",
+    "BogoMIPS:                                2000.00",
+    "Flags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 sve asimdfhm uscat ilrcpc flagm sb paca pacg dcpodp sve2 sveaes svebitperm svesha3 svesm4 flagm2 frint svei8mm svebf16 i8mm bf16",
+    "L1d cache:                               256 KiB (4 instances)",
+    "L1i cache:                               256 KiB (4 instances)",
+    "L2 cache:                                4 MiB (4 instances)",
+    "L3 cache:                                128 MiB (1 instance)",
+    "NUMA node(s):                            1",
+    "NUMA node0 CPU(s):                       0-3",
+    "Vulnerability Gather data sampling:      Not affected",
+    "Vulnerability Ghostwrite:                Not affected",
+    "Vulnerability Indirect target selection: Not affected",
+    "Vulnerability Itlb multihit:             Not affected",
+    "Vulnerability L1tf:                      Not affected",
+    "Vulnerability Mds:                       Not affected",
+    "Vulnerability Meltdown:                  Not affected",
+    "Vulnerability Mmio stale data:           Not affected",
+    "Vulnerability Old microcode:             Not affected",
+    "Vulnerability Reg file data sampling:    Not affected",
+    "Vulnerability Retbleed:                  Not affected",
+    "Vulnerability Spec rstack overflow:      Not affected",
+    "Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl",
+    "Vulnerability Spectre v1:                Mitigation; __user pointer sanitization",
+    "Vulnerability Spectre v2:                Mitigation; CSV2, BHB",
+    "Vulnerability Srbds:                     Not affected",
+    "Vulnerability Tsa:                       Not affected",
+    "Vulnerability Tsx async abort:           Not affected",
+    "Vulnerability Vmscape:                   Not affected"
+  ],
+  "rustc": [
+    "rustc 1.95.0 (59807616e 2026-04-14)",
+    "binary: rustc",
+    "commit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860",
+    "commit-date: 2026-04-14",
+    "host: aarch64-unknown-linux-gnu",
+    "release: 1.95.0",
+    "LLVM version: 22.1.2"
+  ],
+  "binary_sha256": {
+    "scalar": "868a22e1228718f7b9d44115c429bc04e81bf58133609bb0ba401251041cbf29",
+    "neon": "64533b511facea1a9f19f893eff076d7941d788f524c5dc83bc6834b7f9fcaca"
+  },
+  "affinity_cpu": 3,
+  "queries_per_sample": 1048576,
+  "inputs": {
+    "packed-w1": {
+      "sha256": "4d0a1fc855dde4b9d05d10054a8973021a4e72b053ff941919a6029a308ae119",
+      "bytes": 266345,
+      "records": 32768,
+      "seed": 707
+    },
+    "packed-v4": {
+      "sha256": "de0b99782d711214ac8a6dce60af7cc1cb55626f0afdf7422dff136ab5d08b20",
+      "bytes": 299113,
+      "records": 32768,
+      "seed": 707
+    },
+    "packed-w4": {
+      "sha256": "0ca3e11dea478a703a65c7e909036c61d1bef286aef7984489cdd62333bd91a8",
+      "bytes": 364649,
+      "records": 32768,
+      "seed": 707
+    },
+    "packed-w8": {
+      "sha256": "2ea5322f89e6f634ae48810e460c7477f5a7f728378e7626b0c3d3e0fec0ab76",
+      "bytes": 495721,
+      "records": 32768,
+      "seed": 707
+    },
+    "packed-v6": {
+      "sha256": "9751c8eb7fd2bef12a6ce0a3555264cea626f4e32e2d6631a68b1abc2a99bbb1",
+      "bytes": 757865,
+      "records": 32768,
+      "seed": 707
+    },
+    "bitpacked-v6": {
+      "sha256": "9c2fd31df65290ff71731ae36a3552e679ce6168f9cae737e77ff072eed13c27",
+      "bytes": 661609,
+      "records": 32768,
+      "seed": 707
+    },
+    "overlaps": {
+      "sha256": "c78afca7584b8d70a4bae4da6966ff47793e3c974ffefe60336fe5e3517b44e7",
+      "bytes": 852073,
+      "records": 32768,
+      "seed": 707
+    },
+    "aliases": {
+      "sha256": "79c0a7ad65fbfb31ae228aeac7c1c63b1d2ef490e94367096587ec1a01868c73",
+      "bytes": 299153,
+      "records": 65536,
+      "seed": 707
+    },
+    "mixed": {
+      "sha256": "bf7e4c7fb1961ab250fcd624a9873095997da047b63eada8e7975d6fc2232800",
+      "bytes": 439764,
+      "records": 32768,
+      "seed": 707
+    }
+  },
+  "cells": {
+    "packed-w1 point": {
+      "checksum": 10263257088,
+      "scalar": [
+        88.01607,
+        87.994647,
+        87.974704,
+        84.363409,
+        84.363729,
+        84.338338,
+        85.650673,
+        85.592787,
+        85.607985
+      ],
+      "neon": [
+        83.674469,
+        83.536167,
+        83.657487,
+        86.624381,
+        86.621984,
+        86.647323,
+        82.409421,
+        82.623493,
+        82.555696
+      ]
+    },
+    "packed-w1 member": {
+      "checksum": 698368,
+      "scalar": [
+        60.758726,
+        60.7076,
+        60.665256,
+        60.632465,
+        60.474746,
+        60.670812,
+        61.016727,
+        60.86631,
+        61.116791
+      ],
+      "neon": [
+        63.654809,
+        63.596702,
+        63.649895,
+        63.720696,
+        63.517268,
+        63.667762,
+        64.142548,
+        63.985109,
+        63.993692
+      ]
+    },
+    "packed-v4 point": {
+      "checksum": 10263257088,
+      "scalar": [
+        91.39327,
+        91.381253,
+        91.273729,
+        87.371294,
+        87.460248,
+        87.335816,
+        88.507378,
+        88.443327,
+        88.412695
+      ],
+      "neon": [
+        87.194251,
+        87.04896,
+        87.054789,
+        89.97531,
+        89.975218,
+        89.93282,
+        86.594704,
+        86.538343,
+        86.398806
+      ]
+    },
+    "packed-v4 member": {
+      "checksum": 698368,
+      "scalar": [
+        63.234362,
+        63.073017,
+        63.161033,
+        63.118506,
+        62.888343,
+        63.003268,
+        63.42491,
+        63.295275,
+        63.484306
+      ],
+      "neon": [
+        64.484097,
+        64.295333,
+        64.351021,
+        64.57987,
+        64.367431,
+        64.438836,
+        64.531658,
+        64.368972,
+        64.570753
+      ]
+    },
+    "packed-w4 point": {
+      "checksum": 10263257088,
+      "scalar": [
+        88.768346,
+        88.843101,
+        88.73737,
+        84.447075,
+        84.256975,
+        84.228043,
+        85.764247,
+        85.765475,
+        85.646369
+      ],
+      "neon": [
+        86.59698,
+        86.575739,
+        86.527153,
+        89.072243,
+        89.163516,
+        89.108019,
+        85.569593,
+        85.528859,
+        85.450113
+      ]
+    },
+    "packed-w4 member": {
+      "checksum": 698368,
+      "scalar": [
+        63.980739,
+        63.724543,
+        63.957635,
+        63.750637,
+        63.665505,
+        64.014096,
+        63.996378,
+        63.873723,
+        63.949922
+      ],
+      "neon": [
+        68.533834,
+        68.258838,
+        68.206842,
+        68.052584,
+        68.025552,
+        68.231765,
+        68.598514,
+        68.57226,
+        68.550485
+      ]
+    },
+    "packed-w8 point": {
+      "checksum": 10263257088,
+      "scalar": [
+        88.563215,
+        88.439882,
+        88.425714,
+        83.999406,
+        84.059528,
+        83.932258,
+        85.730593,
+        85.631225,
+        85.644263
+      ],
+      "neon": [
+        87.683219,
+        87.713943,
+        87.800235,
+        89.987838,
+        89.898074,
+        89.874641,
+        87.394618,
+        87.243062,
+        87.245427
+      ]
+    },
+    "packed-w8 member": {
+      "checksum": 698368,
+      "scalar": [
+        64.027591,
+        63.849997,
+        64.001086,
+        63.879814,
+        63.691088,
+        63.757908,
+        64.276019,
+        64.067982,
+        64.249681
+      ],
+      "neon": [
+        71.529138,
+        71.334192,
+        71.350909,
+        71.372071,
+        71.25887,
+        71.371397,
+        71.845321,
+        71.716654,
+        71.7382
+      ]
+    },
+    "packed-v6 point": {
+      "checksum": 10263257088,
+      "scalar": [
+        83.902886,
+        83.471781,
+        83.271084,
+        75.648279,
+        75.543273,
+        75.230427,
+        76.784228,
+        76.362706,
+        76.126012
+      ],
+      "neon": [
+        77.013467,
+        76.931235,
+        76.45568,
+        81.145626,
+        80.968787,
+        80.689924,
+        79.599613,
+        79.15833,
+        79.041506
+      ]
+    },
+    "packed-v6 member": {
+      "checksum": 698368,
+      "scalar": [
+        60.099792,
+        59.665559,
+        60.073936,
+        58.423693,
+        57.978053,
+        58.220149,
+        58.801394,
+        58.427197,
+        58.746956
+      ],
+      "neon": [
+        62.533076,
+        61.905767,
+        62.17562,
+        63.506943,
+        63.020743,
+        63.432096,
+        62.353475,
+        62.08743,
+        62.928657
+      ]
+    },
+    "bitpacked-v6 point": {
+      "checksum": 10263257088,
+      "scalar": [
+        93.542868,
+        93.51621,
+        93.116547,
+        89.69635,
+        89.345554,
+        89.048259,
+        90.438684,
+        89.890609,
+        89.70472
+      ],
+      "neon": [
+        90.975012,
+        90.720784,
+        90.543915,
+        93.584515,
+        93.733171,
+        93.437072,
+        90.70001,
+        90.418828,
+        90.105556
+      ]
+    },
+    "bitpacked-v6 member": {
+      "checksum": 698368,
+      "scalar": [
+        75.064559,
+        74.517087,
+        75.156268,
+        74.233157,
+        73.924073,
+        74.140091,
+        74.785163,
+        74.368783,
+        74.786812
+      ],
+      "neon": [
+        76.641042,
+        76.163487,
+        76.21446,
+        76.500505,
+        75.942611,
+        76.373846,
+        76.522661,
+        76.037172,
+        76.222054
+      ]
+    },
+    "overlaps point": {
+      "checksum": 656280928256,
+      "scalar": [
+        1994.698766,
+        1994.08456,
+        1993.368356,
+        1987.377352,
+        1988.032529,
+        1987.915438,
+        2011.867204,
+        2012.90177,
+        2014.604346
+      ],
+      "neon": [
+        2003.803776,
+        2003.550443,
+        2003.011371,
+        2016.818255,
+        2016.530648,
+        2017.264505,
+        1976.70594,
+        1977.698709,
+        1977.803082
+      ]
+    },
+    "overlaps member": {
+      "checksum": 698368,
+      "scalar": [
+        116.747531,
+        116.897003,
+        116.842775,
+        117.180854,
+        117.125325,
+        117.127788,
+        117.221039,
+        116.933241,
+        116.797791
+      ],
+      "neon": [
+        115.268931,
+        115.167336,
+        115.221536,
+        115.543771,
+        115.625172,
+        115.569681,
+        115.442364,
+        115.338746,
+        115.524458
+      ]
+    },
+    "aliases point": {
+      "checksum": 20523720704,
+      "scalar": [
+        98.213769,
+        98.156966,
+        97.974305,
+        95.632579,
+        95.679714,
+        95.531821,
+        96.020997,
+        95.800988,
+        95.57522
+      ],
+      "neon": [
+        95.021064,
+        94.851114,
+        94.783171,
+        97.574269,
+        97.336944,
+        97.305686,
+        94.922399,
+        94.756133,
+        94.588295
+      ]
+    },
+    "aliases member": {
+      "checksum": 698368,
+      "scalar": [
+        68.950502,
+        68.729724,
+        68.892204,
+        68.851553,
+        68.843831,
+        68.726297,
+        69.108921,
+        68.96308,
+        68.913694
+      ],
+      "neon": [
+        69.39537,
+        69.144903,
+        69.34953,
+        69.407434,
+        69.183985,
+        69.089659,
+        69.599332,
+        69.462334,
+        69.441747
+      ]
+    },
+    "mixed point": {
+      "checksum": 14097209344,
+      "scalar": [
+        80.168361,
+        80.142717,
+        80.073082,
+        74.545997,
+        74.461141,
+        74.475362,
+        74.856395,
+        74.698988,
+        74.68308
+      ],
+      "neon": [
+        73.978004,
+        73.950088,
+        73.949958,
+        75.921,
+        75.905649,
+        75.894457,
+        73.625383,
+        73.55233,
+        73.495687
+      ]
+    },
+    "mixed member": {
+      "checksum": 698368,
+      "scalar": [
+        56.340564,
+        56.271462,
+        56.213874,
+        56.272609,
+        56.180565,
+        56.193543,
+        56.484109,
+        56.374624,
+        56.430481
+      ],
+      "neon": [
+        56.296853,
+        56.23014,
+        56.259979,
+        56.549824,
+        56.490525,
+        56.515093,
+        56.623672,
+        56.503024,
+        56.476191
+      ]
+    }
+  }
+}
