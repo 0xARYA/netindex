@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0 - Unreleased
+## 3.0.0 - 2026-11-06
 
 Choose indexed shared-payload references by default when they reduce artifact
 size. Both builders and the reader support format 4, while readers continue to
@@ -13,7 +13,7 @@ readers before rebuilding, or use `Builder::into_legacy_bytes`,
 `Builder::write_legacy_to`, or `ExternalBuilder::new_legacy` for format 3.
 External builds account additional temporary reference files and larger disk
 cells against their existing disk limit. See FORMAT.md for exact selection and
-validation rules. This release has not been published to the registry.
+validation rules.
 
 Explicit IPv6 alias windows can share the IPv4 network table through
 `Reader::write_shared_aliases`. Format 5 preserves logical targets, insertion

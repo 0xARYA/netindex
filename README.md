@@ -22,17 +22,15 @@ Licensed under [MIT](https://github.com/0xARYA/netindex/blob/main/LICENSE-MIT) o
 
 ## Quick start
 
-This guide covers the **unreleased 3.0 API**. To try it now, point Cargo at a
-checkout of this repository (adjust the path for your project):
+Add netindex to your project:
 
 ```toml
 [dependencies]
-netindex = { path = "../netindex" }
+netindex = "3"
 ```
 
-For the published 2.x release, use `netindex = "2"` and its
-[versioned API documentation](https://docs.rs/netindex/2.1.0/netindex/).
-For this checkout's API reference, run `cargo doc --all-features --no-deps --open`.
+See the [3.0 API documentation](https://docs.rs/netindex/3.0.0/netindex/)
+or the [2.1 API documentation](https://docs.rs/netindex/2.1.0/netindex/).
 See [upgrading from 2.x](#upgrading-from-2x) before replacing deployed readers
 or rebuilding files.
 
