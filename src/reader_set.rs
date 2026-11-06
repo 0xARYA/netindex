@@ -9,6 +9,13 @@ mod query;
 /// Source positions follow input order; record IDs remain local to each reader.
 /// Visits preserve every assertion and borrow payloads without allocating output.
 /// Schema decoding, provider precedence and release activation belong to the caller.
+/// All readers in the set use the same backing type `B`.
+///
+/// Use [`Self::visit_ip`] to visit evidence from every source. If your policy
+/// prefers an earlier source, supply that order to [`Self::new`] and use
+/// [`Self::try_visit_ip`] to stop once you have a satisfactory result. Within a
+/// source, normal query order still applies; this does not select the longest
+/// prefix.
 pub struct ReaderSet<B: AsRef<[u8]>> {
     readers: Vec<Arc<Reader<B>>>,
     router: Routing,

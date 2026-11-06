@@ -21,12 +21,13 @@ mod query;
 pub use inspection::{Inspection, PayloadReferences, SectionEncoding, SectionInspection};
 pub use query::{BatchError, Query};
 
-/// A matching assertion with its original target and borrowed payload.
+/// A matching assertion with its target and borrowed payload.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Match<'a> {
     /// Insertion-order record ID, unique within this index.
     pub id: u32,
-    /// Original address, network, inclusive range, or exact ASN.
+    /// Original address, network, inclusive range, or exact ASN. Shared IPv4
+    /// aliases return the projected IPv6 target.
     pub target: Target,
     /// Payload bytes owned by the reader's backing storage.
     pub payload: &'a [u8],
@@ -39,7 +40,12 @@ pub struct Match<'a> {
 /// Payload bytes remain opaque.
 /// Readers are `Send` and `Sync` when their backing storage is, and may be shared
 /// between threads without an internal lock.
-/// See [reading examples](crate#reading) for lookup and application decoding.
+///
+/// Use [`Self::lookup_ip`] to collect all matches, [`Self::contains_ip`] for
+/// membership, and [`Self::longest_prefix`] for a single most specific match.
+/// Use [`Self::visit_ip`] or [`Self::try_visit_ip`] when the caller owns output
+/// storage or only needs to process some results. See the
+/// [query guide](crate#reading) for ASN, intersection, and batch queries.
 pub struct Reader<B: AsRef<[u8]>> {
     bytes: B,
     layout: Layout,

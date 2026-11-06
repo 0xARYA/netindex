@@ -3,6 +3,11 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use crate::Error;
 
 /// Original subject of one assertion; no ranges or ASNs are expanded.
+///
+/// [`Builder::push`](crate::Builder::push) validates targets. A network must
+/// already have its host bits cleared, and both range endpoints must use the
+/// same address family. An address, a host-length CIDR, and a one-address
+/// range are distinct targets, even though they cover the same address.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Target {
     /// One IPv4 or IPv6 address.

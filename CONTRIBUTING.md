@@ -35,8 +35,10 @@ cargo +1.95.0 package --locked --all-features
 Set `RUSTDOCFLAGS="-D warnings"` when checking documentation. Packaging requires
 a clean working tree; use `--allow-dirty` only for local verification.
 
-Feature-dependent README examples are skipped by default. The all-feature check
-includes them; the mapped-file example is compiled without opening a local file.
+Feature-dependent README examples use hidden feature guards. Ordinary
+all-feature doctests exercise them; the mapped-file example is compiled without
+opening a local file. When publishing a new major version, update the README
+quick start and its versioned documentation link with the release.
 
 Use `?` in documentation examples and assert observable results. Put ownership
 and failure contracts on the relevant API; link examples rather than repeating

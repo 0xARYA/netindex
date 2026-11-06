@@ -13,6 +13,25 @@ impl<B: AsRef<[u8]>> Reader<B> {
     /// even when their bounds happen to describe a CIDR. Equal prefixes choose
     /// the lowest logical assertion ID. Shared aliases return the projected IPv6
     /// target and logical ID; the match borrows the original payload.
+    /// Returns `None` if no address or CIDR matches. Use [`Self::lookup_ip`]
+    /// to include ranges and preserve all matches.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use netindex::{Builder, Limits, Reader, Target};
+    ///
+    /// let limits = Limits::default();
+    /// let mut builder = Builder::new(limits);
+    /// let address = "203.0.113.42".parse()?;
+    /// builder.push(Target::Network { address: "203.0.113.0".parse()?, prefix: 24 }, b"network")?;
+    /// builder.push(Target::Address(address), b"host")?;
+    /// let reader = Reader::open(builder.into_bytes(b"")?, limits)?;
+    ///
+    /// assert_eq!(reader.lookup_ip(address)?.len(), 2);
+    /// assert_eq!(reader.longest_prefix(address)?.map(|row| row.payload), Some(&b"host"[..]));
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
+    /// ```
     ///
     /// # Errors
     /// Returns errors encountered while reading the search path or the winner.

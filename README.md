@@ -1,31 +1,9 @@
 # netindex
 
 Read and write immutable IP-range and exact-ASN indexes. Queries return every
-matching assertion, including overlaps and duplicates, with its original target
-and borrowed payload bytes.
-
-## Performance
-
-Warm DB-IP Lite City hit queries measured **3.3–4.3× faster lookup and field
-decoding** and **1.7–1.8× faster lookup through JSON serialization** than the Rust
-MMDB reader, with identical fields, networks, and JSON output.
-
-| Query | netindex (ns) | MMDB (ns) | Speedup |
-| --- | ---: | ---: | ---: |
-| IPv4 lookup + fields | 110 | 359 | **3.3×** |
-| IPv6 lookup + fields | 93 | 401 | **4.3×** |
-| IPv4 lookup + fields + JSON | 383 | 699 | **1.8×** |
-| IPv6 lookup + fields + JSON | 464 | 788 | **1.7×** |
-
-Measured on Ryzen 9 9950X3D2, Windows 11, Rust 1.95.0, using `maxminddb 0.32.0`
-and netindex's public codec. Times are warm mean ns/query. Some lookup workloads
-favor MMDB; those converted fixtures were about 2.2× larger and validated opening
-was slower.
-See [benchmarks](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md) for all
-workloads, methodology, and reproduction instructions.
-
-The latest [performance audit](https://github.com/0xARYA/netindex/blob/main/PERFORMANCE.md)
-covers external-build I/O, every packed width, and application PGO versus ThinLTO.
+matching assertion, including overlaps and duplicates, with its target and
+borrowed payload bytes. Use a membership query when you only need a yes/no
+answer, or longest-prefix lookup when you need one address or CIDR.
 
 ## Use cases
 
@@ -44,10 +22,19 @@ Licensed under [MIT](https://github.com/0xARYA/netindex/blob/main/LICENSE-MIT) o
 
 ## Quick start
 
+This guide covers the **unreleased 3.0 API**. To try it now, point Cargo at a
+checkout of this repository (adjust the path for your project):
+
 ```toml
 [dependencies]
-netindex = "3"
+netindex = { path = "../netindex" }
 ```
+
+For the published 2.x release, use `netindex = "2"` and its
+[versioned API documentation](https://docs.rs/netindex/2.1.0/netindex/).
+For this checkout's API reference, run `cargo doc --all-features --no-deps --open`.
+See [upgrading from 2.x](#upgrading-from-2x) before replacing deployed readers
+or rebuilding files.
 
 ```rust
 use netindex::{Builder, Limits, Reader, Target};
@@ -77,16 +64,27 @@ Index files use `.nidx`, for example `membership.nidx`.
 
 ## Reading
 
-[`Reader::open`] validates the complete index before returning a reader. Backing
-bytes must stay immutable. Your application decodes payloads.
+Open an index with `Reader::open`. Opening validates the entire file. Keep
+the backing immutable; payload bytes remain opaque until your application
+decodes them.
 
-[`Reader::lookup_ip`] and [`Reader::lookup_asn`] collect borrowed matches into a
-vector; misses return an empty vector. ASN lookup matches an exact key and does
-not resolve an IP's ASN. Record IDs follow insertion order; query results need
-not follow that order.
+| I want to… | Use | Result |
+| --- | --- | --- |
+| Find every match | `lookup_ip`, `lookup_asn` | A vector of borrowed matches; empty on a miss. |
+| Test whether any match exists | `contains_ip`, `contains_asn` | A boolean; does not resolve payloads. |
+| Find the most specific address or CIDR | `longest_prefix` | One borrowed match or `None`; ignores ranges. |
+| Process matches without a result vector | `visit_ip`, `visit_asn`, `visit_all` | A callback for each match; a callback error stops delivery. |
+| Stop successfully when a callback finds what it needs | `try_visit_ip`, `try_visit_asn` | `ControlFlow::Break(value)` carries the answer. |
+| Find records that intersect an IP range | `visit_intersecting` | A callback for each whole original target that intersects the query. |
+| Process a mix of queries in input order | `visit_batch`, `try_visit_batch` | Callbacks with the input query position. |
 
-Use [`Reader::visit_ip`], [`Reader::visit_asn`], or [`Reader::visit_all`] to avoid
-allocating a result vector. A visitor error stops delivery:
+ASN methods match an exact number, with zero treated as a miss. They do not
+resolve an IP's ASN. IDs reflect insertion order, but matches within a query
+need not arrive in that order.
+
+A visitor can decode its payload and return an application error. Its error
+type must implement `From<netindex::Error>`. If the callback itself cannot
+fail, return `Ok::<_, netindex::Error>(())`.
 
 ```rust
 use netindex::{Builder, Limits, Reader, Target};
@@ -123,11 +121,9 @@ output buffer, reordering, thread pool or automatic cross-query SIMD policy.
 callbacks have already run; later queries do not run. Callers own output storage
 and any rollback policy.
 
-`contains_ip` and `contains_asn` stop at the first match without resolving its
-payload. The `try_visit_*` methods
-return `ControlFlow::Break(value)` for successful early termination and preserve
-visitor errors separately. `visit_intersecting` takes an address, canonical CIDR
-or inclusive range and returns whole original intersecting targets. It searches
+The `try_visit_*` methods preserve visitor errors separately from a successful
+break. `visit_intersecting` accepts an address, canonical CIDR, or inclusive
+range. It searches
 only that address family, preserves duplicates and sorted target order, and
 includes shared aliases. Invalid queries fail before delivery.
 
@@ -172,7 +168,7 @@ Batch callback positions are query then source. Each query visits sources in
 source order; interval queries search all sources because point coverage masks
 cannot safely exclude a whole range.
 
-[`ReaderSet`] shares up to 64 readers and uses IP coverage to skip files that
+`ReaderSet` shares up to 64 readers and uses IP coverage to skip files that
 cannot match. It returns every matching assertion with its source position and
 source-local record ID. ASN queries search every reader. Schema decoding and
 provider precedence remain application decisions.
@@ -184,33 +180,28 @@ its extra cache footprint against your workload. Both preserve all matches.
 `replaced(position, reader)` creates a new set sharing unchanged readers. Coarse
 routing reuses coverage cached during validation; fine routing scans only the
 replacement. Old sets and borrowed matches remain usable; the application publishes
-the new set. Use [`CoverageRouter`] to manage readers separately.
+the new set. Use `CoverageRouter` to manage readers separately.
 
 ## Memory-mapped files
 
-Enable `mmap` for `MappedReader::map_file`. It checks file-size limits before
-mapping, validates the index, and owns the mapping independently of the file handle.
+Add `features = ["mmap"]` to your dependency for `MappedReader::map_file`.
+It checks file-size limits before mapping, validates the index, and owns the
+mapping independently of the file handle.
 
-```toml
-[dependencies]
-netindex = { version = "3", features = ["mmap"] }
-```
-
-```rust,ignore,no_run
+```rust,no_run
+# #[cfg(feature = "mmap")]
+# {
 use std::fs::File;
 
 use netindex::{Limits, MappedReader};
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let file = File::open("membership.nidx")?;
-    // SAFETY: No process modifies or truncates this file while the reader is alive.
-    let reader = unsafe { MappedReader::map_file(&file, Limits::default()) }?;
-
-    let matches = reader.lookup_ip("203.0.113.42".parse()?)?;
-    println!("{} matching entries", matches.len());
-
-    Ok(())
-}
+let file = File::open("membership.nidx")?;
+// SAFETY: No process modifies or truncates this file while the reader is alive.
+let reader = unsafe { MappedReader::map_file(&file, Limits::default()) }?;
+let matches = reader.lookup_ip("203.0.113.42".parse()?)?;
+println!("{} matching entries", matches.len());
+# }
+# Ok::<(), Box<dyn std::error::Error>>(())
 ```
 
 Mapping is unsafe because changes to the file by any process can invalidate
@@ -226,24 +217,12 @@ is opt-in because its additional check can slow narrow-network queries.
 
 ## Building
 
-[`Builder::into_bytes`] returns owned bytes; [`Builder::write_to`] writes to a
+`Builder::into_bytes` returns owned bytes; `Builder::write_to` writes to a
 caller-owned output. Metadata is stored once as opaque bytes.
 
-Version 3 chooses compact shared-payload references when they save space. The
-new format-4 encoding keeps targets, insertion IDs and borrowed opaque payloads
-unchanged; readers also accept existing format-3 files. **2.x readers cannot open
-format-4 files.** Upgrade readers before rebuilding artifacts, or use
-`Builder::into_legacy_bytes`, `Builder::write_legacy_to`, or
-`ExternalBuilder::new_legacy` to continue producing format 3. Uniform-length and
-unshared values retain their smaller existing representation. See [FORMAT.md](FORMAT.md).
-The in-memory writer temporarily sorts one span per distinct value when selecting
-the new encoding. The external builder keeps its directory and IDs on disk; it
-reuses its existing slot spill for value IDs, charging sixteen temporary bytes
-per distinct value and 32-byte disk-table cells instead of 24-byte cells to the
-temporary-byte budget. Individual payloads at least `u32::MAX` bytes need an
-additional eight temporary bytes per assertion for a wide-length escape.
-These are construction costs; readers borrow the directory without allocating a
-second copy.
+Ordinary builders choose compact shared-payload references when they save
+space. If a deployed reader is still on 2.x, see [upgrading from 2.x](#upgrading-from-2x)
+before writing new artifacts.
 
 Enable `external-sort` for `ExternalBuilder` when buffering all assertions would
 exceed your budget. `ExternalOptions` bounds sorted runs, the payload cache, and
@@ -270,7 +249,7 @@ sequential passes and temporary disk can make this slower than the ordinary
 builder; measure both. Fixed I/O buffers and open-file counts grow with the
 partition count outside the key budget. Nonzero table caches are unsupported,
 and cumulative artifact-byte limits can fail during finalization before output.
-See [partitioned-build measurements](benches/partitioned_dedup/README.md).
+See [partitioned-build measurements](https://github.com/0xARYA/netindex/blob/main/benches/partitioned_dedup/README.md).
 
 The external writer requires empty, seekable output at position zero. Either
 writer can leave partial output on failure. Stage output, check success, and
@@ -288,7 +267,8 @@ copies the original bytes. Ordinary builders continue producing formats 3/4.
 Upgrade readers before using this output: readers without format-6 support
 reject it, including inside alias envelopes. Exact-bit access trades some
 validation and lookup work for smaller files; measure your workload. See
-[FORMAT.md](FORMAT.md) and [bitpacking measurements](benches/bitpacking/RESULTS.md).
+[FORMAT.md](https://github.com/0xARYA/netindex/blob/main/FORMAT.md) and
+[bitpacking measurements](https://github.com/0xARYA/netindex/blob/main/benches/bitpacking/RESULTS.md).
 Stage output and check success before publishing; output errors can leave partial
 bytes.
 
@@ -300,7 +280,8 @@ artifact. The reader projects targets, shares borrowed payloads and preserves
 logical insertion IDs without copying the IPv4 rows. Windows must be disjoint
 from each other and from native IPv6 targets; overlaps and duplicates among
 source IPv4 networks still produce separate matches. The source IPv4 IDs must
-start at zero in sorted order. See [the format rules](FORMAT.md#shared-ipv4-aliases-format-5).
+start at zero in sorted order. See
+[the format rules](https://github.com/0xARYA/netindex/blob/main/FORMAT.md#shared-ipv4-aliases-format-5).
 
 This is opt-in. Ordinary builders still write formats 3/4, and readers that
 predate format 5 cannot open the shared artifact. The `share_aliases` example
@@ -355,45 +336,41 @@ cargo run --example compio
 
 ## Record codec
 
-The `codec` feature provides flat typed records with shared strings and bytes.
-Declare fields once, then encode records with that schema:
+Add `features = ["codec"]` to your dependency for flat typed records with
+shared strings and bytes. Declare fields once, then encode records with that
+schema:
 
-```toml
-[dependencies]
-netindex = { version = "3", features = ["codec"] }
-```
-
-```rust,ignore
+```rust
+# #[cfg(feature = "codec")]
+# {
 use netindex::{
     Builder, Error, Limits, Reader, Target,
     codec::{Decoder, Encoder, Field, Kind, Schema, Value},
 };
 
-fn main() -> Result<(), Error> {
-    let limits = Limits::default();
-    let schema = Schema::new(
-        &[Field::Required(Kind::U32), Field::Optional(Kind::String)],
-        limits,
-    )?;
-    let mut encoder = Encoder::new(schema, limits);
-    let payload = encoder.encode(&[Value::U32(64512), Value::String("example network")])?;
-    let metadata = encoder.into_metadata()?;
+let limits = Limits::default();
+let schema = Schema::new(
+    &[Field::Required(Kind::U32), Field::Optional(Kind::String)],
+    limits,
+)?;
+let mut encoder = Encoder::new(schema, limits);
+let payload = encoder.encode(&[Value::U32(64512), Value::String("example network")])?;
+let metadata = encoder.into_metadata()?;
 
-    let mut builder = Builder::new(limits);
-    builder.push(Target::Asn(64512), &payload)?;
-    let reader = Reader::open(builder.into_bytes(&metadata)?, limits)?;
-    let decoder = Decoder::open(reader.metadata()?, limits)?;
+let mut builder = Builder::new(limits);
+builder.push(Target::Asn(64512), &payload)?;
+let reader = Reader::open(builder.into_bytes(&metadata)?, limits)?;
+let decoder = Decoder::open(reader.metadata()?, limits)?;
 
-    reader.visit_asn(64512, |matched| {
-        let record = decoder.record(matched.payload)?;
+reader.visit_asn(64512, |matched| {
+    let record = decoder.record(matched.payload)?;
 
-        assert_eq!(record.string(1)?, Some("example network"));
+    assert_eq!(record.string(1)?, Some("example network"));
 
-        Ok::<_, Error>(())
-    })?;
-
-    Ok(())
-}
+    Ok::<_, Error>(())
+})?;
+# }
+# Ok::<(), netindex::Error>(())
 ```
 
 Pass encoded records to the index builder as payloads and store codec metadata
@@ -407,6 +384,24 @@ field access checks values and references. Use `validate()` to check every field
 before publishing. Consumers must also check that the stored schema matches their
 expected field declarations. Records and their metadata must belong to the same
 dataset; in-range IDs from another pool cannot be detected automatically.
+
+## Upgrading from 2.x
+
+Upgrade **readers before writers**. 3.0 readers accept existing format-3
+files. The ordinary 3.0 writer can emit format 4; older readers that only
+support format 3 reject it. A small test artifact may still use format 3, so
+use explicit legacy output while any older reader must open your files.
+
+| Need | Use |
+| --- | --- |
+| Write files for a mixed 2.x/3.0 fleet | `Builder::into_legacy_bytes`, `Builder::write_legacy_to`, or `ExternalBuilder::new_legacy` |
+| Use the 3.0 defaults | Upgrade readers, then rebuild with `Builder` or `ExternalBuilder` |
+| Publish shared aliases or exact-bit compaction | Confirm all readers support the chosen encoding, including format 6 inside an alias envelope |
+
+Stage a new artifact and validate it before activation. Keep the old files
+if older readers need to roll back. `Reader::inspect` reports the outer and
+base formats. For layout and validation details, see
+[FORMAT.md](https://github.com/0xARYA/netindex/blob/main/FORMAT.md).
 
 ## Features
 
@@ -430,13 +425,10 @@ diagnostics, not a stable wire format.
 See the [file specification](https://github.com/0xARYA/netindex/blob/main/FORMAT.md) for encoding and validation, and the
 [contributor guide](https://github.com/0xARYA/netindex/blob/main/CONTRIBUTING.md) for checks and measurement practices.
 
-[`Reader::open`]: https://docs.rs/netindex/latest/netindex/struct.Reader.html#method.open
-[`Reader::lookup_ip`]: https://docs.rs/netindex/latest/netindex/struct.Reader.html#method.lookup_ip
-[`Reader::lookup_asn`]: https://docs.rs/netindex/latest/netindex/struct.Reader.html#method.lookup_asn
-[`Reader::visit_ip`]: https://docs.rs/netindex/latest/netindex/struct.Reader.html#method.visit_ip
-[`Reader::visit_asn`]: https://docs.rs/netindex/latest/netindex/struct.Reader.html#method.visit_asn
-[`Reader::visit_all`]: https://docs.rs/netindex/latest/netindex/struct.Reader.html#method.visit_all
-[`ReaderSet`]: https://docs.rs/netindex/latest/netindex/struct.ReaderSet.html
-[`CoverageRouter`]: https://docs.rs/netindex/latest/netindex/struct.CoverageRouter.html
-[`Builder::into_bytes`]: https://docs.rs/netindex/latest/netindex/struct.Builder.html#method.into_bytes
-[`Builder::write_to`]: https://docs.rs/netindex/latest/netindex/struct.Builder.html#method.write_to
+## Performance
+
+Costs vary with index shape, payload decoding, and startup requirements.
+In the Byway City deployment replay, netindex improved lookup tail latency
+while native MMDB opened and reloaded faster. See the
+[benchmark guide](https://github.com/0xARYA/netindex/blob/main/BENCHMARKS.md)
+for the workloads, tradeoffs, and reproduction instructions.
