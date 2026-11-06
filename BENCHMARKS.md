@@ -1,7 +1,7 @@
 # Benchmarks
 
-The ordered [performance work queue](PERF_TASKS.md) tracks experiments, acceptance
-criteria, measurements and decisions. New results should update that queue.
+See the [performance evidence index](benches/EVIDENCE.md) for how to record
+measurements and find the corresponding reports and raw results.
 
 ## Matched-contract competitors (2026-11-04)
 
@@ -515,8 +515,8 @@ or library PGO/release policy is adopted.
 `Reader::longest_prefix`, visitor selection and a trie on matched CIDR workloads.
 Both reports link exact inputs, process samples and reproduction.
 
-[P3 decisions and measurements](PERF_TASKS.md#2026-11-06-p3-03-search-only-membership)
-also cover the shipped search-only membership paths, the decision to keep
-scalar packed search on ARM64, and City storage and cache profiling.
+See also the [search-only membership results](benches/query_capabilities/RESULTS.md#search-only-membership),
+[native ARM64 reader qualification](benches/architectures/RESULTS.md#native-arm64-reader-qualification),
+and [City storage and cache profiling](benches/native_city/P3_RESULTS.md#storage-and-lookup-cache-profile).
 The [deployment replay](benches/native_city/P3_RESULTS.md#deployment-qualification)
 adds production-session queries and verified cold City startup and reload.

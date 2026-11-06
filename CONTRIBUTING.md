@@ -62,6 +62,10 @@ all-feature doctests exercise them; the mapped-file example is compiled without
 opening a local file. When publishing a new major version, update the README
 quick start and its versioned documentation link with the release.
 
+The [Cargo examples](examples/README.md) list distinguishes runnable integration
+examples from the artifact tools used in benchmark reproduction. Declare each
+tool's required features in Cargo so a missing feature fails before execution.
+
 Use `?` in documentation examples and assert observable results. Put ownership
 and failure contracts on the relevant API; link examples rather than repeating
 them on every method.

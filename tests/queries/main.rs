@@ -2,170 +2,16 @@
 use std::{
     net::{IpAddr, Ipv4Addr, Ipv6Addr},
     ops::ControlFlow,
+    sync::Arc,
 };
 
 use netindex::{
-    Builder, Error, Inspection, Limits, Match, Query, Reader, SectionEncoding, SharedAlias, Target,
+    Builder, Error, Limits, Match, Query, Reader, ReaderSet, SectionEncoding, SharedAlias, Target,
 };
 
-fn bounds(target: Target) -> Option<(bool, u128, u128)> {
-    let value = |ip: IpAddr| match ip {
-        IpAddr::V4(ip) => u128::from(u32::from(ip)),
-        IpAddr::V6(ip) => u128::from(ip),
-    };
-    match target {
-        Target::Address(ip) => Some((ip.is_ipv6(), value(ip), value(ip))),
-        Target::Network { address, prefix } => {
-            let width = if address.is_ipv6() { 128 } else { 32 };
-            let host = u128::MAX
-                .checked_shr(128 - (width - u32::from(prefix)))
-                .unwrap_or(0);
-            Some((address.is_ipv6(), value(address), value(address) | host))
-        }
-        Target::Range { start, end } => Some((start.is_ipv6(), value(start), value(end))),
-        Target::Asn(_) => None,
-    }
-}
+use oracle::{assert_inspection_totals, assert_queries_match_original, ip_bounds, owned_match};
 
-#[expect(
-    clippy::unwrap_used,
-    reason = "independent test oracle fails on invalid fixture construction"
-)]
-fn expected(targets: &[(u32, Target, Vec<u8>)], query: Query) -> Vec<(u32, Target, Vec<u8>)> {
-    let mut result: Vec<_> = targets
-        .iter()
-        .filter(|(_, target, _)| match query {
-            Query::Asn(key) => *target == Target::Asn(key),
-            Query::Ip(ip) => bounds(*target).is_some_and(|(v6, start, end)| {
-                let (_, q, _) = bounds(Target::Address(ip)).unwrap();
-                v6 == ip.is_ipv6() && start <= q && q <= end
-            }),
-            Query::Intersecting(query) => match (bounds(*target), bounds(query)) {
-                (Some((v6, start, end)), Some((qv6, first, last))) => {
-                    v6 == qv6 && start <= last && end >= first
-                }
-                _ => false,
-            },
-        })
-        .cloned()
-        .collect();
-    result.sort_by_key(|(id, target, _)| match bounds(*target) {
-        Some((_, start, end)) => (start, end, *id),
-        None => (0, 0, *id),
-    });
-    result
-}
-
-fn owned(row: Match<'_>) -> (u32, Target, Vec<u8>) {
-    (row.id, row.target, row.payload.to_vec())
-}
-
-fn prefix_rank(target: Target) -> Option<u8> {
-    match target {
-        Target::Network { prefix, .. } => Some(prefix),
-        Target::Address(ip) => Some(if ip.is_ipv6() { 128 } else { 32 }),
-        _ => None,
-    }
-}
-
-fn inspect_totals(info: Inspection) {
-    assert_eq!(
-        info.header_bytes
-            + info.metadata_bytes
-            + info.ipv4.bytes
-            + info.ipv6.bytes
-            + info.asn.bytes
-            + info.reference_bytes
-            + info.payload_bytes,
-        info.artifact_bytes
-    );
-    assert_eq!(
-        info.ipv4.records + info.ipv6.records + info.asn.records,
-        info.physical_records
-    );
-    assert!(info.ipv4.bitpacked_blocks <= info.ipv4.blocks);
-    assert!(info.ipv6.bitpacked_blocks <= info.ipv6.blocks);
-    assert_eq!(
-        info.validation_id_bitmap_bytes,
-        info.physical_records.div_ceil(64) * 8
-    );
-}
-
-#[expect(
-    clippy::unwrap_used,
-    clippy::indexing_slicing,
-    clippy::panic,
-    reason = "independent oracle assertions fail loudly on any contract mismatch"
-)]
-fn verify(
-    reader: &Reader<impl AsRef<[u8]>>,
-    targets: &[(u32, Target, Vec<u8>)],
-    queries: &[Query],
-) {
-    inspect_totals(reader.inspect().unwrap());
-    let mut actual = Vec::new();
-    reader
-        .visit_batch(queries, |index, row| {
-            actual.push((index, owned(row)));
-            Ok::<_, Error>(())
-        })
-        .unwrap();
-    let wanted: Vec<_> = queries
-        .iter()
-        .enumerate()
-        .flat_map(|(index, &query)| {
-            expected(targets, query)
-                .into_iter()
-                .map(move |row| (index, row))
-        })
-        .collect();
-    assert_eq!(actual, wanted);
-    for (index, &query) in queries.iter().enumerate() {
-        let want = expected(targets, query);
-        let mut rows = Vec::new();
-        match query {
-            Query::Ip(ip) => {
-                reader
-                    .visit_ip(ip, |row| {
-                        rows.push(owned(row));
-                        Ok::<_, Error>(())
-                    })
-                    .unwrap();
-                assert_eq!(reader.contains_ip(ip).unwrap(), !want.is_empty());
-                let winner = want
-                    .iter()
-                    .filter_map(|row| prefix_rank(row.1).map(|rank| (rank, row)))
-                    .min_by_key(|(rank, row)| (std::cmp::Reverse(*rank), row.0))
-                    .map(|(_, row)| row.clone());
-                assert_eq!(reader.longest_prefix(ip).unwrap().map(owned), winner);
-            }
-            Query::Asn(key) => {
-                reader
-                    .visit_asn(key, |row| {
-                        rows.push(owned(row));
-                        Ok::<_, Error>(())
-                    })
-                    .unwrap();
-                assert_eq!(reader.contains_asn(key).unwrap(), !want.is_empty());
-            }
-            Query::Intersecting(target) => reader
-                .visit_intersecting(target, |row| {
-                    rows.push(owned(row));
-                    Ok::<_, Error>(())
-                })
-                .unwrap(),
-        }
-        assert_eq!(rows, want, "query {index}: {query:?}");
-        let stop = reader
-            .try_visit_batch(&[query], |_, row| Ok::<_, Error>(ControlFlow::Break(row)))
-            .unwrap();
-        match stop {
-            ControlFlow::Continue(()) => assert!(want.is_empty()),
-            ControlFlow::Break((0, row)) => assert_eq!(owned(row), want[0]),
-            _ => panic!("single-query batch position"),
-        }
-    }
-}
+mod oracle;
 
 #[test]
 fn longest_prefix_distinguishes_ranges_addresses_and_duplicate_networks() {
@@ -234,7 +80,6 @@ fn longest_prefix_distinguishes_ranges_addresses_and_duplicate_networks() {
 #[test]
 fn generated_original_assertion_oracle_covers_layouts_boundaries_and_tails() {
     for (ipv6, overlapping) in [(false, false), (true, false), (false, true), (true, true)] {
-        let mut builder = Builder::new(Limits::default());
         let mut targets = Vec::new();
         let ip = |value| {
             if ipv6 {
@@ -271,7 +116,6 @@ fn generated_original_assertion_oracle_covers_layouts_boundaries_and_tails() {
                 Target::Address(ip(start))
             };
             let payload = vec![i as u8; (i as usize % 7) + 1];
-            builder.push(target, &payload).unwrap();
             targets.push((i, target, payload));
             queries.extend([
                 Query::Ip(ip(start)),
@@ -282,10 +126,7 @@ fn generated_original_assertion_oracle_covers_layouts_boundaries_and_tails() {
             ]);
         }
         for id in 529..545 {
-            let t = Target::Asn(id % 3 + 1);
-            let p = vec![id as u8];
-            builder.push(t, &p).unwrap();
-            targets.push((id, t, p));
+            targets.push((id, Target::Asn(id % 3 + 1), vec![id as u8]));
         }
         queries.extend([
             Query::Asn(0),
@@ -308,14 +149,24 @@ fn generated_original_assertion_oracle_covers_layouts_boundaries_and_tails() {
                 builder.write_to(&mut bytes, b"oracle").unwrap();
             }
             let reader = Reader::open(bytes, Limits::default()).unwrap();
+            let layout = reader.inspect().unwrap();
+            let active = if ipv6 { layout.ipv6 } else { layout.ipv4 };
+            let inactive = if ipv6 { layout.ipv4 } else { layout.ipv6 };
+
             assert_eq!(
-                reader.inspect().unwrap().ipv4.encoding == SectionEncoding::Packed,
-                !ipv6 && !overlapping
+                active.encoding,
+                if overlapping {
+                    SectionEncoding::Interval
+                } else {
+                    SectionEncoding::Packed
+                },
+                "IPv6={ipv6}, legacy={legacy}"
             );
-            verify(&reader, &targets, &queries);
+            assert_eq!(inactive.records, 0);
+            assert_queries_match_original(&reader, &targets, &queries);
             let mut compact = Vec::new();
             reader.write_bitpacked_to(&mut compact).unwrap();
-            verify(
+            assert_queries_match_original(
                 &Reader::open(compact, Limits::default()).unwrap(),
                 &targets,
                 &queries,
@@ -326,45 +177,57 @@ fn generated_original_assertion_oracle_covers_layouts_boundaries_and_tails() {
 
 #[test]
 fn aliases_intersections_preserve_projected_ids_whole_targets_and_order() {
-    for prefix in [0, 64, 80, 96] {
+    const SOURCE_NETWORKS: u32 = 529;
+    // Each window places the source ordinal in three IPv4 octets at a
+    // different offset. Specify the resulting layout independently.
+    for (prefix, ordinal_shift, projected_prefix) in
+        [(0, 104, 24), (64, 40, 88), (80, 24, 104), (96, 8, 120)]
+    {
         let mut builder = Builder::new(Limits::default());
         let mut targets = Vec::new();
-        for i in 0..529u32 {
+        for i in 0..SOURCE_NETWORKS {
             let target = Target::Network {
                 address: Ipv4Addr::from(i * 256).into(),
                 prefix: 24,
             };
-            let p = vec![i as u8; 2];
-            builder.push(target, &p).unwrap();
-            targets.push((i, target, p));
+            let payload = vec![i as u8; 2];
+            builder.push(target, &payload).unwrap();
+            targets.push((i, target, payload));
         }
+
         let mut windows = vec![SharedAlias {
             address: Ipv6Addr::UNSPECIFIED,
             prefix,
-            first_id: 529,
+            first_id: SOURCE_NETWORKS,
             interleaved: false,
         }];
         if prefix != 0 {
-            let t = Target::Address(Ipv6Addr::from(u128::MAX).into());
-            builder.push(t, b"native").unwrap();
-            targets.push((529, t, b"native".to_vec()));
-            windows[0].first_id = 530;
+            let target = Target::Address(Ipv6Addr::from(u128::MAX).into());
+            builder.push(target, b"native").unwrap();
+            targets.push((SOURCE_NETWORKS, target, b"native".to_vec()));
+            windows[0].first_id += 1;
             windows.push(SharedAlias {
                 address: Ipv6Addr::from(1u128 << 127),
                 prefix,
-                first_id: 1059,
+                first_id: SOURCE_NETWORKS * 2 + 1,
                 interleaved: false,
             });
         }
+
         for &window in &windows {
-            for i in 0..529u32 {
+            for i in 0..SOURCE_NETWORKS {
+                let address = u128::from(window.address) + (u128::from(i) << ordinal_shift);
                 targets.push((
                     window.first_id + i,
-                    window.project(targets[i as usize].1).unwrap(),
-                    targets[i as usize].2.clone(),
+                    Target::Network {
+                        address: Ipv6Addr::from(address).into(),
+                        prefix: projected_prefix,
+                    },
+                    vec![i as u8; 2],
                 ));
             }
         }
+
         let base = Reader::open(
             builder.into_bytes(b"alias query").unwrap(),
             Limits::default(),
@@ -378,7 +241,7 @@ fn aliases_intersections_preserve_projected_ids_whole_targets_and_order() {
             prefix: 0,
         })];
         for (_, target, _) in &targets {
-            let Some((v6, start, end)) = bounds(*target) else {
+            let Some((v6, start, end)) = ip_bounds(*target) else {
                 continue;
             };
             let ip = |v| {
@@ -402,11 +265,11 @@ fn aliases_intersections_preserve_projected_ids_whole_targets_and_order() {
             ]);
         }
         let reader = Reader::open(envelope, Limits::default()).unwrap();
-        verify(&reader, &targets, &queries);
+        assert_queries_match_original(&reader, &targets, &queries);
         assert_eq!(reader.inspect().unwrap().alias_windows, windows.len());
         let mut compact = Vec::new();
         reader.write_bitpacked_to(&mut compact).unwrap();
-        verify(
+        assert_queries_match_original(
             &Reader::open(compact, Limits::default()).unwrap(),
             &targets,
             &queries,
@@ -446,6 +309,7 @@ fn breaks_errors_and_lifetimes_have_exact_non_speculative_prefixes() {
         address: Ipv4Addr::LOCALHOST.into(),
         prefix: 8,
     });
+
     let mut calls = Vec::new();
     let error = reader
         .visit_batch(&[query, query, invalid], |q, row| {
@@ -457,19 +321,24 @@ fn breaks_errors_and_lifetimes_have_exact_non_speculative_prefixes() {
             }
         })
         .unwrap_err();
+
     assert_eq!(error.query_index, 1);
     assert!(matches!(error.error, Failure::User(123)));
     assert_eq!(calls.len(), 11);
+
     let error = reader
         .visit_batch(&[query, invalid], |_, _| Ok::<_, Failure>(()))
         .unwrap_err();
+
     assert_eq!(error.query_index, 1);
     assert!(matches!(error.error, Failure::Reader(Error::Invalid(_))));
+
     let stopped = reader
         .try_visit_batch(&[query, invalid], |_, row| {
             Ok::<_, Failure>(ControlFlow::Break(row))
         })
         .unwrap();
+
     assert!(matches!(
         stopped,
         ControlFlow::Break((0, Match { id: 0, .. }))
@@ -480,6 +349,7 @@ fn breaks_errors_and_lifetimes_have_exact_non_speculative_prefixes() {
             .unwrap(),
         ControlFlow::Break(8)
     ));
+
     let mut calls = 0;
     reader
         .visit_batch(&[], |_, _| {
@@ -487,7 +357,9 @@ fn breaks_errors_and_lifetimes_have_exact_non_speculative_prefixes() {
             Ok::<_, Error>(())
         })
         .unwrap();
+
     assert_eq!(calls, 0);
+
     let retained = {
         let queries = vec![query];
         let mut result = Vec::new();
@@ -499,6 +371,7 @@ fn breaks_errors_and_lifetimes_have_exact_non_speculative_prefixes() {
             .unwrap();
         result
     };
+
     assert!(retained.iter().all(|row| row.payload == b"borrowed"));
     let pointer = reader.lookup_ip(Ipv4Addr::LOCALHOST.into()).unwrap()[0]
         .payload
@@ -527,22 +400,41 @@ fn breaks_errors_and_lifetimes_have_exact_non_speculative_prefixes() {
 
 #[test]
 fn independent_format_fixtures_inspection_and_queries_agree() {
-    for bytes in [
-        include_bytes!("fixtures/bitpacked-ipv4.nidx").as_slice(),
-        include_bytes!("fixtures/bitpacked-ipv6.nidx").as_slice(),
+    for (ipv6, bytes) in [
+        (
+            false,
+            include_bytes!("../fixtures/bitpacked-ipv4.nidx").as_slice(),
+        ),
+        (
+            true,
+            include_bytes!("../fixtures/bitpacked-ipv6.nidx").as_slice(),
+        ),
     ] {
         let reader = Reader::open(bytes, Limits::default()).unwrap();
         let info = reader.inspect().unwrap();
-        inspect_totals(info);
+        assert_inspection_totals(info);
         assert_eq!(info.format, 6);
         assert_eq!(info.ipv4.bitpacked_blocks + info.ipv6.bitpacked_blocks, 1);
-        let mut targets = Vec::new();
+        let targets: Vec<_> = (0..17u32)
+            .map(|id| {
+                let address = if ipv6 {
+                    let value = ((u128::MAX >> 1) / 16) * u128::from(id);
+                    IpAddr::from(Ipv6Addr::from(value))
+                } else {
+                    IpAddr::from(Ipv4Addr::from(id * 17))
+                };
+                (id, Target::Address(address), Vec::new())
+            })
+            .collect();
+        let mut visited = Vec::new();
         reader
             .visit_all(|row| {
-                targets.push(owned(row));
+                visited.push(owned_match(row));
                 Ok::<_, Error>(())
             })
             .unwrap();
+        assert_eq!(visited, targets);
+
         let queries = [
             Query::Intersecting(Target::Network {
                 address: Ipv4Addr::UNSPECIFIED.into(),
@@ -553,21 +445,19 @@ fn independent_format_fixtures_inspection_and_queries_agree() {
                 prefix: 0,
             }),
         ];
-        verify(&reader, &targets, &queries);
+        assert_queries_match_original(&reader, &targets, &queries);
     }
     let empty = Reader::open(
         Builder::new(Limits::default()).into_bytes(b"").unwrap(),
         Limits::default(),
     )
     .unwrap();
-    inspect_totals(empty.inspect().unwrap());
+    assert_inspection_totals(empty.inspect().unwrap());
     assert!(!empty.contains_asn(0).unwrap());
 }
 
 #[test]
 fn reader_sets_preserve_query_source_order_and_early_stop() {
-    use netindex::ReaderSet;
-    use std::sync::Arc;
     let mut builder = Builder::new(Limits::default());
     builder
         .push(Target::Address(Ipv4Addr::LOCALHOST.into()), b"ip")
@@ -735,7 +625,7 @@ fn interleaved_alias_ids_and_native_window_merge_follow_original_oracle() {
         }),
         Query::Ip(Ipv6Addr::from((1u128 << 112) + 17).into()),
     ];
-    verify(&reader, &targets, &queries);
+    assert_queries_match_original(&reader, &targets, &queries);
     let mut calls = 0;
     let first = reader
         .try_visit_all(|row| {
@@ -781,7 +671,7 @@ fn broad_route_readers_preserve_intersections_and_report_table_capacity() {
         Reader::open_with_broad_routes(builder.into_bytes(b"").unwrap(), Limits::default())
             .unwrap();
     let info = reader.inspect().unwrap();
-    inspect_totals(info);
+    assert_inspection_totals(info);
     assert!(info.broad_route_heap_bytes >= 4096 * 8);
     assert!(info.reader_struct_bytes > 0);
     let mut hits = Vec::new();

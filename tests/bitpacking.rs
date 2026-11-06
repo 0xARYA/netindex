@@ -1,29 +1,34 @@
 //! Exact-bit columns retain independent decoding, errors and ordinary writer bytes.
+
 use std::{
     io,
-    net::{IpAddr, Ipv6Addr},
+    net::{IpAddr, Ipv4Addr, Ipv6Addr},
 };
 
 use netindex::{Builder, Error, Limits, Reader, SharedAlias, Target};
 
+const IPV4_FIXTURE: &[u8] = include_bytes!("fixtures/bitpacked-ipv4.nidx");
+const IPV6_FIXTURE: &[u8] = include_bytes!("fixtures/bitpacked-ipv6.nidx");
+
 #[test]
-fn independent_partial_bitpacked_fixture_checks_tail_padding_and_versions() {
-    let bytes = include_bytes!("fixtures/bitpacked-ipv4.nidx");
-    let reader = Reader::open(bytes.as_slice(), Limits::default()).unwrap();
+fn partial_ipv4_bit_column_preserves_hits_and_gaps() {
+    let reader = Reader::open(IPV4_FIXTURE, Limits::default()).unwrap();
+
     for i in 0..17u32 {
-        let matches = reader
-            .lookup_ip(std::net::Ipv4Addr::from(i * 17).into())
-            .unwrap();
+        let hit = Ipv4Addr::from(i * 17).into();
+        let gap = Ipv4Addr::from(i * 17 + 1).into();
+        let matches = reader.lookup_ip(hit).unwrap();
+
         assert_eq!(matches.len(), 1);
         assert_eq!(matches[0].id, i);
+        assert_eq!(matches[0].target, Target::Address(hit));
         assert!(matches[0].payload.is_empty());
-        assert!(
-            reader
-                .lookup_ip(std::net::Ipv4Addr::from(i * 17 + 1).into())
-                .unwrap()
-                .is_empty()
-        );
+        assert!(reader.lookup_ip(gap).unwrap().is_empty());
     }
+}
+
+#[test]
+fn malformed_exact_bit_descriptors_columns_and_versions_are_rejected() {
     for (at, value) in [
         (140, 1),
         (139, 128),
@@ -32,33 +37,36 @@ fn independent_partial_bitpacked_fixture_checks_tail_padding_and_versions() {
         (105, 255),
         (112, 1),
     ] {
-        let mut invalid = bytes.to_vec();
+        let mut invalid = IPV4_FIXTURE.to_vec();
         invalid[at] = value;
         assert!(
             Reader::open(invalid, Limits::default()).is_err(),
             "mutation at {at}"
         );
     }
-    let mut legacy = bytes.to_vec();
+    let mut legacy = IPV4_FIXTURE.to_vec();
     legacy[8] = 3;
     assert!(Reader::open(legacy, Limits::default()).is_err());
-    for length in 0..bytes.len() {
-        assert!(Reader::open(&bytes[..length], Limits::default()).is_err());
+    for length in 0..IPV4_FIXTURE.len() {
+        assert!(
+            Reader::open(&IPV4_FIXTURE[..length], Limits::default()).is_err(),
+            "truncation at {length}"
+        );
     }
-    let wide = Reader::open(
-        include_bytes!("fixtures/bitpacked-ipv6.nidx").as_slice(),
-        Limits::default(),
-    )
-    .unwrap();
+}
+
+#[test]
+fn wide_ipv6_bit_column_preserves_targets_and_ids() {
+    let wide = Reader::open(IPV6_FIXTURE, Limits::default()).unwrap();
+
     for id in 0..17u32 {
         let value = (u128::MAX >> 1) / 16 * u128::from(id);
-        let rows = wide.lookup_ip(Ipv6Addr::from(value).into()).unwrap();
+        let address = Ipv6Addr::from(value).into();
+        let rows = wide.lookup_ip(address).unwrap();
+
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].id, id);
-        assert_eq!(
-            rows[0].target,
-            Target::Address(Ipv6Addr::from(value).into())
-        );
+        assert_eq!(rows[0].target, Target::Address(address));
         assert!(rows[0].payload.is_empty());
     }
 }
@@ -136,7 +144,7 @@ fn aliases_and_output_errors_survive_compaction() {
         builder
             .push(
                 Target::Network {
-                    address: std::net::Ipv4Addr::from(i * 17).into(),
+                    address: Ipv4Addr::from(i * 17).into(),
                     prefix: 32,
                 },
                 &i.to_le_bytes(),
@@ -170,7 +178,7 @@ fn aliases_and_output_errors_survive_compaction() {
     assert_eq!(result.len(), 2082);
     for i in 0..1041u32 {
         for address in [
-            IpAddr::from(std::net::Ipv4Addr::from(i * 17)),
+            IpAddr::from(Ipv4Addr::from(i * 17)),
             IpAddr::from(Ipv6Addr::from((1u128 << 112) + u128::from(i * 17))),
         ] {
             assert_eq!(
@@ -213,7 +221,7 @@ fn both_builders_and_partitioning_produce_identical_compacted_bytes() {
     )
     .unwrap();
     for id in (0..1041u32).rev() {
-        let target = Target::Address(std::net::Ipv4Addr::from(id * 17).into());
+        let target = Target::Address(Ipv4Addr::from(id * 17).into());
         let payload = vec![(id % 17) as u8; 4 + (id % 3) as usize];
         memory.push(target, &payload).unwrap();
         disk.push(target, &payload).unwrap();

@@ -4,6 +4,7 @@ use netindex::{Builder, Error, Limits, Reader, Target};
 
 pub(super) const MAX_OUTSTANDING: usize = 2;
 const COPIES_PER_BATCH: usize = 256;
+const BATCHES: usize = 4;
 
 pub(super) fn fixture_reader() -> Result<Reader<Vec<u8>>, Error> {
     let mut builder = Builder::new(Limits::default());
@@ -19,8 +20,7 @@ pub(super) fn fixture_reader() -> Result<Reader<Vec<u8>>, Error> {
         b"address evidence",
     )?;
 
-    let mut bytes = Vec::new();
-    builder.write_to(&mut bytes, b"example release")?;
+    let bytes = builder.into_bytes(b"example release")?;
 
     Reader::open(bytes, Limits::default())
 }
@@ -32,7 +32,9 @@ pub(super) fn fixture_batches() -> Vec<Vec<IpAddr>> {
         Ipv4Addr::new(198, 51, 100, 1).into(),
     ];
 
-    (0..4).map(|_| addresses.repeat(COPIES_PER_BATCH)).collect()
+    (0..BATCHES)
+        .map(|_| addresses.repeat(COPIES_PER_BATCH))
+        .collect()
 }
 
 pub(super) fn check_fixture_batch(

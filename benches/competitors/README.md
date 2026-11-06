@@ -73,5 +73,5 @@ Equivalent geography evidence is reused from the
 records and 108,123-query parity, with serving measured separately on Windows.
 Its timings are not pooled with the new Linux synthetic measurements.
 
-Read the [results and decisions](RESULTS.md) and the updated
-[performance queue](../../PERF_TASKS.md).
+Read the [results and decisions](RESULTS.md) and the
+[performance evidence index](../EVIDENCE.md).

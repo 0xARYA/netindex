@@ -12,38 +12,6 @@ use netindex::{Builder, Error, Limits, Reader, Target};
 mod validation;
 
 #[test]
-fn independent_consecutive_id_fixture_preserves_targets_and_rejects_invalid_bases() {
-    let bytes = include_bytes!("../fixtures/consecutive-ids.nidx");
-    let reader = Reader::open(bytes.as_slice(), Limits::default()).unwrap();
-
-    assert_eq!(reader.len(), 3);
-
-    for (address, id) in [("10.0.0.1", 1), ("10.0.0.2", 2)] {
-        let rows = reader.lookup_ip(address.parse().unwrap()).unwrap();
-
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].id, id);
-        assert_eq!(rows[0].target, Target::Address(address.parse().unwrap()));
-        assert_eq!(rows[0].payload, b"x");
-    }
-
-    assert_eq!(reader.lookup_asn(7).unwrap()[0].id, 0);
-    assert!(
-        reader
-            .lookup_ip("10.0.0.3".parse().unwrap())
-            .unwrap()
-            .is_empty()
-    );
-
-    for base in [0u32, 2, u32::MAX] {
-        let mut invalid = bytes.to_vec();
-        invalid[108..112].copy_from_slice(&base.to_le_bytes());
-
-        assert!(Reader::open(invalid, Limits::default()).is_err());
-    }
-}
-
-#[test]
 fn convenience_build_and_lookup_preserve_borrowed_payloads_and_every_match() {
     let targets = [
         Target::Network {
@@ -454,6 +422,38 @@ fn packed_wide_deltas_and_partial_blocks_match_linear_queries() {
             &targets,
             Ipv6Addr::from(u128::from(address).wrapping_add(1)).into(),
         );
+    }
+}
+
+#[test]
+fn independent_consecutive_id_fixture_preserves_targets_and_rejects_invalid_bases() {
+    let bytes = include_bytes!("../fixtures/consecutive-ids.nidx");
+    let reader = Reader::open(bytes.as_slice(), Limits::default()).unwrap();
+
+    assert_eq!(reader.len(), 3);
+
+    for (address, id) in [("10.0.0.1", 1), ("10.0.0.2", 2)] {
+        let rows = reader.lookup_ip(address.parse().unwrap()).unwrap();
+
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].id, id);
+        assert_eq!(rows[0].target, Target::Address(address.parse().unwrap()));
+        assert_eq!(rows[0].payload, b"x");
+    }
+
+    assert_eq!(reader.lookup_asn(7).unwrap()[0].id, 0);
+    assert!(
+        reader
+            .lookup_ip("10.0.0.3".parse().unwrap())
+            .unwrap()
+            .is_empty()
+    );
+
+    for base in [0u32, 2, u32::MAX] {
+        let mut invalid = bytes.to_vec();
+        invalid[108..112].copy_from_slice(&base.to_le_bytes());
+
+        assert!(Reader::open(invalid, Limits::default()).is_err());
     }
 }
 

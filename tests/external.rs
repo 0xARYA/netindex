@@ -1,6 +1,6 @@
 //! External builds preserve the current bytes and assertion identity under spilling.
 
-#![cfg(all(test, feature = "external-sort"))]
+#![cfg(feature = "external-sort")]
 
 use std::{
     io::{self, Cursor, Seek, SeekFrom, Write},
@@ -276,7 +276,7 @@ fn disk_table_budget_failure_poisoning_prevents_output() {
 }
 
 #[test]
-fn limits_invalid_inputs_and_output_failures_remove_temporary_files() {
+fn zero_run_size_is_rejected_without_creating_temporary_files() {
     let directory = tempfile::tempdir().unwrap();
 
     assert!(matches!(
@@ -290,6 +290,12 @@ fn limits_invalid_inputs_and_output_failures_remove_temporary_files() {
         ),
         Err(Error::Invalid("external run size"))
     ));
+    assert_eq!(directory.path().read_dir().unwrap().count(), 0);
+}
+
+#[test]
+fn temporary_limit_poisoning_prevents_output_and_cleans_up() {
+    let directory = tempfile::tempdir().unwrap();
 
     let mut builder = ExternalBuilder::new(
         directory.path(),
@@ -313,6 +319,12 @@ fn limits_invalid_inputs_and_output_failures_remove_temporary_files() {
         builder.write_to(Cursor::new(Vec::new()), b""),
         Err(Error::Invalid("failed external builder"))
     ));
+    assert_eq!(directory.path().read_dir().unwrap().count(), 0);
+}
+
+#[test]
+fn temporary_limit_applies_to_spilled_runs() {
+    let directory = tempfile::tempdir().unwrap();
 
     let mut builder = ExternalBuilder::new(
         directory.path(),
@@ -333,6 +345,12 @@ fn limits_invalid_inputs_and_output_failures_remove_temporary_files() {
     ));
 
     drop(builder);
+    assert_eq!(directory.path().read_dir().unwrap().count(), 0);
+}
+
+#[test]
+fn record_limit_rejects_the_next_assertion() {
+    let directory = tempfile::tempdir().unwrap();
 
     let mut builder = ExternalBuilder::new(
         directory.path(),
@@ -351,6 +369,12 @@ fn limits_invalid_inputs_and_output_failures_remove_temporary_files() {
     ));
 
     drop(builder);
+    assert_eq!(directory.path().read_dir().unwrap().count(), 0);
+}
+
+#[test]
+fn artifact_limit_is_checked_before_output() {
+    let directory = tempfile::tempdir().unwrap();
 
     let builder = ExternalBuilder::new(
         directory.path(),
@@ -368,15 +392,25 @@ fn limits_invalid_inputs_and_output_failures_remove_temporary_files() {
         Err(Error::Limit("artifact bytes"))
     ));
     assert!(output.get_ref().is_empty());
+    assert_eq!(directory.path().read_dir().unwrap().count(), 0);
+}
+
+#[test]
+fn output_write_failure_preserves_the_cause_and_removes_temporary_files() {
+    let directory = tempfile::tempdir().unwrap();
 
     let builder =
         ExternalBuilder::new(directory.path(), Limits::default(), Default::default()).unwrap();
 
-    assert!(matches!(
-        builder.write_to(FailOnWrite, b""),
-        Err(Error::Io(_))
-    ));
+    let result = builder.write_to(FailOnWrite, b"");
 
+    assert!(matches!(result, Err(Error::Io(error)) if error.kind() == io::ErrorKind::WriteZero));
+    assert_eq!(directory.path().read_dir().unwrap().count(), 0);
+}
+
+#[test]
+fn nonempty_output_is_rejected_without_overwriting() {
+    let directory = tempfile::tempdir().unwrap();
     let builder =
         ExternalBuilder::new(directory.path(), Limits::default(), Default::default()).unwrap();
     let mut output = Cursor::new(b"existing".to_vec());

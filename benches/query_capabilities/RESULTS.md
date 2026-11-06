@@ -203,3 +203,57 @@ PGO matrix therefore ran on Windows. No Linux rerun of that revised profile is
 claimed. All ten P2 tasks are complete for the implemented library and declared
 benchmark application. Costs, negative results and consumer-owned production
 qualification remain explicit above.
+
+## Search-only membership
+
+Adopted direct membership for readers and reader sets. It no longer constructs
+matches or resolves references or payloads. Packed, interval, bitpacked and
+aliased IP searches use the existing index and still report malformed index
+data. There are no file changes or new memory allocations.
+
+Median ns/query from nine warm samples per cell (three fresh processes per
+build, alternating order; 1,048,576 queries per sample; Ryzen 9 9950X3D2,
+Windows, CPU 20). Point lookup is the unchanged-work control:
+
+| Input | Membership before / after | Point before / after |
+| --- | ---: | ---: |
+| Packed IPv4 | 35.10 / 26.84 | 37.30 / 37.84 |
+| Packed IPv6 | 36.20 / 28.89 | 38.77 / 39.74 |
+| Bitpacked IPv6 | 43.15 / 35.93 | 45.46 / 46.24 |
+| Overlapping IPv4 | 85.52 / 58.89 | 928.08 / 928.47 |
+| Exact ASN (duplicate keys) | 18.88 / 19.49 | 107.23 / 107.60 |
+| Mixed | 30.64 / 24.81 | 34.21 / 34.67 |
+| Shared aliases | 38.19 / 30.05 | 43.97 / 42.41 |
+| Retained City | 53.42 / 40.36 | 58.93 / 57.05 |
+| Retained IP-to-ASN | 271.09 / 185.51 | 275.40 / 272.44 |
+
+All input digests and result checksums matched. IP membership took
+17-32% less time; exact ASN was effectively flat on this small-key workload.
+Point controls moved by at most 3.6%. A dense bitmap is not adopted: the ASN
+workload does not establish value for a real consumer or a default budget.
+[Raw samples and provenance](../results/2026-11-06-p3-membership.json).
+
+## Standards cleanup regression check
+
+Compared `8be3593` and `30a9d37` with the same
+[query harness](README.md) on Windows,
+Rust 1.95.0 release builds, pinned to logical CPU 20 on a Ryzen 9 9950X3D2.
+Artifact hashes and query checksums matched across all nine workloads.
+The initial retained City run measured 59.27 to 57.73 ns for point lookup
+and 44.13 to 41.23 ns for membership; this was a local benchmark.
+
+The focused rerun used five pairs of alternating processes, each with three
+samples of 1,048,576 queries per method. Median nanoseconds per query:
+
+| Workload | Point, before to after | Membership, before to after |
+| --- | ---: | ---: |
+| Packed IPv6 | 39.35 to 42.11 (+7.0%) | 28.96 to 29.28 (+1.1%) |
+| Packed IPv4 | 38.21 to 38.77 (+1.4%) | 27.03 to 27.00 (-0.1%) |
+| ASN | 106.71 to 107.12 (+0.4%) | 19.21 to 19.21 |
+
+The synthetic packed IPv6 point regression remains open. The benchmark's
+point loop had the same instructions apart from address displacements;
+that comparison does not cover every callee or establish a cause. An
+isolated build with the original packed source still measured 42.64 ns
+(nine samples). Profile the full packed IPv6 lookup path on this host and
+check a second native build before changing search code or alignment.

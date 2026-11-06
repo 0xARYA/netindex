@@ -1,29 +1,32 @@
 //! Replay an immutable index through the external builder, retaining every assertion.
 //! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|partitioned|bitpacked|memory|memory-legacy] [CACHE_BYTES_OR_PARTITIONS]. Files must remain immutable while mapped.
 
-#[cfg(all(feature = "external-sort", feature = "mmap"))]
+use std::{
+    env,
+    fs::{File, OpenOptions},
+    net::IpAddr,
+    time::Instant,
+};
+
+use netindex::{Builder, ExternalBuilder, ExternalOptions, Limits, MappedReader, Match};
+
+type Failure = Box<dyn std::error::Error>;
+
+const QUERY_COUNT: usize = 100_005;
+
 #[expect(
     clippy::print_stdout,
     reason = "emit benchmark phases and measured results"
 )]
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    use std::{
-        env,
-        fs::{File, OpenOptions},
-        net::IpAddr,
-        time::Instant,
-    };
-
-    use netindex::{Builder, ExternalBuilder, ExternalOptions, Limits, MappedReader};
-
+fn main() -> Result<(), Failure> {
     let arguments: Vec<_> = env::args_os().skip(1).collect();
     let [input, output, temporary, ..] = arguments.as_slice() else {
         return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|partitioned|bitpacked|memory|memory-legacy] [CACHE_BYTES_OR_PARTITIONS]".into());
     };
-    let mode = arguments
-        .get(3)
-        .and_then(|arg| arg.to_str())
-        .unwrap_or("external");
+    let mode = match arguments.get(3) {
+        Some(arg) => arg.to_str().ok_or("invalid build mode")?,
+        None => "external",
+    };
     let disk_budget = arguments
         .get(4)
         .map(|arg| {
@@ -61,18 +64,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // SAFETY: this benchmark requires immutable private input for the mapping's lifetime.
     let original = unsafe { MappedReader::map_file(&File::open(input)?, limits) }?;
     let input_open_ms = started.elapsed().as_secs_f64() * 1000.0;
-    let mut assertions = Vec::new();
-    assertions.try_reserve_exact(original.len())?;
-    original.visit_all(|row| {
-        assertions.push(row);
-        Ok::<_, netindex::Error>(())
-    })?;
-    assertions.sort_unstable_by_key(|row| row.id);
-    for (id, row) in assertions.iter().enumerate() {
-        if row.id != u32::try_from(id)? {
-            return Err("input insertion IDs are not a complete permutation".into());
-        }
-    }
+    let assertions = in_insertion_order(&original)?;
+
     println!(
         "{}",
         serde_json::json!({"phase":"prepared", "records":assertions.len(),
@@ -138,6 +131,40 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // SAFETY: the new private output is closed and remains immutable during verification.
     let rebuilt = unsafe { MappedReader::map_file(&File::open(output)?, limits) }?;
     let output_open_ms = started.elapsed().as_secs_f64() * 1000.0;
+    let verified = verify_assertions(&original, &rebuilt, &assertions)?;
+    verify_queries(&original, &rebuilt)?;
+
+    println!(
+        "{}",
+        serde_json::json!({"phase":"verified", "assertions":verified,
+        "queries":QUERY_COUNT,"output_open_ms":output_open_ms,
+        "verification_ms":started.elapsed().as_secs_f64()*1000.0,
+        "scope":"opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync"})
+    );
+    Ok(())
+}
+
+fn in_insertion_order(original: &MappedReader) -> Result<Vec<Match<'_>>, Failure> {
+    let mut assertions = Vec::new();
+    assertions.try_reserve_exact(original.len())?;
+    original.visit_all(|row| {
+        assertions.push(row);
+        Ok::<_, netindex::Error>(())
+    })?;
+    assertions.sort_unstable_by_key(|row| row.id);
+    for (id, row) in assertions.iter().enumerate() {
+        if row.id != u32::try_from(id)? {
+            return Err("input insertion IDs are not a complete permutation".into());
+        }
+    }
+    Ok(assertions)
+}
+
+fn verify_assertions(
+    original: &MappedReader,
+    rebuilt: &MappedReader,
+    assertions: &[Match<'_>],
+) -> Result<usize, Failure> {
     assert_eq!(original.metadata()?, rebuilt.metadata()?);
     assert_eq!(assertions.len(), rebuilt.len());
     let mut seen = Vec::new();
@@ -156,6 +183,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     })?;
     assert_eq!(verified, assertions.len());
 
+    Ok(verified)
+}
+
+fn verify_queries(original: &MappedReader, rebuilt: &MappedReader) -> Result<(), Failure> {
     let edges: [IpAddr; 5] = [
         "0.0.0.0".parse()?,
         "255.255.255.255".parse()?,
@@ -164,7 +195,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "2002:c000:201::".parse()?,
     ];
     let mut random = 0x73c8_6af2_3e1d_0945u64;
-    for index in 0..100_005 {
+    for index in 0..QUERY_COUNT {
         random ^= random << 13;
         random ^= random >> 7;
         random ^= random << 17;
@@ -187,17 +218,5 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
         }
     }
-    println!(
-        "{}",
-        serde_json::json!({"phase":"verified", "assertions":verified,
-        "queries":100_005,"output_open_ms":output_open_ms,
-        "verification_ms":started.elapsed().as_secs_f64()*1000.0,
-        "scope":"opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync"})
-    );
     Ok(())
-}
-
-#[cfg(not(all(feature = "external-sort", feature = "mmap")))]
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    Err("enable external-sort and mmap".into())
 }

@@ -21,11 +21,20 @@ All `.nidx` fixtures begin with the eight ASCII bytes `NETINDEX`.
 - `mixed.nidx`: IPv4 and IPv6 `/0` networks, address assertions at IPv4
   numeric value 42 and IPv6 maximum, and exact ASN 42. IDs are 0 through 4;
   all share payload `P`. Interval maxima include the covering networks.
-
 - `fixed-payloads.nidx`: six ASN assertions with two-byte payloads `aa`, `bb`,
   and `cc`, using independent one-byte references `[0, 1, 1, 0, 2, 1]`.
 - `uniform-kind.nidx`: two IPv4 `/24` networks with consecutive IDs, a uniform
   network kind in the descriptor, and one shared one-byte payload.
+- `indexed-payloads.nidx`: format 4, six ASN assertions, metadata `meta`, and
+  three variable-length shared payloads (empty, `a`, `xyz`). The span directory
+  contains `(0,0)`, `(0,1)`, `(1,3)` and one-byte ordinals `[0,1,1,0,2,1]`.
+- `shared-alias.nidx`: format 5 with one stride-1 `2002::/16` window over a
+  format-3 index holding one IPv4 `/0` with payload `x`. Logical IDs are 0 and 1.
+- `bitpacked-ipv4.nidx`: format 6, addresses with numeric values `17 * id`
+  for IDs 0 through 16. One partial block has 13-bit deltas and empty payloads.
+- `bitpacked-ipv6.nidx`: format 6, addresses with numeric values
+  `floor((2^127 - 1) / 16) * id` for IDs 0 through 16. One partial block
+  has 127-bit deltas and empty payloads.
 
 The tests specify lookup expectations separately. No fixture is regenerated
 by the implementation under test.
@@ -36,6 +45,8 @@ redistributed under `maxmind-LICENSE-MIT.txt`. SHA-256:
 `d080856c8dfb306780a2c20cf1b32fd873bd6ac262fbe5cb5ea37e497348244d`.
 It contains IPv4 and IPv6 records, including IPv4-mapped and 6to4 aliases.
 
+## Other fixtures and fuzz seeds
+
 `values.bin` seeds shared-value fuzzing with two nonempty values.
 [values.rs](../values.rs) also checks a separately specified fixed-byte pool.
 
@@ -43,11 +54,5 @@ It contains IPv4 and IPv6 records, including IPv4-mapped and 6to4 aliases.
 with a one-byte metadata-length prefix for the codec fuzz target. Its record
 is `[1, 1, 0, 0, 0, 0]`: presence bit, true boolean, and string ID zero.
 
-- `indexed-payloads.nidx`: format 4, six ASN assertions, metadata `meta`, and
-  three variable-length shared payloads (empty, `a`, `xyz`). The borrowed span
-  directory contains `(0,0)`, `(0,1)`, `(1,3)` and one-byte ordinals
-  `[0,1,1,0,2,1]`. Independently assembled with integer fields; no library writer.
-
-- `shared-alias.nidx`: independent format-5 envelope with one stride-1
-  `2002::/16` window over a format-3 index holding one IPv4 `/0` with payload
-  `x`. The logical IPv4 and IPv6 IDs are 0 and 1.
+`bitpacking-encode.bin` seeds the [encode fuzz target](../../fuzz/README.md)
+with generator input; it is not an index file.
