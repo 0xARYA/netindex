@@ -246,10 +246,62 @@ fn open_component(
     }?)
 }
 
+fn layout(mode: &str, path: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    let bytes = std::fs::read(path)?;
+    let row = if mode == "layout-native" {
+        let reader = maxminddb::Reader::from_source(bytes.as_slice())?;
+        let meta = reader.metadata();
+        let marker = b"\xab\xcd\xefMaxMind.com";
+        let footer = bytes
+            .windows(marker.len())
+            .rposition(|window| window == marker)
+            .ok_or("missing MMDB metadata marker")?;
+        let tree_bytes = usize::try_from(meta.node_count)? * usize::from(meta.record_size / 4);
+        let data_start = tree_bytes + 16;
+        if bytes.get(tree_bytes..data_start) != Some(&[0; 16]) || footer < data_start {
+            return Err("invalid MMDB section boundaries".into());
+        }
+        serde_json::json!({
+            "bytes": bytes.len(), "tree_bytes": tree_bytes, "separator_bytes": 16,
+            "data_bytes": footer - data_start, "metadata_bytes": bytes.len() - footer,
+            "nodes": meta.node_count, "record_bits": meta.record_size
+        })
+    } else {
+        let limits = netindex::Limits {
+            records: 100_000_000,
+            bytes: usize::MAX,
+        };
+        let info = netindex::Reader::open(bytes, limits)?.inspect()?;
+        let reference_layout = match info.references {
+            netindex::PayloadReferences::Indexed { values, width } => {
+                serde_json::json!({"kind":"indexed", "values":values, "ordinal_bytes":width})
+            }
+            _ => return Err("expected indexed references in City component".into()),
+        };
+        serde_json::json!({
+            "bytes": info.artifact_bytes, "header_bytes": info.header_bytes,
+            "metadata_bytes": info.metadata_bytes, "payload_bytes": info.payload_bytes,
+            "reference_bytes": info.reference_bytes, "reference_layout": reference_layout,
+            "ipv4_bytes": info.ipv4.bytes, "ipv6_bytes": info.ipv6.bytes,
+            "ipv4_records": info.ipv4.records, "ipv6_records": info.ipv6.records,
+            "ipv4_bitpacked_blocks": info.ipv4.bitpacked_blocks,
+            "ipv6_bitpacked_blocks": info.ipv6.bitpacked_blocks,
+            "asn_bytes": info.asn.bytes, "records": info.records,
+            "physical_records": info.physical_records, "alias_windows": info.alias_windows,
+            "format": info.format, "base_format": info.base_format,
+        })
+    };
+    println!("{row}");
+    Ok(())
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().collect();
     let mode = args.get(1).ok_or("mode required")?;
     let input = Path::new(args.get(2).ok_or("input required")?);
+    if matches!(mode.as_str(), "layout-native" | "layout-converted") {
+        return layout(mode, input);
+    }
     if mode == "convert" {
         return sources::convert(
             input,
@@ -351,6 +403,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 std::hint::black_box(converted.as_ref().ok_or("missing component")?.lookup(ip)?);
             }
         }
+        let gate = std::env::var_os("NETINDEX_PROFILE_LOOKUPS").is_some();
+        if gate {
+            profile_gate("lookup-ready")?;
+        }
         for ip in queries {
             let start = Instant::now();
             let found = if let Some(db) = &native {
@@ -361,6 +417,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             };
             timings.push(start.elapsed().as_nanos());
             hits += usize::from(found);
+        }
+        if gate {
+            profile_gate("lookup-finished")?;
         }
         timings.sort_unstable();
         let n = timings.len();
@@ -373,6 +432,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     Ok(())
 }
+
+fn profile_gate(phase: &str) -> Result<(), Box<dyn std::error::Error>> {
+    use std::io::Write as _;
+    println!("{}", serde_json::json!({"phase": phase}));
+    std::io::stdout().flush()?;
+    if std::io::stdin().read_line(&mut String::new())? == 0 {
+        return Err("missing profiler acknowledgement".into());
+    }
+    Ok(())
+}
+
 fn addresses() -> Vec<IpAddr> {
     let mut result: Vec<IpAddr> = [
         "0.0.0.0",

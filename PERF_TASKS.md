@@ -159,7 +159,7 @@ not complete the broader experiments below.
   Defer a dense ASN bitmap until a consumer can justify its memory budget.
 - [x] **P3-04 Packed NEON.** Port the qualified packed search kernel behind
   the existing SIMD feature if native ARM comparisons justify adoption.
-- [ ] **P3-05 Remaining storage cost.** Profile the remaining City bytes and
+- [x] **P3-05 Remaining storage cost.** Profile the remaining City bytes and
   cache misses after consumer qualification before proposing a new layout.
 
 ## Acceptance
@@ -1347,3 +1347,20 @@ membership. Wider columns showed no point benefit. Revisit with a stronger
 end-to-end result on a consumer workload.
 [Raw samples](benches/results/2026-11-06-p3-neon.json) and
 [native qualification run](https://github.com/0xARYA/netindex/actions/runs/42292016178).
+
+### 2026-11-06: P3-05 City storage and cache decision
+
+Keep the file format unchanged. The format-5 City artifact uses 24,696,954
+bytes for IP sections, 19,344,302 bytes for payload references, and 16,726,691
+bytes for payloads. Bitpacking only the IP columns saves 5,744,460 bytes.
+A hypothetical 19-bit ordinal column saves another 3,577,936 bytes before
+overhead; bitpacked City would still exceed native MMDB by 3,139,952 bytes.
+
+In a pinned Ubuntu WSL2 process, the median warm open and full validation took
+2.89 s native, 4.03 s shared, and 4.18 s bitpacked. Lookup-only cache misses
+per query were 3.33, 6.85, and 6.69, respectively, without a corresponding
+cycle penalty. The Linux file cache was verified empty before cold trials;
+their timings varied too much to rank startup and do not control the host
+or device cache. Prioritize deployment-host trace and validation measurements
+before adding another encoding.
+[Full measurements and limitations](benches/native_city/P3_RESULTS.md#storage-and-lookup-cache-profile).

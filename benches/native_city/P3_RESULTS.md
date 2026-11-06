@@ -45,3 +45,54 @@ host. The Byway validator visits logical assertions, so reducing physical rows
 does not proportionally reduce consumer validation work.
 
 [Reproduction](README.md) · [Raw receipts and provenance](../results/2026-11-06-p3-city.json)
+
+## Storage and lookup cache profile
+
+The same immutable files were profiled on Ubuntu 24.04 under WSL2 on the Ryzen
+9 9950X3D2, with processes pinned to virtual CPU 20 and Rust 1.95.0. The Linux
+adapter used the same Byway sources. Each cell is the median of three fresh
+processes with rotated case order. The fixed 100,005 queries produced 42,802
+hits per run. A separate parity run for each converted artifact matched all
+108,123 normalized answers on Linux.
+
+| File region | Native MMDB | Shared aliases and compact references | Also bitpacked |
+| --- | ---: | ---: | ---: |
+| Search tree or IP index | 29,146,299 | 24,696,954 | 18,952,494 |
+| Separate payload reference region | — | 19,344,302 | 19,344,302 |
+| Record data or opaque payloads | 20,752,708 | 16,726,691 | 16,726,691 |
+| Header, metadata, and separator | 259 | 1,593,667 | 1,593,667 |
+| **Total bytes** | **49,899,266** | **62,361,614** | **56,617,154** |
+
+The native tree includes pointers to data and its data section can reuse
+individual fields. The converted files preserve assertions and insertion IDs
+and store separate references to complete normalized payloads. The regions
+are therefore useful for byte accounting, not equivalent encodings of the
+same fields. See the [MMDB format specification](https://maxmind.github.io/MaxMind-DB/).
+
+| Measurement | Native MMDB | Shared aliases and compact references | Also bitpacked |
+| --- | ---: | ---: | ---: |
+| Open and validate with all file pages cached, s | 2.89 | 4.03 | 4.18 |
+| Open and validate from zero resident file pages, s (range) | 6.66 (2.96–14.80) | 4.20 (4.08–10.00) | 20.31 (4.34–23.79) |
+| Lookup-only user-space cache misses/query | 3.33 | 6.85 | 6.69 |
+| Lookup-only user-space cycles/query | 1,927 | 1,847 | 1,870 |
+| Lookup-only p95 / p99, ns | 1,139 / 1,439 | 1,010 / 1,309 | 1,030 / 1,310 |
+
+`mincore` verified zero resident file pages before every cold run and all pages
+resident before every warm run. The WSL host and underlying device caches were
+uncontrolled; the wide cold ranges cannot rank deployment startup. Open
+includes the production consumer's full validation. The Linux `perf` generic
+user-space cache and cycle events ran without multiplexing during the lookup
+loop. They do not attribute misses to specific file regions. The converted
+paths incurred about twice the recorded misses but completed the timed loop
+with slightly fewer cycles; miss counts alone did not predict lookup time.
+
+The converted files use three bytes per ordinal for 271,275 unique payloads.
+Using 19 bits for each of 5,724,698 physical references would save 3,577,936
+bytes before any additional format overhead. Even with bitpacked IP columns,
+that alone would leave a 3,139,952-byte gap to native. Keep the format
+unchanged. Warm validation is the larger measured consumer cost; qualify it
+and replay production traffic on the deployment host before trading more
+decode work for storage. If the storage target justifies another prototype,
+start with a schema-neutral ordinal column and require an end-to-end win.
+
+[Linux reproduction](README.md) · [Raw profile and provenance](../results/2026-11-06-p3-city-profile.json)

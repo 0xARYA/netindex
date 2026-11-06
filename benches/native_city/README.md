@@ -77,3 +77,20 @@ validation; it does not model request concurrency or a changed next snapshot.
 Optional `-Trace PATH` supplies one IP per line for both lookup and parity
 (parity also checks the boundary corpus). With no trace, the existing fixed
 corpus is used. Keep private traces and source artifacts outside Git.
+
+On Linux, profile the same prepared adapter and immutable artifacts with:
+
+```sh
+sync CITY.mmdb CITY_FORMAT5.nidx CITY_FORMAT6.nidx
+python3 benches/native_city/profile.py PATH_TO_ADAPTER CITY.mmdb \
+  CITY_FORMAT5.nidx CITY_FORMAT6.nidx NEW_RECEIPT.json --cpu AVAILABLE_CPU
+```
+
+This needs permission to read hardware counters with `perf stat`. Use
+`--perf PATH` if the distribution wrapper cannot locate a compatible binary.
+The runner verifies the file page cache with `mincore` before each trial.
+Cold trials evict only that file's Linux page cache; host and device caches are
+outside this check. Warm trials read the entire input before launching.
+Lookup-only counters start after open, validation and warm-up, and stop before
+sorting timings. The ordinary adapter remains ungated. Use `layout-native FILE`
+and `layout-converted FILE` for the byte breakdown alone.

@@ -1,0 +1,118 @@
+{
+  "cpu": 20,
+  "sha256": {
+    "native-city-audit": "6cbd83630e4551d34d586510f472befcb68718839d9b781e8318321299f2cb84",
+    "city.mmdb": "d6ff9368ab19a13b096fd6392f752aa6c0890f2c92752d09253fab9e50501e46",
+    "format5.nidx": "7367b75c4a51b0bdfa1c979205c9929da53a1700edc5d2aa2e1689429d537aca",
+    "format6-alias.nidx": "7939bfd9c680a9d6ef034129f2cad0b32580502e6ac9c43a8c69ad647281d980"
+  },
+  "layout": {
+    "native": {
+      "bytes": 49899266,
+      "data_bytes": 20752708,
+      "metadata_bytes": 243,
+      "nodes": 4163757,
+      "record_bits": 28,
+      "separator_bytes": 16,
+      "tree_bytes": 29146299
+    },
+    "shared": {
+      "alias_windows": 4,
+      "asn_bytes": 0,
+      "base_format": 4,
+      "bytes": 62361614,
+      "format": 5,
+      "header_bytes": 192,
+      "ipv4_bitpacked_blocks": 0,
+      "ipv4_bytes": 14730020,
+      "ipv4_records": 3632756,
+      "ipv6_bitpacked_blocks": 0,
+      "ipv6_bytes": 9966934,
+      "ipv6_records": 2091942,
+      "metadata_bytes": 1593475,
+      "payload_bytes": 16726691,
+      "physical_records": 5724698,
+      "records": 20255722,
+      "reference_bytes": 19344302,
+      "reference_layout": {
+        "kind": "indexed",
+        "ordinal_bytes": 3,
+        "values": 271275
+      }
+    },
+    "bitpacked": {
+      "alias_windows": 4,
+      "asn_bytes": 0,
+      "base_format": 6,
+      "bytes": 56617154,
+      "format": 5,
+      "header_bytes": 192,
+      "ipv4_bitpacked_blocks": 13388,
+      "ipv4_bytes": 10993573,
+      "ipv4_records": 3632756,
+      "ipv6_bitpacked_blocks": 7163,
+      "ipv6_bytes": 7958921,
+      "ipv6_records": 2091942,
+      "metadata_bytes": 1593475,
+      "payload_bytes": 16726691,
+      "physical_records": 5724698,
+      "records": 20255722,
+      "reference_bytes": 19344302,
+      "reference_layout": {
+        "kind": "indexed",
+        "ordinal_bytes": 3,
+        "values": 271275
+      }
+    }
+  },
+  "netindex_revision": "613f37c",
+  "consumer_revision": "658d2339308cbcf20e5860daa08fc5f0e2409699",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+  "kernel": "6.6.114.1-microsoft-standard-WSL2",
+  "cpu_model": "AMD Ryzen 9 9950X3D2 16-Core Processor",
+  "platform": "Ubuntu 24.04 under WSL2, ext4, perf from Linux tools 6.8.0-147",
+  "adapter_source_sha256": "dfcf9148533e933e0b03e5b74a98c66581901bf0b2c02a33ffba0927c745e58e",
+  "lock_sha256": "af3778b2e982c9cb3ddc8b38d1316b4c551fadcf3c2e101351feee48ababcdfd",
+  "profile_source_sha256": "c441246562c964e3bed3bb023bde98d083c0a3880d45760acc1face68e6866c3",
+  "linux_parity": {
+    "shared": {
+      "mismatches": 0,
+      "phase": "parity",
+      "queries": 108123
+    },
+    "bitpacked": {
+      "mismatches": 0,
+      "phase": "parity",
+      "queries": 108123
+    }
+  },
+  "runs": [
+    {"trial": 0, "case": "native", "mode": "cold", "cache": {"resident": 0, "total": 12183}, "rows": [{"mode": "native", "open_ms": 2955.255094, "phase": "opened"}, {"hits": 42802, "p50_ns": 40, "p95_ns": 1190, "p99_ns": 1499, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 15727999127, "running_pct": 100.0}, "instructions:u": {"count": 58593157237, "running_pct": 100.0}, "cache-references:u": {"count": 323665342, "running_pct": 100.0}, "cache-misses:u": {"count": 11358373, "running_pct": 100.0}, "minor-faults": {"count": 19941, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 0, "case": "shared", "mode": "cold", "cache": {"resident": 0, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 4204.419277999999, "phase": "opened"}, {"hits": 42802, "p50_ns": 41, "p95_ns": 1071, "p99_ns": 1372, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 22258283143, "running_pct": 100.0}, "instructions:u": {"count": 86694155409, "running_pct": 100.0}, "cache-references:u": {"count": 81334028, "running_pct": 100.0}, "cache-misses:u": {"count": 14733586, "running_pct": 100.0}, "minor-faults": {"count": 2820, "running_pct": 100.0}, "major-faults": {"count": 484, "running_pct": 100.0}}},
+    {"trial": 0, "case": "bitpacked", "mode": "cold", "cache": {"resident": 0, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 4342.581905, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 990, "p99_ns": 1249, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 22733050485, "running_pct": 100.0}, "instructions:u": {"count": 89226610250, "running_pct": 100.0}, "cache-references:u": {"count": 82576444, "running_pct": 100.0}, "cache-misses:u": {"count": 14186134, "running_pct": 100.0}, "minor-faults": {"count": 2731, "running_pct": 100.0}, "major-faults": {"count": 439, "running_pct": 100.0}}},
+    {"trial": 0, "case": "native", "mode": "warm", "cache": {"resident": 12183, "total": 12183}, "rows": [{"mode": "native", "open_ms": 2888.177012, "phase": "opened"}, {"hits": 42802, "p50_ns": 40, "p95_ns": 1201, "p99_ns": 1541, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 15572170059, "running_pct": 100.0}, "instructions:u": {"count": 58593676028, "running_pct": 100.0}, "cache-references:u": {"count": 322496660, "running_pct": 100.0}, "cache-misses:u": {"count": 10479691, "running_pct": 100.0}, "minor-faults": {"count": 19941, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 0, "case": "shared", "mode": "warm", "cache": {"resident": 15226, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 4028.581525, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 961, "p99_ns": 1211, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 21621206267, "running_pct": 100.0}, "instructions:u": {"count": 86693836938, "running_pct": 100.0}, "cache-references:u": {"count": 72003901, "running_pct": 100.0}, "cache-misses:u": {"count": 13745912, "running_pct": 100.0}, "minor-faults": {"count": 2835, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 0, "case": "bitpacked", "mode": "warm", "cache": {"resident": 13823, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 3896.102771, "phase": "opened"}, {"hits": 42802, "p50_ns": 60, "p95_ns": 891, "p99_ns": 1141, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 21412679395, "running_pct": 100.0}, "instructions:u": {"count": 89226495473, "running_pct": 100.0}, "cache-references:u": {"count": 64302474, "running_pct": 100.0}, "cache-misses:u": {"count": 12470693, "running_pct": 100.0}, "minor-faults": {"count": 2748, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 0, "case": "native", "mode": "lookup", "cache": {"resident": 12183, "total": 12183}, "rows": [{"mode": "native", "open_ms": 2754.094177, "phase": "opened"}, {"hits": 42802, "p50_ns": 40, "p95_ns": 1120, "p99_ns": 1390, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 192457108, "running_pct": 100.0}, "instructions:u": {"count": 445938912, "running_pct": 100.0}, "cache-references:u": {"count": 6086473, "running_pct": 100.0}, "cache-misses:u": {"count": 328106, "running_pct": 100.0}}},
+    {"trial": 0, "case": "shared", "mode": "lookup", "cache": {"resident": 15226, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 3831.9742039999996, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 1040, "p99_ns": 1331, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 189814153, "running_pct": 100.0}, "instructions:u": {"count": 353712216, "running_pct": 100.0}, "cache-references:u": {"count": 2629027, "running_pct": 100.0}, "cache-misses:u": {"count": 685117, "running_pct": 100.0}}},
+    {"trial": 0, "case": "bitpacked", "mode": "lookup", "cache": {"resident": 13823, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 4179.590108, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 920, "p99_ns": 1160, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 174075630, "running_pct": 100.0}, "instructions:u": {"count": 358816101, "running_pct": 100.0}, "cache-references:u": {"count": 2254208, "running_pct": 100.0}, "cache-misses:u": {"count": 654198, "running_pct": 100.0}}},
+    {"trial": 1, "case": "shared", "mode": "lookup", "cache": {"resident": 15226, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 3975.622258, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 1009, "p99_ns": 1309, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 184696687, "running_pct": 100.0}, "instructions:u": {"count": 353712225, "running_pct": 100.0}, "cache-references:u": {"count": 2674438, "running_pct": 100.0}, "cache-misses:u": {"count": 682447, "running_pct": 100.0}}},
+    {"trial": 1, "case": "bitpacked", "mode": "lookup", "cache": {"resident": 13823, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 3992.4137229999997, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 1030, "p99_ns": 1310, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 187035036, "running_pct": 100.0}, "instructions:u": {"count": 358816095, "running_pct": 100.0}, "cache-references:u": {"count": 2819948, "running_pct": 100.0}, "cache-misses:u": {"count": 668563, "running_pct": 100.0}}},
+    {"trial": 1, "case": "native", "mode": "lookup", "cache": {"resident": 12183, "total": 12183}, "rows": [{"mode": "native", "open_ms": 2882.502148, "phase": "opened"}, {"hits": 42802, "p50_ns": 40, "p95_ns": 1139, "p99_ns": 1439, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 192722094, "running_pct": 100.0}, "instructions:u": {"count": 445938901, "running_pct": 100.0}, "cache-references:u": {"count": 6342322, "running_pct": 100.0}, "cache-misses:u": {"count": 332862, "running_pct": 100.0}}},
+    {"trial": 1, "case": "shared", "mode": "warm", "cache": {"resident": 15226, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 4003.0856860000004, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 1091, "p99_ns": 1420, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 21311390573, "running_pct": 100.0}, "instructions:u": {"count": 86693954198, "running_pct": 100.0}, "cache-references:u": {"count": 75849211, "running_pct": 100.0}, "cache-misses:u": {"count": 14194969, "running_pct": 100.0}, "minor-faults": {"count": 2836, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 1, "case": "bitpacked", "mode": "warm", "cache": {"resident": 13823, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 4177.596678999999, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 980, "p99_ns": 1241, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 22353033337, "running_pct": 100.0}, "instructions:u": {"count": 89226272700, "running_pct": 100.0}, "cache-references:u": {"count": 80246339, "running_pct": 100.0}, "cache-misses:u": {"count": 14064693, "running_pct": 100.0}, "minor-faults": {"count": 2748, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 1, "case": "native", "mode": "warm", "cache": {"resident": 12183, "total": 12183}, "rows": [{"mode": "native", "open_ms": 2916.133382, "phase": "opened"}, {"hits": 42802, "p50_ns": 40, "p95_ns": 1279, "p99_ns": 1649, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 15628546328, "running_pct": 100.0}, "instructions:u": {"count": 58593310543, "running_pct": 100.0}, "cache-references:u": {"count": 303520707, "running_pct": 100.0}, "cache-misses:u": {"count": 10880282, "running_pct": 100.0}, "minor-faults": {"count": 19942, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 1, "case": "shared", "mode": "cold", "cache": {"resident": 0, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 10002.089703, "phase": "opened"}, {"hits": 42802, "p50_ns": 70, "p95_ns": 1400, "p99_ns": 1691, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 25414696077, "running_pct": 100.0}, "instructions:u": {"count": 86694258805, "running_pct": 100.0}, "cache-references:u": {"count": 99894457, "running_pct": 100.0}, "cache-misses:u": {"count": 15223375, "running_pct": 100.0}, "minor-faults": {"count": 2818, "running_pct": 100.0}, "major-faults": {"count": 484, "running_pct": 100.0}}},
+    {"trial": 1, "case": "bitpacked", "mode": "cold", "cache": {"resident": 0, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 23794.103726999998, "phase": "opened"}, {"hits": 42802, "p50_ns": 70, "p95_ns": 1390, "p99_ns": 1700, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 34384854654, "running_pct": 100.0}, "instructions:u": {"count": 89226949013, "running_pct": 100.0}, "cache-references:u": {"count": 131460779, "running_pct": 100.0}, "cache-misses:u": {"count": 16612344, "running_pct": 100.0}, "minor-faults": {"count": 2730, "running_pct": 100.0}, "major-faults": {"count": 439, "running_pct": 100.0}}},
+    {"trial": 1, "case": "native", "mode": "cold", "cache": {"resident": 0, "total": 12183}, "rows": [{"mode": "native", "open_ms": 14801.116092, "phase": "opened"}, {"hits": 42802, "p50_ns": 60, "p95_ns": 1649, "p99_ns": 1960, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 24608906038, "running_pct": 100.0}, "instructions:u": {"count": 58593478157, "running_pct": 100.0}, "cache-references:u": {"count": 1024021399, "running_pct": 100.0}, "cache-misses:u": {"count": 14148164, "running_pct": 100.0}, "minor-faults": {"count": 19941, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 2, "case": "bitpacked", "mode": "cold", "cache": {"resident": 0, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 20313.956887, "phase": "opened"}, {"hits": 42802, "p50_ns": 70, "p95_ns": 1360, "p99_ns": 1660, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 34699799569, "running_pct": 100.0}, "instructions:u": {"count": 89226694369, "running_pct": 100.0}, "cache-references:u": {"count": 146472698, "running_pct": 100.0}, "cache-misses:u": {"count": 17595998, "running_pct": 100.0}, "minor-faults": {"count": 2730, "running_pct": 100.0}, "major-faults": {"count": 440, "running_pct": 100.0}}},
+    {"trial": 2, "case": "native", "mode": "cold", "cache": {"resident": 0, "total": 12183}, "rows": [{"mode": "native", "open_ms": 6656.599733, "phase": "opened"}, {"hits": 42802, "p50_ns": 40, "p95_ns": 1141, "p99_ns": 1420, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 18879426240, "running_pct": 100.0}, "instructions:u": {"count": 58592835307, "running_pct": 100.0}, "cache-references:u": {"count": 450185383, "running_pct": 100.0}, "cache-misses:u": {"count": 15178293, "running_pct": 100.0}, "minor-faults": {"count": 19941, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 2, "case": "shared", "mode": "cold", "cache": {"resident": 0, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 4083.540781, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 1160, "p99_ns": 1559, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 21481794666, "running_pct": 100.0}, "instructions:u": {"count": 86693929033, "running_pct": 100.0}, "cache-references:u": {"count": 78318943, "running_pct": 100.0}, "cache-misses:u": {"count": 14228754, "running_pct": 100.0}, "minor-faults": {"count": 2819, "running_pct": 100.0}, "major-faults": {"count": 484, "running_pct": 100.0}}},
+    {"trial": 2, "case": "bitpacked", "mode": "warm", "cache": {"resident": 13823, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 4279.42859, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 950, "p99_ns": 1200, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 22904796514, "running_pct": 100.0}, "instructions:u": {"count": 89226405362, "running_pct": 100.0}, "cache-references:u": {"count": 101428264, "running_pct": 100.0}, "cache-misses:u": {"count": 14866035, "running_pct": 100.0}, "minor-faults": {"count": 2748, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 2, "case": "native", "mode": "warm", "cache": {"resident": 12183, "total": 12183}, "rows": [{"mode": "native", "open_ms": 2849.602937, "phase": "opened"}, {"hits": 42802, "p50_ns": 40, "p95_ns": 1160, "p99_ns": 1460, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 15339095514, "running_pct": 100.0}, "instructions:u": {"count": 58592711757, "running_pct": 100.0}, "cache-references:u": {"count": 291937639, "running_pct": 100.0}, "cache-misses:u": {"count": 10402750, "running_pct": 100.0}, "minor-faults": {"count": 19941, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 2, "case": "shared", "mode": "warm", "cache": {"resident": 15226, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 4132.254684, "phase": "opened"}, {"hits": 42802, "p50_ns": 60, "p95_ns": 1170, "p99_ns": 1551, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 21856330127, "running_pct": 100.0}, "instructions:u": {"count": 86693891330, "running_pct": 100.0}, "cache-references:u": {"count": 82103000, "running_pct": 100.0}, "cache-misses:u": {"count": 14459264, "running_pct": 100.0}, "minor-faults": {"count": 2834, "running_pct": 100.0}, "major-faults": {"count": 0, "running_pct": 100.0}}},
+    {"trial": 2, "case": "bitpacked", "mode": "lookup", "cache": {"resident": 13823, "total": 13823}, "rows": [{"mode": "converted", "open_ms": 4283.783618, "phase": "opened"}, {"hits": 42802, "p50_ns": 60, "p95_ns": 1180, "p99_ns": 1540, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 208460869, "running_pct": 100.0}, "instructions:u": {"count": 358816072, "running_pct": 100.0}, "cache-references:u": {"count": 3304936, "running_pct": 100.0}, "cache-misses:u": {"count": 712844, "running_pct": 100.0}}},
+    {"trial": 2, "case": "native", "mode": "lookup", "cache": {"resident": 12183, "total": 12183}, "rows": [{"mode": "native", "open_ms": 3031.2326089999997, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 1630, "p99_ns": 2090, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 254883298, "running_pct": 100.0}, "instructions:u": {"count": 445938961, "running_pct": 100.0}, "cache-references:u": {"count": 10178498, "running_pct": 100.0}, "cache-misses:u": {"count": 424607, "running_pct": 100.0}}},
+    {"trial": 2, "case": "shared", "mode": "lookup", "cache": {"resident": 15226, "total": 15226}, "rows": [{"mode": "converted", "open_ms": 4271.639998000001, "phase": "opened"}, {"hits": 42802, "p50_ns": 50, "p95_ns": 1010, "p99_ns": 1290, "phase": "lookups", "queries": 100005}], "counters": {"cycles:u": {"count": 182966975, "running_pct": 100.0}, "instructions:u": {"count": 353712153, "running_pct": 100.0}, "cache-references:u": {"count": 2574169, "running_pct": 100.0}, "cache-misses:u": {"count": 703753, "running_pct": 100.0}}}
+  ]
+}

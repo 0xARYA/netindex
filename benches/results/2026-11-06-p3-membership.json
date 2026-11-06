@@ -7,7 +7,7 @@
     "src/reader_set/query.rs": "863057453d75f8be968af016128832a2c469a6f473db71d967a60a266842c17e"
   },
   "host": "Windows, Ryzen 9 9950X3D2, pinned CPU 20",
-  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-pc-windows-msvc\nrelease: 1.99.1\nLLVM version: 23.1.1",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-pc-windows-msvc\nrelease: 1.95.0\nLLVM version: 22.1.2",
   "profile": "release, locked, default study features",
   "cases": {
     "packed-v4": {

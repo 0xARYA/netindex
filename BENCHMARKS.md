@@ -514,3 +514,7 @@ or library PGO/release policy is adopted.
 [direct prefix results](benches/competitors/P3_RESULTS.md) compare
 `Reader::longest_prefix`, visitor selection and a trie on matched CIDR workloads.
 Both reports link exact inputs, process samples and reproduction.
+
+[P3 decisions and measurements](PERF_TASKS.md#2026-11-06-p3-03-search-only-membership)
+also cover the shipped search-only membership paths, the decision to keep
+scalar packed search on ARM64, and City storage and cache profiling.
