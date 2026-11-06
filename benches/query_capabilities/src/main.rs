@@ -546,6 +546,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 methods.to_vec()
             };
             for method in order {
+                if phase == "membership" && !matches!(method, "member" | "point") {
+                    continue;
+                }
                 if phase == "train"
                     && matches!(
                         method,
@@ -563,7 +566,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 {
                     continue;
                 }
-                let repeats = if phase == "train" {
+                let repeats = if phase == "membership" {
+                    1024
+                } else if phase == "train" {
                     if method.starts_with("whole") {
                         1
                     } else if method == "inspect" {

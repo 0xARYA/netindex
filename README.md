@@ -123,7 +123,8 @@ output buffer, reordering, thread pool or automatic cross-query SIMD policy.
 callbacks have already run; later queries do not run. Callers own output storage
 and any rollback policy.
 
-`contains_ip` and `contains_asn` stop at the first match. The `try_visit_*` methods
+`contains_ip` and `contains_asn` stop at the first match without resolving its
+payload. The `try_visit_*` methods
 return `ControlFlow::Break(value)` for successful early termination and preserve
 visitor errors separately. `visit_intersecting` takes an address, canonical CIDR
 or inclusive range and returns whole original intersecting targets. It searches

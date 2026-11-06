@@ -37,7 +37,7 @@ output are unchanged. Readers without format-6 support reject the result;
 upgrade readers before enabling compaction. No new production dependency is added.
 
 Add borrowed mixed-query batches with indexed errors, explicit `ControlFlow`
-early termination, first-match membership and indexed inclusive intersections.
+early termination, payload-free membership and indexed inclusive intersections.
 Reader sets preserve query/source ordering. Range/CIDR queries preserve original
 targets, duplicates and shared aliases. Allocation-free inspection reports exact
 encoded regions and separate reader resource capacities. File bytes are unchanged.

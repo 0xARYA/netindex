@@ -1,6 +1,13 @@
 use std::{fmt, net::IpAddr, ops::ControlFlow};
 
-use crate::{Error, Match, Reader, Target, layout::Section, packed, target::number};
+use crate::{
+    Error, Match, Reader, Target,
+    layout::{Encoding, Section},
+    packed,
+    target::number,
+};
+
+use super::asn_key;
 
 /// One query in a borrowed, query-major batch.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -125,24 +132,49 @@ impl<B: AsRef<[u8]>> Reader<B> {
         }
     }
 
-    /// Test membership, stopping at the first IP match without result allocation.
+    /// Test membership, stopping at the first IP match without resolving payloads.
     ///
     /// # Errors
-    /// Returns a reader error encountered before the first match.
+    /// Returns errors encountered in the index search. Payload bytes and references
+    /// are validated when opening the reader, and are not accessed by this query.
     pub fn contains_ip(&self, address: IpAddr) -> Result<bool, Error> {
-        Ok(self
-            .try_visit_ip(address, |_| Ok::<_, Error>(ControlFlow::Break(())))?
-            .is_break())
+        let address = if let IpAddr::V6(ip) = address
+            && let Some(window) = self
+                .aliases
+                .as_ref()
+                .and_then(|aliases| aliases.lookup(ip.into()))
+        {
+            window.query(ip.into()).into()
+        } else {
+            address
+        };
+        let ipv6 = address.is_ipv6();
+        let query = number(address);
+        let (first, last) = if ipv6 { self.bounds[1] } else { self.bounds[0] };
+        if query < first || query > last {
+            return Ok(false);
+        }
+        let section = if ipv6 { self.layout.v6 } else { self.layout.v4 };
+        let bytes = self.bytes.as_ref();
+        if section.encoding == Encoding::Packed {
+            if let Some(entry) = self.lookup_packed_ip(bytes, section, query)? {
+                entry.validate(ipv6)?;
+                return Ok(true);
+            }
+            return Ok(false);
+        }
+        contains_interval(section, bytes, 0, section.count, query)
     }
 
     /// Test exact ASN membership; zero is a miss. Stops at the first match.
     ///
     /// # Errors
-    /// Returns a reader error encountered before the first match.
+    /// Returns errors encountered in the ASN index search. Does not read payloads
+    /// or their references.
     pub fn contains_asn(&self, number: u32) -> Result<bool, Error> {
-        Ok(self
-            .try_visit_asn(number, |_| Ok::<_, Error>(ControlFlow::Break(())))?
-            .is_break())
+        let rows = self.asn_rows(self.bytes.as_ref())?;
+        let first = rows.partition_point(|row| asn_key(row) < number);
+        Ok(rows.get(first).is_some_and(|row| asn_key(row) == number))
     }
 
     /// Visit every IP assertion intersecting an inclusive address/network/range.
@@ -257,7 +289,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
         ipv6: bool,
         emit: &mut impl FnMut(crate::target::Entry) -> Result<(), E>,
     ) -> Result<(), E> {
-        if section.encoding == crate::layout::Encoding::Packed {
+        if section.encoding == Encoding::Packed {
             return packed::visit_intersecting(
                 crate::layout::slice(self.bytes.as_ref(), section.offset, section.length)?,
                 section.count,
@@ -286,6 +318,34 @@ impl<B: AsRef<[u8]>> Reader<B> {
         }
         self.intersect_entries(section, mid + 1, high, first, last, ipv6, emit)
     }
+}
+
+fn contains_interval(
+    section: Section,
+    bytes: &[u8],
+    low: usize,
+    high: usize,
+    query: u128,
+) -> Result<bool, Error> {
+    if low == high {
+        return Ok(false);
+    }
+    let mid = low + (high - low) / 2;
+    if section.maximum(bytes, mid)? < query || section.start(bytes, low)? > query {
+        return Ok(false);
+    }
+    if contains_interval(section, bytes, low, mid, query)? {
+        return Ok(true);
+    }
+    if section.start(bytes, mid)? > query {
+        return Ok(false);
+    }
+    let entry = section.entry(bytes, mid)?;
+    if entry.end >= query {
+        entry.validate(section.ipv6)?;
+        return Ok(true);
+    }
+    contains_interval(section, bytes, mid + 1, high, query)
 }
 
 enum Stop<E, T> {

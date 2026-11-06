@@ -271,45 +271,55 @@ impl<B: AsRef<[u8]>> Reader<B> {
 
         let section = if ipv6 { self.layout.v6 } else { self.layout.v4 };
 
-        if let Some(routes) = &self.broad_routes
-            && let Some(entry) = routes.lookup(query, ipv6)?
-        {
-            emit(Match {
-                id: entry.id,
-                target: entry.target(ipv6)?,
-                payload: self.layout.payload(self.bytes.as_ref(), entry.id)?,
-            })?;
-
-            return Ok(());
-        }
-
         if section.encoding == Encoding::Packed {
             let bytes = self.bytes.as_ref();
-            let data = slice(bytes, section.offset, section.length)?;
-
-            if let Some(entry) = packed::lookup(
-                data,
-                section.count,
-                query,
-                ipv6,
-                self.search,
-                if ipv6 {
-                    None
-                } else {
-                    self.ipv4_directory.as_ref()
-                },
-            )? {
+            if let Some(entry) = self.lookup_packed_ip(bytes, section, query)? {
                 emit(Match {
                     id: entry.id,
                     target: entry.target(ipv6)?,
                     payload: self.layout.payload(bytes, entry.id)?,
                 })?;
             }
-
             return Ok(());
         }
 
         self.visit(section, 0, section.count, query, ipv6, &mut emit)
+    }
+
+    fn lookup_packed_ip(
+        &self,
+        bytes: &[u8],
+        section: Section,
+        query: u128,
+    ) -> Result<Option<Entry>, Error> {
+        if let Some(routes) = &self.broad_routes
+            && let Some(entry) = routes.lookup(query, section.ipv6)?
+        {
+            return Ok(Some(entry));
+        }
+
+        let data = slice(bytes, section.offset, section.length)?;
+        packed::lookup(
+            data,
+            section.count,
+            query,
+            section.ipv6,
+            self.search,
+            if section.ipv6 {
+                None
+            } else {
+                self.ipv4_directory.as_ref()
+            },
+        )
+    }
+
+    fn asn_rows<'a>(&self, bytes: &'a [u8]) -> Result<&'a [[u8; 8]], Error> {
+        let section = self.layout.asns;
+        let (rows, remainder) = slice(bytes, section.offset, section.length)?.as_chunks::<8>();
+        if !remainder.is_empty() || rows.len() != section.count {
+            return Err(Error::Invalid("ASN section length"));
+        }
+        Ok(rows)
     }
 
     /// Visit every assertion for an exact ASN key, including duplicates.
@@ -324,25 +334,14 @@ impl<B: AsRef<[u8]>> Reader<B> {
         mut emit: impl FnMut(Match<'a>) -> Result<(), E>,
     ) -> Result<(), E> {
         let bytes = self.bytes.as_ref();
-        let section = self.layout.asns;
-        let (rows, remainder) = slice(bytes, section.offset, section.length)?.as_chunks::<8>();
-
-        if !remainder.is_empty() || rows.len() != section.count {
-            return Err(Error::Invalid("ASN section length").into());
-        }
-
-        let key = |row: &[u8; 8]| {
-            let [a, b, c, d, _, _, _, _] = *row;
-            u32::from_le_bytes([a, b, c, d])
-        };
-
-        let first = rows.partition_point(|row| key(row) < number);
+        let rows = self.asn_rows(bytes)?;
+        let first = rows.partition_point(|row| asn_key(row) < number);
         let matches = rows
             .get(first..)
             .ok_or(Error::Invalid("ASN index position"))?;
 
         for row in matches {
-            if key(row) != number {
+            if asn_key(row) != number {
                 break;
             }
 
@@ -554,6 +553,11 @@ impl<B: AsRef<[u8]>> fmt::Debug for Reader<B> {
             .field("artifact_bytes", &self.layout.bytes)
             .finish()
     }
+}
+
+fn asn_key(row: &[u8; 8]) -> u32 {
+    let [a, b, c, d, _, _, _, _] = *row;
+    u32::from_le_bytes([a, b, c, d])
 }
 
 fn ip_bounds(bytes: &[u8], section: Section) -> Result<(u128, u128), Error> {

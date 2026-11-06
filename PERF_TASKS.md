@@ -154,9 +154,9 @@ not complete the broader experiments below.
   with deterministic ties and explicit treatment of ranges. Preserve file
   compatibility and existing all-match semantics. Compare against visitor-based
   selection and a trie on overlapping and disjoint inputs.
-- [ ] **P3-03 Search-only membership.** Avoid constructing matches and resolving
-  payloads when only existence is needed. Preserve errors and aliases; consider
-  a budgeted dense ASN bitmap only if a meaningful gap remains. Next implementation task.
+- [x] **P3-03 Search-only membership.** Avoid constructing matches and resolving
+  payloads when only existence is needed. Preserve index errors and aliases.
+  Defer a dense ASN bitmap until a consumer can justify its memory budget.
 - [ ] **P3-04 Packed NEON.** Port the qualified packed search kernel behind
   the existing SIMD feature if native ARM comparisons justify adoption.
 - [ ] **P3-05 Remaining storage cost.** Profile the remaining City bytes and
@@ -1286,3 +1286,32 @@ prefixes, empty/partial batches, borrowing and coarse/fine reader-set routing.
   uniform IPv6 286 vs 682 ns. The trie still wins overlap, and direct lookup
   costs 5-10% more than the visitor on the tested disjoint cases.
   [Results](benches/competitors/P3_RESULTS.md).
+
+### 2026-11-06: P3-03 search-only membership
+
+Adopted direct membership for readers and reader sets. It no longer constructs
+matches or resolves references or payloads. Packed, interval, bitpacked and
+aliased IP searches use the existing index and still report malformed index
+data. There are no file changes or new memory allocations.
+
+Median ns/query from nine warm samples per cell (three fresh processes per
+build, alternating order; 1,048,576 queries per sample; Ryzen 9 9950X3D2,
+Windows, CPU 20). Point lookup is the unchanged-work control:
+
+| Input | Membership before / after | Point before / after |
+| --- | ---: | ---: |
+| Packed IPv4 | 35.10 / 26.84 | 37.30 / 37.84 |
+| Packed IPv6 | 36.20 / 28.89 | 38.77 / 39.74 |
+| Bitpacked IPv6 | 43.15 / 35.93 | 45.46 / 46.24 |
+| Overlapping IPv4 | 85.52 / 58.89 | 928.08 / 928.47 |
+| Exact ASN (duplicate keys) | 18.88 / 19.49 | 107.23 / 107.60 |
+| Mixed | 30.64 / 24.81 | 34.21 / 34.67 |
+| Shared aliases | 38.19 / 30.05 | 43.97 / 42.41 |
+| Retained City | 53.42 / 40.36 | 58.93 / 57.05 |
+| Retained IP-to-ASN | 271.09 / 185.51 | 275.40 / 272.44 |
+
+All input digests and result checksums matched. IP membership took
+17-32% less time; exact ASN was effectively flat on this small-key workload.
+Point controls moved by at most 3.6%. A dense bitmap is not adopted: the ASN
+workload does not establish value for a real consumer or a default budget.
+[Raw samples and provenance](benches/results/2026-11-06-p3-membership.json).

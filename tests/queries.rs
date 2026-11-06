@@ -643,35 +643,41 @@ fn reader_sets_preserve_query_source_order_and_early_stop() {
 }
 
 #[test]
-fn inspection_reports_truncated_backing_as_an_error() {
+fn inspection_and_membership_read_only_their_required_backing_regions() {
     use std::{cell::Cell, rc::Rc};
     struct Backing {
-        short: Rc<Cell<bool>>,
+        length: Rc<Cell<usize>>,
         bytes: Vec<u8>,
     }
     impl AsRef<[u8]> for Backing {
         fn as_ref(&self) -> &[u8] {
-            if self.short.get() {
-                &self.bytes[..80]
-            } else {
-                &self.bytes
-            }
+            &self.bytes[..self.length.get()]
         }
     }
-    let flag = Rc::new(Cell::new(false));
     let mut builder = Builder::new(Limits::default());
-    builder
-        .push(Target::Address(Ipv4Addr::LOCALHOST.into()), b"payload")
-        .unwrap();
+    let ip = Ipv4Addr::LOCALHOST.into();
+    builder.push(Target::Address(ip), b"payload").unwrap();
+    builder.push(Target::Asn(42), b"second").unwrap();
+    let bytes = builder.into_bytes(b"").unwrap();
+    let length = Rc::new(Cell::new(bytes.len()));
     let reader = Reader::open(
         Backing {
-            short: flag.clone(),
-            bytes: builder.into_bytes(b"").unwrap(),
+            length: length.clone(),
+            bytes,
         },
         Limits::default(),
     )
     .unwrap();
-    flag.set(true);
+    let info = reader.inspect().unwrap();
+    length.set(info.artifact_bytes - info.payload_bytes - info.reference_bytes);
+    assert!(reader.contains_ip(ip).unwrap());
+    assert!(reader.contains_asn(42).unwrap());
+    assert!(reader.lookup_ip(ip).is_err());
+    assert!(reader.lookup_asn(42).is_err());
+
+    length.set(80);
+    assert!(reader.contains_ip(ip).is_err());
+    assert!(reader.contains_asn(42).is_err());
     assert!(matches!(
         reader.inspect(),
         Err(Error::Invalid("inspection backing length"))

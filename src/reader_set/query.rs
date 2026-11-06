@@ -77,9 +77,16 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
     /// # Errors
     /// Returns a reader error encountered before the first match.
     pub fn contains_ip(&self, address: IpAddr) -> Result<bool, Error> {
-        Ok(self
-            .try_visit_ip(address, |_, _| Ok::<_, Error>(ControlFlow::Break(())))?
-            .is_break())
+        for source in crate::coverage::candidates(self.router.mask(address)) {
+            let reader = self
+                .readers
+                .get(source)
+                .ok_or(Error::Invalid("routed reader position"))?;
+            if reader.contains_ip(address)? {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
 
     /// Test exact-ASN membership, stopping at the first match; zero is a miss.
@@ -87,9 +94,12 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
     /// # Errors
     /// Returns a reader error encountered before the first match.
     pub fn contains_asn(&self, number: u32) -> Result<bool, Error> {
-        Ok(self
-            .try_visit_asn(number, |_, _| Ok::<_, Error>(ControlFlow::Break(())))?
-            .is_break())
+        for reader in &self.readers {
+            if reader.contains_asn(number)? {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
 
     /// Visit inclusive intersections in source order, then each reader's order.
