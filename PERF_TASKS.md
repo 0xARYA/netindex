@@ -1379,3 +1379,29 @@ p95 was 2.38, 2.06, and 1.93 microseconds, respectively. Retain the existing
 formats and prioritize validation profiling if rollout startup matters.
 These measurements cover the City adapter, not a full service restart.
 [Deployment measurements and samples](benches/native_city/P3_RESULTS.md#deployment-qualification).
+
+
+### 2026-11-06: Standards cleanup regression check
+
+Compared `8be3593` and `30a9d37` with the same
+[`query_capabilities` harness](benches/query_capabilities/) on Windows,
+Rust 1.95.0 release builds, pinned to logical CPU 20 on a Ryzen 9 9950X3D2.
+Artifact hashes and query checksums matched across all nine workloads.
+The initial retained City run measured 59.27 to 57.73 ns for point lookup
+and 44.13 to 41.23 ns for membership; this was a local benchmark.
+
+The focused rerun used five pairs of alternating processes, each with three
+samples of 1,048,576 queries per method. Median nanoseconds per query:
+
+| Workload | Point, before to after | Membership, before to after |
+| --- | ---: | ---: |
+| Packed IPv6 | 39.35 to 42.11 (+7.0%) | 28.96 to 29.28 (+1.1%) |
+| Packed IPv4 | 38.21 to 38.77 (+1.4%) | 27.03 to 27.00 (-0.1%) |
+| ASN | 106.71 to 107.12 (+0.4%) | 19.21 to 19.21 |
+
+The synthetic packed IPv6 point regression remains open. The benchmark's
+point loop had the same instructions apart from address displacements;
+that comparison does not cover every callee or establish a cause. An
+isolated build with the original packed source still measured 42.64 ns
+(nine samples). Profile the full packed IPv6 lookup path on this host and
+check a second native build before changing search code or alignment.
