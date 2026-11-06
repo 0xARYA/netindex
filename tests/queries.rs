@@ -60,6 +60,14 @@ fn owned(row: Match<'_>) -> (u32, Target, Vec<u8>) {
     (row.id, row.target, row.payload.to_vec())
 }
 
+fn prefix_rank(target: Target) -> Option<u8> {
+    match target {
+        Target::Network { prefix, .. } => Some(prefix),
+        Target::Address(ip) => Some(if ip.is_ipv6() { 128 } else { 32 }),
+        _ => None,
+    }
+}
+
 fn inspect_totals(info: Inspection) {
     assert_eq!(
         info.header_bytes
@@ -124,6 +132,12 @@ fn verify(
                     })
                     .unwrap();
                 assert_eq!(reader.contains_ip(ip).unwrap(), !want.is_empty());
+                let winner = want
+                    .iter()
+                    .filter_map(|row| prefix_rank(row.1).map(|rank| (rank, row)))
+                    .min_by_key(|(rank, row)| (std::cmp::Reverse(*rank), row.0))
+                    .map(|(_, row)| row.clone());
+                assert_eq!(reader.longest_prefix(ip).unwrap().map(owned), winner);
             }
             Query::Asn(key) => {
                 reader
@@ -149,6 +163,70 @@ fn verify(
             ControlFlow::Continue(()) => assert!(want.is_empty()),
             ControlFlow::Break((0, row)) => assert_eq!(owned(row), want[0]),
             _ => panic!("single-query batch position"),
+        }
+    }
+}
+
+#[test]
+fn longest_prefix_distinguishes_ranges_addresses_and_duplicate_networks() {
+    for ipv6 in [false, true] {
+        let ip = |offset| {
+            if ipv6 {
+                IpAddr::V6(Ipv6Addr::from(offset))
+            } else {
+                IpAddr::V4(Ipv4Addr::from(offset as u32))
+            }
+        };
+        let width = if ipv6 { 128 } else { 32 };
+        let rows = [
+            Target::Range {
+                start: ip(9),
+                end: ip(9),
+            },
+            Target::Network {
+                address: ip(0),
+                prefix: 0,
+            },
+            Target::Network {
+                address: ip(8),
+                prefix: width - 2,
+            },
+            Target::Network {
+                address: ip(8),
+                prefix: width - 1,
+            },
+            Target::Network {
+                address: ip(8),
+                prefix: width - 1,
+            },
+            Target::Address(ip(8)),
+            Target::Network {
+                address: ip(8),
+                prefix: width,
+            },
+        ];
+        let mut builder = Builder::new(Limits::default());
+        builder
+            .push(
+                Target::Range {
+                    start: ip(9),
+                    end: ip(9),
+                },
+                b"range",
+            )
+            .unwrap();
+        let range_only = Reader::open(builder.into_bytes(b"").unwrap(), Limits::default()).unwrap();
+        assert!(range_only.longest_prefix(ip(9)).unwrap().is_none());
+
+        let mut builder = Builder::new(Limits::default());
+        for (id, target) in rows.into_iter().enumerate() {
+            builder.push(target, &[id as u8]).unwrap();
+        }
+        let reader = Reader::open(builder.into_bytes(b"").unwrap(), Limits::default()).unwrap();
+        for (point, id) in [(0, 1), (8, 5), (9, 3), (10, 2), (12, 1)] {
+            let row = reader.longest_prefix(ip(point)).unwrap().unwrap();
+            assert_eq!(row.id, id);
+            assert_eq!(row.payload, &[id as u8]);
         }
     }
 }

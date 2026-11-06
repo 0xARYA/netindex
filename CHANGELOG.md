@@ -42,6 +42,10 @@ Reader sets preserve query/source ordering. Range/CIDR queries preserve original
 targets, duplicates and shared aliases. Allocation-free inspection reports exact
 encoded regions and separate reader resource capacities. File bytes are unchanged.
 
+`Reader::longest_prefix` returns one most specific matching address or CIDR,
+breaking ties by lowest logical assertion ID and ignoring arbitrary ranges.
+It preserves shared alias projection and borrows the winning payload.
+
 ## 2.1.0 - 2026-11-04
 
 Deduplicate every external-builder payload, including values outside the memory

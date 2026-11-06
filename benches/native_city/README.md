@@ -55,3 +55,25 @@ but exclude JSON, HTTP and networking. Queries run in a single thread after a
 capacity or tail-latency guarantee. Full validation touches mapped bytes before
 lookups, so these are warm-file observations; cold mappings and >RAM workloads
 remain separate tasks.
+
+For P3, prepare with `local` in place of a registry version. Record the Byway
+revision, copied source hashes, generated lockfile and executable identity. Run
+`convert` against the retained City snapshot, then use the
+[shared alias replay](../shared_aliases/README.md) with its snapshot-specific
+windows, followed by `rebuild SHARED BITPACKED TEMP_DIRECTORY bitpacked`.
+The alias parameters apply only to the retained fixture.
+
+```powershell
+./benches/native_city/qualify.ps1 -Executable PATH_TO_ADAPTER_EXE `
+  -Native CITY.mmdb -Shared CITY_FORMAT5.nidx -Bitpacked CITY_COMPACT.nidx `
+  -OutputDirectory target/city-qualification-new
+```
+
+The runner checks normalized parity before timing and rotates the three cases
+across three fresh processes per case. It primes the file cache by reading each
+input before launching. Reload opens a distinct, hash-verified copy while
+retaining the old reader. Its process peak working set includes both readers and
+validation; it does not model request concurrency or a changed next snapshot.
+Optional `-Trace PATH` supplies one IP per line for both lookup and parity
+(parity also checks the boundary corpus). With no trace, the existing fixed
+corpus is used. Keep private traces and source artifacts outside Git.

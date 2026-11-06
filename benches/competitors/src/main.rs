@@ -119,6 +119,27 @@ fn prefix(directory: &Path, family: &str, shape: &str, records: u32) -> Result<(
             id,
         })
     };
+    let direct = |ip| -> Result<Option<Answer>, Error> {
+        reader
+            .longest_prefix(ip)?
+            .map(|row| {
+                let Target::Network { address, prefix } = row.target else {
+                    return Err(Error::Invalid("unexpected prefix target"));
+                };
+                let id = u32::from_le_bytes(
+                    row.payload
+                        .try_into()
+                        .map_err(|_| Error::Invalid("payload width"))?,
+                );
+                assert_eq!(row.id, id);
+                Ok(Answer {
+                    address,
+                    prefix,
+                    id,
+                })
+            })
+            .transpose()
+    };
     // Exercise every input prefix's boundaries and its immediate neighbours.
     // The independent oracle performs masked-key equality, never trie traversal.
     let mut boundary_checks = 0u64;
@@ -140,6 +161,7 @@ fn prefix(directory: &Path, family: &str, shape: &str, records: u32) -> Result<(
             }
             let ip = from_numeric(v6, point);
             assert_eq!(index_lookup(ip)?, oracle(ip));
+            assert_eq!(direct(ip)?, oracle(ip));
             assert_eq!(table_lookup(ip), oracle(ip));
             boundary_checks += 1;
         }
@@ -176,6 +198,7 @@ fn prefix(directory: &Path, family: &str, shape: &str, records: u32) -> Result<(
         );
         for &ip in &queries {
             assert_eq!(index_lookup(ip)?, oracle(ip));
+            assert_eq!(direct(ip)?, oracle(ip));
             assert_eq!(table_lookup(ip), oracle(ip));
         }
         let expected: u64 = queries
@@ -184,14 +207,18 @@ fn prefix(directory: &Path, family: &str, shape: &str, records: u32) -> Result<(
             .fold(0, u64::wrapping_add);
         for trial in 1..=4 {
             let engines = if trial % 2 == 1 {
-                ["netindex", "ip_network_table"]
+                ["netindex", "netindex-direct", "ip_network_table"]
             } else {
-                ["ip_network_table", "netindex"]
+                ["ip_network_table", "netindex-direct", "netindex"]
             };
             for engine in engines {
                 if engine == "netindex" {
                     measure(traffic, engine, trial, &queries, expected, |&ip| {
                         Ok(fingerprint(index_lookup(ip)?))
+                    })?;
+                } else if engine == "netindex-direct" {
+                    measure(traffic, engine, trial, &queries, expected, |&ip| {
+                        Ok(fingerprint(direct(ip)?))
                     })?;
                 } else {
                     measure(traffic, engine, trial, &queries, expected, |&ip| {
@@ -427,6 +454,7 @@ fn limits() -> Limits {
 }
 
 fn pin() -> std::io::Result<()> {
+    #[cfg(target_os = "linux")]
     // SAFETY: CPU 20 fits the initialized mask; PID zero selects only this thread.
     unsafe {
         let mut set: libc::cpu_set_t = std::mem::zeroed();

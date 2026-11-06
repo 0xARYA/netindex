@@ -41,7 +41,7 @@ for run in result['runs']:
     assert digest(log) == run['raw_log_sha256']
     assert [json.loads(line) for line in log.read_text().splitlines()] == run['rows']
     measured = [row for row in run['rows'] if row['phase'] == 'measure']
-    engines = ['netindex', 'roaring-default', 'roaring-optimized'] if run['family'] == 'asn' else ['netindex', 'ip_network_table']
+    engines = ['netindex', 'roaring-default', 'roaring-optimized'] if run['family'] == 'asn' else ['netindex', 'netindex-direct', 'ip_network_table']
     trials = range(1, 7 if run['family'] == 'asn' else 5)
     expected = set(itertools.product(['uniform', 'hot'], engines, trials))
     actual = [(row['traffic'], row['engine'], row['trial']) for row in measured]
@@ -56,7 +56,7 @@ for run in result['runs']:
         for percentile in [50, 95, 99]:
             assert row[f'p{percentile}_ns'] == samples[len(samples) * percentile // 100]
     total += len(measured)
-assert total == 1032
+assert total == 1224
 geography = here.parents[1] / result['geography_evidence']['path']
 assert digest(geography) == result['geography_evidence']['sha256']
 result['source_lf_sha256'] = normalized
@@ -66,4 +66,4 @@ result['verification'] = dict(processes=42, measurements=total, sources=True,
                               executables=True, inputs=True, raw_logs=True,
                               trial_coordinates=True, histograms=True)
 receipt.write_text(json.dumps(result, indent=2) + '\n')
-print('Verified 42 processes, 1032 measurements, sources, binaries, fixtures, logs and histograms')
+print('Verified 42 processes, 1224 measurements, sources, binaries, fixtures, logs and histograms')

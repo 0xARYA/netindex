@@ -143,6 +143,25 @@ not complete the broader experiments below.
 - [x] **P2-10 Decisions.** Record adoption/rejection, gains, regressions, resource
   costs and the workloads supported by evidence for each experiment.
 
+## P3: consumer qualification and focused query paths
+
+- [x] **P3-01 Warm consumer qualification against native MMDB.** Use the Byway City decoder,
+  validator and serving lookup on the same retained MMDB. Rebuild with compact
+  references and shared aliases; compare identical decoded answers, file size,
+  opening, reload peak memory and p95/p99. Distinguish a fresh process from a
+  verified cold filesystem cache, and disclose query trace provenance.
+- [x] **P3-02 Direct longest-prefix lookup.** Add a single-result CIDR query
+  with deterministic ties and explicit treatment of ranges. Preserve file
+  compatibility and existing all-match semantics. Compare against visitor-based
+  selection and a trie on overlapping and disjoint inputs.
+- [ ] **P3-03 Search-only membership.** Avoid constructing matches and resolving
+  payloads when only existence is needed. Preserve errors and aliases; consider
+  a budgeted dense ASN bitmap only if a meaningful gap remains. Next implementation task.
+- [ ] **P3-04 Packed NEON.** Port the qualified packed search kernel behind
+  the existing SIMD feature if native ARM comparisons justify adoption.
+- [ ] **P3-05 Remaining storage cost.** Profile the remaining City bytes and
+  cache misses after consumer qualification before proposing a new layout.
+
 ## Acceptance
 
 Preserve the declared query and validation contracts, original targets, insertion
@@ -1242,3 +1261,28 @@ prefixes, empty/partial batches, borrowing and coarse/fine reader-set routing.
 - [Results, costs and decisions](benches/query_capabilities/RESULTS.md),
   [reproduction](benches/query_capabilities/README.md),
   [measurements and provenance](benches/query_capabilities/raw).
+
+### 2026-11-06: P3-01 consumer and P3-02 longest-prefix results
+
+- Reused the Byway City schema, validator and owned lookup in a standalone
+  consumer. Native input SHA-256:
+  `d6ff9368ab19a13b096fd6392f752aa6c0890f2c92752d09253fab9e50501e46`.
+  The 3.0 conversion took 71.38 s in one run, then alias folding reduced
+  physical rows to 5,724,698 while retaining all 20,255,722 logical assertions.
+  Both shared and bitpacked outputs passed 108,123 normalized native queries.
+- Native/shared/bitpacked sizes: 49.90/62.36/56.62 MB. Across three cache-primed
+  Windows processes per case, median open was 2.74/3.55/3.73 s and peak reload
+  working set was 152.3/128.6/117.7 MiB. Lookup p95/p99 was 1,200/1,500,
+  1,100/1,300 and 900/1,100 ns, with 100 ns clock granularity and synthetic
+  traffic. Real-trace and verified OS-cache-cold qualification remain open
+  for rollout; the tested consumer uses Byway code, not a live deployment.
+  [Results](benches/native_city/P3_RESULTS.md).
+- Added allocation-free `Reader::longest_prefix`: address/CIDR only, lowest
+  logical ID wins equal prefixes, range assertions ignored, and only the winner
+  resolves its payload. Existing files and all-match APIs are unchanged.
+  Original-assertion tests include ties, alias IDs, and both IP families.
+- At 100,000 leaves and 12 samples/cell, direct overlap lookups were about
+  2.0-2.4x faster than visitor selection. Uniform IPv4 was 211 vs 421 ns and
+  uniform IPv6 286 vs 682 ns. The trie still wins overlap, and direct lookup
+  costs 5-10% more than the visitor on the tested disjoint cases.
+  [Results](benches/competitors/P3_RESULTS.md).

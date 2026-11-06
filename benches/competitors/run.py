@@ -45,7 +45,7 @@ for records in (1_000, 100_000, 1_000_000):
                 raise RuntimeError(f'{name}: {process.stderr}')
             rows = [json.loads(line) for line in process.stdout.splitlines()]
             measured = [r for r in rows if r['phase'] == 'measure']
-            expected_rows = 36 if family == 'asn' else 16
+            expected_rows = 36 if family == 'asn' else 24
             if len(measured) != expected_rows or any(r['queries'] != 1_048_576 for r in measured):
                 raise ValueError(f'incomplete matrix: {name}')
             inputs = {p.name: dict(bytes=p.stat().st_size, sha256=digest(p))

@@ -15,6 +15,7 @@ use crate::{
 mod mmap;
 
 mod inspection;
+mod prefix;
 mod query;
 
 pub use inspection::{Inspection, PayloadReferences, SectionEncoding, SectionInspection};

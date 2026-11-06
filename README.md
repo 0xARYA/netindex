@@ -110,6 +110,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Batches, membership and intersections
 
+`Reader::longest_prefix` returns the most specific matching CIDR or address
+(treated as a host prefix). It ignores arbitrary ranges and breaks equal-prefix
+ties by lowest logical assertion ID. Use `visit_ip` when you need all matching
+assertions, including ranges.
+
 `Reader::visit_batch` accepts borrowed `Query` values and calls the visitor with
 its input query position and each borrowed match. Delivery follows input order,
 then normal per-query ordering; duplicate queries run independently. There is no

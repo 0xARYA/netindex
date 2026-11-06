@@ -506,3 +506,11 @@ mixes, executable size, two startup boundaries, linked code and supported Linux
 counters. The [runner](benches/query_capabilities/README.md) and raw provenance
 are retained. Benefits are workload-specific: no default cross-query SIMD kernel
 or library PGO/release policy is adopted.
+
+## P3 consumer and direct prefix queries
+
+[Consumer results](benches/native_city/P3_RESULTS.md) compare native MMDB and
+3.0 shared/bitpacked City using Byway validation and owned decoding. The
+[direct prefix results](benches/competitors/P3_RESULTS.md) compare
+`Reader::longest_prefix`, visitor selection and a trie on matched CIDR workloads.
+Both reports link exact inputs, process samples and reproduction.

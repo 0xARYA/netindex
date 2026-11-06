@@ -233,6 +233,19 @@ mod sources {
         Ok(())
     }
 }
+fn open_component(
+    path: &Path,
+) -> Result<ip_intel_format::native_component::Database<memmap2::Mmap>, Box<dyn std::error::Error>>
+{
+    // SAFETY: benchmark files remain immutable for the entire mapping lifetime.
+    Ok(unsafe {
+        ip_intel_format::native_component::Database::map_file(
+            &std::fs::File::open(path)?,
+            Limits::collector(),
+        )
+    }?)
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().collect();
     let mode = args.get(1).ok_or("mode required")?;
@@ -244,21 +257,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             Path::new(args.get(4).ok_or("temporary directory required")?),
         );
     }
+    if !matches!(
+        mode.as_str(),
+        "native" | "converted" | "parity" | "reload-native" | "reload-converted"
+    ) {
+        return Err("unknown benchmark mode".into());
+    }
     let start = Instant::now();
-    let native = if mode != "converted" {
+    let native = if matches!(mode.as_str(), "native" | "parity" | "reload-native") {
         Some(sources::native(input)?)
     } else {
         None
     };
-    let converted = if mode != "native" {
+    let converted = if matches!(mode.as_str(), "converted" | "parity" | "reload-converted") {
         let path = Path::new(args.get(3).ok_or("component required")?);
-        // SAFETY: retained benchmark files are immutable for the entire mapping lifetime.
-        Some(unsafe {
-            ip_intel_format::native_component::Database::map_file(
-                &std::fs::File::open(path)?,
-                Limits::collector(),
-            )?
-        })
+        Some(open_component(path)?)
     } else {
         None
     };
@@ -267,7 +280,46 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "{}",
         serde_json::json!({"phase":"opened","mode":mode,"open_ms":open_ms})
     );
+    if mode.starts_with("reload-") {
+        let replacement = Path::new(args.get(4).ok_or("replacement required")?);
+        let start = Instant::now();
+        if mode == "reload-native" {
+            let next = sources::native(replacement)?;
+            let reload_ms = start.elapsed().as_secs_f64() * 1000.;
+            std::hint::black_box((&native, &next));
+            std::thread::sleep(std::time::Duration::from_millis(300));
+            std::hint::black_box((&native, &next));
+            println!(
+                "{}",
+                serde_json::json!({"phase":"reload","reload_ms":reload_ms})
+            );
+        } else {
+            let next = open_component(replacement)?;
+            let reload_ms = start.elapsed().as_secs_f64() * 1000.;
+            std::hint::black_box((&converted, &next));
+            std::thread::sleep(std::time::Duration::from_millis(300));
+            std::hint::black_box((&converted, &next));
+            println!(
+                "{}",
+                serde_json::json!({"phase":"reload","reload_ms":reload_ms})
+            );
+        }
+        return Ok(());
+    }
     let mut queries = addresses();
+    if let Some(path) = args.get(4) {
+        let trace = std::fs::read_to_string(path)?;
+        let supplied = trace
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+            .map(str::parse::<IpAddr>)
+            .collect::<Result<Vec<_>, _>>()?;
+        if supplied.is_empty() {
+            return Err("empty query trace".into());
+        }
+        queries = supplied;
+    }
     if mode == "parity" {
         add_boundaries(input, &mut queries)?;
     }

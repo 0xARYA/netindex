@@ -1,0 +1,791 @@
+{
+  "baseline": "ab28f32aff2e1a02a8229d98fa7e9e8375d98a1d",
+  "host": "AMD Ryzen 9 9950X3D2 16-Core Processor",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-pc-windows-msvc\nrelease: 1.95.0\nLLVM version: 22.1.2",
+  "platform": "Windows native, logical CPU 20",
+  "byway_revision": "658d2339308cbcf20e5860daa08fc5f0e2409699",
+  "input_identities": {
+    "shared": {
+      "sha256": "7367b75c4a51b0bdfa1c979205c9929da53a1700edc5d2aa2e1689429d537aca",
+      "bytes": 62361614
+    },
+    "bitpacked": {
+      "sha256": "7939bfd9c680a9d6ef034129f2cad0b32580502e6ac9c43a8c69ad647281d980",
+      "bytes": 56617154
+    },
+    "native": {
+      "sha256": "d6ff9368ab19a13b096fd6392f752aa6c0890f2c92752d09253fab9e50501e46",
+      "bytes": 49899266
+    }
+  },
+  "format4": {
+    "bytes": 164836510,
+    "sha256": "348b657507936b6b8953eb8bc83dcf2e5147c220c7c685da9a734d2d7a1717dd"
+  },
+  "consumer_sources": {
+    "consumer": {
+      "snapshot": {
+        "Cargo.toml": "cad7393db546bc31d9c0edb4b110d7efedad4c69c0b38abf4e3fb0a0d0ed393e",
+        "format\\Cargo.toml": "e856c88b110db1296278dd443acbaf39221b07547fc656c457986a5e91a74926",
+        "maxminddb\\.cargo_vcs_info.json": "a77c03fc450edc575087d16cfa1ed373c05f29e2cfc91ecee2b689b49cac4481",
+        "maxminddb\\Cargo.lock": "0afd82b091ebacfa836cac10c714b1a4d725cd3a083ce2b7f6c4432207cf12d3",
+        "maxminddb\\Cargo.toml": "7c2e755fed0d1def80f0682000198de478b5aaca65450e9f486a3a8f5ecbbba8",
+        "maxminddb\\Cargo.toml.orig": "105b3c01855a3f62106790f67e58c4d31bce63db9ca425474c17e671459e47b9",
+        "maxminddb\\LICENSE": "798ec93a28c76d881f412b285b07a2cbeb8c03ca29c25da9d46aa147448d5741",
+        "maxminddb\\PATCHES.md": "90bc317237223c68c4360826e8452006e75b15908bb5dfb66446d1e185434580",
+        "maxminddb\\README.md": "24440bbf145df55218d289abfe89cf3c6b165919a252b254636144f0da58385b",
+        "maxminddb\\UPGRADING.md": "57f73c99078737e1855ce7fcb7be6db3285073586946fe7cf29747f3ba293f9b",
+        "src\\main.rs": "5e43f57afd57d3ad4ee6ec6ed3ff147c9d7e4bc18a65bd510ae2e362f2d6c14a",
+        "format\\src\\asn.rs": "be15c479d7fbc068b6b90dbaeed6ef2c54367152e1110dcc7e924e2e42d72b6c",
+        "format\\src\\definition.rs": "4e68722a12800dbc4f3e45e020d112bcb8efa9a6befc3983e95b8a7b6f6419b8",
+        "format\\src\\definitions.rs": "fb397131f9ce972b1dfd95646672253949eba6ad77183ca0da211305624a2a4a",
+        "format\\src\\geo.rs": "12c06393f2cab4ed07086b0e1d7d6602662cd91f34d3ed1b35d7f70d8b83f905",
+        "format\\src\\lib.rs": "b87ed332e722bbde074a6d3940b0d19eda29744f36cedabcb5a8b947c66fb76a",
+        "format\\src\\limits.rs": "6f46db4774c6c08d6fc450c84638605288cd8755fd095c8c4b14d8796da92620",
+        "format\\src\\native.rs": "be760cf7c75566a96cb68727c47faeef0710dc91d5ca28f80425b71e89d6168a",
+        "format\\src\\native_component.rs": "62d706ca53defb37627e59879120550770f909cb585649c1e83fca4972d7c0e3",
+        "format\\src\\release.rs": "440793d2ad7a6303c9f807eb0d19faae2873afefb16b8f2bcb5a8362fb32c499",
+        "format\\src\\release_set.rs": "502306d75699217c0eb6b1a7778f75e51cceb866ce1ed0d23fec88f8e2428533",
+        "format\\src\\source.rs": "b12cf0c00e8215c8d86791f114b10036cfadd8e3912e8abe08095c06697b7f2d",
+        "format\\src\\membership\\component.rs": "6480d81f18bac46271d48297dcb9a432d81ba7c089a4daea7798710ed849cd7f",
+        "format\\src\\membership\\mod.rs": "5f268d98a2ebd088b821782fe244f1f764b115965b9f495b66d8540e71f874e6",
+        "format\\src\\membership\\model.rs": "89814408e8a64714d024392441f0fde55343b1eab6cfe8d853e56eea40b5b513",
+        "format\\src\\membership\\payload.rs": "97f8e46f61bdc7097a26e4663dd4a30a61013d7db5315695d8bbe7c5cbf2565a",
+        "format\\src\\native_component\\payload.rs": "6bde2549c63c13d9d938000d717c3c1e2482f2842117b3797c33b3b00ef043c7",
+        "maxminddb\\benches\\common.rs": "2873f6b9ec43d864dc6aeb3285abdfaa55ec7e9c3a243fe588cd58911165ecb7",
+        "maxminddb\\benches\\lookup.rs": "e3546979281240fe943362f8f1c1641b0fb835ea06a515bf8adb2bed41a2c02b",
+        "maxminddb\\benches\\metadata.rs": "a1555bebe37db0dcc6e2bd3e1284dd2dc78a6076716301a84939c97cd3544f0e",
+        "maxminddb\\benches\\raw_strings.rs": "aae4d06f6d24caf54a9630400c0dc5dd13036bdfc72df357962c18736b1dd6af",
+        "maxminddb\\benches\\serde_usage.rs": "054a384659da78248aa5659da8c354c7cbe6297359fc1dcfe930f3abe9201b0e",
+        "maxminddb\\benches\\within.rs": "4ee1d0fb6bec105107169b78c0004665f86914b57520570e8a4c1f372160b4eb",
+        "maxminddb\\src\\decoder.rs": "32fbfbf6f4c929d8ecba02bad774637f885a5572c24c696193dd6bb25354aea9",
+        "maxminddb\\src\\error.rs": "fdc3fac624ec9d255fb3c88f6ead1e634b50c434130c8a48f97d576a359c591e",
+        "maxminddb\\src\\geoip2.rs": "2f29e2cf5d81f37607c9562e4d1309628ac64a9b96ce2138bc203f54ae312003",
+        "maxminddb\\src\\lib.rs": "b99cd251803cbc3883c112e9a0832d9831abb758be5f083bd77e69c5b8a25b4f",
+        "maxminddb\\src\\metadata.rs": "41352d847b1320e0a14b706f6907098499e933abf8eca76551806a41adfec70a",
+        "maxminddb\\src\\reader.rs": "2b5fc56828af8cb8320211707bdfa97d892ee8d8f4cbf32f30291b3575553a91",
+        "maxminddb\\src\\reader_test.rs": "bc983593dea68a0d1040bc613d1e2c8a91e133bf94bf15aedc90b5a7c84d20b1",
+        "maxminddb\\src\\result.rs": "4341834f421939e617692ddaf7479a4f49fc091f3a2ed38577d52a5a0236728b",
+        "maxminddb\\src\\within.rs": "03f1d886e10c2ed8c85d56a3d2fdfae00be91b9cee7548ee0e1c2a756511a3e0",
+        "maxminddb\\src\\decoder\\key.rs": "f5050b3a00f414442477d714ab69ca3e036e5ff8413814466c597626da114e79",
+        "maxminddb\\src\\decoder\\verification.rs": "49e795dcac88ac3a2d8a8bcf740ecccaa99c91988a1d93c7f1d875ffc01a8470",
+        "src\\mmdb\\database.rs": "fe4abd64fb26ff130216f873be0bb8cb52ef230dabce278282e790cbf95db1d4",
+        "src\\sources\\geo\\model.rs": "55918ef0f169b113bf817f2c9607066546b2adbc6455f1c66ab87ebe835dbf20",
+        "src\\sources\\geo\\schema.rs": "c5aff1df3dce796b2aff21e0eed65e33586d5b5fd56133710f5faf5c82aa6a6f",
+        "src\\sources\\native_component\\payload.rs": "adb51e15baea0c03aeba93eb4ec13bff151c9108d818c6fff53b99fc21a57c7f"
+      },
+      "lock_sha256": "af3778b2e982c9cb3ddc8b38d1316b4c551fadcf3c2e101351feee48ababcdfd"
+    },
+    "qualification": {
+      "snapshot": {
+        "Cargo.toml": "cad7393db546bc31d9c0edb4b110d7efedad4c69c0b38abf4e3fb0a0d0ed393e",
+        "format\\Cargo.toml": "e856c88b110db1296278dd443acbaf39221b07547fc656c457986a5e91a74926",
+        "maxminddb\\.cargo_vcs_info.json": "a77c03fc450edc575087d16cfa1ed373c05f29e2cfc91ecee2b689b49cac4481",
+        "maxminddb\\Cargo.lock": "0afd82b091ebacfa836cac10c714b1a4d725cd3a083ce2b7f6c4432207cf12d3",
+        "maxminddb\\Cargo.toml": "7c2e755fed0d1def80f0682000198de478b5aaca65450e9f486a3a8f5ecbbba8",
+        "maxminddb\\Cargo.toml.orig": "105b3c01855a3f62106790f67e58c4d31bce63db9ca425474c17e671459e47b9",
+        "maxminddb\\LICENSE": "798ec93a28c76d881f412b285b07a2cbeb8c03ca29c25da9d46aa147448d5741",
+        "maxminddb\\PATCHES.md": "90bc317237223c68c4360826e8452006e75b15908bb5dfb66446d1e185434580",
+        "maxminddb\\README.md": "24440bbf145df55218d289abfe89cf3c6b165919a252b254636144f0da58385b",
+        "maxminddb\\UPGRADING.md": "57f73c99078737e1855ce7fcb7be6db3285073586946fe7cf29747f3ba293f9b",
+        "src\\main.rs": "4b33173290ae864380d19553ac7cb87caa1ab85bb8ba763f0d07e121ddeca97e",
+        "format\\src\\asn.rs": "be15c479d7fbc068b6b90dbaeed6ef2c54367152e1110dcc7e924e2e42d72b6c",
+        "format\\src\\definition.rs": "4e68722a12800dbc4f3e45e020d112bcb8efa9a6befc3983e95b8a7b6f6419b8",
+        "format\\src\\definitions.rs": "fb397131f9ce972b1dfd95646672253949eba6ad77183ca0da211305624a2a4a",
+        "format\\src\\geo.rs": "12c06393f2cab4ed07086b0e1d7d6602662cd91f34d3ed1b35d7f70d8b83f905",
+        "format\\src\\lib.rs": "b87ed332e722bbde074a6d3940b0d19eda29744f36cedabcb5a8b947c66fb76a",
+        "format\\src\\limits.rs": "6f46db4774c6c08d6fc450c84638605288cd8755fd095c8c4b14d8796da92620",
+        "format\\src\\native.rs": "be760cf7c75566a96cb68727c47faeef0710dc91d5ca28f80425b71e89d6168a",
+        "format\\src\\native_component.rs": "62d706ca53defb37627e59879120550770f909cb585649c1e83fca4972d7c0e3",
+        "format\\src\\release.rs": "440793d2ad7a6303c9f807eb0d19faae2873afefb16b8f2bcb5a8362fb32c499",
+        "format\\src\\release_set.rs": "502306d75699217c0eb6b1a7778f75e51cceb866ce1ed0d23fec88f8e2428533",
+        "format\\src\\source.rs": "b12cf0c00e8215c8d86791f114b10036cfadd8e3912e8abe08095c06697b7f2d",
+        "format\\src\\membership\\component.rs": "6480d81f18bac46271d48297dcb9a432d81ba7c089a4daea7798710ed849cd7f",
+        "format\\src\\membership\\mod.rs": "5f268d98a2ebd088b821782fe244f1f764b115965b9f495b66d8540e71f874e6",
+        "format\\src\\membership\\model.rs": "89814408e8a64714d024392441f0fde55343b1eab6cfe8d853e56eea40b5b513",
+        "format\\src\\membership\\payload.rs": "97f8e46f61bdc7097a26e4663dd4a30a61013d7db5315695d8bbe7c5cbf2565a",
+        "format\\src\\native_component\\payload.rs": "6bde2549c63c13d9d938000d717c3c1e2482f2842117b3797c33b3b00ef043c7",
+        "maxminddb\\benches\\common.rs": "2873f6b9ec43d864dc6aeb3285abdfaa55ec7e9c3a243fe588cd58911165ecb7",
+        "maxminddb\\benches\\lookup.rs": "e3546979281240fe943362f8f1c1641b0fb835ea06a515bf8adb2bed41a2c02b",
+        "maxminddb\\benches\\metadata.rs": "a1555bebe37db0dcc6e2bd3e1284dd2dc78a6076716301a84939c97cd3544f0e",
+        "maxminddb\\benches\\raw_strings.rs": "aae4d06f6d24caf54a9630400c0dc5dd13036bdfc72df357962c18736b1dd6af",
+        "maxminddb\\benches\\serde_usage.rs": "054a384659da78248aa5659da8c354c7cbe6297359fc1dcfe930f3abe9201b0e",
+        "maxminddb\\benches\\within.rs": "4ee1d0fb6bec105107169b78c0004665f86914b57520570e8a4c1f372160b4eb",
+        "maxminddb\\src\\decoder.rs": "32fbfbf6f4c929d8ecba02bad774637f885a5572c24c696193dd6bb25354aea9",
+        "maxminddb\\src\\error.rs": "fdc3fac624ec9d255fb3c88f6ead1e634b50c434130c8a48f97d576a359c591e",
+        "maxminddb\\src\\geoip2.rs": "2f29e2cf5d81f37607c9562e4d1309628ac64a9b96ce2138bc203f54ae312003",
+        "maxminddb\\src\\lib.rs": "b99cd251803cbc3883c112e9a0832d9831abb758be5f083bd77e69c5b8a25b4f",
+        "maxminddb\\src\\metadata.rs": "41352d847b1320e0a14b706f6907098499e933abf8eca76551806a41adfec70a",
+        "maxminddb\\src\\reader.rs": "2b5fc56828af8cb8320211707bdfa97d892ee8d8f4cbf32f30291b3575553a91",
+        "maxminddb\\src\\reader_test.rs": "bc983593dea68a0d1040bc613d1e2c8a91e133bf94bf15aedc90b5a7c84d20b1",
+        "maxminddb\\src\\result.rs": "4341834f421939e617692ddaf7479a4f49fc091f3a2ed38577d52a5a0236728b",
+        "maxminddb\\src\\within.rs": "03f1d886e10c2ed8c85d56a3d2fdfae00be91b9cee7548ee0e1c2a756511a3e0",
+        "maxminddb\\src\\decoder\\key.rs": "f5050b3a00f414442477d714ab69ca3e036e5ff8413814466c597626da114e79",
+        "maxminddb\\src\\decoder\\verification.rs": "49e795dcac88ac3a2d8a8bcf740ecccaa99c91988a1d93c7f1d875ffc01a8470",
+        "src\\mmdb\\database.rs": "fe4abd64fb26ff130216f873be0bb8cb52ef230dabce278282e790cbf95db1d4",
+        "src\\sources\\geo\\model.rs": "55918ef0f169b113bf817f2c9607066546b2adbc6455f1c66ab87ebe835dbf20",
+        "src\\sources\\geo\\schema.rs": "c5aff1df3dce796b2aff21e0eed65e33586d5b5fd56133710f5faf5c82aa6a6f",
+        "src\\sources\\native_component\\payload.rs": "adb51e15baea0c03aeba93eb4ec13bff151c9108d818c6fff53b99fc21a57c7f"
+      },
+      "lock_sha256": "af3778b2e982c9cb3ddc8b38d1316b4c551fadcf3c2e101351feee48ababcdfd"
+    }
+  },
+  "builds": {
+    "convert": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "7b6ec5f9f88bb2e89321e5b5400870c11baecd65bdfd652b596fdff8c02aa74c",
+      "arguments": [
+        "convert",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format4.nidx",
+        "target/p3-city"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 71441.8439,
+      "peak_working_set_bytes": 225120256,
+      "exit_code": 0,
+      "rows": [
+        {
+          "artifact_bytes": 164836510,
+          "encode_build_ms": 64033.54810000001,
+          "native_validation_ms": 2656.8112,
+          "normalized_output_validation_ms": 4688.9263,
+          "payload_cache_bytes": 4194267,
+          "phase": "converted",
+          "records": 20255722,
+          "temporary_peak_bytes": 1965616403,
+          "total_ms": 71380.1244
+        }
+      ],
+      "stdout_sha256": "cac699ac900867cd4618726af5b0a92f2e0100db5f687579e479d02c14d7dfe7"
+    },
+    "share": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\release\\examples\\share_aliases.exe",
+      "executable_sha256": "ebc218e95d873501a881740b7bb3bc9aee26d60f651cdbce42e2c55907ee8acb",
+      "arguments": [
+        "target/p3-city/format4.nidx",
+        "target/p3-city/format5.nidx",
+        "::/96,1,2",
+        "::ffff:0:0/96,7265512,1",
+        "2001::/32,10898268,1",
+        "2002::/16,14704189,1"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 3702.035,
+      "peak_working_set_bytes": 925982720,
+      "exit_code": 0,
+      "rows": [
+        {
+          "build_ms": 1739.4872,
+          "file_bytes": 62361614,
+          "logical_records": 20255722,
+          "physical_records": 5724698,
+          "shared_rows": [
+            3632756,
+            3632756,
+            3632756,
+            3632756
+          ],
+          "verified_queries": 150000
+        }
+      ],
+      "stdout_sha256": "f482afb269d81170e27e51bd57136d8403eaf185e00af4d9f0f1b78b94b4cff8"
+    },
+    "bitpack": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\release\\examples\\rebuild.exe",
+      "executable_sha256": "c68364d49f80a31d94eb747bfb3a83be363ab7763fe336328aeef3039d84d78d",
+      "arguments": [
+        "target/p3-city/format5.nidx",
+        "target/p3-city/format6-alias.nidx",
+        "target/p3-city",
+        "bitpacked"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 2896.7259,
+      "peak_working_set_bytes": 1279954944,
+      "exit_code": 0,
+      "rows": [
+        {
+          "input_open_ms": 142.0645,
+          "payload_cache_bytes": 4194304,
+          "phase": "prepared",
+          "prepare_ms": 1534.6282,
+          "records": 20255722,
+          "run_records": 16384,
+          "temporary_limit_bytes": 8589934592
+        },
+        {
+          "artifact_bytes": 56617154,
+          "build_ms": 59.6317,
+          "disk_cache_budget": 0,
+          "disk_cache_bytes": 0,
+          "mode": "bitpacked",
+          "partitions": null,
+          "payload_cache_bytes": null,
+          "phase": "built",
+          "records": 20255722,
+          "temporary_peak_bytes": null
+        },
+        {
+          "assertions": 20255722,
+          "output_open_ms": 191.25130000000001,
+          "phase": "verified",
+          "queries": 100005,
+          "scope": "opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync",
+          "verification_ms": 1088.2925
+        }
+      ],
+      "stdout_sha256": "4942b721f1eea906089a1a84571a43caae256e76562940db80a0a2382039ac51"
+    }
+  },
+  "qualification": {
+    "parity-bitpacked": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "parity",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format6-alias.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 8242.7023,
+      "peak_working_set_bytes": 184741888,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "parity",
+          "open_ms": 7790.2037,
+          "phase": "opened"
+        },
+        {
+          "mismatches": 0,
+          "phase": "parity",
+          "queries": 108123
+        }
+      ],
+      "stdout_sha256": "653a5c6f6dd26c0d6393bc45c749d244d7d5cd3bcbdc3d680d0ca2ae02099d7a"
+    },
+    "parity-shared": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "parity",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format5.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7442.1687,
+      "peak_working_set_bytes": 189415424,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "parity",
+          "open_ms": 7106.953200000001,
+          "phase": "opened"
+        },
+        {
+          "mismatches": 0,
+          "phase": "parity",
+          "queries": 108123
+        }
+      ],
+      "stdout_sha256": "be2bf1334e243307322cc22b83edc8f6b9e322c5144d5dfd69ed23ef5562e44e"
+    },
+    "reload-bitpacked-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format6-alias.nidx",
+        "target\\p3-city\\results\\replacement-bitpacked"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7872.1466,
+      "peak_working_set_bytes": 123396096,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-converted",
+          "open_ms": 3714.0278000000003,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 3796.2272000000003
+        }
+      ],
+      "stdout_sha256": "6fb1671e6553267990fc5e1f1711d8d109157410a43a9779f12de81eb27cbb92"
+    },
+    "reload-bitpacked-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format6-alias.nidx",
+        "target\\p3-city\\results\\replacement-bitpacked"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7838.6542,
+      "peak_working_set_bytes": 123400192,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-converted",
+          "open_ms": 3794.7296,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 3668.5712000000003
+        }
+      ],
+      "stdout_sha256": "7b1e34a35cacec66a451103a5c433c32c09e68bc747d1180aa2caf781d44892e"
+    },
+    "reload-bitpacked-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format6-alias.nidx",
+        "target\\p3-city\\results\\replacement-bitpacked"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 8160.4766,
+      "peak_working_set_bytes": 123387904,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-converted",
+          "open_ms": 3723.7653,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 3915.5202999999997
+        }
+      ],
+      "stdout_sha256": "0ba1b1f6907e2dad14e02ce95506249935403c0215825d5a996d58e3147b1c65"
+    },
+    "reload-native-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-native",
+        "target/city-study/city.mmdb",
+        "target/city-study/city.mmdb",
+        "target\\p3-city\\results\\replacement-native"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 6108.9546,
+      "peak_working_set_bytes": 159739904,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-native",
+          "open_ms": 2739.8956000000003,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 3014.7432
+        }
+      ],
+      "stdout_sha256": "573dc34278ab50ab555f459700a2297257a0c0c47310717cefd541d2d5d3958d"
+    },
+    "reload-native-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-native",
+        "target/city-study/city.mmdb",
+        "target/city-study/city.mmdb",
+        "target\\p3-city\\results\\replacement-native"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 5786.0373,
+      "peak_working_set_bytes": 159735808,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-native",
+          "open_ms": 2734.9598,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 2719.8937
+        }
+      ],
+      "stdout_sha256": "8b1d7625de0fd1726a55943ae8756dffe4fea8ed53432d86e2a4e697d0617ba8"
+    },
+    "reload-native-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-native",
+        "target/city-study/city.mmdb",
+        "target/city-study/city.mmdb",
+        "target\\p3-city\\results\\replacement-native"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7658.5267,
+      "peak_working_set_bytes": 159735808,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-native",
+          "open_ms": 3133.7126999999996,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 3993.7721
+        }
+      ],
+      "stdout_sha256": "462e6876b5a4584cfd72d513f56e501689437c0d84525f95c47a835a075ff7c1"
+    },
+    "reload-shared-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format5.nidx",
+        "target\\p3-city\\results\\replacement-shared"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7649.6327,
+      "peak_working_set_bytes": 134885376,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-converted",
+          "open_ms": 3627.51,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 3546.1934
+        }
+      ],
+      "stdout_sha256": "71e84598be62f547fb18abbc506e614340b39c6c0cfa7bf36d1398e927c66771"
+    },
+    "reload-shared-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format5.nidx",
+        "target\\p3-city\\results\\replacement-shared"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7626.3206,
+      "peak_working_set_bytes": 134885376,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-converted",
+          "open_ms": 3554.4617,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 3531.5646
+        }
+      ],
+      "stdout_sha256": "15f4edbc9b93caa107830dcbd6fdfe37cc01b99bbb15e1bc67495cc36f7cf633"
+    },
+    "reload-shared-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "reload-converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format5.nidx",
+        "target\\p3-city\\results\\replacement-shared"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 7476.5405,
+      "peak_working_set_bytes": 134893568,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "reload-converted",
+          "open_ms": 3557.5212,
+          "phase": "opened"
+        },
+        {
+          "phase": "reload",
+          "reload_ms": 3571.0498
+        }
+      ],
+      "stdout_sha256": "a5051ce6d3bdc241c3d587f2643e53ce752b36d9ad1e4b73ea4b93918050a057"
+    },
+    "serve-bitpacked-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format6-alias.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 4042.3243,
+      "peak_working_set_bytes": 68943872,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 3678.5117,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 800,
+          "p99_ns": 1000,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "8ca2ee13c4b3c54a436ae888888c2ec8ce5fc2b9195f5770169d6e2ae93ad7e5"
+    },
+    "serve-bitpacked-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format6-alias.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 4115.3468,
+      "peak_working_set_bytes": 68956160,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 3728.16,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 900,
+          "p99_ns": 1100,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "26a347f75c6695e2ab3dc643a2bbe5707f96c37579ebf139a062901045764ede"
+    },
+    "serve-bitpacked-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format6-alias.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 4182.234,
+      "peak_working_set_bytes": 68964352,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 3790.0792,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1000,
+          "p99_ns": 1300,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "0418099c03e4830a449f3232048518dce407a033d21f0a6d995fae3f8a4e4b42"
+    },
+    "serve-native-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "native",
+        "target/city-study/city.mmdb",
+        "target/city-study/city.mmdb"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 3269.2738,
+      "peak_working_set_bytes": 92442624,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "native",
+          "open_ms": 2738.6001,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1200,
+          "p99_ns": 1500,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "63b5a6b77114ccd2f91437c83fc06472917f98205046555facf8b9f4d1924786"
+    },
+    "serve-native-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "native",
+        "target/city-study/city.mmdb",
+        "target/city-study/city.mmdb"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 3111.0175,
+      "peak_working_set_bytes": 92442624,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "native",
+          "open_ms": 2703.828,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1200,
+          "p99_ns": 1400,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "645df5e8d5ee4aa97395ea729664b46f06878513c343af66a7b41aeb83b4cf27"
+    },
+    "serve-native-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "native",
+        "target/city-study/city.mmdb",
+        "target/city-study/city.mmdb"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 3169.7087,
+      "peak_working_set_bytes": 92442624,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "native",
+          "open_ms": 2790.1564,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1300,
+          "p99_ns": 1600,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "66db224c429df073382bc383be7da9aeae0a1562427d06034b427f9c2c9f063c"
+    },
+    "serve-shared-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format5.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 4103.403,
+      "peak_working_set_bytes": 74502144,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 3619.1839,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1100,
+          "p99_ns": 1400,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "02a1af97f82054b349b1418b18d687b7a7dddb8fe5bf6ff94cc14e5620035d67"
+    },
+    "serve-shared-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format5.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 3900.6595,
+      "peak_working_set_bytes": 74465280,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 3530.3338000000003,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 1100,
+          "p99_ns": 1300,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "87fcf161cf777e4a55c8b0d6b9038729dc75b81323519bc7659cefd2ff094c2c"
+    },
+    "serve-shared-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\target\\p3-city\\consumer\\target\\release\\native-city-audit.exe",
+      "executable_sha256": "b98f66aa085728b0902db5c5dd6786bf08aaf8662d55018167f5c7707882e540",
+      "arguments": [
+        "converted",
+        "target/city-study/city.mmdb",
+        "target/p3-city/format5.nidx"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 3919.5154,
+      "peak_working_set_bytes": 74465280,
+      "exit_code": 0,
+      "rows": [
+        {
+          "mode": "converted",
+          "open_ms": 3547.7699000000002,
+          "phase": "opened"
+        },
+        {
+          "hits": 42802,
+          "p50_ns": 100,
+          "p95_ns": 800,
+          "p99_ns": 1000,
+          "phase": "lookups",
+          "queries": 100005
+        }
+      ],
+      "stdout_sha256": "756c37bd1d765b7dc879d59850928979081ea722aa9a2445340bdb617bd47e05"
+    }
+  },
+  "scope": "Byway modules in standalone process. Fixed synthetic corpus, cache primed, reload opens distinct immutable byte-identical copy."
+}

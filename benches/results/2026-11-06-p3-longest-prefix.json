@@ -1,0 +1,6789 @@
+{
+  "baseline": "ab28f32aff2e1a02a8229d98fa7e9e8375d98a1d",
+  "host": "AMD Ryzen 9 9950X3D2 16-Core Processor",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-pc-windows-msvc\nrelease: 1.95.0\nLLVM version: 22.1.2",
+  "platform": "Windows native, logical CPU 20",
+  "sources": {
+    "src/reader.rs": "71b75066d4c86c899e46addd47a0381a49d61a0e2c489e62783b1cd8b958d622",
+    "src/reader/prefix.rs": "01409c7fed17298bdadd3c9c7131311fc5bfde44843566fdd220a2f944521402",
+    "benches/competitors/src/main.rs": "016c60d58ed4d5a330bb446ab698a3d82f44b290dec48158bd3d7983b64fbf0a",
+    "benches/competitors/Cargo.lock": "511e8d693e394fc718372405225bb126a772503f30691c8528d4e5bc9365529c"
+  },
+  "runs": {
+    "lpm-v4-disjoint-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v4-disjoint-0-data",
+        "v4",
+        "disjoint",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 1492.5562,
+      "peak_working_set_bytes": 17428480,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100000,
+          "boundary_checks": 399999,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v4",
+          "leaf_records": 100000,
+          "netindex_bytes": 912614,
+          "phase": "fixture",
+          "shape": "disjoint"
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56656100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 251,
+            "100": 776,
+            "200": 1
+          },
+          "ns_per_query": 54.03146743774414,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 59680500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 220,
+            "100": 802,
+            "200": 6
+          },
+          "ns_per_query": 56.9157600402832,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40842900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 417,
+            "100": 611
+          },
+          "ns_per_query": 38.95082473754883,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40908800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 411,
+            "100": 617
+          },
+          "ns_per_query": 39.013671875,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 59438200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 228,
+            "100": 798,
+            "200": 2
+          },
+          "ns_per_query": 56.68468475341797,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56606400,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 260,
+            "100": 768
+          },
+          "ns_per_query": 53.98406982421875,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56595700,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 245,
+            "100": 783
+          },
+          "ns_per_query": 53.9738655090332,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 59590200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 225,
+            "100": 803
+          },
+          "ns_per_query": 56.82964324951172,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40847800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 410,
+            "100": 618
+          },
+          "ns_per_query": 38.95549774169922,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40758000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 405,
+            "100": 623
+          },
+          "ns_per_query": 38.86985778808594,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 59559300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 243,
+            "100": 783,
+            "200": 2
+          },
+          "ns_per_query": 56.800174713134766,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56571600,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 296,
+            "100": 731,
+            "200": 1
+          },
+          "ns_per_query": 53.95088195800781,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49234800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 289,
+            "100": 739
+          },
+          "ns_per_query": 46.95396423339844,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 53265400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 250,
+            "100": 777,
+            "16500": 1
+          },
+          "ns_per_query": 50.79784393310547,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39030200,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 446,
+            "100": 581,
+            "200": 1
+          },
+          "ns_per_query": 37.22209930419922,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39295600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 464,
+            "100": 564
+          },
+          "ns_per_query": 37.47520446777344,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 53578400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 259,
+            "100": 768,
+            "200": 1
+          },
+          "ns_per_query": 51.096343994140625,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49405100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 325,
+            "100": 702,
+            "200": 1
+          },
+          "ns_per_query": 47.11637496948242,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49439100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 317,
+            "100": 711
+          },
+          "ns_per_query": 47.148799896240234,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 53266200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 297,
+            "100": 729,
+            "200": 2
+          },
+          "ns_per_query": 50.798606872558594,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39154300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 463,
+            "100": 565
+          },
+          "ns_per_query": 37.340450286865234,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39066900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 451,
+            "100": 577
+          },
+          "ns_per_query": 37.25709915161133,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 53264700,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 288,
+            "100": 740
+          },
+          "ns_per_query": 50.797176361083984,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49423900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 292,
+            "100": 735,
+            "1900": 1
+          },
+          "ns_per_query": 47.13430404663086,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "a64608c5c563c08c9d82914046d90c71f8c53f1fda48c779387d1d1c98c92c07",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "ea49e03f55091e4b87b3811a441129bfc369b97c48b3663264216f0696633bc3"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "86909c696794b2b6848525594c87814ce030b41604d5b766b04a69be7f6e35cb"
+        },
+        "netindex.nidx": {
+          "bytes": 912614,
+          "sha256": "ae7c4d9b5c2c2964de45e86854fd8a57ff0c1d9bf20adb5e0c307b9ac342cf65"
+        }
+      }
+    },
+    "lpm-v4-disjoint-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v4-disjoint-1-data",
+        "v4",
+        "disjoint",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 1475.2315,
+      "peak_working_set_bytes": 17874944,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100000,
+          "boundary_checks": 399999,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v4",
+          "leaf_records": 100000,
+          "netindex_bytes": 912614,
+          "phase": "fixture",
+          "shape": "disjoint"
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56536300,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 275,
+            "100": 750,
+            "200": 3
+          },
+          "ns_per_query": 53.91721725463867,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 60743500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 197,
+            "100": 825,
+            "200": 6
+          },
+          "ns_per_query": 57.92951583862305,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40650000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 424,
+            "100": 604
+          },
+          "ns_per_query": 38.76686096191406,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40553700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 428,
+            "100": 600
+          },
+          "ns_per_query": 38.67502212524414,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 60904600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 199,
+            "100": 824,
+            "200": 4,
+            "300": 1
+          },
+          "ns_per_query": 58.083152770996094,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56175700,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 281,
+            "100": 744,
+            "200": 2,
+            "300": 1
+          },
+          "ns_per_query": 53.57332229614258,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56354200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 245,
+            "100": 779,
+            "200": 4
+          },
+          "ns_per_query": 53.743553161621094,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 60647200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 215,
+            "100": 805,
+            "200": 4,
+            "300": 2,
+            "3000": 1,
+            "400": 1
+          },
+          "ns_per_query": 57.837677001953125,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40653100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 438,
+            "100": 590
+          },
+          "ns_per_query": 38.76981735229492,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40565100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 448,
+            "100": 580
+          },
+          "ns_per_query": 38.68589401245117,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 60679600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 208,
+            "100": 818,
+            "200": 2
+          },
+          "ns_per_query": 57.86857604980469,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56274800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 295,
+            "100": 732,
+            "200": 1
+          },
+          "ns_per_query": 53.66783142089844,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 48874600,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 256,
+            "100": 769,
+            "200": 3
+          },
+          "ns_per_query": 46.610450744628906,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 54175800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 243,
+            "100": 783,
+            "200": 2
+          },
+          "ns_per_query": 51.66606903076172,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39013400,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 459,
+            "100": 569
+          },
+          "ns_per_query": 37.206077575683594,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39077500,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 466,
+            "100": 562
+          },
+          "ns_per_query": 37.267208099365234,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 54100700,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 233,
+            "100": 794,
+            "200": 1
+          },
+          "ns_per_query": 51.59444808959961,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49035500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 283,
+            "100": 742,
+            "200": 3
+          },
+          "ns_per_query": 46.76389694213867,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 48904400,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 298,
+            "100": 729,
+            "1300": 1
+          },
+          "ns_per_query": 46.63887023925781,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 54276400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 221,
+            "100": 805,
+            "200": 2
+          },
+          "ns_per_query": 51.76200866699219,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 38991400,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 434,
+            "100": 594
+          },
+          "ns_per_query": 37.185096740722656,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39077900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 493,
+            "100": 535
+          },
+          "ns_per_query": 37.2675895690918,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 54121200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 261,
+            "100": 767
+          },
+          "ns_per_query": 51.61399841308594,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49089500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 322,
+            "100": 705,
+            "200": 1
+          },
+          "ns_per_query": 46.81539535522461,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "30d1bcefd8a53caee91369769ec58a517a5ab8929b30d8d9147fa42b4901e3e3",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "ea49e03f55091e4b87b3811a441129bfc369b97c48b3663264216f0696633bc3"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "86909c696794b2b6848525594c87814ce030b41604d5b766b04a69be7f6e35cb"
+        },
+        "netindex.nidx": {
+          "bytes": 912614,
+          "sha256": "ae7c4d9b5c2c2964de45e86854fd8a57ff0c1d9bf20adb5e0c307b9ac342cf65"
+        }
+      }
+    },
+    "lpm-v4-disjoint-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v4-disjoint-2-data",
+        "v4",
+        "disjoint",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 1475.7165,
+      "peak_working_set_bytes": 17862656,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100000,
+          "boundary_checks": 399999,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v4",
+          "leaf_records": 100000,
+          "netindex_bytes": 912614,
+          "phase": "fixture",
+          "shape": "disjoint"
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56429100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 255,
+            "100": 772,
+            "200": 1
+          },
+          "ns_per_query": 53.81498336791992,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 60801900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 211,
+            "100": 813,
+            "200": 4
+          },
+          "ns_per_query": 57.98521041870117,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40589100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 415,
+            "100": 613
+          },
+          "ns_per_query": 38.70878219604492,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40595900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 429,
+            "100": 599
+          },
+          "ns_per_query": 38.715267181396484,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 60692700,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 190,
+            "100": 835,
+            "200": 3
+          },
+          "ns_per_query": 57.88106918334961,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56430500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 261,
+            "100": 767
+          },
+          "ns_per_query": 53.81631851196289,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56506800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 257,
+            "100": 769,
+            "300": 2
+          },
+          "ns_per_query": 53.88908386230469,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 60768900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 186,
+            "100": 839,
+            "200": 3
+          },
+          "ns_per_query": 57.953739166259766,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40758800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 404,
+            "100": 623,
+            "200": 1
+          },
+          "ns_per_query": 38.87062072753906,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 40621400,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 441,
+            "100": 587
+          },
+          "ns_per_query": 38.739585876464844,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 60888800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 198,
+            "100": 825,
+            "200": 4,
+            "2200": 1
+          },
+          "ns_per_query": 58.068084716796875,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 13447565611520,
+          "elapsed_ns": 56499500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 249,
+            "100": 779
+          },
+          "ns_per_query": 53.88212203979492,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49130300,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 328,
+            "100": 700
+          },
+          "ns_per_query": 46.854305267333984,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 54589400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 230,
+            "100": 796,
+            "200": 2
+          },
+          "ns_per_query": 52.060508728027344,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39090600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 467,
+            "100": 560,
+            "200": 1
+          },
+          "ns_per_query": 37.279701232910156,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 38997200,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 471,
+            "100": 557
+          },
+          "ns_per_query": 37.19062805175781,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 54623900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 231,
+            "100": 794,
+            "200": 3
+          },
+          "ns_per_query": 52.09341049194336,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49075500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 277,
+            "100": 750,
+            "200": 1
+          },
+          "ns_per_query": 46.80204391479492,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49046200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 304,
+            "100": 724
+          },
+          "ns_per_query": 46.77410125732422,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 54562800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 241,
+            "100": 787
+          },
+          "ns_per_query": 52.03514099121094,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39029000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 478,
+            "100": 550
+          },
+          "ns_per_query": 37.22095489501953,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 39031800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 456,
+            "100": 572
+          },
+          "ns_per_query": 37.22362518310547,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 54516900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 237,
+            "100": 790,
+            "200": 1
+          },
+          "ns_per_query": 51.99136734008789,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 137451536384,
+          "elapsed_ns": 49017400,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 325,
+            "100": 703
+          },
+          "ns_per_query": 46.74663543701172,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "7e27337f33fd9c3d5dbcc5794d6b55ed9a3bf8ae9d910298f447e4c118fafb46",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "ea49e03f55091e4b87b3811a441129bfc369b97c48b3663264216f0696633bc3"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "86909c696794b2b6848525594c87814ce030b41604d5b766b04a69be7f6e35cb"
+        },
+        "netindex.nidx": {
+          "bytes": 912614,
+          "sha256": "ae7c4d9b5c2c2964de45e86854fd8a57ff0c1d9bf20adb5e0c307b9ac342cf65"
+        }
+      }
+    },
+    "lpm-v4-overlap-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v4-overlap-0-data",
+        "v4",
+        "overlap",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 6191.8826,
+      "peak_working_set_bytes": 18591744,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 113282,
+          "boundary_checks": 453125,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v4",
+          "leaf_records": 100000,
+          "netindex_bytes": 3058716,
+          "phase": "fixture",
+          "shape": "overlap"
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 434967500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "300": 56,
+            "400": 444,
+            "500": 488,
+            "600": 38,
+            "800": 1,
+            "900": 1
+          },
+          "ns_per_query": 414.81733322143555,
+          "p50_ns": 500,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 220439900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 4,
+            "200": 676,
+            "300": 345,
+            "3000": 1,
+            "400": 1,
+            "700": 1
+          },
+          "ns_per_query": 210.2278709411621,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44347900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 372,
+            "100": 656
+          },
+          "ns_per_query": 42.293453216552734,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44367900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 399,
+            "100": 629
+          },
+          "ns_per_query": 42.31252670288086,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 221530600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 4,
+            "200": 672,
+            "300": 349,
+            "400": 3
+          },
+          "ns_per_query": 211.2680435180664,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 442418000,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "200": 1,
+            "300": 53,
+            "400": 433,
+            "500": 480,
+            "600": 46,
+            "700": 6,
+            "800": 6,
+            "900": 2
+          },
+          "ns_per_query": 421.9226837158203,
+          "p50_ns": 500,
+          "p95_ns": 600,
+          "p99_ns": 700,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 435450700,
+          "engine": "netindex",
+          "histogram_ns": {
+            "300": 55,
+            "400": 432,
+            "500": 493,
+            "600": 44,
+            "700": 2,
+            "800": 2
+          },
+          "ns_per_query": 415.27814865112305,
+          "p50_ns": 500,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 222445600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 5,
+            "200": 651,
+            "300": 368,
+            "500": 3,
+            "700": 1
+          },
+          "ns_per_query": 212.14065551757812,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44422100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 410,
+            "100": 617,
+            "200": 1
+          },
+          "ns_per_query": 42.36421585083008,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44305600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 392,
+            "100": 636
+          },
+          "ns_per_query": 42.25311279296875,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 220378300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 2,
+            "200": 687,
+            "300": 336,
+            "400": 1,
+            "500": 2
+          },
+          "ns_per_query": 210.16912460327148,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 607245000,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 8,
+            "1100": 6,
+            "1200": 2,
+            "1300": 1,
+            "1900": 1,
+            "300": 10,
+            "400": 130,
+            "500": 185,
+            "600": 232,
+            "700": 285,
+            "800": 144,
+            "900": 24
+          },
+          "ns_per_query": 579.1139602661133,
+          "p50_ns": 600,
+          "p95_ns": 800,
+          "p99_ns": 1000,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 348282800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "200": 69,
+            "300": 461,
+            "400": 334,
+            "500": 97,
+            "600": 52,
+            "700": 9,
+            "800": 3,
+            "900": 2
+          },
+          "ns_per_query": 332.1483612060547,
+          "p50_ns": 300,
+          "p95_ns": 600,
+          "p99_ns": 700,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 194058300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 63,
+            "200": 715,
+            "300": 241,
+            "400": 9
+          },
+          "ns_per_query": 185.06841659545898,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 50496600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 265,
+            "100": 761,
+            "200": 1,
+            "300": 1
+          },
+          "ns_per_query": 48.157310485839844,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 50303000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 324,
+            "100": 702,
+            "200": 2
+          },
+          "ns_per_query": 47.972679138183594,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 180481100,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 147,
+            "200": 698,
+            "300": 180,
+            "400": 3
+          },
+          "ns_per_query": 172.12018966674805,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 386914900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "200": 30,
+            "300": 352,
+            "400": 295,
+            "500": 217,
+            "600": 108,
+            "700": 21,
+            "800": 4,
+            "900": 1
+          },
+          "ns_per_query": 368.9908027648926,
+          "p50_ns": 400,
+          "p95_ns": 600,
+          "p99_ns": 700,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 356018000,
+          "engine": "netindex",
+          "histogram_ns": {
+            "200": 43,
+            "300": 464,
+            "400": 337,
+            "500": 117,
+            "600": 56,
+            "700": 10,
+            "800": 1
+          },
+          "ns_per_query": 339.5252227783203,
+          "p50_ns": 400,
+          "p95_ns": 600,
+          "p99_ns": 700,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 162253600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 260,
+            "200": 704,
+            "300": 63,
+            "400": 1
+          },
+          "ns_per_query": 154.73709106445312,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 43242700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 409,
+            "100": 613,
+            "200": 6
+          },
+          "ns_per_query": 41.23945236206055,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 43525600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 405,
+            "100": 620,
+            "200": 2,
+            "5400": 1
+          },
+          "ns_per_query": 41.509246826171875,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 173215600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 189,
+            "200": 686,
+            "300": 150,
+            "400": 3
+          },
+          "ns_per_query": 165.19126892089844,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 416154100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "200": 23,
+            "300": 233,
+            "400": 287,
+            "500": 332,
+            "600": 145,
+            "700": 7,
+            "900": 1
+          },
+          "ns_per_query": 396.8754768371582,
+          "p50_ns": 400,
+          "p95_ns": 600,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "2bfdfa7c04025f80967f9b1b6aed1415e24484076000f9d6b989e4b6a8a73fc1",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "ea49e03f55091e4b87b3811a441129bfc369b97c48b3663264216f0696633bc3"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "86909c696794b2b6848525594c87814ce030b41604d5b766b04a69be7f6e35cb"
+        },
+        "netindex.nidx": {
+          "bytes": 3058716,
+          "sha256": "51d04d0a3c2b10e9c671e58d4ea42d3e71f1f224d41e402021023737c077f254"
+        }
+      }
+    },
+    "lpm-v4-overlap-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v4-overlap-1-data",
+        "v4",
+        "overlap",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 6359.3955,
+      "peak_working_set_bytes": 18542592,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 113282,
+          "boundary_checks": 453125,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v4",
+          "leaf_records": 100000,
+          "netindex_bytes": 3058716,
+          "phase": "fixture",
+          "shape": "overlap"
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 442586600,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "1100": 1,
+            "1500": 1,
+            "1600": 1,
+            "1700": 1,
+            "1800": 2,
+            "200": 1,
+            "300": 53,
+            "400": 437,
+            "500": 480,
+            "600": 45,
+            "700": 3,
+            "800": 1,
+            "900": 1
+          },
+          "ns_per_query": 422.0834732055664,
+          "p50_ns": 500,
+          "p95_ns": 600,
+          "p99_ns": 700,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 221928800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 7,
+            "200": 648,
+            "300": 370,
+            "400": 3
+          },
+          "ns_per_query": 211.64779663085938,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44437000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 397,
+            "100": 630,
+            "200": 1
+          },
+          "ns_per_query": 42.37842559814453,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44319800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 378,
+            "100": 650
+          },
+          "ns_per_query": 42.26665496826172,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 220434300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 3,
+            "200": 666,
+            "300": 353,
+            "400": 3,
+            "500": 2,
+            "600": 1
+          },
+          "ns_per_query": 210.22253036499023,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 445254200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "2400": 1,
+            "300": 60,
+            "400": 419,
+            "43100": 1,
+            "500": 496,
+            "600": 46,
+            "700": 1,
+            "800": 3,
+            "900": 1
+          },
+          "ns_per_query": 424.6274948120117,
+          "p50_ns": 500,
+          "p95_ns": 600,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 440430600,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "200": 1,
+            "300": 49,
+            "400": 439,
+            "500": 487,
+            "600": 45,
+            "700": 2,
+            "800": 3,
+            "900": 1
+          },
+          "ns_per_query": 420.02735137939453,
+          "p50_ns": 500,
+          "p95_ns": 600,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 222425200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 6,
+            "200": 650,
+            "300": 368,
+            "400": 2,
+            "600": 1,
+            "700": 1
+          },
+          "ns_per_query": 212.12120056152344,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44584100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 428,
+            "100": 598,
+            "200": 2
+          },
+          "ns_per_query": 42.51871109008789,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44491300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 373,
+            "100": 655
+          },
+          "ns_per_query": 42.43021011352539,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 225213500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 5,
+            "1100": 1,
+            "1200": 1,
+            "1400": 1,
+            "200": 605,
+            "300": 409,
+            "400": 6
+          },
+          "ns_per_query": 214.78033065795898,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 523481700,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 3,
+            "1100": 2,
+            "1200": 1,
+            "1300": 1,
+            "1400": 2,
+            "14400": 1,
+            "1700": 1,
+            "1800": 2,
+            "1900": 1,
+            "2000": 2,
+            "2100": 1,
+            "2500": 1,
+            "300": 26,
+            "3200": 1,
+            "400": 268,
+            "500": 385,
+            "600": 135,
+            "700": 113,
+            "800": 66,
+            "900": 16
+          },
+          "ns_per_query": 499.23105239868164,
+          "p50_ns": 500,
+          "p95_ns": 800,
+          "p99_ns": 1400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 440107000,
+          "engine": "netindex",
+          "histogram_ns": {
+            "200": 16,
+            "300": 160,
+            "3300": 1,
+            "400": 266,
+            "500": 381,
+            "600": 178,
+            "700": 19,
+            "800": 4,
+            "900": 3
+          },
+          "ns_per_query": 419.71874237060547,
+          "p50_ns": 500,
+          "p95_ns": 600,
+          "p99_ns": 700,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 196141500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 12,
+            "200": 748,
+            "300": 262,
+            "400": 4,
+            "500": 1,
+            "600": 1
+          },
+          "ns_per_query": 187.05511093139648,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 49611700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 302,
+            "100": 724,
+            "200": 2
+          },
+          "ns_per_query": 47.31340408325195,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 50358200,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 304,
+            "100": 722,
+            "200": 1,
+            "300": 1
+          },
+          "ns_per_query": 48.02532196044922,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 189528800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 75,
+            "200": 728,
+            "300": 217,
+            "400": 7,
+            "600": 1
+          },
+          "ns_per_query": 180.74874877929688,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 346002000,
+          "engine": "netindex",
+          "histogram_ns": {
+            "200": 59,
+            "300": 497,
+            "400": 327,
+            "500": 92,
+            "600": 46,
+            "700": 6,
+            "800": 1
+          },
+          "ns_per_query": 329.9732208251953,
+          "p50_ns": 300,
+          "p95_ns": 600,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 410072100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "1700": 1,
+            "200": 27,
+            "300": 266,
+            "400": 291,
+            "500": 277,
+            "600": 143,
+            "700": 21,
+            "800": 1
+          },
+          "ns_per_query": 391.0752296447754,
+          "p50_ns": 400,
+          "p95_ns": 600,
+          "p99_ns": 700,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 181752800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 129,
+            "200": 708,
+            "300": 182,
+            "400": 8,
+            "500": 1
+          },
+          "ns_per_query": 173.33297729492188,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 49857600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 292,
+            "100": 730,
+            "200": 4,
+            "300": 1,
+            "3800": 1
+          },
+          "ns_per_query": 47.54791259765625,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 50700100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 288,
+            "100": 737,
+            "200": 3
+          },
+          "ns_per_query": 48.351383209228516,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 201045300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 24,
+            "13900": 1,
+            "1600": 1,
+            "200": 656,
+            "300": 339,
+            "400": 6,
+            "500": 1
+          },
+          "ns_per_query": 191.73173904418945,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 464623500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1300": 1,
+            "200": 8,
+            "300": 97,
+            "400": 215,
+            "500": 438,
+            "600": 240,
+            "700": 27,
+            "800": 2
+          },
+          "ns_per_query": 443.0994987487793,
+          "p50_ns": 500,
+          "p95_ns": 600,
+          "p99_ns": 700,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "099487170c4a75d02f436b5d36782d1af3a267d874b4dbed599a508f659be19d",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "ea49e03f55091e4b87b3811a441129bfc369b97c48b3663264216f0696633bc3"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "86909c696794b2b6848525594c87814ce030b41604d5b766b04a69be7f6e35cb"
+        },
+        "netindex.nidx": {
+          "bytes": 3058716,
+          "sha256": "51d04d0a3c2b10e9c671e58d4ea42d3e71f1f224d41e402021023737c077f254"
+        }
+      }
+    },
+    "lpm-v4-overlap-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v4-overlap-2-data",
+        "v4",
+        "overlap",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 5740.3482,
+      "peak_working_set_bytes": 18612224,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 113282,
+          "boundary_checks": 453125,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v4",
+          "leaf_records": 100000,
+          "netindex_bytes": 3058716,
+          "phase": "fixture",
+          "shape": "overlap"
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 437015300,
+          "engine": "netindex",
+          "histogram_ns": {
+            "200": 1,
+            "300": 53,
+            "400": 443,
+            "500": 479,
+            "600": 51,
+            "900": 1
+          },
+          "ns_per_query": 416.77026748657227,
+          "p50_ns": 500,
+          "p95_ns": 600,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 222454500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 5,
+            "200": 637,
+            "300": 380,
+            "400": 4,
+            "600": 2
+          },
+          "ns_per_query": 212.14914321899414,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44275300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 382,
+            "100": 644,
+            "200": 2
+          },
+          "ns_per_query": 42.22421646118164,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44263500,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 377,
+            "100": 651
+          },
+          "ns_per_query": 42.21296310424805,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 221409500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 7,
+            "200": 662,
+            "300": 359
+          },
+          "ns_per_query": 211.1525535583496,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 437577100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1700": 1,
+            "300": 44,
+            "400": 438,
+            "500": 495,
+            "600": 46,
+            "700": 3,
+            "900": 1
+          },
+          "ns_per_query": 417.3060417175293,
+          "p50_ns": 500,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 438108300,
+          "engine": "netindex",
+          "histogram_ns": {
+            "300": 52,
+            "400": 446,
+            "4700": 1,
+            "500": 480,
+            "600": 46,
+            "800": 2,
+            "900": 1
+          },
+          "ns_per_query": 417.8126335144043,
+          "p50_ns": 500,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 221152600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 8,
+            "200": 674,
+            "300": 344,
+            "400": 1,
+            "500": 1
+          },
+          "ns_per_query": 210.90755462646484,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44579700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 397,
+            "100": 629,
+            "200": 1,
+            "400": 1
+          },
+          "ns_per_query": 42.5145149230957,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 44334800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 421,
+            "100": 607
+          },
+          "ns_per_query": 42.28096008300781,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 220780700,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 6,
+            "200": 647,
+            "300": 373,
+            "400": 2
+          },
+          "ns_per_query": 210.55288314819336,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 26902164523808,
+          "elapsed_ns": 460770900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "200": 1,
+            "300": 47,
+            "400": 367,
+            "500": 465,
+            "600": 83,
+            "700": 36,
+            "800": 24,
+            "900": 4
+          },
+          "ns_per_query": 439.4253730773926,
+          "p50_ns": 500,
+          "p95_ns": 700,
+          "p99_ns": 800,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 327982100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "200": 50,
+            "300": 549,
+            "400": 354,
+            "4500": 1,
+            "500": 48,
+            "600": 18,
+            "700": 4,
+            "800": 4
+          },
+          "ns_per_query": 312.7881050109863,
+          "p50_ns": 300,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 158599400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 265,
+            "200": 710,
+            "300": 44,
+            "400": 6,
+            "500": 2,
+            "600": 1
+          },
+          "ns_per_query": 151.2521743774414,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 42730800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 410,
+            "100": 614,
+            "200": 4
+          },
+          "ns_per_query": 40.75126647949219,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 43551600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 413,
+            "100": 612,
+            "1900": 1,
+            "200": 2
+          },
+          "ns_per_query": 41.53404235839844,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 159718100,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 255,
+            "200": 713,
+            "300": 58,
+            "400": 1,
+            "600": 1
+          },
+          "ns_per_query": 152.31904983520508,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 328764900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1700": 1,
+            "200": 63,
+            "300": 552,
+            "400": 334,
+            "500": 56,
+            "600": 16,
+            "700": 5,
+            "800": 1
+          },
+          "ns_per_query": 313.53464126586914,
+          "p50_ns": 300,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 335981600,
+          "engine": "netindex",
+          "histogram_ns": {
+            "200": 64,
+            "300": 511,
+            "400": 350,
+            "500": 61,
+            "600": 33,
+            "700": 5,
+            "800": 4
+          },
+          "ns_per_query": 320.4170227050781,
+          "p50_ns": 300,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 158810000,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 255,
+            "200": 724,
+            "300": 47,
+            "400": 2
+          },
+          "ns_per_query": 151.45301818847656,
+          "p50_ns": 200,
+          "p95_ns": 200,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 43449400,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 400,
+            "100": 625,
+            "200": 3
+          },
+          "ns_per_query": 41.43657684326172,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 43116300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "0": 385,
+            "100": 634,
+            "200": 9
+          },
+          "ns_per_query": 41.1189079284668,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 157212800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 270,
+            "200": 710,
+            "300": 45,
+            "400": 3
+          },
+          "ns_per_query": 149.9298095703125,
+          "p50_ns": 200,
+          "p95_ns": 200,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 274166276096,
+          "elapsed_ns": 325573400,
+          "engine": "netindex",
+          "histogram_ns": {
+            "100": 1,
+            "200": 57,
+            "300": 568,
+            "400": 339,
+            "500": 39,
+            "600": 20,
+            "700": 3,
+            "800": 1
+          },
+          "ns_per_query": 310.4909896850586,
+          "p50_ns": 300,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "4cf89fc30e0c0fbf8e60bb901c19226f1b54d353f1f6115da8f85d9155dc9cc6",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "ea49e03f55091e4b87b3811a441129bfc369b97c48b3663264216f0696633bc3"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "86909c696794b2b6848525594c87814ce030b41604d5b766b04a69be7f6e35cb"
+        },
+        "netindex.nidx": {
+          "bytes": 3058716,
+          "sha256": "51d04d0a3c2b10e9c671e58d4ea42d3e71f1f224d41e402021023737c077f254"
+        }
+      }
+    },
+    "lpm-v6-disjoint-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v6-disjoint-0-data",
+        "v6",
+        "disjoint",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 2438.9436,
+      "peak_working_set_bytes": 22831104,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100000,
+          "boundary_checks": 400000,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v6",
+          "leaf_records": 100000,
+          "netindex_bytes": 912614,
+          "phase": "fixture",
+          "shape": "disjoint"
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82418000,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 44,
+            "100": 918,
+            "200": 63,
+            "300": 2,
+            "500": 1
+          },
+          "ns_per_query": 78.59992980957031,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 85542200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 50,
+            "100": 883,
+            "200": 94,
+            "2000": 1
+          },
+          "ns_per_query": 81.57939910888672,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117955100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 647,
+            "1100": 1,
+            "1400": 1,
+            "200": 378,
+            "300": 1
+          },
+          "ns_per_query": 112.49074935913086,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117427900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 660,
+            "200": 368
+          },
+          "ns_per_query": 111.98797225952148,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 85892100,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 47,
+            "100": 874,
+            "200": 107
+          },
+          "ns_per_query": 81.91308975219727,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82976000,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 46,
+            "100": 928,
+            "200": 54
+          },
+          "ns_per_query": 79.132080078125,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82997300,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 43,
+            "100": 909,
+            "200": 76
+          },
+          "ns_per_query": 79.15239334106445,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 86739900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 31,
+            "100": 890,
+            "200": 107
+          },
+          "ns_per_query": 82.72161483764648,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117555800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 645,
+            "200": 383
+          },
+          "ns_per_query": 112.10994720458984,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117664700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 644,
+            "200": 384
+          },
+          "ns_per_query": 112.21380233764648,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 85442000,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 49,
+            "100": 887,
+            "200": 92
+          },
+          "ns_per_query": 81.48384094238281,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82879900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 38,
+            "100": 912,
+            "1600": 1,
+            "200": 76,
+            "300": 1
+          },
+          "ns_per_query": 79.04043197631836,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 50485500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 258,
+            "100": 768,
+            "1500": 1,
+            "200": 1
+          },
+          "ns_per_query": 48.146724700927734,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 54870600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 227,
+            "100": 800,
+            "200": 1
+          },
+          "ns_per_query": 52.32868194580078,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114876300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 696,
+            "200": 332
+          },
+          "ns_per_query": 109.5545768737793,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114738900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 684,
+            "200": 344
+          },
+          "ns_per_query": 109.42354202270508,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 54692600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 229,
+            "100": 797,
+            "200": 2
+          },
+          "ns_per_query": 52.15892791748047,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 50343200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 241,
+            "100": 785,
+            "200": 2
+          },
+          "ns_per_query": 48.011016845703125,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 50182200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 284,
+            "100": 741,
+            "200": 3
+          },
+          "ns_per_query": 47.85747528076172,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 54682600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 233,
+            "100": 795
+          },
+          "ns_per_query": 52.149391174316406,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114254100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 725,
+            "200": 303
+          },
+          "ns_per_query": 108.96120071411133,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114402000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 698,
+            "200": 329,
+            "300": 1
+          },
+          "ns_per_query": 109.10224914550781,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 54847500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 219,
+            "100": 807,
+            "200": 2
+          },
+          "ns_per_query": 52.3066520690918,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 50159900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 267,
+            "100": 761
+          },
+          "ns_per_query": 47.83620834350586,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "dd79c3a66d330dee79ce7b188f786c61c4dcc35149de94b6b500bcfb0da47aa1",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "dcd8e5e673a08390df6cd1e13ad47ba830bf584bd63e8fde9ed81977a96878b4"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "8be420d5682d72d519e7a845a81b334481fd320728a0d02db7f45df42c2b983d"
+        },
+        "netindex.nidx": {
+          "bytes": 912614,
+          "sha256": "ce75a4f908012eb30af15c8f87b28d2bc3b3dac2176972a9b6b793ed262a4213"
+        }
+      }
+    },
+    "lpm-v6-disjoint-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v6-disjoint-1-data",
+        "v6",
+        "disjoint",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 2464.1393,
+      "peak_working_set_bytes": 22876160,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100000,
+          "boundary_checks": 400000,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v6",
+          "leaf_records": 100000,
+          "netindex_bytes": 912614,
+          "phase": "fixture",
+          "shape": "disjoint"
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82112500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 41,
+            "100": 919,
+            "200": 68
+          },
+          "ns_per_query": 78.3085823059082,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 86398900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 37,
+            "100": 883,
+            "200": 108
+          },
+          "ns_per_query": 82.39641189575195,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117903400,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 661,
+            "1200": 1,
+            "200": 366
+          },
+          "ns_per_query": 112.44144439697266,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117451900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 672,
+            "200": 356
+          },
+          "ns_per_query": 112.01086044311523,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 85692500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 39,
+            "100": 884,
+            "200": 105
+          },
+          "ns_per_query": 81.72273635864258,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 81807300,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 49,
+            "100": 904,
+            "1200": 1,
+            "200": 73,
+            "2800": 1
+          },
+          "ns_per_query": 78.01752090454102,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82036200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 39,
+            "100": 900,
+            "1300": 1,
+            "200": 87,
+            "7700": 1
+          },
+          "ns_per_query": 78.2358169555664,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 86176700,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 34,
+            "100": 888,
+            "200": 106
+          },
+          "ns_per_query": 82.18450546264648,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117293300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 700,
+            "200": 328
+          },
+          "ns_per_query": 111.8596076965332,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117423800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 680,
+            "200": 348
+          },
+          "ns_per_query": 111.98406219482422,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 86175100,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 45,
+            "100": 869,
+            "200": 113,
+            "300": 1
+          },
+          "ns_per_query": 82.18297958374023,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 81927100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 46,
+            "100": 908,
+            "200": 74
+          },
+          "ns_per_query": 78.13177108764648,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 49650700,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 262,
+            "100": 766
+          },
+          "ns_per_query": 47.3505973815918,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 53735800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 242,
+            "100": 785,
+            "200": 1
+          },
+          "ns_per_query": 51.24645233154297,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114512400,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 708,
+            "200": 320
+          },
+          "ns_per_query": 109.20753479003906,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114687000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 713,
+            "200": 315
+          },
+          "ns_per_query": 109.3740463256836,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 53713500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 252,
+            "100": 775,
+            "200": 1
+          },
+          "ns_per_query": 51.22518539428711,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 49666800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 272,
+            "100": 756
+          },
+          "ns_per_query": 47.36595153808594,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 49575900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 264,
+            "100": 764
+          },
+          "ns_per_query": 47.27926254272461,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 53769900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 230,
+            "100": 798
+          },
+          "ns_per_query": 51.27897262573242,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114558500,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 668,
+            "200": 360
+          },
+          "ns_per_query": 109.25149917602539,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114828700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 710,
+            "200": 318
+          },
+          "ns_per_query": 109.50918197631836,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 53840300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 237,
+            "100": 791
+          },
+          "ns_per_query": 51.34611129760742,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 49575200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 259,
+            "100": 768,
+            "12600": 1
+          },
+          "ns_per_query": 47.278594970703125,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "025d22d9f3654f3fc842239dc4d42a205229cdf24d4d89d10e21076a47f101a5",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "dcd8e5e673a08390df6cd1e13ad47ba830bf584bd63e8fde9ed81977a96878b4"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "8be420d5682d72d519e7a845a81b334481fd320728a0d02db7f45df42c2b983d"
+        },
+        "netindex.nidx": {
+          "bytes": 912614,
+          "sha256": "ce75a4f908012eb30af15c8f87b28d2bc3b3dac2176972a9b6b793ed262a4213"
+        }
+      }
+    },
+    "lpm-v6-disjoint-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v6-disjoint-2-data",
+        "v6",
+        "disjoint",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 2457.1207,
+      "peak_working_set_bytes": 22863872,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100000,
+          "boundary_checks": 400000,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v6",
+          "leaf_records": 100000,
+          "netindex_bytes": 912614,
+          "phase": "fixture",
+          "shape": "disjoint"
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82390500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 46,
+            "100": 919,
+            "200": 63
+          },
+          "ns_per_query": 78.57370376586914,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 88302400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 31,
+            "100": 891,
+            "200": 105,
+            "300": 1
+          },
+          "ns_per_query": 84.21173095703125,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117070300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 700,
+            "200": 328
+          },
+          "ns_per_query": 111.64693832397461,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117490800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 676,
+            "200": 351,
+            "4200": 1
+          },
+          "ns_per_query": 112.04795837402344,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 88731200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 29,
+            "100": 871,
+            "200": 128
+          },
+          "ns_per_query": 84.62066650390625,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82377300,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 51,
+            "100": 904,
+            "200": 73
+          },
+          "ns_per_query": 78.56111526489258,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82429400,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 41,
+            "100": 921,
+            "200": 64,
+            "300": 2
+          },
+          "ns_per_query": 78.61080169677734,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 88814400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 40,
+            "100": 873,
+            "200": 115
+          },
+          "ns_per_query": 84.70001220703125,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117734900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 670,
+            "200": 358
+          },
+          "ns_per_query": 112.2807502746582,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 117739100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 679,
+            "200": 349
+          },
+          "ns_per_query": 112.28475570678711,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 88331500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 37,
+            "100": 871,
+            "200": 119,
+            "400": 1
+          },
+          "ns_per_query": 84.23948287963867,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 7908321024337327616,
+          "elapsed_ns": 82178900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 41,
+            "100": 920,
+            "200": 67
+          },
+          "ns_per_query": 78.37190628051758,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 32768,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 49842100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 270,
+            "100": 758
+          },
+          "ns_per_query": 47.53313064575195,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 56766600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 196,
+            "100": 830,
+            "200": 2
+          },
+          "ns_per_query": 54.13684844970703,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 115216800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 692,
+            "200": 336
+          },
+          "ns_per_query": 109.87930297851562,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 115034300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 701,
+            "200": 326,
+            "300": 1
+          },
+          "ns_per_query": 109.70525741577148,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 56697500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 196,
+            "100": 831,
+            "200": 1
+          },
+          "ns_per_query": 54.07094955444336,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 49583500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 267,
+            "100": 760,
+            "200": 1
+          },
+          "ns_per_query": 47.2865104675293,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 50099200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 280,
+            "100": 746,
+            "200": 2
+          },
+          "ns_per_query": 47.7783203125,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 56688300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 191,
+            "100": 836,
+            "200": 1
+          },
+          "ns_per_query": 54.06217575073242,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114954800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 695,
+            "1400": 1,
+            "200": 330,
+            "2500": 1,
+            "300": 1
+          },
+          "ns_per_query": 109.62944030761719,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 114904700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 694,
+            "1300": 1,
+            "200": 332,
+            "300": 1
+          },
+          "ns_per_query": 109.58166122436523,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 56999600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "0": 213,
+            "100": 814,
+            "200": 1
+          },
+          "ns_per_query": 54.35905456542969,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 7908320946500403200,
+          "elapsed_ns": 49568800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "0": 289,
+            "100": 739
+          },
+          "ns_per_query": 47.272491455078125,
+          "p50_ns": 100,
+          "p95_ns": 100,
+          "p99_ns": 100,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "410bdf78da86ba3fa5ecd2d8efa55b6ce98e2a8976b9707f2a5fa209c55a1249",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "dcd8e5e673a08390df6cd1e13ad47ba830bf584bd63e8fde9ed81977a96878b4"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "8be420d5682d72d519e7a845a81b334481fd320728a0d02db7f45df42c2b983d"
+        },
+        "netindex.nidx": {
+          "bytes": 912614,
+          "sha256": "ce75a4f908012eb30af15c8f87b28d2bc3b3dac2176972a9b6b793ed262a4213"
+        }
+      }
+    },
+    "lpm-v6-overlap-0": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v6-overlap-0-data",
+        "v6",
+        "overlap",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 9458.5398,
+      "peak_working_set_bytes": 26583040,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100786,
+          "boundary_checks": 403144,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v6",
+          "leaf_records": 100000,
+          "netindex_bytes": 6349620,
+          "phase": "fixture",
+          "shape": "overlap"
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 704109700,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "1200": 1,
+            "1300": 1,
+            "1900": 2,
+            "2200": 1,
+            "300": 1,
+            "400": 3,
+            "500": 25,
+            "600": 209,
+            "700": 562,
+            "800": 207,
+            "900": 15
+          },
+          "ns_per_query": 671.4913368225098,
+          "p50_ns": 700,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 297942300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "1100": 2,
+            "200": 188,
+            "300": 580,
+            "400": 250,
+            "500": 6,
+            "600": 1,
+            "800": 1
+          },
+          "ns_per_query": 284.13991928100586,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 122712600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 610,
+            "200": 418
+          },
+          "ns_per_query": 117.0278549194336,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 122567700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 631,
+            "200": 397
+          },
+          "ns_per_query": 116.88966751098633,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 297654300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 160,
+            "300": 595,
+            "400": 265,
+            "500": 8
+          },
+          "ns_per_query": 283.86526107788086,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 690477200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 3,
+            "1300": 1,
+            "1400": 1,
+            "1900": 1,
+            "300": 2,
+            "400": 5,
+            "500": 28,
+            "600": 226,
+            "700": 557,
+            "800": 200,
+            "900": 4
+          },
+          "ns_per_query": 658.4903717041016,
+          "p50_ns": 700,
+          "p95_ns": 800,
+          "p99_ns": 800,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 726676200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 32,
+            "1100": 31,
+            "1200": 9,
+            "1300": 2,
+            "1400": 2,
+            "1500": 1,
+            "1600": 1,
+            "300": 1,
+            "400": 4,
+            "500": 21,
+            "600": 178,
+            "700": 515,
+            "800": 206,
+            "900": 25
+          },
+          "ns_per_query": 693.0124282836914,
+          "p50_ns": 700,
+          "p95_ns": 1000,
+          "p99_ns": 1200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 304532400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 124,
+            "300": 598,
+            "400": 259,
+            "500": 38,
+            "600": 7,
+            "700": 1,
+            "900": 1
+          },
+          "ns_per_query": 290.4247283935547,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 500,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 128271000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 574,
+            "1200": 2,
+            "1500": 1,
+            "200": 450,
+            "300": 1
+          },
+          "ns_per_query": 122.3287582397461,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 126167600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 575,
+            "200": 451,
+            "300": 2
+          },
+          "ns_per_query": 120.32279968261719,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 303276500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 163,
+            "300": 538,
+            "400": 283,
+            "500": 36,
+            "600": 5,
+            "6700": 1,
+            "700": 1,
+            "800": 1
+          },
+          "ns_per_query": 289.2270088195801,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 500,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 741064900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 36,
+            "1100": 27,
+            "1200": 22,
+            "1300": 4,
+            "1400": 2,
+            "1500": 1,
+            "300": 2,
+            "400": 2,
+            "500": 19,
+            "600": 179,
+            "700": 453,
+            "800": 237,
+            "900": 44
+          },
+          "ns_per_query": 706.734561920166,
+          "p50_ns": 700,
+          "p95_ns": 1100,
+          "p99_ns": 1200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 455111100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 3,
+            "200": 13,
+            "2900": 1,
+            "300": 91,
+            "3200": 1,
+            "400": 350,
+            "500": 458,
+            "600": 47,
+            "700": 48,
+            "800": 11,
+            "900": 5
+          },
+          "ns_per_query": 434.0277671813965,
+          "p50_ns": 500,
+          "p95_ns": 700,
+          "p99_ns": 800,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 241423500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 22,
+            "200": 448,
+            "300": 440,
+            "400": 109,
+            "500": 7,
+            "600": 2
+          },
+          "ns_per_query": 230.2393913269043,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 123585900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 566,
+            "200": 451,
+            "300": 11
+          },
+          "ns_per_query": 117.86069869995117,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 120947700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 595,
+            "200": 430,
+            "300": 2,
+            "400": 1
+          },
+          "ns_per_query": 115.3447151184082,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 214580900,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 41,
+            "200": 626,
+            "300": 325,
+            "400": 34,
+            "500": 2
+          },
+          "ns_per_query": 204.6402931213379,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 585657200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 5,
+            "1100": 1,
+            "1200": 1,
+            "1600": 1,
+            "200": 3,
+            "300": 38,
+            "3700": 1,
+            "400": 158,
+            "500": 227,
+            "600": 184,
+            "6300": 1,
+            "700": 247,
+            "800": 140,
+            "900": 21
+          },
+          "ns_per_query": 558.5262298583984,
+          "p50_ns": 600,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 610477500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 2,
+            "1100": 1,
+            "1200": 1,
+            "1300": 1,
+            "200": 6,
+            "300": 26,
+            "3000": 1,
+            "400": 123,
+            "500": 193,
+            "600": 189,
+            "700": 292,
+            "800": 159,
+            "900": 34
+          },
+          "ns_per_query": 582.1967124938965,
+          "p50_ns": 600,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 211439600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 48,
+            "200": 633,
+            "300": 307,
+            "400": 38,
+            "500": 1,
+            "600": 1
+          },
+          "ns_per_query": 201.64451599121094,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 125246200,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 530,
+            "200": 496,
+            "300": 2
+          },
+          "ns_per_query": 119.44408416748047,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 129092800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 497,
+            "200": 529,
+            "300": 1,
+            "3800": 1
+          },
+          "ns_per_query": 123.11248779296875,
+          "p50_ns": 200,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 264205500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 6,
+            "200": 274,
+            "300": 561,
+            "400": 175,
+            "500": 10,
+            "600": 2
+          },
+          "ns_per_query": 251.96599960327148,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 500,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 649217900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 4,
+            "1100": 1,
+            "200": 3,
+            "300": 14,
+            "400": 61,
+            "500": 104,
+            "600": 201,
+            "700": 403,
+            "800": 205,
+            "900": 32
+          },
+          "ns_per_query": 619.1424369812012,
+          "p50_ns": 700,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "55dc617f194a9ff95b08373396de1c1ae8c79f2b5636553128c579cadf080e66",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "dcd8e5e673a08390df6cd1e13ad47ba830bf584bd63e8fde9ed81977a96878b4"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "8be420d5682d72d519e7a845a81b334481fd320728a0d02db7f45df42c2b983d"
+        },
+        "netindex.nidx": {
+          "bytes": 6349620,
+          "sha256": "78e98db281c0ef3da06ce9991a204ce21e0005d6e2921b19b4668ed68916490c"
+        }
+      }
+    },
+    "lpm-v6-overlap-1": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v6-overlap-1-data",
+        "v6",
+        "overlap",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 9328.4854,
+      "peak_working_set_bytes": 26554368,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100786,
+          "boundary_checks": 403144,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v6",
+          "leaf_records": 100000,
+          "netindex_bytes": 6349620,
+          "phase": "fixture",
+          "shape": "overlap"
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 689162800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "1300": 1,
+            "1400": 1,
+            "1700": 1,
+            "400": 5,
+            "4300": 1,
+            "500": 28,
+            "600": 246,
+            "700": 561,
+            "800": 175,
+            "900": 8
+          },
+          "ns_per_query": 657.2368621826172,
+          "p50_ns": 700,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 293015600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 196,
+            "2600": 1,
+            "300": 567,
+            "400": 249,
+            "500": 13,
+            "600": 2
+          },
+          "ns_per_query": 279.4414520263672,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 500,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 123019900,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 620,
+            "200": 408
+          },
+          "ns_per_query": 117.32091903686523,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 123017000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 613,
+            "200": 415
+          },
+          "ns_per_query": 117.31815338134766,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 294148000,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 203,
+            "300": 567,
+            "400": 251,
+            "500": 6,
+            "900": 1
+          },
+          "ns_per_query": 280.5213928222656,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 687649300,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "1100": 2,
+            "1200": 1,
+            "1300": 1,
+            "1400": 1,
+            "1800": 1,
+            "300": 2,
+            "400": 5,
+            "500": 31,
+            "600": 250,
+            "700": 552,
+            "800": 177,
+            "900": 4
+          },
+          "ns_per_query": 655.7934761047363,
+          "p50_ns": 700,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 731320800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 38,
+            "1100": 26,
+            "1200": 16,
+            "1300": 4,
+            "1400": 1,
+            "1600": 1,
+            "200": 1,
+            "2300": 1,
+            "400": 4,
+            "4000": 1,
+            "500": 22,
+            "600": 203,
+            "700": 473,
+            "800": 199,
+            "900": 38
+          },
+          "ns_per_query": 697.4418640136719,
+          "p50_ns": 700,
+          "p95_ns": 1000,
+          "p99_ns": 1200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 302716800,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 177,
+            "300": 546,
+            "400": 255,
+            "500": 42,
+            "600": 8
+          },
+          "ns_per_query": 288.6932373046875,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 500,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 125702100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 569,
+            "200": 459
+          },
+          "ns_per_query": 119.87886428833008,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 126799500,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 596,
+            "200": 431,
+            "300": 1
+          },
+          "ns_per_query": 120.9254264831543,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 308272700,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 149,
+            "300": 549,
+            "400": 270,
+            "500": 50,
+            "600": 9,
+            "700": 1
+          },
+          "ns_per_query": 293.991756439209,
+          "p50_ns": 300,
+          "p95_ns": 500,
+          "p99_ns": 500,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 941566000,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 127,
+            "1100": 136,
+            "1200": 73,
+            "1300": 39,
+            "1400": 16,
+            "1500": 12,
+            "1600": 7,
+            "1700": 2,
+            "2000": 2,
+            "300": 3,
+            "400": 1,
+            "500": 15,
+            "600": 82,
+            "700": 261,
+            "800": 175,
+            "900": 77
+          },
+          "ns_per_query": 897.9473114013672,
+          "p50_ns": 800,
+          "p95_ns": 1300,
+          "p99_ns": 1600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 480580500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 9,
+            "1100": 1,
+            "1300": 1,
+            "200": 14,
+            "300": 78,
+            "400": 324,
+            "500": 387,
+            "600": 100,
+            "700": 65,
+            "800": 35,
+            "900": 14
+          },
+          "ns_per_query": 458.3172798156738,
+          "p50_ns": 500,
+          "p95_ns": 800,
+          "p99_ns": 1000,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 228548400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 35,
+            "200": 545,
+            "300": 361,
+            "400": 79,
+            "500": 6,
+            "600": 1,
+            "700": 1
+          },
+          "ns_per_query": 217.9607391357422,
+          "p50_ns": 200,
+          "p95_ns": 400,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 124677200,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 557,
+            "200": 467,
+            "300": 2,
+            "400": 2
+          },
+          "ns_per_query": 118.90144348144531,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 122406700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 570,
+            "200": 456,
+            "300": 2
+          },
+          "ns_per_query": 116.73612594604492,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 211225200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 58,
+            "200": 648,
+            "300": 271,
+            "400": 37,
+            "500": 10,
+            "600": 4
+          },
+          "ns_per_query": 201.44004821777344,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 500,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 489796600,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 3,
+            "1100": 1,
+            "1200": 1,
+            "200": 9,
+            "300": 91,
+            "400": 315,
+            "4900": 1,
+            "500": 366,
+            "600": 98,
+            "700": 81,
+            "800": 49,
+            "900": 13
+          },
+          "ns_per_query": 467.10643768310547,
+          "p50_ns": 500,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 475566800,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 5,
+            "200": 16,
+            "2300": 1,
+            "300": 93,
+            "400": 320,
+            "500": 401,
+            "600": 87,
+            "700": 57,
+            "800": 35,
+            "900": 13
+          },
+          "ns_per_query": 453.5358428955078,
+          "p50_ns": 500,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 203771400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 57,
+            "200": 701,
+            "300": 253,
+            "400": 16,
+            "500": 1
+          },
+          "ns_per_query": 194.33155059814453,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 121350100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 636,
+            "200": 391,
+            "300": 1
+          },
+          "ns_per_query": 115.72847366333008,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 121751300,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 626,
+            "200": 401,
+            "300": 1
+          },
+          "ns_per_query": 116.11108779907227,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 203326600,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 61,
+            "200": 674,
+            "300": 263,
+            "400": 21,
+            "4300": 1,
+            "500": 6,
+            "600": 1,
+            "700": 1
+          },
+          "ns_per_query": 193.90735626220703,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 455811400,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "1100": 1,
+            "1300": 1,
+            "1400": 1,
+            "200": 12,
+            "300": 101,
+            "400": 369,
+            "500": 404,
+            "600": 70,
+            "700": 34,
+            "800": 24,
+            "900": 10
+          },
+          "ns_per_query": 434.6956253051758,
+          "p50_ns": 500,
+          "p95_ns": 700,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "dfed15749a644f2d1bdad4091c4534d6171d87c6d8f48cd0c3c44efb58fa6d7d",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "dcd8e5e673a08390df6cd1e13ad47ba830bf584bd63e8fde9ed81977a96878b4"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "8be420d5682d72d519e7a845a81b334481fd320728a0d02db7f45df42c2b983d"
+        },
+        "netindex.nidx": {
+          "bytes": 6349620,
+          "sha256": "78e98db281c0ef3da06ce9991a204ce21e0005d6e2921b19b4668ed68916490c"
+        }
+      }
+    },
+    "lpm-v6-overlap-2": {
+      "executable": "C:\\code\\0xARYA\\netindex\\benches\\competitors\\target\\release\\netindex-competitor-study.exe",
+      "executable_sha256": "25de919862315a3fe41185e5024dd619be308737c5d1c8148efb5a09910f1584",
+      "arguments": [
+        "target/p3-city/lpm-v6-overlap-2-data",
+        "v6",
+        "overlap",
+        "100000"
+      ],
+      "affinity_mask": 1048576,
+      "wall_ms": 8842.3728,
+      "peak_working_set_bytes": 26509312,
+      "exit_code": 0,
+      "rows": [
+        {
+          "p50_ns": 0,
+          "p95_ns": 100,
+          "phase": "clock"
+        },
+        {
+          "assertions": 100786,
+          "boundary_checks": 403144,
+          "contract": "Option<(network address, prefix, insertion ID)>; unique prefixes; all-match visitor reduced to longest prefix",
+          "family": "v6",
+          "leaf_records": 100000,
+          "netindex_bytes": 6349620,
+          "phase": "fixture",
+          "shape": "overlap"
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "uniform"
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 697412700,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 7,
+            "1300": 1,
+            "1400": 1,
+            "1500": 1,
+            "300": 2,
+            "3000": 1,
+            "400": 4,
+            "500": 33,
+            "600": 218,
+            "700": 538,
+            "7500": 1,
+            "800": 205,
+            "900": 16
+          },
+          "ns_per_query": 665.1045799255371,
+          "p50_ns": 700,
+          "p95_ns": 800,
+          "p99_ns": 1000,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 291790500,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 235,
+            "300": 562,
+            "400": 222,
+            "500": 8,
+            "700": 1
+          },
+          "ns_per_query": 278.2731056213379,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 122780200,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 633,
+            "200": 395
+          },
+          "ns_per_query": 117.09232330322266,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 1
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 122693500,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 645,
+            "200": 383
+          },
+          "ns_per_query": 117.00963973999023,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 291452100,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 216,
+            "300": 580,
+            "400": 226,
+            "500": 4,
+            "700": 2
+          },
+          "ns_per_query": 277.950382232666,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 690982900,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 2,
+            "1200": 1,
+            "1300": 1,
+            "1600": 1,
+            "200": 1,
+            "300": 1,
+            "400": 3,
+            "500": 31,
+            "600": 237,
+            "700": 538,
+            "800": 204,
+            "900": 8
+          },
+          "ns_per_query": 658.9726448059082,
+          "p50_ns": 700,
+          "p95_ns": 800,
+          "p99_ns": 900,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 2
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 734834100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 43,
+            "1100": 26,
+            "1200": 15,
+            "1300": 3,
+            "1400": 5,
+            "1500": 1,
+            "1700": 1,
+            "300": 2,
+            "400": 7,
+            "500": 16,
+            "600": 200,
+            "6900": 1,
+            "700": 465,
+            "800": 200,
+            "900": 43
+          },
+          "ns_per_query": 700.792407989502,
+          "p50_ns": 700,
+          "p95_ns": 1100,
+          "p99_ns": 1300,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 310377200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "1000": 1,
+            "200": 158,
+            "300": 543,
+            "400": 260,
+            "500": 49,
+            "600": 14,
+            "700": 1,
+            "800": 1,
+            "900": 1
+          },
+          "ns_per_query": 295.99876403808594,
+          "p50_ns": 300,
+          "p95_ns": 500,
+          "p99_ns": 600,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 126523100,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 531,
+            "200": 495,
+            "300": 2
+          },
+          "ns_per_query": 120.66183090209961,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 3
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 124607400,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 585,
+            "200": 439,
+            "300": 4
+          },
+          "ns_per_query": 118.83487701416016,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 302790200,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "200": 197,
+            "300": 552,
+            "400": 243,
+            "500": 35,
+            "600": 1
+          },
+          "ns_per_query": 288.7632369995117,
+          "p50_ns": 300,
+          "p95_ns": 400,
+          "p99_ns": 500,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "checksum": 15816642048988741392,
+          "elapsed_ns": 737234200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 48,
+            "1100": 38,
+            "1200": 10,
+            "1300": 3,
+            "1400": 1,
+            "1500": 3,
+            "1600": 2,
+            "300": 2,
+            "400": 3,
+            "500": 28,
+            "600": 182,
+            "700": 478,
+            "800": 205,
+            "900": 25
+          },
+          "ns_per_query": 703.0813217163086,
+          "p50_ns": 700,
+          "p95_ns": 1100,
+          "p99_ns": 1200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "uniform",
+          "trial": 4
+        },
+        {
+          "hits": 65536,
+          "phase": "corpus",
+          "queries": 65536,
+          "traffic": "hot"
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 454458500,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "1100": 1,
+            "200": 12,
+            "300": 91,
+            "400": 359,
+            "500": 434,
+            "600": 72,
+            "700": 40,
+            "800": 17,
+            "900": 1
+          },
+          "ns_per_query": 433.40539932250977,
+          "p50_ns": 500,
+          "p95_ns": 700,
+          "p99_ns": 800,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 204852300,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 61,
+            "200": 676,
+            "300": 265,
+            "400": 23,
+            "500": 2,
+            "5000": 1
+          },
+          "ns_per_query": 195.36237716674805,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 123270800,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 584,
+            "200": 440,
+            "300": 4
+          },
+          "ns_per_query": 117.56019592285156,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 1
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 121386600,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 624,
+            "200": 404
+          },
+          "ns_per_query": 115.7632827758789,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 203087400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 48,
+            "200": 709,
+            "300": 251,
+            "400": 17,
+            "600": 2,
+            "700": 1
+          },
+          "ns_per_query": 193.67923736572266,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 459533200,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "200": 11,
+            "300": 96,
+            "400": 338,
+            "500": 444,
+            "5500": 1,
+            "600": 62,
+            "700": 48,
+            "800": 23,
+            "900": 4
+          },
+          "ns_per_query": 438.24501037597656,
+          "p50_ns": 500,
+          "p95_ns": 700,
+          "p99_ns": 800,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 2
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 454897700,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 2,
+            "200": 14,
+            "300": 88,
+            "3100": 1,
+            "400": 370,
+            "500": 444,
+            "600": 52,
+            "700": 39,
+            "800": 16,
+            "900": 2
+          },
+          "ns_per_query": 433.8242530822754,
+          "p50_ns": 500,
+          "p95_ns": 700,
+          "p99_ns": 800,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 201394400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 74,
+            "200": 696,
+            "300": 242,
+            "400": 16
+          },
+          "ns_per_query": 192.06466674804688,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 121389000,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 586,
+            "200": 441,
+            "300": 1
+          },
+          "ns_per_query": 115.76557159423828,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 3
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 121116700,
+          "engine": "ip_network_table",
+          "histogram_ns": {
+            "100": 620,
+            "200": 405,
+            "300": 3
+          },
+          "ns_per_query": 115.50588607788086,
+          "p50_ns": 100,
+          "p95_ns": 200,
+          "p99_ns": 200,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 202850400,
+          "engine": "netindex-direct",
+          "histogram_ns": {
+            "100": 57,
+            "1300": 1,
+            "200": 719,
+            "300": 234,
+            "400": 12,
+            "500": 4,
+            "600": 1
+          },
+          "ns_per_query": 193.45321655273438,
+          "p50_ns": 200,
+          "p95_ns": 300,
+          "p99_ns": 400,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        },
+        {
+          "checksum": 15816641892903214080,
+          "elapsed_ns": 456779100,
+          "engine": "netindex",
+          "histogram_ns": {
+            "1000": 1,
+            "1100": 2,
+            "200": 15,
+            "300": 96,
+            "400": 363,
+            "500": 415,
+            "600": 76,
+            "700": 48,
+            "800": 11,
+            "900": 1
+          },
+          "ns_per_query": 435.6184959411621,
+          "p50_ns": 500,
+          "p95_ns": 700,
+          "p99_ns": 800,
+          "phase": "measure",
+          "queries": 1048576,
+          "sample_count": 1028,
+          "traffic": "hot",
+          "trial": 4
+        }
+      ],
+      "stdout_sha256": "de6bde1f59036c7fbede821eaa2b393eefa95e4027464e56b29f4738b174d168",
+      "inputs": {
+        "corpus-hot.bin": {
+          "bytes": 1048576,
+          "sha256": "dcd8e5e673a08390df6cd1e13ad47ba830bf584bd63e8fde9ed81977a96878b4"
+        },
+        "corpus-uniform.bin": {
+          "bytes": 1048576,
+          "sha256": "8be420d5682d72d519e7a845a81b334481fd320728a0d02db7f45df42c2b983d"
+        },
+        "netindex.nidx": {
+          "bytes": 6349620,
+          "sha256": "78e98db281c0ef3da06ce9991a204ce21e0005d6e2921b19b4668ed68916490c"
+        }
+      }
+    }
+  },
+  "summary": {
+    "v4-disjoint": {
+      "uniform": {
+        "netindex": {
+          "median": 53.885602951049805,
+          "min": 53.57332229614258,
+          "max": 54.03146743774414,
+          "n": 12
+        },
+        "netindex-direct": {
+          "median": 57.87482261657715,
+          "min": 56.68468475341797,
+          "max": 58.083152770996094,
+          "n": 12
+        },
+        "ip_network_table": {
+          "median": 38.76833915710449,
+          "min": 38.67502212524414,
+          "max": 39.013671875,
+          "n": 12
+        }
+      },
+      "hot": {
+        "netindex": {
+          "median": 46.808719635009766,
+          "min": 46.610450744628906,
+          "max": 47.148799896240234,
+          "n": 12
+        },
+        "netindex-direct": {
+          "median": 51.64003372192383,
+          "min": 50.797176361083984,
+          "max": 52.09341049194336,
+          "n": 12
+        },
+        "ip_network_table": {
+          "median": 37.2403621673584,
+          "min": 37.185096740722656,
+          "max": 37.47520446777344,
+          "n": 12
+        }
+      }
+    },
+    "v4-overlap": {
+      "uniform": {
+        "netindex": {
+          "median": 420.9750175476074,
+          "min": 414.81733322143555,
+          "max": 579.1139602661133,
+          "n": 12
+        },
+        "netindex-direct": {
+          "median": 211.210298538208,
+          "min": 210.16912460327148,
+          "max": 214.78033065795898,
+          "n": 12
+        },
+        "ip_network_table": {
+          "median": 42.3029899597168,
+          "min": 42.21296310424805,
+          "max": 42.51871109008789,
+          "n": 12
+        }
+      },
+      "hot": {
+        "netindex": {
+          "median": 335.8367919921875,
+          "min": 310.4909896850586,
+          "max": 443.0994987487793,
+          "n": 12
+        },
+        "netindex-direct": {
+          "median": 168.65572929382324,
+          "min": 149.9298095703125,
+          "max": 191.73173904418945,
+          "n": 12
+        },
+        "ip_network_table": {
+          "median": 44.423723220825195,
+          "min": 40.75126647949219,
+          "max": 48.351383209228516,
+          "n": 12
+        }
+      }
+    },
+    "v6-disjoint": {
+      "uniform": {
+        "netindex": {
+          "median": 78.56740951538086,
+          "min": 78.01752090454102,
+          "max": 79.15239334106445,
+          "n": 12
+        },
+        "netindex-direct": {
+          "median": 82.29045867919922,
+          "min": 81.48384094238281,
+          "max": 84.70001220703125,
+          "n": 12
+        },
+        "ip_network_table": {
+          "median": 112.07895278930664,
+          "min": 111.64693832397461,
+          "max": 112.49074935913086,
+          "n": 12
+        }
+      },
+      "hot": {
+        "netindex": {
+          "median": 47.449541091918945,
+          "min": 47.272491455078125,
+          "max": 48.146724700927734,
+          "n": 12
+        },
+        "netindex-direct": {
+          "median": 52.23278999328613,
+          "min": 51.22518539428711,
+          "max": 54.35905456542969,
+          "n": 12
+        },
+        "ip_network_table": {
+          "median": 109.46636199951172,
+          "min": 108.96120071411133,
+          "max": 109.87930297851562,
+          "n": 12
+        }
+      }
+    },
+    "v6-overlap": {
+      "uniform": {
+        "netindex": {
+          "median": 682.2518825531006,
+          "min": 655.7934761047363,
+          "max": 897.9473114013672,
+          "n": 12
+        },
+        "netindex-direct": {
+          "median": 286.4165782928467,
+          "min": 277.950382232666,
+          "max": 295.99876403808594,
+          "n": 12
+        },
+        "ip_network_table": {
+          "median": 118.0778980255127,
+          "min": 116.88966751098633,
+          "max": 122.3287582397461,
+          "n": 12
+        }
+      },
+      "hot": {
+        "netindex": {
+          "median": 445.8904266357422,
+          "min": 433.40539932250977,
+          "max": 619.1424369812012,
+          "n": 12
+        },
+        "netindex-direct": {
+          "median": 198.40121269226074,
+          "min": 192.06466674804688,
+          "max": 251.96599960327148,
+          "n": 12
+        },
+        "ip_network_table": {
+          "median": 116.4236068725586,
+          "min": 115.3447151184082,
+          "max": 123.11248779296875,
+          "n": 12
+        }
+      }
+    }
+  }
+}

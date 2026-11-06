@@ -1,11 +1,17 @@
 # Comparisons under equivalent query contracts
 
-This standalone Linux study compares netindex 2.1.0 with
+This standalone study compares netindex with
 [ip_network_table 0.2.0](https://docs.rs/ip_network_table/0.2.0/ip_network_table/struct.IpNetworkTable.html)
 and [Roaring 0.12.0](https://docs.rs/roaring/0.12.0/roaring/bitmap/struct.RoaringBitmap.html).
 These dependencies belong to the benchmark, not the library. The trie provides
 longest-prefix lookup; Roaring provides integer membership and optional run
 compression through `optimize()`.
+
+The historical P0 receipt uses the harness at `ab28f32`; use that revision to
+verify its original 1,032-measurement matrix. The current harness adds
+`netindex-direct` to the prefix comparison. On Windows, pin externally (see
+the [native City process runner](../native_city/README.md)); Linux still pins
+internally.
 
 ```sh
 cargo +1.95.0 fmt --manifest-path benches/competitors/Cargo.toml -- --check
