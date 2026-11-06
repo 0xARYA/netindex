@@ -518,3 +518,5 @@ Both reports link exact inputs, process samples and reproduction.
 [P3 decisions and measurements](PERF_TASKS.md#2026-11-06-p3-03-search-only-membership)
 also cover the shipped search-only membership paths, the decision to keep
 scalar packed search on ARM64, and City storage and cache profiling.
+The [deployment replay](benches/native_city/P3_RESULTS.md#deployment-qualification)
+adds production-session queries and verified cold City startup and reload.

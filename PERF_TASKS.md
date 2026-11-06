@@ -161,6 +161,9 @@ not complete the broader experiments below.
   the existing SIMD feature if native ARM comparisons justify adoption.
 - [x] **P3-05 Remaining storage cost.** Profile the remaining City bytes and
   cache misses after consumer qualification before proposing a new layout.
+- [x] **P3-06 Deployment qualification.** Replay production collector sessions
+  against native MMDB and both netindex layouts. Verify cold City startup and
+  reload with isolated files on the deployment host and record aggregate results.
 
 ## Acceptance
 
@@ -1364,3 +1367,15 @@ their timings varied too much to rank startup and do not control the host
 or device cache. Prioritize deployment-host trace and validation measurements
 before adding another encoding.
 [Full measurements and limitations](benches/native_city/P3_RESULTS.md#storage-and-lookup-cache-profile).
+
+### 2026-11-06: P3-06 deployment qualification
+
+Replayed 3,278 observed production-session queries on the live collector host
+using isolated City artifacts. Both converted layouts matched native MMDB on
+all trace queries and another 8,118 boundary and alias checks. Median verified
+cold startup was 5.53 s native, 7.57 s shared, and 7.86 s bitpacked; median
+cold-replacement reload was 5.43 s, 7.53 s, and 7.76 s. Median warm-file trace
+p95 was 2.38, 2.06, and 1.93 microseconds, respectively. Retain the existing
+formats and prioritize validation profiling if rollout startup matters.
+These measurements cover the City adapter, not a full service restart.
+[Deployment measurements and samples](benches/native_city/P3_RESULTS.md#deployment-qualification).

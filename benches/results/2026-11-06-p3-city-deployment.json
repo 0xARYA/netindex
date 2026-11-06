@@ -1,0 +1,71 @@
+{
+  "cpu": 3,
+  "executable_sha256": "6cbd83630e4551d34d586510f472befcb68718839d9b781e8318321299f2cb84",
+  "input_sha256": {
+    "native": "d6ff9368ab19a13b096fd6392f752aa6c0890f2c92752d09253fab9e50501e46",
+    "shared": "7367b75c4a51b0bdfa1c979205c9929da53a1700edc5d2aa2e1689429d537aca",
+    "bitpacked": "7939bfd9c680a9d6ef034129f2cad0b32580502e6ac9c43a8c69ad647281d980"
+  },
+  "parity": {
+    "shared": {
+      "mismatches": 0,
+      "phase": "parity",
+      "queries": 11396
+    },
+    "bitpacked": {
+      "mismatches": 0,
+      "phase": "parity",
+      "queries": 11396
+    }
+  },
+  "trace": {
+    "queries": 3278,
+    "distinct": 1101,
+    "ipv4": 2158,
+    "source": "production sessions with persisted IP-intel evidence and an observed socket peer; latest 10000 within 7 days, chronological order",
+    "utc_dates": [
+      "2026-11-04",
+      "2026-11-06"
+    ]
+  },
+  "host": [
+    "6.8.0-147-generic",
+    "CPU(s):                                  4",
+    "Model name:                              Intel(R) Xeon(R) Gold 5315Y CPU @ 3.20GHz",
+    "Hypervisor vendor:                       KVM",
+    "ext4"
+  ],
+  "netindex_baseline": "613f37c",
+  "consumer_revision": "658d2339308cbcf20e5860daa08fc5f0e2409699",
+  "date": "2026-11-06",
+  "method": "CPU pinned, nice +10; three fresh processes per condition. Cold Linux file pages verified; reload old warm plus a separate byte-identical cold replacement.",
+  "runs": [
+    {"trial": 0, "case": "native", "mode": "cold", "cache": {"resident": 0, "total": 12183}, "replacement_cache": null, "rows": [{"mode": "native", "open_ms": 5533.573691, "phase": "opened"}, {"hits": 3278, "p50_ns": 1230, "p95_ns": 2467, "p99_ns": 3102, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 70016, "major_faults": 0, "minor_faults": 19596},
+    {"trial": 0, "case": "shared", "mode": "cold", "cache": {"resident": 0, "total": 15226}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7424.648196, "phase": "opened"}, {"hits": 3278, "p50_ns": 848, "p95_ns": 2067, "p99_ns": 2568, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 68116, "major_faults": 2, "minor_faults": 2369},
+    {"trial": 0, "case": "bitpacked", "mode": "cold", "cache": {"resident": 0, "total": 13823}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7856.543003, "phase": "opened"}, {"hits": 3278, "p50_ns": 849, "p95_ns": 2036, "p99_ns": 2670, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 62612, "major_faults": 2, "minor_faults": 2284},
+    {"trial": 0, "case": "native", "mode": "warm", "cache": {"resident": 12183, "total": 12183}, "replacement_cache": null, "rows": [{"mode": "native", "open_ms": 5359.891223, "phase": "opened"}, {"hits": 3278, "p50_ns": 1223, "p95_ns": 2452, "p99_ns": 3029, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 69888, "major_faults": 0, "minor_faults": 19597},
+    {"trial": 0, "case": "shared", "mode": "warm", "cache": {"resident": 15226, "total": 15226}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7437.169521000001, "phase": "opened"}, {"hits": 3278, "p50_ns": 855, "p95_ns": 2083, "p99_ns": 2596, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 68244, "major_faults": 0, "minor_faults": 2372},
+    {"trial": 0, "case": "bitpacked", "mode": "warm", "cache": {"resident": 13823, "total": 13823}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7714.732849, "phase": "opened"}, {"hits": 3278, "p50_ns": 845, "p95_ns": 1895, "p99_ns": 2303, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 62616, "major_faults": 0, "minor_faults": 2285},
+    {"trial": 0, "case": "native", "mode": "reload", "cache": {"resident": 12183, "total": 12183}, "replacement_cache": {"resident": 0, "total": 12183}, "rows": [{"mode": "reload-native", "open_ms": 5397.356656, "phase": "opened"}, {"phase": "reload", "reload_ms": 5429.200788}], "peak_rss_kib": 123128, "major_faults": 0, "minor_faults": 37088},
+    {"trial": 0, "case": "shared", "mode": "reload", "cache": {"resident": 15226, "total": 15226}, "replacement_cache": {"resident": 0, "total": 15226}, "rows": [{"mode": "reload-converted", "open_ms": 7397.178396, "phase": "opened"}, {"phase": "reload", "reload_ms": 7526.484346}], "peak_rss_kib": 129684, "major_faults": 2, "minor_faults": 3452},
+    {"trial": 0, "case": "bitpacked", "mode": "reload", "cache": {"resident": 13823, "total": 13823}, "replacement_cache": {"resident": 0, "total": 13823}, "rows": [{"mode": "reload-converted", "open_ms": 7741.158832, "phase": "opened"}, {"phase": "reload", "reload_ms": 7740.03734}], "peak_rss_kib": 118296, "major_faults": 2, "minor_faults": 3277},
+    {"trial": 1, "case": "shared", "mode": "reload", "cache": {"resident": 15226, "total": 15226}, "replacement_cache": {"resident": 0, "total": 15226}, "rows": [{"mode": "reload-converted", "open_ms": 7707.136871000001, "phase": "opened"}, {"phase": "reload", "reload_ms": 7539.5002380000005}], "peak_rss_kib": 129556, "major_faults": 2, "minor_faults": 3450},
+    {"trial": 1, "case": "bitpacked", "mode": "reload", "cache": {"resident": 13823, "total": 13823}, "replacement_cache": {"resident": 0, "total": 13823}, "rows": [{"mode": "reload-converted", "open_ms": 7699.654352, "phase": "opened"}, {"phase": "reload", "reload_ms": 7759.916658}], "peak_rss_kib": 118424, "major_faults": 2, "minor_faults": 3278},
+    {"trial": 1, "case": "native", "mode": "reload", "cache": {"resident": 12183, "total": 12183}, "replacement_cache": {"resident": 0, "total": 12183}, "rows": [{"mode": "reload-native", "open_ms": 5568.022085, "phase": "opened"}, {"phase": "reload", "reload_ms": 5396.37241}], "peak_rss_kib": 123256, "major_faults": 0, "minor_faults": 37088},
+    {"trial": 1, "case": "shared", "mode": "warm", "cache": {"resident": 15226, "total": 15226}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7399.9694500000005, "phase": "opened"}, {"hits": 3278, "p50_ns": 842, "p95_ns": 2022, "p99_ns": 2551, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 68244, "major_faults": 0, "minor_faults": 2372},
+    {"trial": 1, "case": "bitpacked", "mode": "warm", "cache": {"resident": 13823, "total": 13823}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7779.369686, "phase": "opened"}, {"hits": 3278, "p50_ns": 850, "p95_ns": 1926, "p99_ns": 2274, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 62484, "major_faults": 0, "minor_faults": 2284},
+    {"trial": 1, "case": "native", "mode": "warm", "cache": {"resident": 12183, "total": 12183}, "replacement_cache": null, "rows": [{"mode": "native", "open_ms": 5384.357886, "phase": "opened"}, {"hits": 3278, "p50_ns": 1220, "p95_ns": 2365, "p99_ns": 2969, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 69884, "major_faults": 0, "minor_faults": 19595},
+    {"trial": 1, "case": "shared", "mode": "cold", "cache": {"resident": 0, "total": 15226}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7571.335169, "phase": "opened"}, {"hits": 3278, "p50_ns": 845, "p95_ns": 2018, "p99_ns": 2444, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 68248, "major_faults": 2, "minor_faults": 2372},
+    {"trial": 1, "case": "bitpacked", "mode": "cold", "cache": {"resident": 0, "total": 13823}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7643.612348, "phase": "opened"}, {"hits": 3278, "p50_ns": 847, "p95_ns": 1940, "p99_ns": 2444, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 62484, "major_faults": 2, "minor_faults": 2284},
+    {"trial": 1, "case": "native", "mode": "cold", "cache": {"resident": 0, "total": 12183}, "replacement_cache": null, "rows": [{"mode": "native", "open_ms": 5560.060405, "phase": "opened"}, {"hits": 3278, "p50_ns": 1227, "p95_ns": 2859, "p99_ns": 3626, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 69884, "major_faults": 0, "minor_faults": 19595},
+    {"trial": 2, "case": "bitpacked", "mode": "cold", "cache": {"resident": 0, "total": 13823}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7930.972606, "phase": "opened"}, {"hits": 3278, "p50_ns": 841, "p95_ns": 1920, "p99_ns": 2340, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 62612, "major_faults": 2, "minor_faults": 2283},
+    {"trial": 2, "case": "native", "mode": "cold", "cache": {"resident": 0, "total": 12183}, "replacement_cache": null, "rows": [{"mode": "native", "open_ms": 5392.1173, "phase": "opened"}, {"hits": 3278, "p50_ns": 1225, "p95_ns": 2408, "p99_ns": 3085, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 69756, "major_faults": 0, "minor_faults": 19595},
+    {"trial": 2, "case": "shared", "mode": "cold", "cache": {"resident": 0, "total": 15226}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7629.911916, "phase": "opened"}, {"hits": 3278, "p50_ns": 844, "p95_ns": 1988, "p99_ns": 2462, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 68248, "major_faults": 2, "minor_faults": 2372},
+    {"trial": 2, "case": "bitpacked", "mode": "warm", "cache": {"resident": 13823, "total": 13823}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7660.648464999999, "phase": "opened"}, {"hits": 3278, "p50_ns": 844, "p95_ns": 1963, "p99_ns": 2426, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 62612, "major_faults": 0, "minor_faults": 2283},
+    {"trial": 2, "case": "native", "mode": "warm", "cache": {"resident": 12183, "total": 12183}, "replacement_cache": null, "rows": [{"mode": "native", "open_ms": 5382.498363, "phase": "opened"}, {"hits": 3278, "p50_ns": 1221, "p95_ns": 2384, "p99_ns": 3023, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 69760, "major_faults": 0, "minor_faults": 19594},
+    {"trial": 2, "case": "shared", "mode": "warm", "cache": {"resident": 15226, "total": 15226}, "replacement_cache": null, "rows": [{"mode": "converted", "open_ms": 7623.836849, "phase": "opened"}, {"hits": 3278, "p50_ns": 845, "p95_ns": 2056, "p99_ns": 2465, "phase": "lookups", "queries": 3278}], "peak_rss_kib": 68244, "major_faults": 0, "minor_faults": 2371},
+    {"trial": 2, "case": "bitpacked", "mode": "reload", "cache": {"resident": 13823, "total": 13823}, "replacement_cache": {"resident": 0, "total": 13823}, "rows": [{"mode": "reload-converted", "open_ms": 7795.486456, "phase": "opened"}, {"phase": "reload", "reload_ms": 7893.129064}], "peak_rss_kib": 118424, "major_faults": 2, "minor_faults": 3276},
+    {"trial": 2, "case": "native", "mode": "reload", "cache": {"resident": 12183, "total": 12183}, "replacement_cache": {"resident": 0, "total": 12183}, "rows": [{"mode": "reload-native", "open_ms": 5415.715951, "phase": "opened"}, {"phase": "reload", "reload_ms": 5527.085633000001}], "peak_rss_kib": 123124, "major_faults": 0, "minor_faults": 37087},
+    {"trial": 2, "case": "shared", "mode": "reload", "cache": {"resident": 15226, "total": 15226}, "replacement_cache": {"resident": 0, "total": 15226}, "rows": [{"mode": "reload-converted", "open_ms": 7555.719182, "phase": "opened"}, {"phase": "reload", "reload_ms": 7474.29009}], "peak_rss_kib": 129684, "major_faults": 2, "minor_faults": 3452}
+  ]
+}

@@ -94,3 +94,22 @@ outside this check. Warm trials read the entire input before launching.
 Lookup-only counters start after open, validation and warm-up, and stop before
 sorting timings. The ordinary adapter remains ungated. Use `layout-native FILE`
 and `layout-converted FILE` for the byte breakdown alone.
+
+On a Linux deployment host, put the adapter, three immutable benchmark
+artifacts, and an approved one-IP-per-line production trace in a private
+directory. Run from that directory with a CPU available to the process:
+
+```sh
+umask 077
+sync CITY.mmdb CITY_FORMAT5.nidx CITY_FORMAT6.nidx
+python3 /path/to/deployment.py ./native-city-audit CITY.mmdb \
+  CITY_FORMAT5.nidx CITY_FORMAT6.nidx trace.txt NEW_RECEIPT.json --cpu AVAILABLE_CPU
+```
+
+`deployment.py` uses the neighboring `profile.py` and GNU `time`. It checks
+normalized parity, then measures one fresh process per trial. It verifies
+each file's Linux page residency without dropping system-wide caches. For
+reload it primes the old file and verifies that a distinct, byte-identical
+replacement has zero resident pages; the adapter retains both readers.
+Keep the trace private and delete it from the benchmark directory when done.
+The receipt contains aggregate timings and counts only.

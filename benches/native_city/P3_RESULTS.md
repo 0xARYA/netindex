@@ -96,3 +96,43 @@ decode work for storage. If the storage target justifies another prototype,
 start with a schema-neutral ordinal column and require an end-to-end win.
 
 [Linux reproduction](README.md) · [Raw profile and provenance](../results/2026-11-06-p3-city-profile.json)
+
+## Deployment qualification
+
+On November 6, 2026, the standalone Byway City adapter ran on the production
+collector host (KVM, Xeon Gold 5315Y, Ubuntu 24.04, ext4), pinned to virtual
+CPU 3 at reduced scheduling priority. It used the same executable and three
+immutable City artifacts as the Linux profile above. It did not load these
+files into the running service.
+
+The trace contains 3,278 chronologically ordered production sessions from
+November 4–6 UTC with persisted IP-intel evidence and an observed socket
+peer. It preserves repeated addresses: 1,101 peers were distinct, and 2,158
+queries were IPv4. Each layout hit on all 3,278 trace entries. Both converted
+layouts matched native MMDB on every normalized answer, including 8,118
+additional boundary and alias checks. The raw trace stayed on the host and
+was removed after the run.
+
+| Measurement | Native MMDB | Shared aliases and compact references | Also bitpacked |
+| --- | ---: | ---: | ---: |
+| Cold startup and validate, s (range) | 5.53 (5.39–5.56) | 7.57 (7.42–7.63) | 7.86 (7.64–7.93) |
+| Warm-file startup and validate, s | 5.38 | 7.44 | 7.71 |
+| Reload with cold replacement, s (range) | 5.43 (5.40–5.53) | 7.53 (7.47–7.54) | 7.76 (7.74–7.89) |
+| Peak reload RSS, MiB | 120.2 | 126.6 | 115.6 |
+| Warm-file trace p95 / p99, µs | 2.38 / 3.02 | 2.06 / 2.55 | 1.93 / 2.30 |
+
+Medians of three fresh processes per condition. Cold startup verified zero
+resident Linux file pages before opening. Reload primed the old file, retained
+its reader, and verified zero resident pages for a distinct, byte-identical
+replacement. Hypervisor and device caches were not controlled. These times
+cover the City adapter's file open and full validation, not service restart,
+the entire provider set, or a concurrent production rollout. Lookup timings
+include owned decoding and clock overhead; this all-hit trace does not
+qualify miss latency.
+
+Native MMDB opens and reloads faster. Netindex answered the observed trace
+faster at the tail, and bitpacking had the lowest reload RSS. The warm/cold
+startup gap was much smaller than the gap between formats, so profile
+validation before pursuing another storage encoding. Keep bitpacking optional.
+
+[Reproduction](README.md) · [Aggregate samples](../results/2026-11-06-p3-city-deployment.json)
