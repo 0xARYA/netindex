@@ -1,0 +1,15 @@
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":17.365424,"phase":"reader-open","round":0}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":20.591788,"phase":"reader-visit","round":0}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":64.777215,"phase":"reader-lookup","queries":131072,"round":0}
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":19.889463,"phase":"reader-open","round":1}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":27.396746999999998,"phase":"reader-visit","round":1}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":66.870935,"phase":"reader-lookup","queries":131072,"round":1}
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":16.125273999999997,"phase":"reader-open","round":2}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":17.181983000000002,"phase":"reader-visit","round":2}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":49.295223,"phase":"reader-lookup","queries":131072,"round":2}
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":16.292444,"phase":"reader-open","round":3}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":17.600696999999997,"phase":"reader-visit","round":3}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":84.193912,"phase":"reader-lookup","queries":131072,"round":3}
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":29.487083000000002,"phase":"reader-open","round":4}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":26.109239,"phase":"reader-visit","round":4}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":63.931343,"phase":"reader-lookup","queries":131072,"round":4}

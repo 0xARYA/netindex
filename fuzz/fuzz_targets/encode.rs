@@ -49,64 +49,68 @@ fuzz_target!(|input: &[u8]| {
     let mut bytes = Vec::new();
     builder.write_to(&mut bytes, b"fuzz").unwrap();
     let reader = Reader::open(bytes, Limits::default()).unwrap();
+    let mut compact = Vec::new();
+    reader.write_bitpacked_to(&mut compact).unwrap();
+    let compact = Reader::open(compact, Limits::default()).unwrap();
+    for reader in [&reader, &compact] {
+        assert_eq!(reader.len(), targets.len());
 
-    assert_eq!(reader.len(), targets.len());
+        reader
+            .visit_all(|matched| {
+                let (target, payload) = targets.get(matched.id as usize).unwrap();
 
-    reader
-        .visit_all(|matched| {
-            let (target, payload) = targets.get(matched.id as usize).unwrap();
+                assert_eq!(matched.target, *target);
+                assert_eq!(matched.payload, payload);
 
-            assert_eq!(matched.target, *target);
-            assert_eq!(matched.payload, payload);
+                Ok::<_, Error>(())
+            })
+            .unwrap();
 
-            Ok::<_, Error>(())
-        })
-        .unwrap();
+        for &(target, _) in &targets {
+            let queries: Vec<_> = match target {
+                Target::Address(address) | Target::Network { address, .. } => vec![address],
+                Target::Range { start, end } => vec![start, end],
+                Target::Asn(number) => {
+                    let mut actual = Vec::new();
+                    reader
+                        .visit_asn(number, |row| {
+                            actual.push((row.id as usize, row.target, row.payload));
+                            Ok::<_, Error>(())
+                        })
+                        .unwrap();
 
-    for &(target, _) in &targets {
-        let queries: Vec<_> = match target {
-            Target::Address(address) | Target::Network { address, .. } => vec![address],
-            Target::Range { start, end } => vec![start, end],
-            Target::Asn(number) => {
+                    let expected: Vec<_> = targets
+                        .iter()
+                        .enumerate()
+                        .filter(|(_, (target, _))| *target == Target::Asn(number))
+                        .map(|(id, (target, payload))| (id, *target, payload.as_slice()))
+                        .collect();
+
+                    assert_eq!(actual, expected);
+
+                    Vec::new()
+                }
+            };
+
+            for query in queries {
                 let mut actual = Vec::new();
                 reader
-                    .visit_asn(number, |row| {
+                    .visit_ip(query, |row| {
                         actual.push((row.id as usize, row.target, row.payload));
                         Ok::<_, Error>(())
                     })
                     .unwrap();
 
+                actual.sort_unstable_by_key(|row| row.0);
                 let expected: Vec<_> = targets
                     .iter()
                     .enumerate()
-                    .filter(|(_, (target, _))| *target == Target::Asn(number))
+                    .filter(|(_, (target, _))| contains(*target, query))
                     .map(|(id, (target, payload))| (id, *target, payload.as_slice()))
                     .collect();
 
                 assert_eq!(actual, expected);
-
-                Vec::new()
             }
-        };
-
-        for query in queries {
-            let mut actual = Vec::new();
-            reader
-                .visit_ip(query, |row| {
-                    actual.push((row.id as usize, row.target, row.payload));
-                    Ok::<_, Error>(())
-                })
-                .unwrap();
-
-            actual.sort_unstable_by_key(|row| row.0);
-            let expected: Vec<_> = targets
-                .iter()
-                .enumerate()
-                .filter(|(_, (target, _))| contains(*target, query))
-                .map(|(id, (target, payload))| (id, *target, payload.as_slice()))
-                .collect();
-
-            assert_eq!(actual, expected);
         }
     }
 });

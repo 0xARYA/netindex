@@ -1,0 +1,15 @@
+{"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":22.320614,"phase":"reader-open","round":0}
+{"checksum":258617448092,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":23.367761,"phase":"reader-visit","round":0}
+{"checksum":47129179152,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":70.757075,"phase":"reader-lookup","queries":131072,"round":0}
+{"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":19.497691,"phase":"reader-open","round":1}
+{"checksum":258617448092,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":21.680627,"phase":"reader-visit","round":1}
+{"checksum":47129179152,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":82.15987299999999,"phase":"reader-lookup","queries":131072,"round":1}
+{"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":25.54089,"phase":"reader-open","round":2}
+{"checksum":258617448092,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":30.379424,"phase":"reader-visit","round":2}
+{"checksum":47129179152,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":82.27794800000001,"phase":"reader-lookup","queries":131072,"round":2}
+{"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":22.787885,"phase":"reader-open","round":3}
+{"checksum":258617448092,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":21.728658000000003,"phase":"reader-visit","round":3}
+{"checksum":47129179152,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":91.24122299999999,"phase":"reader-lookup","queries":131072,"round":3}
+{"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":28.103333000000003,"phase":"reader-open","round":4}
+{"checksum":258617448092,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":28.74861,"phase":"reader-visit","round":4}
+{"checksum":47129179152,"input":"/root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx","ms":91.649565,"phase":"reader-lookup","queries":131072,"round":4}

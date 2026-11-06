@@ -115,6 +115,7 @@ impl Section {
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Layout {
+    pub bitpacking: bool,
     pub records: usize,
     pub metadata: usize,
     pub v4: Section,
@@ -208,6 +209,7 @@ impl Layout {
         }
 
         Ok(Self {
+            bitpacking: false,
             records,
             metadata,
             v4,
@@ -233,7 +235,9 @@ impl Layout {
             };
 
         output.write_all(MAGIC)?;
-        let version = if matches!(self.slot_encoding, Slots::Indexed { .. }) {
+        let version = if self.bitpacking {
+            6
+        } else if matches!(self.slot_encoding, Slots::Indexed { .. }) {
             4
         } else {
             VERSION
@@ -267,7 +271,7 @@ impl Layout {
         }
 
         let version = u32_at(bytes, 8)?;
-        if version != VERSION && version != 4 {
+        if version != VERSION && version != 4 && version != 6 {
             return Err(Error::Version(version));
         }
 
@@ -334,7 +338,9 @@ impl Layout {
             Slots::Spans(if flags & 4 != 0 { 8 } else { 16 })
         };
 
-        let layout = Self::with_packed(counts, metadata, payloads, limits, packed, slot_encoding)?;
+        let mut layout =
+            Self::with_packed(counts, metadata, payloads, limits, packed, slot_encoding)?;
+        layout.bitpacking = version == 6;
 
         if usize_at(bytes, 16)? != layout.records || bytes.len() != layout.bytes {
             return Err(Error::Invalid("artifact length or record count"));

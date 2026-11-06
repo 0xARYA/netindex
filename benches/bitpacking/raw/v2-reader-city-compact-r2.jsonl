@@ -1,0 +1,15 @@
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":595.468195,"phase":"reader-open","round":0}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":965.730023,"phase":"reader-visit","round":0}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":32.457781999999995,"phase":"reader-lookup","queries":131072,"round":0}
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":633.2458330000001,"phase":"reader-open","round":1}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":866.944853,"phase":"reader-visit","round":1}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":60.819143,"phase":"reader-lookup","queries":131072,"round":1}
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":668.258748,"phase":"reader-open","round":2}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":963.250675,"phase":"reader-visit","round":2}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":39.766478,"phase":"reader-lookup","queries":131072,"round":2}
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":637.012348,"phase":"reader-open","round":3}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":976.81698,"phase":"reader-visit","round":3}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":38.072784999999996,"phase":"reader-lookup","queries":131072,"round":3}
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":672.995821,"phase":"reader-open","round":4}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":961.891339,"phase":"reader-visit","round":4}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":42.195608,"phase":"reader-lookup","queries":131072,"round":4}

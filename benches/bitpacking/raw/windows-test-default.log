@@ -1,0 +1,193 @@
+   Compiling netindex v3.0.0 (C:\code\0xARYA\netindex)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.68s
+     Running unittests src\lib.rs (target\debug\deps\netindex-57ce2b9ba1e302aa.exe)
+
+running 12 tests
+test builder::tests::hash_collisions_compare_bytes_before_reusing_payloads ... ok
+test layout::tests::packed_layout_does_not_require_interval_representation_to_fit ... ok
+test packed::bitpacking::tests::every_bit_width_and_word_crossing_matches_independent_values ... ok
+test payload::tests::indexed_selection_uses_all_widths_and_preserves_wide_pool_fallback ... ok
+test payload::tests::references_roundtrip_every_width_and_tail ... ok
+test reader::tests::record_marks_reject_duplicates_word_boundaries_and_padding_ids ... ok
+test routing::tests::default_network_routes_both_boundaries_and_all_record_ids ... ok
+test routing::tests::ineligible_targets_leave_the_table_empty_and_conflicts_fail ... ok
+test routing::tests::ipv6_routes_preserve_adjacent_targets_and_leave_other_buckets_unrouted ... ok
+test search::tests::randomized_columns_match_scalar_and_detected_search_at_every_alignment ... ok
+test search::tests::scalar_and_detected_search_match_linear_unsigned_oracle ... ok
+test target::tests::decoded_targets_preserve_every_prefix_and_reject_invalid_bounds ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.91s
+
+     Running tests\bitpacking.rs (target\debug\deps\bitpacking-f96cfaad0a45fb3e.exe)
+
+running 3 tests
+test aliases_and_output_errors_survive_compaction ... ok
+test compacted_widths_tails_and_explicit_ids_preserve_every_assertion ... ok
+test independent_partial_bitpacked_fixture_checks_tail_padding_and_versions ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests\codec.rs (target\debug\deps\codec-e00830bc011c166c.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\concurrency.rs (target\debug\deps\concurrency-b8918b3e5e88ac79.exe)
+
+running 1 test
+test owned_and_borrowed_readers_support_concurrent_ip_and_asn_visitors ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\coverage.rs (target\debug\deps\coverage-12e28aebe36f96f9.exe)
+
+running 3 tests
+test coverage_matches_bucket_boundaries_and_preserves_ranges_and_full_networks ... ok
+test fixed_components_produce_conservative_coverage ... ok
+test routing_supports_empty_sets_and_the_highest_source_bit ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests\external.rs (target\debug\deps\external-ca2b3a0968ce6a8e.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\fixed_codec.rs (target\debug\deps\fixed_codec-50ae9d7fcdd79895.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\indexed_payload.rs (target\debug\deps\indexed_payload-097a71eee64a9d96.exe)
+
+running 6 tests
+test adaptive_encoding_covers_width_boundaries_and_unshared_fallback ... ok
+test compact_default_matches_fixture_and_explicit_legacy_remains_readable ... ok
+test directory_overhead_counts_toward_break_even_and_reader_byte_limit ... ok
+test independent_fixture_preserves_empty_and_shared_borrowed_values ... ok
+test rejects_invalid_version_flags_directory_and_references ... ok
+test zero_width_references_allow_one_shared_value_including_empty ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.63s
+
+     Running tests\lookup.rs (target\debug\deps\lookup-3774d87962dd2312.exe)
+
+running 1 test
+test large_packed_ipv4_sections_preserve_hits_gaps_and_extrema ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.53s
+
+     Running tests\mmap.rs (target\debug\deps\mmap-28e202a53f831f3b.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\mmdb.rs (target\debug\deps\mmdb-1aceedf1e62c03e0.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\partitioned.rs (target\debug\deps\partitioned-c693d033dfe0fdad.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\payload.rs (target\debug\deps\payload-15635f63f905ecba.exe)
+
+running 4 tests
+test fixed_lengths_cross_reference_width_and_pool_boundaries_without_losing_payloads ... ok
+test independent_fixed_reference_fixture_rejects_bad_ids_and_descriptors ... ok
+test independent_uniform_kind_fixture_preserves_networks_and_rejects_ambiguous_flags ... ok
+test mixed_kind_blocks_and_unordered_ids_keep_their_original_targets ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\reader_set.rs (target\debug\deps\reader_set-42a4b740efd8474a.exe)
+
+running 5 tests
+test empty_sets_limits_and_visitor_errors_are_explicit ... ok
+test fine_routing_preserves_cross_bucket_ranges_and_address_extremes ... ok
+test replacement_keeps_old_snapshots_borrowed_payloads_and_unchanged_readers ... ok
+test replacement_updates_family_coverage_and_exact_asn_memberships ... ok
+test routed_visits_match_independent_ranges_and_keep_every_source_and_id ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests\replacement.rs (target\debug\deps\replacement-50dd98299654c10f.exe)
+
+running 1 test
+test publication_preserves_in_flight_results_and_rejects_invalid_replacements ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests\roundtrip.rs (target\debug\deps\roundtrip-92cca06ae2163132.exe)
+
+running 16 tests
+test accepted_mutations_still_match_their_decoded_targets ... ok
+test byte_limits_writer_failures_and_visitor_errors_are_observed ... ok
+test convenience_build_and_lookup_preserve_borrowed_payloads_and_every_match ... ok
+test empty_components_and_rejected_pushes_do_not_create_phantom_records ... ok
+test fixed_ipv6_and_mixed_fixtures_preserve_family_and_overlap_semantics ... ok
+test identical_and_empty_payloads_share_bytes_without_merging_assertions ... ok
+test independent_consecutive_id_fixture_preserves_targets_and_rejects_invalid_bases ... ok
+test independently_encoded_interval_fixture_preserves_targets_and_rejects_other_versions ... ok
+test independently_encoded_packed_fixture_preserves_ids_and_gaps ... ok
+test interval_search_matches_a_linear_oracle_for_unsorted_generated_ranges ... ok
+test overlaps_duplicates_ranges_and_asns_preserve_original_targets_and_payloads ... ok
+test packed_blocks_preserve_targets_at_fences_gaps_and_address_extremes ... ok
+test packed_corruption_truncation_and_accepted_mutations_remain_safe ... ok
+test packed_wide_deltas_and_partial_blocks_match_linear_queries ... ok
+test repeated_payload_runs_do_not_allow_unvalidated_spans ... ok
+test truncated_corrupt_and_unsupported_files_are_rejected_before_lookup ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests\routing.rs (target\debug\deps\routing-aba6420dff8355bc.exe)
+
+running 2 tests
+test optional_routes_preserve_original_ids_targets_and_borrowed_payloads ... ok
+test overlapping_sections_keep_every_assertion_when_routes_are_requested ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\shared_aliases.rs (target\debug\deps\shared_aliases-e4607231c7eda7d2.exe)
+
+running 4 tests
+test independent_format5_fixture_maps_only_its_declared_window ... ok
+test malformed_envelopes_and_logical_limits_are_rejected ... ok
+test native_intersections_and_incompatible_ipv4_sources_fail_before_writing ... ok
+test shared_and_materialized_outputs_match_including_duplicates_overlaps_and_order ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\strided.rs (target\debug\deps\strided-996dee3a40aec392.exe)
+
+running 2 tests
+test independent_stride_fixture_preserves_ids_and_rejects_invalid_flags_and_overflow ... ok
+test interleaved_families_keep_every_id_across_full_and_partial_blocks ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\values.rs (target\debug\deps\values-e3cb6a8deaeefd90.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests netindex
+
+running 4 tests
+test src\../README.md - (line 137) ... ignored
+test src\../README.md - (line 304) ... ignored
+test src\../README.md - (line 52) ... ok
+test src\../README.md - (line 91) ... ok
+
+test result: ok. 2 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+all doctests ran in 1.13s; merged doctests compilation took 0.91s

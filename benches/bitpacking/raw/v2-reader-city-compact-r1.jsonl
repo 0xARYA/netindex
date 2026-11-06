@@ -1,0 +1,15 @@
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":646.318946,"phase":"reader-open","round":0}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":821.6953689999999,"phase":"reader-visit","round":0}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":42.628655,"phase":"reader-lookup","queries":131072,"round":0}
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":608.589374,"phase":"reader-open","round":1}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":804.6489570000001,"phase":"reader-visit","round":1}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":37.906662,"phase":"reader-lookup","queries":131072,"round":1}
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":560.445173,"phase":"reader-open","round":2}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":780.383618,"phase":"reader-visit","round":2}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":33.709929,"phase":"reader-lookup","queries":131072,"round":2}
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":521.089017,"phase":"reader-open","round":3}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":739.5756650000001,"phase":"reader-visit","round":3}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":32.165073,"phase":"reader-lookup","queries":131072,"round":3}
+{"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":710.640759,"phase":"reader-open","round":4}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":993.384794,"phase":"reader-visit","round":4}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-bitpacking/outputs/city-v2.nidx","ms":65.519199,"phase":"reader-lookup","queries":131072,"round":4}

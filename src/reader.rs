@@ -94,6 +94,85 @@ impl<B: AsRef<[u8]>> Reader<B> {
         )
     }
 
+    /// Write opt-in format-6 bitpacked columns when they reduce the file size.
+    ///
+    /// Preserves IDs, original targets, metadata, payloads and shared aliases.
+    /// Existing builders keep their ordinary output policy. Upgrade readers before
+    /// deploying this output: earlier readers reject format 6, including inside
+    /// format-5 alias envelopes. If no space is saved, copies the original bytes.
+    /// Uses fixed block buffers and creates no threads. Output failure can leave
+    /// partial bytes; stage the result before publishing.
+    ///
+    /// # Errors
+    /// Fails on output I/O or invalid backing bytes. Keep the backing immutable.
+    pub fn write_bitpacked_to(&self, output: impl Write) -> Result<usize, Error> {
+        let bytes = self.bytes.as_ref();
+        let mut lengths = [self.layout.v4.length, self.layout.v6.length];
+        for (index, section) in [self.layout.v4, self.layout.v6].into_iter().enumerate() {
+            if section.encoding == Encoding::Packed {
+                *lengths
+                    .get_mut(index)
+                    .ok_or(Error::Invalid("bitpacking section"))? = packed::compacted_size(
+                    slice(bytes, section.offset, section.length)?,
+                    section.count,
+                )?;
+            }
+        }
+        let length = bytes
+            .len()
+            .checked_sub(self.layout.v4.length)
+            .and_then(|v| v.checked_sub(self.layout.v6.length))
+            .and_then(|v| v.checked_add(*lengths.first()?))
+            .and_then(|v| v.checked_add(*lengths.get(1)?))
+            .ok_or(Error::Invalid("bitpacking length"))?;
+        let mut output = std::io::BufWriter::new(output);
+        if length >= bytes.len() {
+            output.write_all(bytes)?;
+            output.flush()?;
+            return Ok(bytes.len());
+        }
+        let base = self.layout.v4.offset - self.layout.metadata - crate::layout::HEADER;
+        output.write_all(slice(bytes, 0, base)?)?;
+        let mut header = [0u8; crate::layout::HEADER];
+        header.copy_from_slice(slice(bytes, base, crate::layout::HEADER)?);
+        header
+            .get_mut(8..12)
+            .ok_or(Error::Invalid("bitpacking header"))?
+            .copy_from_slice(&6u32.to_le_bytes());
+        for (index, section) in [self.layout.v4, self.layout.v6].into_iter().enumerate() {
+            if section.encoding == Encoding::Packed {
+                let length = lengths
+                    .get(index)
+                    .copied()
+                    .ok_or(Error::Invalid("bitpacking length"))?;
+                header
+                    .get_mut(64 + index * 8..72 + index * 8)
+                    .ok_or(Error::Invalid("bitpacking header"))?
+                    .copy_from_slice(&(length as u64).to_le_bytes());
+            }
+        }
+        output.write_all(&header)?;
+        output.write_all(self.metadata()?)?;
+        for section in [self.layout.v4, self.layout.v6] {
+            let data = slice(bytes, section.offset, section.length)?;
+            if section.encoding == Encoding::Packed {
+                packed::write_compacted(data, section.count, &mut output)?;
+            } else {
+                output.write_all(data)?;
+            }
+        }
+        output.write_all(slice(
+            bytes,
+            self.layout.asns.offset,
+            bytes
+                .len()
+                .checked_sub(self.layout.asns.offset)
+                .ok_or(Error::Invalid("bitpacking tail"))?,
+        )?)?;
+        output.flush()?;
+        Ok(length)
+    }
+
     /// Return conservative coverage cached during validation.
     ///
     /// Copies a 1 KiB summary without rescanning targets or decoding payloads.
@@ -321,7 +400,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
         Ok(())
     }
 
-    /// Write an opt-in format-5 artifact over this plain format-3 or format-4 index.
+    /// Write an opt-in format-5 artifact over this plain format-3, -4 or -6 index.
     ///
     /// Windows must be sorted by address and disjoint from each other and from
     /// native IPv6 assertions. The physical IPv4 section must contain networks
@@ -516,7 +595,11 @@ fn validate(
 
     for (section, ipv6) in [(layout.v4, false), (layout.v6, true)] {
         if section.encoding == Encoding::Packed {
-            packed::validate(slice(bytes, section.offset, section.length)?, section.count)?;
+            packed::validate(
+                slice(bytes, section.offset, section.length)?,
+                section.count,
+                layout.bitpacking,
+            )?;
         }
 
         let mut previous = None;

@@ -1,0 +1,15 @@
+{"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":185.850517,"phase":"reader-open","round":0}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":194.44555799999998,"phase":"reader-visit","round":0}
+{"checksum":375090013938,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":27.26485,"phase":"reader-lookup","queries":131072,"round":0}
+{"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":164.32128400000002,"phase":"reader-open","round":1}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":173.734676,"phase":"reader-visit","round":1}
+{"checksum":375090013938,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":28.341917000000002,"phase":"reader-lookup","queries":131072,"round":1}
+{"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":122.807605,"phase":"reader-open","round":2}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":221.704374,"phase":"reader-visit","round":2}
+{"checksum":375090013938,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":27.857770000000002,"phase":"reader-lookup","queries":131072,"round":2}
+{"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":156.822082,"phase":"reader-open","round":3}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":195.199767,"phase":"reader-visit","round":3}
+{"checksum":375090013938,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":24.353669,"phase":"reader-lookup","queries":131072,"round":3}
+{"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":150.07644200000001,"phase":"reader-open","round":4}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":203.534985,"phase":"reader-visit","round":4}
+{"checksum":375090013938,"input":"/root/.cache/netindex-disk-cache/canonical.nidx","ms":28.401109,"phase":"reader-lookup","queries":131072,"round":4}

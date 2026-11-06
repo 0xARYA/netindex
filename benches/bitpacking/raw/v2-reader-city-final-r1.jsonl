@@ -1,0 +1,15 @@
+{"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":457.915269,"phase":"reader-open","round":0}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":782.4648589999999,"phase":"reader-visit","round":0}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":52.233193,"phase":"reader-lookup","queries":131072,"round":0}
+{"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":451.240882,"phase":"reader-open","round":1}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":721.748701,"phase":"reader-visit","round":1}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":47.433441,"phase":"reader-lookup","queries":131072,"round":1}
+{"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":455.38401899999997,"phase":"reader-open","round":2}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":736.1891109999999,"phase":"reader-visit","round":2}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":40.250093,"phase":"reader-lookup","queries":131072,"round":2}
+{"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":474.519457,"phase":"reader-open","round":3}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":750.1797310000001,"phase":"reader-visit","round":3}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":36.012994,"phase":"reader-lookup","queries":131072,"round":3}
+{"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":468.969534,"phase":"reader-open","round":4}
+{"checksum":205148322336545,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":688.542937,"phase":"reader-visit","round":4}
+{"checksum":1327361452864,"input":"/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx","ms":36.33304,"phase":"reader-lookup","queries":131072,"round":4}

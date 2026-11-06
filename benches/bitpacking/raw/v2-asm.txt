@@ -1,0 +1,534 @@
+netindex_bitpacking_study::Column::direct>:
+   2bef0:	55                   	push   %rbp
+   2bef1:	41 57                	push   %r15
+   2bef3:	41 56                	push   %r14
+   2bef5:	41 55                	push   %r13
+   2bef7:	41 54                	push   %r12
+   2bef9:	53                   	push   %rbx
+   2befa:	50                   	push   %rax
+   2befb:	4c 8b 57 10          	mov    0x10(%rdi),%r10
+   2beff:	4d 85 d2             	test   %r10,%r10
+   2bf02:	0f 84 54 01 00 00    	je     2c05c <netindex_bitpacking_study::Column::direct+0x16c>
+   2bf08:	44 8b 9f 80 00 00 00 	mov    0x80(%rdi),%r11d
+   2bf0f:	44 89 d9             	mov    %r11d,%ecx
+   2bf12:	f6 d9                	neg    %cl
+   2bf14:	48 c7 c3 ff ff ff ff 	mov    $0xffffffffffffffff,%rbx
+   2bf1b:	48 d3 eb             	shr    %cl,%rbx
+   2bf1e:	45 31 ff             	xor    %r15d,%r15d
+   2bf21:	f6 c1 40             	test   $0x40,%cl
+   2bf24:	4c 0f 44 fb          	cmove  %rbx,%r15
+   2bf28:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
+   2bf2f:	48 0f 44 d8          	cmove  %rax,%rbx
+   2bf33:	4d 85 db             	test   %r11,%r11
+   2bf36:	0f 84 24 01 00 00    	je     2c060 <netindex_bitpacking_study::Column::direct+0x170>
+   2bf3c:	4c 8b 77 38          	mov    0x38(%rdi),%r14
+   2bf40:	4c 8b 47 40          	mov    0x40(%rdi),%r8
+   2bf44:	31 c0                	xor    %eax,%eax
+   2bf46:	41 83 fb 3a          	cmp    $0x3a,%r11d
+   2bf4a:	72 13                	jb     2bf5f <netindex_bitpacking_study::Column::direct+0x6f>
+   2bf4c:	eb 71                	jmp    2bfbf <netindex_bitpacking_study::Column::direct+0xcf>
+   2bf4e:	66 90                	xchg   %ax,%ax
+   2bf50:	49 ff c7             	inc    %r15
+   2bf53:	4c 89 f8             	mov    %r15,%rax
+   2bf56:	4c 39 d0             	cmp    %r10,%rax
+   2bf59:	0f 83 25 01 00 00    	jae    2c084 <netindex_bitpacking_study::Column::direct+0x194>
+   2bf5f:	4d 89 d7             	mov    %r10,%r15
+   2bf62:	49 29 c7             	sub    %rax,%r15
+   2bf65:	49 d1 ef             	shr    $1,%r15
+   2bf68:	49 01 c7             	add    %rax,%r15
+   2bf6b:	4c 89 f9             	mov    %r15,%rcx
+   2bf6e:	49 0f af cb          	imul   %r11,%rcx
+   2bf72:	48 89 cf             	mov    %rcx,%rdi
+   2bf75:	48 c1 ef 03          	shr    $0x3,%rdi
+   2bf79:	4c 8d 4f 08          	lea    0x8(%rdi),%r9
+   2bf7d:	4d 39 c1             	cmp    %r8,%r9
+   2bf80:	0f 87 0d 01 00 00    	ja     2c093 <netindex_bitpacking_study::Column::direct+0x1a3>
+   2bf86:	49 8b 3c 3e          	mov    (%r14,%rdi,1),%rdi
+   2bf8a:	80 e1 07             	and    $0x7,%cl
+   2bf8d:	48 d3 ef             	shr    %cl,%rdi
+   2bf90:	48 21 df             	and    %rbx,%rdi
+   2bf93:	48 39 fe             	cmp    %rdi,%rsi
+   2bf96:	48 89 d1             	mov    %rdx,%rcx
+   2bf99:	48 83 d9 00          	sbb    $0x0,%rcx
+   2bf9d:	73 b1                	jae    2bf50 <netindex_bitpacking_study::Column::direct+0x60>
+   2bf9f:	4d 89 fa             	mov    %r15,%r10
+   2bfa2:	4c 39 d0             	cmp    %r10,%rax
+   2bfa5:	72 b8                	jb     2bf5f <netindex_bitpacking_study::Column::direct+0x6f>
+   2bfa7:	e9 d8 00 00 00       	jmp    2c084 <netindex_bitpacking_study::Column::direct+0x194>
+   2bfac:	0f 1f 40 00          	nopl   0x0(%rax)
+   2bfb0:	49 ff c5             	inc    %r13
+   2bfb3:	4c 89 e8             	mov    %r13,%rax
+   2bfb6:	4c 39 d0             	cmp    %r10,%rax
+   2bfb9:	0f 83 c5 00 00 00    	jae    2c084 <netindex_bitpacking_study::Column::direct+0x194>
+   2bfbf:	4d 89 d5             	mov    %r10,%r13
+   2bfc2:	49 29 c5             	sub    %rax,%r13
+   2bfc5:	49 d1 ed             	shr    $1,%r13
+   2bfc8:	49 01 c5             	add    %rax,%r13
+   2bfcb:	4c 89 e9             	mov    %r13,%rcx
+   2bfce:	49 0f af cb          	imul   %r11,%rcx
+   2bfd2:	48 89 cf             	mov    %rcx,%rdi
+   2bfd5:	48 c1 ef 03          	shr    $0x3,%rdi
+   2bfd9:	4c 8d 4f 10          	lea    0x10(%rdi),%r9
+   2bfdd:	4d 39 c1             	cmp    %r8,%r9
+   2bfe0:	0f 87 c0 00 00 00    	ja     2c0a6 <netindex_bitpacking_study::Column::direct+0x1b6>
+   2bfe6:	83 e1 07             	and    $0x7,%ecx
+   2bfe9:	49 8b 2c 3e          	mov    (%r14,%rdi,1),%rbp
+   2bfed:	49 8b 7c 3e 08       	mov    0x8(%r14,%rdi,1),%rdi
+   2bff2:	49 89 fc             	mov    %rdi,%r12
+   2bff5:	49 d3 ec             	shr    %cl,%r12
+   2bff8:	48 0f ad fd          	shrd   %cl,%rdi,%rbp
+   2bffc:	4a 8d 3c 19          	lea    (%rcx,%r11,1),%rdi
+   2c000:	48 81 ff 81 00 00 00 	cmp    $0x81,%rdi
+   2c007:	72 30                	jb     2c039 <netindex_bitpacking_study::Column::direct+0x149>
+   2c009:	4d 39 c1             	cmp    %r8,%r9
+   2c00c:	0f 83 a7 00 00 00    	jae    2c0b9 <netindex_bitpacking_study::Column::direct+0x1c9>
+   2c012:	43 0f b6 3c 0e       	movzbl (%r14,%r9,1),%edi
+   2c017:	f6 d9                	neg    %cl
+   2c019:	45 31 c9             	xor    %r9d,%r9d
+   2c01c:	49 0f a5 f9          	shld   %cl,%rdi,%r9
+   2c020:	48 d3 e7             	shl    %cl,%rdi
+   2c023:	f6 c1 40             	test   $0x40,%cl
+   2c026:	4c 0f 45 cf          	cmovne %rdi,%r9
+   2c02a:	b9 00 00 00 00       	mov    $0x0,%ecx
+   2c02f:	48 0f 45 f9          	cmovne %rcx,%rdi
+   2c033:	4d 09 cc             	or     %r9,%r12
+   2c036:	48 09 fd             	or     %rdi,%rbp
+   2c039:	4d 21 fc             	and    %r15,%r12
+   2c03c:	48 21 dd             	and    %rbx,%rbp
+   2c03f:	48 39 ee             	cmp    %rbp,%rsi
+   2c042:	48 89 d1             	mov    %rdx,%rcx
+   2c045:	4c 19 e1             	sbb    %r12,%rcx
+   2c048:	0f 83 62 ff ff ff    	jae    2bfb0 <netindex_bitpacking_study::Column::direct+0xc0>
+   2c04e:	4d 89 ea             	mov    %r13,%r10
+   2c051:	4c 39 d0             	cmp    %r10,%rax
+   2c054:	0f 82 65 ff ff ff    	jb     2bfbf <netindex_bitpacking_study::Column::direct+0xcf>
+   2c05a:	eb 28                	jmp    2c084 <netindex_bitpacking_study::Column::direct+0x194>
+   2c05c:	31 c0                	xor    %eax,%eax
+   2c05e:	eb 24                	jmp    2c084 <netindex_bitpacking_study::Column::direct+0x194>
+   2c060:	31 c0                	xor    %eax,%eax
+   2c062:	66 66 66 66 66 2e 0f 	data16 data16 data16 data16 cs nopw 0x0(%rax,%rax,1)
+   2c069:	1f 84 00 00 00 00 00
+   2c070:	4c 89 d1             	mov    %r10,%rcx
+   2c073:	48 29 c1             	sub    %rax,%rcx
+   2c076:	48 d1 e9             	shr    $1,%rcx
+   2c079:	48 01 c8             	add    %rcx,%rax
+   2c07c:	48 ff c0             	inc    %rax
+   2c07f:	4c 39 d0             	cmp    %r10,%rax
+   2c082:	72 ec                	jb     2c070 <netindex_bitpacking_study::Column::direct+0x180>
+   2c084:	48 83 c4 08          	add    $0x8,%rsp
+   2c088:	5b                   	pop    %rbx
+   2c089:	41 5c                	pop    %r12
+   2c08b:	41 5d                	pop    %r13
+   2c08d:	41 5e                	pop    %r14
+   2c08f:	41 5f                	pop    %r15
+   2c091:	5d                   	pop    %rbp
+   2c092:	c3                   	ret
+   2c093:	48 8d 0d 8e 4f 0f 00 	lea    0xf4f8e(%rip),%rcx        # 121028 <__frame_dummy_init_array_entry+0x378>
+   2c09a:	4c 89 ce             	mov    %r9,%rsi
+   2c09d:	4c 89 c2             	mov    %r8,%rdx
+   2c0a0:	ff 15 5a 7e 0f 00    	call   *0xf7e5a(%rip)        # 123f00 <_DYNAMIC+0x2c8>
+   2c0a6:	48 8d 0d 63 4f 0f 00 	lea    0xf4f63(%rip),%rcx        # 121010 <__frame_dummy_init_array_entry+0x360>
+   2c0ad:	4c 89 ce             	mov    %r9,%rsi
+   2c0b0:	4c 89 c2             	mov    %r8,%rdx
+   2c0b3:	ff 15 47 7e 0f 00    	call   *0xf7e47(%rip)        # 123f00 <_DYNAMIC+0x2c8>
+   2c0b9:	48 8d 15 38 4f 0f 00 	lea    0xf4f38(%rip),%rdx        # 120ff8 <__frame_dummy_init_array_entry+0x348>
+   2c0c0:	4c 89 cf             	mov    %r9,%rdi
+   2c0c3:	4c 89 c6             	mov    %r8,%rsi
+   2c0c6:	ff 15 ac 7e 0f 00    	call   *0xf7eac(%rip)        # 123f78 <_DYNAMIC+0x340>
+   2c0cc:	cc                   	int3
+   2c0cd:	cc                   	int3
+   2c0ce:	cc                   	int3
+   2c0cf:	cc                   	int3
+
+netindex::packed::bitpacking::upper_bound>:
+   51aa0:	55                   	push   %rbp
+   51aa1:	41 57                	push   %r15
+   51aa3:	41 56                	push   %r14
+   51aa5:	41 55                	push   %r13
+   51aa7:	41 54                	push   %r12
+   51aa9:	53                   	push   %rbx
+   51aaa:	48 89 f8             	mov    %rdi,%rax
+   51aad:	48 85 c9             	test   %rcx,%rcx
+   51ab0:	0f 84 d1 00 00 00    	je     51b87 <netindex::packed::bitpacking::upper_bound+0xe7>
+   51ab6:	48 89 cd             	mov    %rcx,%rbp
+   51ab9:	44 89 c1             	mov    %r8d,%ecx
+   51abc:	f6 d9                	neg    %cl
+   51abe:	48 c7 c7 ff ff ff ff 	mov    $0xffffffffffffffff,%rdi
+   51ac5:	48 d3 ef             	shr    %cl,%rdi
+   51ac8:	45 31 c9             	xor    %r9d,%r9d
+   51acb:	f6 c1 40             	test   $0x40,%cl
+   51ace:	4c 0f 44 cf          	cmove  %rdi,%r9
+   51ad2:	4c 89 4c 24 f8       	mov    %r9,-0x8(%rsp)
+   51ad7:	48 c7 c1 ff ff ff ff 	mov    $0xffffffffffffffff,%rcx
+   51ade:	48 0f 44 f9          	cmove  %rcx,%rdi
+   51ae2:	45 84 c0             	test   %r8b,%r8b
+   51ae5:	0f 84 a1 00 00 00    	je     51b8c <netindex::packed::bitpacking::upper_bound+0xec>
+   51aeb:	4c 8b 6c 24 40       	mov    0x40(%rsp),%r13
+   51af0:	41 0f b6 d8          	movzbl %r8b,%ebx
+   51af4:	49 89 e9             	mov    %rbp,%r9
+   51af7:	49 d1 e9             	shr    $1,%r9
+   51afa:	4d 89 ce             	mov    %r9,%r14
+   51afd:	4c 0f af f3          	imul   %rbx,%r14
+   51b01:	4c 89 f1             	mov    %r14,%rcx
+   51b04:	48 c1 e9 03          	shr    $0x3,%rcx
+   51b08:	41 80 f8 39          	cmp    $0x39,%r8b
+   51b0c:	0f 87 9e 00 00 00    	ja     51bb0 <netindex::packed::bitpacking::upper_bound+0x110>
+   51b12:	4c 8d 41 08          	lea    0x8(%rcx),%r8
+   51b16:	4c 8d 1d 0c cc fb ff 	lea    -0x433f4(%rip),%r11        # e729 <anon.cd426b2dc8014a531c1d9b64a4f8a2f0.1.llvm.16049920288832595771>
+   51b1d:	49 39 d0             	cmp    %rdx,%r8
+   51b20:	0f 87 9a 00 00 00    	ja     51bc0 <netindex::packed::bitpacking::upper_bound+0x120>
+   51b26:	45 31 d2             	xor    %r10d,%r10d
+   51b29:	45 31 ff             	xor    %r15d,%r15d
+   51b2c:	0f 1f 40 00          	nopl   0x0(%rax)
+   51b30:	4c 8b 04 0e          	mov    (%rsi,%rcx,1),%r8
+   51b34:	41 80 e6 07          	and    $0x7,%r14b
+   51b38:	44 89 f1             	mov    %r14d,%ecx
+   51b3b:	49 d3 e8             	shr    %cl,%r8
+   51b3e:	49 21 f8             	and    %rdi,%r8
+   51b41:	4c 39 44 24 38       	cmp    %r8,0x38(%rsp)
+   51b46:	4c 89 e9             	mov    %r13,%rcx
+   51b49:	48 83 d9 00          	sbb    $0x0,%rcx
+   51b4d:	72 11                	jb     51b60 <netindex::packed::bitpacking::upper_bound+0xc0>
+   51b4f:	49 ff c1             	inc    %r9
+   51b52:	4d 89 cf             	mov    %r9,%r15
+   51b55:	49 89 e9             	mov    %rbp,%r9
+   51b58:	4d 29 f9             	sub    %r15,%r9
+   51b5b:	77 0b                	ja     51b68 <netindex::packed::bitpacking::upper_bound+0xc8>
+   51b5d:	eb 45                	jmp    51ba4 <netindex::packed::bitpacking::upper_bound+0x104>
+   51b5f:	90                   	nop
+   51b60:	4c 89 cd             	mov    %r9,%rbp
+   51b63:	4d 29 f9             	sub    %r15,%r9
+   51b66:	76 3c                	jbe    51ba4 <netindex::packed::bitpacking::upper_bound+0x104>
+   51b68:	49 d1 e9             	shr    $1,%r9
+   51b6b:	4d 01 f9             	add    %r15,%r9
+   51b6e:	4d 89 ce             	mov    %r9,%r14
+   51b71:	4c 0f af f3          	imul   %rbx,%r14
+   51b75:	4c 89 f1             	mov    %r14,%rcx
+   51b78:	48 c1 e9 03          	shr    $0x3,%rcx
+   51b7c:	4c 8d 41 08          	lea    0x8(%rcx),%r8
+   51b80:	49 39 d0             	cmp    %rdx,%r8
+   51b83:	76 ab                	jbe    51b30 <netindex::packed::bitpacking::upper_bound+0x90>
+   51b85:	eb 39                	jmp    51bc0 <netindex::packed::bitpacking::upper_bound+0x120>
+   51b87:	45 31 ff             	xor    %r15d,%r15d
+   51b8a:	eb 18                	jmp    51ba4 <netindex::packed::bitpacking::upper_bound+0x104>
+   51b8c:	45 31 ff             	xor    %r15d,%r15d
+   51b8f:	90                   	nop
+   51b90:	48 89 e9             	mov    %rbp,%rcx
+   51b93:	4c 29 f9             	sub    %r15,%rcx
+   51b96:	48 d1 e9             	shr    $1,%rcx
+   51b99:	49 01 cf             	add    %rcx,%r15
+   51b9c:	49 ff c7             	inc    %r15
+   51b9f:	49 39 ef             	cmp    %rbp,%r15
+   51ba2:	72 ec                	jb     51b90 <netindex::packed::bitpacking::upper_bound+0xf0>
+   51ba4:	4c 89 78 08          	mov    %r15,0x8(%rax)
+   51ba8:	c7 00 07 00 00 00    	movl   $0x7,(%rax)
+   51bae:	eb 26                	jmp    51bd6 <netindex::packed::bitpacking::upper_bound+0x136>
+   51bb0:	4c 8d 41 10          	lea    0x10(%rcx),%r8
+   51bb4:	4c 8d 1d 6e cb fb ff 	lea    -0x43492(%rip),%r11        # e729 <anon.cd426b2dc8014a531c1d9b64a4f8a2f0.1.llvm.16049920288832595771>
+   51bbb:	49 39 d0             	cmp    %rdx,%r8
+   51bbe:	76 21                	jbe    51be1 <netindex::packed::bitpacking::upper_bound+0x141>
+   51bc0:	4c 89 58 08          	mov    %r11,0x8(%rax)
+   51bc4:	c7 00 01 00 00 00    	movl   $0x1,(%rax)
+   51bca:	4c 89 50 18          	mov    %r10,0x18(%rax)
+   51bce:	48 c7 40 10 11 00 00 	movq   $0x11,0x10(%rax)
+   51bd5:	00
+   51bd6:	5b                   	pop    %rbx
+   51bd7:	41 5c                	pop    %r12
+   51bd9:	41 5d                	pop    %r13
+   51bdb:	41 5e                	pop    %r14
+   51bdd:	41 5f                	pop    %r15
+   51bdf:	5d                   	pop    %rbp
+   51be0:	c3                   	ret
+   51be1:	45 31 ff             	xor    %r15d,%r15d
+   51be4:	66 66 66 2e 0f 1f 84 	data16 data16 cs nopw 0x0(%rax,%rax,1)
+   51beb:	00 00 00 00 00
+   51bf0:	41 83 e6 07          	and    $0x7,%r14d
+   51bf4:	4c 8b 5c 0e 04       	mov    0x4(%rsi,%rcx,1),%r11
+   51bf9:	44 8b 64 0e 0c       	mov    0xc(%rsi,%rcx,1),%r12d
+   51bfe:	4d 0f a4 dc 20       	shld   $0x20,%r11,%r12
+   51c03:	8b 0c 0e             	mov    (%rsi,%rcx,1),%ecx
+   51c06:	49 c1 e3 20          	shl    $0x20,%r11
+   51c0a:	49 09 cb             	or     %rcx,%r11
+   51c0d:	44 89 f1             	mov    %r14d,%ecx
+   51c10:	4d 0f ad e3          	shrd   %cl,%r12,%r11
+   51c14:	49 d3 ec             	shr    %cl,%r12
+   51c17:	41 8d 0c 1e          	lea    (%r14,%rbx,1),%ecx
+   51c1b:	81 f9 81 00 00 00    	cmp    $0x81,%ecx
+   51c21:	72 35                	jb     51c58 <netindex::packed::bitpacking::upper_bound+0x1b8>
+   51c23:	49 39 d0             	cmp    %rdx,%r8
+   51c26:	0f 83 8d 00 00 00    	jae    51cb9 <netindex::packed::bitpacking::upper_bound+0x219>
+   51c2c:	46 0f b6 04 06       	movzbl (%rsi,%r8,1),%r8d
+   51c31:	41 f6 de             	neg    %r14b
+   51c34:	45 31 d2             	xor    %r10d,%r10d
+   51c37:	44 89 f1             	mov    %r14d,%ecx
+   51c3a:	4d 0f a5 c2          	shld   %cl,%r8,%r10
+   51c3e:	49 d3 e0             	shl    %cl,%r8
+   51c41:	41 f6 c6 40          	test   $0x40,%r14b
+   51c45:	4d 0f 45 d0          	cmovne %r8,%r10
+   51c49:	b9 00 00 00 00       	mov    $0x0,%ecx
+   51c4e:	4c 0f 45 c1          	cmovne %rcx,%r8
+   51c52:	4d 09 d4             	or     %r10,%r12
+   51c55:	4d 09 c3             	or     %r8,%r11
+   51c58:	4d 89 e2             	mov    %r12,%r10
+   51c5b:	4c 23 54 24 f8       	and    -0x8(%rsp),%r10
+   51c60:	49 21 fb             	and    %rdi,%r11
+   51c63:	4c 39 5c 24 38       	cmp    %r11,0x38(%rsp)
+   51c68:	4c 89 e9             	mov    %r13,%rcx
+   51c6b:	4c 19 d1             	sbb    %r10,%rcx
+   51c6e:	72 10                	jb     51c80 <netindex::packed::bitpacking::upper_bound+0x1e0>
+   51c70:	49 ff c1             	inc    %r9
+   51c73:	4d 89 cf             	mov    %r9,%r15
+   51c76:	49 89 e9             	mov    %rbp,%r9
+   51c79:	eb 08                	jmp    51c83 <netindex::packed::bitpacking::upper_bound+0x1e3>
+   51c7b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   51c80:	4c 89 cd             	mov    %r9,%rbp
+   51c83:	4d 29 f9             	sub    %r15,%r9
+   51c86:	0f 86 18 ff ff ff    	jbe    51ba4 <netindex::packed::bitpacking::upper_bound+0x104>
+   51c8c:	49 d1 e9             	shr    $1,%r9
+   51c8f:	4d 01 f9             	add    %r15,%r9
+   51c92:	4d 89 ce             	mov    %r9,%r14
+   51c95:	4c 0f af f3          	imul   %rbx,%r14
+   51c99:	4c 89 f1             	mov    %r14,%rcx
+   51c9c:	48 c1 e9 03          	shr    $0x3,%rcx
+   51ca0:	4c 8d 41 10          	lea    0x10(%rcx),%r8
+   51ca4:	49 39 d0             	cmp    %rdx,%r8
+   51ca7:	0f 86 43 ff ff ff    	jbe    51bf0 <netindex::packed::bitpacking::upper_bound+0x150>
+   51cad:	4c 8d 1d 75 ca fb ff 	lea    -0x4358b(%rip),%r11        # e729 <anon.cd426b2dc8014a531c1d9b64a4f8a2f0.1.llvm.16049920288832595771>
+   51cb4:	e9 07 ff ff ff       	jmp    51bc0 <netindex::packed::bitpacking::upper_bound+0x120>
+   51cb9:	4c 8d 1d 58 ce fb ff 	lea    -0x431a8(%rip),%r11        # eb18 <anon.bf47790437fff37fb9289b46704d17f5.10.llvm.15015665282038348823+0x80>
+   51cc0:	e9 fb fe ff ff       	jmp    51bc0 <netindex::packed::bitpacking::upper_bound+0x120>
+   51cc5:	cc                   	int3
+   51cc6:	cc                   	int3
+   51cc7:	cc                   	int3
+   51cc8:	cc                   	int3
+   51cc9:	cc                   	int3
+   51cca:	cc                   	int3
+   51ccb:	cc                   	int3
+   51ccc:	cc                   	int3
+   51ccd:	cc                   	int3
+   51cce:	cc                   	int3
+   51ccf:	cc                   	int3
+
+bitpacking::bitpacker8x::avx2::integrate_delta>:
+   928b0:	55                   	push   %rbp
+   928b1:	48 89 e5             	mov    %rsp,%rbp
+   928b4:	41 57                	push   %r15
+   928b6:	41 56                	push   %r14
+   928b8:	41 54                	push   %r12
+   928ba:	53                   	push   %rbx
+   928bb:	48 83 e4 e0          	and    $0xffffffffffffffe0,%rsp
+   928bf:	48 81 ec c0 00 00 00 	sub    $0xc0,%rsp
+   928c6:	49 89 d7             	mov    %rdx,%r15
+   928c9:	48 89 fb             	mov    %rdi,%rbx
+   928cc:	0f 28 06             	movaps (%rsi),%xmm0
+   928cf:	0f 28 4e 10          	movaps 0x10(%rsi),%xmm1
+   928d3:	0f 29 4c 24 70       	movaps %xmm1,0x70(%rsp)
+   928d8:	0f 29 44 24 60       	movaps %xmm0,0x60(%rsp)
+   928dd:	4c 8d 64 24 40       	lea    0x40(%rsp),%r12
+   928e2:	48 8d 74 24 60       	lea    0x60(%rsp),%rsi
+   928e7:	4c 89 e7             	mov    %r12,%rdi
+   928ea:	e8 e1 71 00 00       	call   99ad0 <core::core_arch::x86::avx2::_mm256_shuffle_epi32>
+   928ef:	4c 8d 74 24 60       	lea    0x60(%rsp),%r14
+   928f4:	4c 89 f7             	mov    %r14,%rdi
+   928f7:	4c 89 e6             	mov    %r12,%rsi
+   928fa:	e8 81 71 00 00       	call   99a80 <core::core_arch::x86::avx::_mm256_permute2f128_si256>
+   928ff:	41 0f 28 07          	movaps (%r15),%xmm0
+   92903:	0f 29 44 24 30       	movaps %xmm0,0x30(%rsp)
+   92908:	41 0f 28 4f 10       	movaps 0x10(%r15),%xmm1
+   9290d:	0f 29 4c 24 20       	movaps %xmm1,0x20(%rsp)
+   92912:	0f 29 4c 24 10       	movaps %xmm1,0x10(%rsp)
+   92917:	0f 29 04 24          	movaps %xmm0,(%rsp)
+   9291b:	4c 8d 7c 24 40       	lea    0x40(%rsp),%r15
+   92920:	48 89 e6             	mov    %rsp,%rsi
+   92923:	4c 89 ff             	mov    %r15,%rdi
+   92926:	e8 85 71 00 00       	call   99ab0 <core::core_arch::x86::avx2::_mm256_slli_si256>
+   9292b:	0f 28 44 24 20       	movaps 0x20(%rsp),%xmm0
+   92930:	0f 29 44 24 10       	movaps %xmm0,0x10(%rsp)
+   92935:	0f 28 44 24 30       	movaps 0x30(%rsp),%xmm0
+   9293a:	0f 29 04 24          	movaps %xmm0,(%rsp)
+   9293e:	48 8d bc 24 80 00 00 	lea    0x80(%rsp),%rdi
+   92945:	00
+   92946:	48 89 e6             	mov    %rsp,%rsi
+   92949:	4c 89 fa             	mov    %r15,%rdx
+   9294c:	e8 4f ff ff ff       	call   928a0 <core::core_arch::x86::avx2::_mm256_add_epi32>
+   92951:	0f 28 84 24 80 00 00 	movaps 0x80(%rsp),%xmm0
+   92958:	00
+   92959:	0f 29 44 24 30       	movaps %xmm0,0x30(%rsp)
+   9295e:	0f 28 8c 24 90 00 00 	movaps 0x90(%rsp),%xmm1
+   92965:	00
+   92966:	0f 29 4c 24 20       	movaps %xmm1,0x20(%rsp)
+   9296b:	0f 29 4c 24 50       	movaps %xmm1,0x50(%rsp)
+   92970:	0f 29 44 24 40       	movaps %xmm0,0x40(%rsp)
+   92975:	4c 8d bc 24 80 00 00 	lea    0x80(%rsp),%r15
+   9297c:	00
+   9297d:	48 8d 74 24 40       	lea    0x40(%rsp),%rsi
+   92982:	4c 89 ff             	mov    %r15,%rdi
+   92985:	e8 06 71 00 00       	call   99a90 <core::core_arch::x86::avx2::_mm256_slli_si256>
+   9298a:	0f 28 44 24 20       	movaps 0x20(%rsp),%xmm0
+   9298f:	0f 29 44 24 10       	movaps %xmm0,0x10(%rsp)
+   92994:	0f 28 44 24 30       	movaps 0x30(%rsp),%xmm0
+   92999:	0f 29 04 24          	movaps %xmm0,(%rsp)
+   9299d:	4c 8d 64 24 40       	lea    0x40(%rsp),%r12
+   929a2:	48 89 e2             	mov    %rsp,%rdx
+   929a5:	4c 89 e7             	mov    %r12,%rdi
+   929a8:	4c 89 fe             	mov    %r15,%rsi
+   929ab:	e8 f0 fe ff ff       	call   928a0 <core::core_arch::x86::avx2::_mm256_add_epi32>
+   929b0:	48 89 e7             	mov    %rsp,%rdi
+   929b3:	4c 89 e6             	mov    %r12,%rsi
+   929b6:	4c 89 f2             	mov    %r14,%rdx
+   929b9:	e8 e2 fe ff ff       	call   928a0 <core::core_arch::x86::avx2::_mm256_add_epi32>
+   929be:	0f 28 04 24          	movaps (%rsp),%xmm0
+   929c2:	0f 29 44 24 30       	movaps %xmm0,0x30(%rsp)
+   929c7:	0f 28 4c 24 10       	movaps 0x10(%rsp),%xmm1
+   929cc:	0f 29 4c 24 20       	movaps %xmm1,0x20(%rsp)
+   929d1:	0f 29 4c 24 50       	movaps %xmm1,0x50(%rsp)
+   929d6:	0f 29 44 24 40       	movaps %xmm0,0x40(%rsp)
+   929db:	4c 8d 74 24 60       	lea    0x60(%rsp),%r14
+   929e0:	48 8d 74 24 40       	lea    0x40(%rsp),%rsi
+   929e5:	4c 89 f7             	mov    %r14,%rdi
+   929e8:	e8 e3 70 00 00       	call   99ad0 <core::core_arch::x86::avx2::_mm256_shuffle_epi32>
+   929ed:	4c 8d 7c 24 40       	lea    0x40(%rsp),%r15
+   929f2:	4c 89 ff             	mov    %r15,%rdi
+   929f5:	4c 89 f6             	mov    %r14,%rsi
+   929f8:	e8 63 70 00 00       	call   99a60 <core::core_arch::x86::avx::_mm256_permute2f128_si256>
+   929fd:	0f 28 44 24 20       	movaps 0x20(%rsp),%xmm0
+   92a02:	0f 29 44 24 70       	movaps %xmm0,0x70(%rsp)
+   92a07:	0f 28 44 24 30       	movaps 0x30(%rsp),%xmm0
+   92a0c:	0f 29 44 24 60       	movaps %xmm0,0x60(%rsp)
+   92a11:	48 8d 54 24 60       	lea    0x60(%rsp),%rdx
+   92a16:	48 89 df             	mov    %rbx,%rdi
+   92a19:	4c 89 fe             	mov    %r15,%rsi
+   92a1c:	e8 7f fe ff ff       	call   928a0 <core::core_arch::x86::avx2::_mm256_add_epi32>
+   92a21:	48 89 d8             	mov    %rbx,%rax
+   92a24:	48 8d 65 e0          	lea    -0x20(%rbp),%rsp
+   92a28:	5b                   	pop    %rbx
+   92a29:	41 5c                	pop    %r12
+   92a2b:	41 5e                	pop    %r14
+   92a2d:	41 5f                	pop    %r15
+   92a2f:	5d                   	pop    %rbp
+   92a30:	c3                   	ret
+   92a31:	cc                   	int3
+   92a32:	cc                   	int3
+   92a33:	cc                   	int3
+   92a34:	cc                   	int3
+   92a35:	cc                   	int3
+   92a36:	cc                   	int3
+   92a37:	cc                   	int3
+   92a38:	cc                   	int3
+   92a39:	cc                   	int3
+   92a3a:	cc                   	int3
+   92a3b:	cc                   	int3
+   92a3c:	cc                   	int3
+   92a3d:	cc                   	int3
+   92a3e:	cc                   	int3
+   92a3f:	cc                   	int3
+
+netindex_bitpacking_study::Column::vector>:
+   2c0d0:	55                   	push   %rbp
+   2c0d1:	41 57                	push   %r15
+   2c0d3:	41 56                	push   %r14
+   2c0d5:	53                   	push   %rbx
+   2c0d6:	48 81 ec 18 04 00 00 	sub    $0x418,%rsp
+   2c0dd:	89 cd                	mov    %ecx,%ebp
+   2c0df:	48 89 d3             	mov    %rdx,%rbx
+   2c0e2:	49 89 f6             	mov    %rsi,%r14
+   2c0e5:	49 89 ff             	mov    %rdi,%r15
+   2c0e8:	48 8d 7c 24 18       	lea    0x18(%rsp),%rdi
+   2c0ed:	ba 00 04 00 00       	mov    $0x400,%edx
+   2c0f2:	31 f6                	xor    %esi,%esi
+   2c0f4:	ff 15 d6 7d 0f 00    	call   *0xf7dd6(%rip)        # 123ed0 <memset@GLIBC_2.2.5>
+   2c0fa:	41 0f b6 87 84 00 00 	movzbl 0x84(%r15),%eax
+   2c101:	00
+   2c102:	88 44 24 17          	mov    %al,0x17(%rsp)
+   2c106:	85 ed                	test   %ebp,%ebp
+   2c108:	74 2d                	je     2c137 <netindex_bitpacking_study::Column::vector+0x67>
+   2c10a:	49 8b 57 68          	mov    0x68(%r15),%rdx
+   2c10e:	49 8b 4f 70          	mov    0x70(%r15),%rcx
+   2c112:	41 0f b6 87 85 00 00 	movzbl 0x85(%r15),%eax
+   2c119:	00
+   2c11a:	89 04 24             	mov    %eax,(%rsp)
+   2c11d:	48 8d 7c 24 17       	lea    0x17(%rsp),%rdi
+   2c122:	4c 8d 44 24 18       	lea    0x18(%rsp),%r8
+   2c127:	41 b9 00 01 00 00    	mov    $0x100,%r9d
+   2c12d:	31 f6                	xor    %esi,%esi
+   2c12f:	ff 15 4b 7e 0f 00    	call   *0xf7e4b(%rip)        # 123f80 <_DYNAMIC+0x348>
+   2c135:	eb 25                	jmp    2c15c <netindex_bitpacking_study::Column::vector+0x8c>
+   2c137:	49 8b 77 50          	mov    0x50(%r15),%rsi
+   2c13b:	49 8b 57 58          	mov    0x58(%r15),%rdx
+   2c13f:	45 8b 8f 80 00 00 00 	mov    0x80(%r15),%r9d
+   2c146:	48 8d 7c 24 17       	lea    0x17(%rsp),%rdi
+   2c14b:	48 8d 4c 24 18       	lea    0x18(%rsp),%rcx
+   2c150:	41 b8 00 01 00 00    	mov    $0x100,%r8d
+   2c156:	ff 15 2c 7e 0f 00    	call   *0xf7e2c(%rip)        # 123f88 <_DYNAMIC+0x350>
+   2c15c:	8b 84 24 18 02 00 00 	mov    0x218(%rsp),%eax
+   2c163:	49 39 c6             	cmp    %rax,%r14
+   2c166:	48 89 d8             	mov    %rbx,%rax
+   2c169:	48 83 d8 00          	sbb    $0x0,%rax
+   2c16d:	0f 93 c0             	setae  %al
+   2c170:	0f b6 c0             	movzbl %al,%eax
+   2c173:	c1 e0 07             	shl    $0x7,%eax
+   2c176:	48 8d 48 40          	lea    0x40(%rax),%rcx
+   2c17a:	8b 94 84 18 01 00 00 	mov    0x118(%rsp,%rax,4),%edx
+   2c181:	49 39 d6             	cmp    %rdx,%r14
+   2c184:	48 89 da             	mov    %rbx,%rdx
+   2c187:	48 83 da 00          	sbb    $0x0,%rdx
+   2c18b:	48 0f 42 c8          	cmovb  %rax,%rcx
+   2c18f:	48 8d 41 20          	lea    0x20(%rcx),%rax
+   2c193:	8b 94 8c 98 00 00 00 	mov    0x98(%rsp,%rcx,4),%edx
+   2c19a:	49 39 d6             	cmp    %rdx,%r14
+   2c19d:	48 89 da             	mov    %rbx,%rdx
+   2c1a0:	48 83 da 00          	sbb    $0x0,%rdx
+   2c1a4:	48 0f 42 c1          	cmovb  %rcx,%rax
+   2c1a8:	48 8d 48 10          	lea    0x10(%rax),%rcx
+   2c1ac:	8b 54 84 58          	mov    0x58(%rsp,%rax,4),%edx
+   2c1b0:	49 39 d6             	cmp    %rdx,%r14
+   2c1b3:	48 89 da             	mov    %rbx,%rdx
+   2c1b6:	48 83 da 00          	sbb    $0x0,%rdx
+   2c1ba:	48 0f 42 c8          	cmovb  %rax,%rcx
+   2c1be:	48 8d 41 08          	lea    0x8(%rcx),%rax
+   2c1c2:	8b 54 8c 38          	mov    0x38(%rsp,%rcx,4),%edx
+   2c1c6:	49 39 d6             	cmp    %rdx,%r14
+   2c1c9:	48 89 da             	mov    %rbx,%rdx
+   2c1cc:	48 83 da 00          	sbb    $0x0,%rdx
+   2c1d0:	48 0f 42 c1          	cmovb  %rcx,%rax
+   2c1d4:	48 8d 48 04          	lea    0x4(%rax),%rcx
+   2c1d8:	8b 54 84 28          	mov    0x28(%rsp,%rax,4),%edx
+   2c1dc:	49 39 d6             	cmp    %rdx,%r14
+   2c1df:	48 89 da             	mov    %rbx,%rdx
+   2c1e2:	48 83 da 00          	sbb    $0x0,%rdx
+   2c1e6:	48 0f 42 c8          	cmovb  %rax,%rcx
+   2c1ea:	48 8d 51 02          	lea    0x2(%rcx),%rdx
+   2c1ee:	8b 44 8c 20          	mov    0x20(%rsp,%rcx,4),%eax
+   2c1f2:	49 39 c6             	cmp    %rax,%r14
+   2c1f5:	48 89 d8             	mov    %rbx,%rax
+   2c1f8:	48 83 d8 00          	sbb    $0x0,%rax
+   2c1fc:	48 0f 42 d1          	cmovb  %rcx,%rdx
+   2c200:	48 8d 42 01          	lea    0x1(%rdx),%rax
+   2c204:	8b 4c 94 1c          	mov    0x1c(%rsp,%rdx,4),%ecx
+   2c208:	49 39 ce             	cmp    %rcx,%r14
+   2c20b:	48 89 d9             	mov    %rbx,%rcx
+   2c20e:	48 83 d9 00          	sbb    $0x0,%rcx
+   2c212:	48 0f 42 c2          	cmovb  %rdx,%rax
+   2c216:	8b 4c 84 18          	mov    0x18(%rsp,%rax,4),%ecx
+   2c21a:	49 39 ce             	cmp    %rcx,%r14
+   2c21d:	48 83 db 00          	sbb    $0x0,%rbx
+   2c221:	48 83 d8 ff          	sbb    $0xffffffffffffffff,%rax
+   2c225:	48 81 c4 18 04 00 00 	add    $0x418,%rsp
+   2c22c:	5b                   	pop    %rbx
+   2c22d:	41 5e                	pop    %r14
+   2c22f:	41 5f                	pop    %r15
+   2c231:	5d                   	pop    %rbp
+   2c232:	c3                   	ret
+   2c233:	cc                   	int3
+   2c234:	cc                   	int3
+   2c235:	cc                   	int3
+   2c236:	cc                   	int3
+   2c237:	cc                   	int3
+   2c238:	cc                   	int3
+   2c239:	cc                   	int3
+   2c23a:	cc                   	int3
+   2c23b:	cc                   	int3
+   2c23c:	cc                   	int3
+   2c23d:	cc                   	int3
+   2c23e:	cc                   	int3
+   2c23f:	cc                   	int3

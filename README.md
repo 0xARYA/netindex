@@ -215,6 +215,21 @@ writer can leave partial output on failure. Stage output, check success, and
 validate your payloads before publishing. File synchronization and release
 activation belong to your application.
 
+### Exact-bit compaction
+
+`Reader::write_bitpacked_to(output)` optionally compacts packed IP deltas into
+format 6. It accepts the output of either builder, including shared-alias files,
+and preserves every assertion, ID, target, payload and metadata byte. It uses
+fixed block buffers and returns the written size. When no space is saved, it
+copies the original bytes. Ordinary builders continue producing formats 3/4.
+
+Upgrade readers before using this output: readers without format-6 support
+reject it, including inside alias envelopes. Exact-bit access trades some
+validation and lookup work for smaller files; measure your workload. See
+[FORMAT.md](FORMAT.md) and [bitpacking measurements](benches/bitpacking/RESULTS.md).
+Stage output and check success before publishing; output errors can leave partial
+bytes.
+
 ### Shared IPv4 aliases
 
 For an index whose complete IPv4 network section is repeated under explicit

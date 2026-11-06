@@ -30,6 +30,12 @@ artifact bytes, at the cost of additional sequential passes and temporary disk.
 It can reduce random I/O without additional table-cache pages; ordinary builders
 remain unchanged. Cumulative artifact limits may fail at finalization.
 
+`Reader::write_bitpacked_to` adds opt-in format-6 exact-bit delta columns.
+It compacts either builder's output, including shared-alias envelopes, while
+preserving all assertions and opaque bytes. Existing builder defaults and legacy
+output are unchanged. Readers without format-6 support reject the result;
+upgrade readers before enabling compaction. No new production dependency is added.
+
 ## 2.1.0 - 2026-11-04
 
 Deduplicate every external-builder payload, including values outside the memory

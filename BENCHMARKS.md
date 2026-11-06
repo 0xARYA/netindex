@@ -481,3 +481,16 @@ table operations; City temporary peak increased by 35.9%. All 81 replays retaine
 identical bytes and verified every assertion plus 100,005 queries. The report
 contains timed ranges, native/WSL measurements, resource accounting, instruction
 and syscall counters, source snapshots and limitations.
+
+
+## Exact-bit delta compaction - 2026-11-05
+
+[P1-15 results](benches/bitpacking/RESULTS.md) qualify opt-in format-6 direct
+bit access and ordinary width-specialized scans. Materialized City saves 19.71 MiB;
+canonical/shared-alias City saves 5.48 MiB. Warm compaction trades size for CPU:
+City/canonical lookup medians increased 4.8%/23.8% in the new reader. Byte-column
+scan changes reduced aggregate process instructions by 6.5%/6.4% on ordinary files.
+Reports retain ranges, noise controls, full assertion replays, source/artifact
+hashes, CPU counters, portable/native assembly, sanitizer and fuzz evidence.
+Full-block scalar/SIMD decoding was rejected for single-query use after a native
+build control. Batch locality, PGO, cold storage and other hardware remain open.

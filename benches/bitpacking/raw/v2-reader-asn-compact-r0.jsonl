@@ -1,0 +1,15 @@
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":16.663418,"phase":"reader-open","round":0}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":18.814131,"phase":"reader-visit","round":0}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":47.056184,"phase":"reader-lookup","queries":131072,"round":0}
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":22.003524,"phase":"reader-open","round":1}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":28.063881,"phase":"reader-visit","round":1}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":122.69560899999999,"phase":"reader-lookup","queries":131072,"round":1}
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":25.390854,"phase":"reader-open","round":2}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":20.515461,"phase":"reader-visit","round":2}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":61.128564000000004,"phase":"reader-lookup","queries":131072,"round":2}
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":16.797685,"phase":"reader-open","round":3}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":17.791746,"phase":"reader-visit","round":3}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":66.509057,"phase":"reader-lookup","queries":131072,"round":3}
+{"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":35.481938,"phase":"reader-open","round":4}
+{"checksum":258617448092,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":25.376357,"phase":"reader-visit","round":4}
+{"checksum":47129179152,"input":"/root/.cache/netindex-bitpacking/outputs/asn-v2.nidx","ms":88.843883,"phase":"reader-lookup","queries":131072,"round":4}

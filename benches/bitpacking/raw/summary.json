@@ -1,0 +1,3017 @@
+{
+  "date": "2026-11-05",
+  "baseline": "9b2a2b6",
+  "hardware": "Ryzen 9 9950X3D2; WSL Ubuntu 24.04; CPU 20; warm ext4 files",
+  "reader": {
+    "city": {
+      "control": {
+        "reader-open": {
+          "median_ms": 592.703451,
+          "min_ms": 447.762291,
+          "max_ms": 744.131365,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 772.392734,
+          "min_ms": 618.5133269999999,
+          "max_ms": 972.057932,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 36.735101,
+          "min_ms": 30.758194,
+          "max_ms": 74.171075,
+          "samples": 15
+        }
+      },
+      "final": {
+        "reader-open": {
+          "median_ms": 474.519457,
+          "min_ms": 361.208725,
+          "max_ms": 607.292358,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 738.008822,
+          "min_ms": 554.0652339999999,
+          "max_ms": 854.25843,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 40.250093,
+          "min_ms": 30.87995,
+          "max_ms": 78.892518,
+          "samples": 15
+        }
+      },
+      "compact": {
+        "reader-open": {
+          "median_ms": 646.318946,
+          "min_ms": 521.089017,
+          "max_ms": 712.554036,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 943.24299,
+          "min_ms": 739.5756650000001,
+          "max_ms": 1028.174402,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 42.195608,
+          "min_ms": 32.165073,
+          "max_ms": 82.95715100000001,
+          "samples": 15
+        }
+      }
+    },
+    "canonical": {
+      "control": {
+        "reader-open": {
+          "median_ms": 185.045311,
+          "min_ms": 122.807605,
+          "max_ms": 247.285377,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 221.704374,
+          "min_ms": 173.734676,
+          "max_ms": 268.36141299999997,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 27.857770000000002,
+          "min_ms": 23.136637,
+          "max_ms": 38.515881,
+          "samples": 15
+        }
+      },
+      "final": {
+        "reader-open": {
+          "median_ms": 116.926443,
+          "min_ms": 102.934095,
+          "max_ms": 203.740205,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 193.86367800000002,
+          "min_ms": 146.980437,
+          "max_ms": 219.63013,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 27.656308,
+          "min_ms": 21.281746000000002,
+          "max_ms": 45.155183,
+          "samples": 15
+        }
+      },
+      "compact": {
+        "reader-open": {
+          "median_ms": 193.800779,
+          "min_ms": 157.030356,
+          "max_ms": 279.30499,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 280.606547,
+          "min_ms": 250.316612,
+          "max_ms": 366.40500999999995,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 34.226949,
+          "min_ms": 23.378841,
+          "max_ms": 51.50776,
+          "samples": 15
+        }
+      }
+    },
+    "asn": {
+      "control": {
+        "reader-open": {
+          "median_ms": 22.320614,
+          "min_ms": 15.762435000000002,
+          "max_ms": 32.295221999999995,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 20.978532,
+          "min_ms": 17.461689,
+          "max_ms": 35.937948,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 82.15987299999999,
+          "min_ms": 55.064463,
+          "max_ms": 128.43628700000002,
+          "samples": 15
+        }
+      },
+      "final": {
+        "reader-open": {
+          "median_ms": 22.562949999999997,
+          "min_ms": 16.343079,
+          "max_ms": 49.668684999999996,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 20.157868,
+          "min_ms": 17.088742,
+          "max_ms": 46.384467,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 70.62633,
+          "min_ms": 48.171297,
+          "max_ms": 113.016003,
+          "samples": 15
+        }
+      },
+      "compact": {
+        "reader-open": {
+          "median_ms": 22.003524,
+          "min_ms": 16.125273999999997,
+          "max_ms": 35.481938,
+          "samples": 15
+        },
+        "reader-visit": {
+          "median_ms": 25.376357,
+          "min_ms": 17.181983000000002,
+          "max_ms": 36.151061999999996,
+          "samples": 15
+        },
+        "reader-lookup": {
+          "median_ms": 69.55914,
+          "min_ms": 47.056184,
+          "max_ms": 122.69560899999999,
+          "samples": 15
+        }
+      }
+    }
+  },
+  "columns": {
+    "portable": {
+      "synthetic-8": {
+        "byte-scalar": {
+          "median_ns": 7.591083526611328,
+          "min_ns": 7.418956756591797,
+          "max_ns": 7.875663757324219,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 6.8609619140625,
+          "min_ns": 6.833530426025391,
+          "max_ns": 7.711055755615234,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.56424331665039,
+          "min_ns": 11.216789245605469,
+          "max_ns": 13.30899429321289,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 214.4094009399414,
+          "min_ns": 191.41008758544922,
+          "max_ns": 340.6817283630371,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 9.628002166748047,
+          "min_ns": 6.784053802490234,
+          "max_ns": 44.915069580078125,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 27.453109741210938,
+          "min_ns": 18.680984497070312,
+          "max_ns": 60.946067810058594,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1549.0981636047363,
+          "min_ns": 1530.4951820373535,
+          "max_ns": 1700.8647422790527,
+          "samples": 3
+        }
+      },
+      "synthetic-9": {
+        "byte-scalar": {
+          "median_ns": 7.8436737060546875,
+          "min_ns": 7.652130126953125,
+          "max_ns": 17.83303451538086,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.481010437011719,
+          "min_ns": 8.5093994140625,
+          "max_ns": 11.375186920166016,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 14.267425537109375,
+          "min_ns": 11.651542663574219,
+          "max_ns": 15.492855072021484,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 285.49182510375977,
+          "min_ns": 200.13533401489258,
+          "max_ns": 310.5160255432129,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 14.808624267578125,
+          "min_ns": 11.108325958251953,
+          "max_ns": 15.06490707397461,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 27.630481719970703,
+          "min_ns": 20.522628784179688,
+          "max_ns": 43.4759635925293,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1536.4555435180664,
+          "min_ns": 1424.40913772583,
+          "max_ns": 1568.2723960876465,
+          "samples": 3
+        }
+      },
+      "synthetic-12": {
+        "byte-scalar": {
+          "median_ns": 7.835971832275391,
+          "min_ns": 7.575836181640625,
+          "max_ns": 8.357650756835938,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.035369873046875,
+          "min_ns": 7.991191864013672,
+          "max_ns": 8.107894897460938,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.376419067382812,
+          "min_ns": 11.283069610595703,
+          "max_ns": 11.418907165527344,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 205.9408416748047,
+          "min_ns": 205.31755447387695,
+          "max_ns": 221.77696228027344,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.27994155883789,
+          "min_ns": 11.107322692871094,
+          "max_ns": 20.18675994873047,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 19.042858123779297,
+          "min_ns": 18.80878448486328,
+          "max_ns": 26.942195892333984,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1561.2869758605957,
+          "min_ns": 1539.5606956481934,
+          "max_ns": 1756.2175369262695,
+          "samples": 3
+        }
+      },
+      "synthetic-15": {
+        "byte-scalar": {
+          "median_ns": 7.980846405029297,
+          "min_ns": 7.75018310546875,
+          "max_ns": 10.330623626708984,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.929866790771484,
+          "min_ns": 7.92095947265625,
+          "max_ns": 10.48836898803711,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.64980697631836,
+          "min_ns": 11.51882553100586,
+          "max_ns": 45.842899322509766,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 209.87646865844727,
+          "min_ns": 194.5894660949707,
+          "max_ns": 393.336124420166,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 14.427314758300781,
+          "min_ns": 13.7742919921875,
+          "max_ns": 19.638710021972656,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 25.600536346435547,
+          "min_ns": 19.549510955810547,
+          "max_ns": 49.8162956237793,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1606.1365966796875,
+          "min_ns": 1392.9221572875977,
+          "max_ns": 1650.0803718566895,
+          "samples": 3
+        }
+      },
+      "synthetic-16": {
+        "byte-scalar": {
+          "median_ns": 10.704795837402344,
+          "min_ns": 7.754802703857422,
+          "max_ns": 10.83211898803711,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.03396987915039,
+          "min_ns": 7.916160583496094,
+          "max_ns": 11.045398712158203,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 15.018627166748047,
+          "min_ns": 11.32101058959961,
+          "max_ns": 17.092185974121094,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 366.9542770385742,
+          "min_ns": 198.30994033813477,
+          "max_ns": 383.8424987792969,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.713111877441406,
+          "min_ns": 8.70047378540039,
+          "max_ns": 11.080001831054688,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 65.09793090820312,
+          "min_ns": 23.049907684326172,
+          "max_ns": 103.71017837524414,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1456.5866012573242,
+          "min_ns": 1411.5460662841797,
+          "max_ns": 1500.7824592590332,
+          "samples": 3
+        }
+      },
+      "synthetic-17": {
+        "byte-scalar": {
+          "median_ns": 14.676849365234375,
+          "min_ns": 7.813388824462891,
+          "max_ns": 21.40805435180664,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.889976501464844,
+          "min_ns": 8.191261291503906,
+          "max_ns": 12.075153350830078,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 14.490280151367188,
+          "min_ns": 11.804008483886719,
+          "max_ns": 14.58926773071289,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 325.0864791870117,
+          "min_ns": 195.66846466064453,
+          "max_ns": 350.32049560546875,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 12.451770782470703,
+          "min_ns": 11.207603454589844,
+          "max_ns": 14.555976867675781,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 25.017898559570312,
+          "min_ns": 19.13290786743164,
+          "max_ns": 26.681488037109375,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1435.9064407348633,
+          "min_ns": 1277.0109214782715,
+          "max_ns": 1543.6643104553223,
+          "samples": 3
+        }
+      },
+      "synthetic-24": {
+        "byte-scalar": {
+          "median_ns": 10.178619384765625,
+          "min_ns": 7.583686828613281,
+          "max_ns": 10.210052490234375,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.320831298828125,
+          "min_ns": 7.782863616943359,
+          "max_ns": 10.401325225830078,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.951828002929688,
+          "min_ns": 11.283157348632812,
+          "max_ns": 13.951789855957031,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 198.5641326904297,
+          "min_ns": 190.37940979003906,
+          "max_ns": 283.27784729003906,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.959095001220703,
+          "min_ns": 10.91995620727539,
+          "max_ns": 22.3218994140625,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 19.278667449951172,
+          "min_ns": 18.85633087158203,
+          "max_ns": 45.809539794921875,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1222.3272514343262,
+          "min_ns": 1219.6877632141113,
+          "max_ns": 1348.5540771484375,
+          "samples": 3
+        }
+      },
+      "synthetic-25": {
+        "byte-scalar": {
+          "median_ns": 7.508583068847656,
+          "min_ns": 7.441898345947266,
+          "max_ns": 7.663993835449219,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.710994720458984,
+          "min_ns": 7.696502685546875,
+          "max_ns": 7.7557830810546875,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.148994445800781,
+          "min_ns": 11.075145721435547,
+          "max_ns": 11.492301940917969,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 208.65000534057617,
+          "min_ns": 189.11834335327148,
+          "max_ns": 211.44816970825195,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.149456024169922,
+          "min_ns": 11.021278381347656,
+          "max_ns": 14.66595458984375,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 19.607280731201172,
+          "min_ns": 19.35501480102539,
+          "max_ns": 23.39904022216797,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1221.0014114379883,
+          "min_ns": 1211.5735206604004,
+          "max_ns": 1407.0341911315918,
+          "samples": 3
+        }
+      },
+      "synthetic-31": {
+        "byte-scalar": {
+          "median_ns": 7.753383636474609,
+          "min_ns": 7.5324249267578125,
+          "max_ns": 7.83074951171875,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.896900177001953,
+          "min_ns": 7.725456237792969,
+          "max_ns": 10.299983978271484,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.910751342773438,
+          "min_ns": 11.253833770751953,
+          "max_ns": 11.987472534179688,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 189.7527732849121,
+          "min_ns": 188.8096160888672,
+          "max_ns": 221.01270294189453,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.087543487548828,
+          "min_ns": 11.018501281738281,
+          "max_ns": 11.853912353515625,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 20.538192749023438,
+          "min_ns": 19.865203857421875,
+          "max_ns": 22.200580596923828,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1231.316593170166,
+          "min_ns": 1210.8666381835938,
+          "max_ns": 1325.2418518066406,
+          "samples": 3
+        }
+      },
+      "synthetic-32": {
+        "byte-scalar": {
+          "median_ns": 7.544288635253906,
+          "min_ns": 7.4123382568359375,
+          "max_ns": 7.686763763427734,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.928123474121094,
+          "min_ns": 7.63568115234375,
+          "max_ns": 8.42398452758789,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.197040557861328,
+          "min_ns": 10.923210144042969,
+          "max_ns": 11.622200012207031,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 216.45922470092773,
+          "min_ns": 192.3593292236328,
+          "max_ns": 234.04579544067383,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 7.6138763427734375,
+          "min_ns": 7.576290130615234,
+          "max_ns": 11.05364990234375,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 19.587387084960938,
+          "min_ns": 18.87586212158203,
+          "max_ns": 48.571773529052734,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1281.4827003479004,
+          "min_ns": 1221.8920555114746,
+          "max_ns": 1285.699504852295,
+          "samples": 3
+        }
+      },
+      "synthetic-33": {
+        "byte-scalar": {
+          "median_ns": 8.401481628417969,
+          "min_ns": 7.799060821533203,
+          "max_ns": 9.402591705322266,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.592105865478516,
+          "min_ns": 8.300514221191406,
+          "max_ns": 11.444908142089844,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.890975952148438,
+          "min_ns": 11.184494018554688,
+          "max_ns": 14.83724594116211,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 199.2333221435547,
+          "min_ns": 190.7039031982422,
+          "max_ns": 237.02643966674805,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 14.226242065429688,
+          "min_ns": 11.173545837402344,
+          "max_ns": 14.28658676147461,
+          "samples": 3
+        }
+      },
+      "synthetic-48": {
+        "byte-scalar": {
+          "median_ns": 7.779388427734375,
+          "min_ns": 7.735321044921875,
+          "max_ns": 8.275108337402344,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.208396911621094,
+          "min_ns": 8.183483123779297,
+          "max_ns": 8.414905548095703,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.808734893798828,
+          "min_ns": 11.071128845214844,
+          "max_ns": 13.87149429321289,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 196.30520629882812,
+          "min_ns": 188.17467498779297,
+          "max_ns": 250.17232131958008,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.223861694335938,
+          "min_ns": 10.853248596191406,
+          "max_ns": 14.361602783203125,
+          "samples": 3
+        }
+      },
+      "synthetic-63": {
+        "byte-scalar": {
+          "median_ns": 10.920684814453125,
+          "min_ns": 9.381725311279297,
+          "max_ns": 11.7481689453125,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 15.984611511230469,
+          "min_ns": 11.372966766357422,
+          "max_ns": 16.531070709228516,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 18.631061553955078,
+          "min_ns": 17.842487335205078,
+          "max_ns": 20.68439483642578,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 297.6390190124512,
+          "min_ns": 280.17660903930664,
+          "max_ns": 320.09703826904297,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 14.051197052001953,
+          "min_ns": 14.007976531982422,
+          "max_ns": 14.57137680053711,
+          "samples": 3
+        }
+      },
+      "synthetic-64": {
+        "byte-scalar": {
+          "median_ns": 7.713432312011719,
+          "min_ns": 7.710227966308594,
+          "max_ns": 7.7686614990234375,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.254241943359375,
+          "min_ns": 8.191268920898438,
+          "max_ns": 8.51504135131836,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 13.716175079345703,
+          "min_ns": 13.685649871826172,
+          "max_ns": 14.086711883544922,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 271.7528991699219,
+          "min_ns": 268.5387954711914,
+          "max_ns": 285.6233100891113,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 9.101058959960938,
+          "min_ns": 8.614677429199219,
+          "max_ns": 9.707836151123047,
+          "samples": 3
+        }
+      },
+      "synthetic-65": {
+        "byte-scalar": {
+          "median_ns": 10.5064697265625,
+          "min_ns": 8.797775268554688,
+          "max_ns": 12.666618347167969,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 11.159210205078125,
+          "min_ns": 9.243534088134766,
+          "max_ns": 11.458911895751953,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 14.33282470703125,
+          "min_ns": 13.81271743774414,
+          "max_ns": 16.364994049072266,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 294.15822982788086,
+          "min_ns": 267.9052047729492,
+          "max_ns": 322.8149108886719,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 20.63595962524414,
+          "min_ns": 15.100944519042969,
+          "max_ns": 27.948440551757812,
+          "samples": 3
+        }
+      },
+      "synthetic-96": {
+        "byte-scalar": {
+          "median_ns": 8.907669067382812,
+          "min_ns": 8.67746353149414,
+          "max_ns": 12.241680145263672,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 9.65603256225586,
+          "min_ns": 8.899276733398438,
+          "max_ns": 12.12057113647461,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 14.541053771972656,
+          "min_ns": 14.499019622802734,
+          "max_ns": 19.92837142944336,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 369.21067810058594,
+          "min_ns": 357.88794708251953,
+          "max_ns": 529.7848243713379,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 22.362545013427734,
+          "min_ns": 20.576339721679688,
+          "max_ns": 30.406124114990234,
+          "samples": 3
+        }
+      },
+      "synthetic-127": {
+        "byte-scalar": {
+          "median_ns": 12.707084655761719,
+          "min_ns": 12.012283325195312,
+          "max_ns": 22.349510192871094,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 12.41501235961914,
+          "min_ns": 11.473678588867188,
+          "max_ns": 17.275592803955078,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 26.229488372802734,
+          "min_ns": 21.913742065429688,
+          "max_ns": 40.79653549194336,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 515.3163757324219,
+          "min_ns": 438.09870529174805,
+          "max_ns": 529.9155464172363,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 15.79571533203125,
+          "min_ns": 15.724960327148438,
+          "max_ns": 19.864269256591797,
+          "samples": 3
+        }
+      },
+      "synthetic-128": {
+        "byte-scalar": {
+          "median_ns": 15.245990753173828,
+          "min_ns": 13.157577514648438,
+          "max_ns": 15.6114501953125,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 12.577457427978516,
+          "min_ns": 11.518390655517578,
+          "max_ns": 15.21173095703125,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 18.620075225830078,
+          "min_ns": 14.626121520996094,
+          "max_ns": 19.232807159423828,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 445.13390350341797,
+          "min_ns": 286.5963554382324,
+          "max_ns": 486.140323638916,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 9.683265686035156,
+          "min_ns": 9.233673095703125,
+          "max_ns": 12.628917694091797,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx/v4": {
+        "byte-scalar": {
+          "median_ns": 41.235355377197266,
+          "min_ns": 40.735782623291016,
+          "max_ns": 58.32334899902344,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 18.162845611572266,
+          "min_ns": 16.6793212890625,
+          "max_ns": 19.037517547607422,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 18.036479949951172,
+          "min_ns": 17.513469696044922,
+          "max_ns": 21.039703369140625,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 213.86176681518555,
+          "min_ns": 206.8691177368164,
+          "max_ns": 231.39974212646484,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 25.662612915039062,
+          "min_ns": 20.26970672607422,
+          "max_ns": 44.35643768310547,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 33.34757995605469,
+          "min_ns": 32.99636459350586,
+          "max_ns": 66.19956970214844,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1520.226905822754,
+          "min_ns": 1411.9368705749512,
+          "max_ns": 1668.6158752441406,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx/v4/u32": {
+        "byte-scalar": {
+          "median_ns": 62.61472702026367,
+          "min_ns": 41.146484375,
+          "max_ns": 64.47053527832031,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 25.4044189453125,
+          "min_ns": 18.945293426513672,
+          "max_ns": 64.83491134643555,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 63.851593017578125,
+          "min_ns": 18.00420379638672,
+          "max_ns": 114.05059051513672,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 324.2897491455078,
+          "min_ns": 287.7568168640137,
+          "max_ns": 432.07951736450195,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 29.564250946044922,
+          "min_ns": 28.33892059326172,
+          "max_ns": 46.320255279541016,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 41.51496505737305,
+          "min_ns": 41.439720153808594,
+          "max_ns": 79.29996490478516,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1488.8056030273438,
+          "min_ns": 1457.9089584350586,
+          "max_ns": 1570.3929290771484,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx/v6": {
+        "byte-scalar": {
+          "median_ns": 51.868797302246094,
+          "min_ns": 43.07638168334961,
+          "max_ns": 54.4694709777832,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 23.231597900390625,
+          "min_ns": 16.922882080078125,
+          "max_ns": 23.318954467773438,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 25.819190979003906,
+          "min_ns": 18.383602142333984,
+          "max_ns": 32.881019592285156,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 212.34806442260742,
+          "min_ns": 209.66086196899414,
+          "max_ns": 458.75002670288086,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 22.90878677368164,
+          "min_ns": 22.64293670654297,
+          "max_ns": 46.15272521972656,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx/v6/u32": {
+        "byte-scalar": {
+          "median_ns": 45.6678466796875,
+          "min_ns": 39.00502395629883,
+          "max_ns": 58.47736358642578,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 20.328815460205078,
+          "min_ns": 19.619911193847656,
+          "max_ns": 25.761150360107422,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 25.92275619506836,
+          "min_ns": 20.818180084228516,
+          "max_ns": 58.35809326171875,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 277.0155258178711,
+          "min_ns": 267.7125129699707,
+          "max_ns": 290.2820625305176,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 28.89813995361328,
+          "min_ns": 24.05925750732422,
+          "max_ns": 41.61078643798828,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 49.24507522583008,
+          "min_ns": 33.2809944152832,
+          "max_ns": 56.89059829711914,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1476.3842430114746,
+          "min_ns": 1422.386157989502,
+          "max_ns": 1934.9548988342285,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v4": {
+        "byte-scalar": {
+          "median_ns": 45.077484130859375,
+          "min_ns": 45.070594787597656,
+          "max_ns": 45.8476676940918,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 16.557292938232422,
+          "min_ns": 16.443161010742188,
+          "max_ns": 21.48345947265625,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 19.38442611694336,
+          "min_ns": 18.678314208984375,
+          "max_ns": 54.15726089477539,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 220.6163558959961,
+          "min_ns": 214.7044677734375,
+          "max_ns": 343.2854461669922,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 22.071067810058594,
+          "min_ns": 19.54904556274414,
+          "max_ns": 42.951316833496094,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 31.707672119140625,
+          "min_ns": 30.675838470458984,
+          "max_ns": 43.3929328918457,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1310.476261138916,
+          "min_ns": 1259.6253089904785,
+          "max_ns": 1440.9373092651367,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v4/u32": {
+        "byte-scalar": {
+          "median_ns": 41.76396942138672,
+          "min_ns": 36.51488494873047,
+          "max_ns": 50.2879524230957,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 17.62582778930664,
+          "min_ns": 17.33884048461914,
+          "max_ns": 20.721939086914062,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 21.289352416992188,
+          "min_ns": 19.918075561523438,
+          "max_ns": 23.283153533935547,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 229.49772262573242,
+          "min_ns": 216.30213165283203,
+          "max_ns": 247.74873733520508,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 26.39453125,
+          "min_ns": 21.668193817138672,
+          "max_ns": 44.30608367919922,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 32.05528259277344,
+          "min_ns": 30.854190826416016,
+          "max_ns": 45.359649658203125,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1304.0218086242676,
+          "min_ns": 1291.2569618225098,
+          "max_ns": 1381.4067039489746,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v6": {
+        "byte-scalar": {
+          "median_ns": 53.002471923828125,
+          "min_ns": 50.523292541503906,
+          "max_ns": 56.2452507019043,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 26.856517791748047,
+          "min_ns": 24.7113037109375,
+          "max_ns": 29.49665069580078,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 30.326099395751953,
+          "min_ns": 26.88979721069336,
+          "max_ns": 35.54328155517578,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 214.63811492919922,
+          "min_ns": 207.21526336669922,
+          "max_ns": 216.66144561767578,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 30.461448669433594,
+          "min_ns": 25.691402435302734,
+          "max_ns": 36.0565185546875,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v6/u32": {
+        "byte-scalar": {
+          "median_ns": 44.527164459228516,
+          "min_ns": 43.499168395996094,
+          "max_ns": 46.1159553527832,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 17.12847137451172,
+          "min_ns": 16.037860870361328,
+          "max_ns": 17.676841735839844,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 18.295452117919922,
+          "min_ns": 17.914352416992188,
+          "max_ns": 18.809722900390625,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 212.89422988891602,
+          "min_ns": 212.19916152954102,
+          "max_ns": 236.41357040405273,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 28.75018310546875,
+          "min_ns": 24.385494232177734,
+          "max_ns": 33.10319519042969,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 34.04499053955078,
+          "min_ns": 33.99870681762695,
+          "max_ns": 34.33760452270508,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1284.0285110473633,
+          "min_ns": 1261.2924880981445,
+          "max_ns": 1367.8332328796387,
+          "samples": 3
+        }
+      }
+    },
+    "native": {
+      "synthetic-8": {
+        "byte-scalar": {
+          "median_ns": 7.433879852294922,
+          "min_ns": 7.34124755859375,
+          "max_ns": 7.451560974121094,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 6.042461395263672,
+          "min_ns": 5.9447021484375,
+          "max_ns": 6.088581085205078,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.168109893798828,
+          "min_ns": 11.145606994628906,
+          "max_ns": 11.468330383300781,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 156.19232559204102,
+          "min_ns": 151.18280792236328,
+          "max_ns": 162.4541015625,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 6.772834777832031,
+          "min_ns": 6.744113922119141,
+          "max_ns": 6.826389312744141,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 15.8326416015625,
+          "min_ns": 15.800140380859375,
+          "max_ns": 16.063255310058594,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 111.08308410644531,
+          "min_ns": 110.8208122253418,
+          "max_ns": 112.37550354003906,
+          "samples": 3
+        }
+      },
+      "synthetic-9": {
+        "byte-scalar": {
+          "median_ns": 7.5557708740234375,
+          "min_ns": 7.497028350830078,
+          "max_ns": 9.033409118652344,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 6.801673889160156,
+          "min_ns": 6.775428771972656,
+          "max_ns": 6.923236846923828,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.10605239868164,
+          "min_ns": 11.073017120361328,
+          "max_ns": 11.313705444335938,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 144.36547470092773,
+          "min_ns": 143.70492935180664,
+          "max_ns": 146.58022689819336,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.0404052734375,
+          "min_ns": 11.019119262695312,
+          "max_ns": 11.362720489501953,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 15.924335479736328,
+          "min_ns": 15.888675689697266,
+          "max_ns": 16.244586944580078,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 68.0456314086914,
+          "min_ns": 68.03389739990234,
+          "max_ns": 69.60184478759766,
+          "samples": 3
+        }
+      },
+      "synthetic-12": {
+        "byte-scalar": {
+          "median_ns": 7.475517272949219,
+          "min_ns": 7.458499908447266,
+          "max_ns": 7.702045440673828,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 6.897945404052734,
+          "min_ns": 6.891002655029297,
+          "max_ns": 6.935596466064453,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 10.98574447631836,
+          "min_ns": 10.965682983398438,
+          "max_ns": 11.053638458251953,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 142.68790817260742,
+          "min_ns": 142.63718032836914,
+          "max_ns": 144.00603485107422,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.101665496826172,
+          "min_ns": 10.967933654785156,
+          "max_ns": 11.131832122802734,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 15.913654327392578,
+          "min_ns": 15.672248840332031,
+          "max_ns": 16.126575469970703,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 111.02709197998047,
+          "min_ns": 110.81859970092773,
+          "max_ns": 113.41933822631836,
+          "samples": 3
+        }
+      },
+      "synthetic-15": {
+        "byte-scalar": {
+          "median_ns": 7.529911041259766,
+          "min_ns": 7.407009124755859,
+          "max_ns": 7.576328277587891,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 6.904582977294922,
+          "min_ns": 6.887687683105469,
+          "max_ns": 6.940704345703125,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.155792236328125,
+          "min_ns": 11.011035919189453,
+          "max_ns": 11.169368743896484,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 145.02339553833008,
+          "min_ns": 142.66570663452148,
+          "max_ns": 165.27045822143555,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 12.257793426513672,
+          "min_ns": 11.026714324951172,
+          "max_ns": 13.169502258300781,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 16.11880874633789,
+          "min_ns": 16.114479064941406,
+          "max_ns": 17.541202545166016,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 113.11827850341797,
+          "min_ns": 110.83627319335938,
+          "max_ns": 121.69536972045898,
+          "samples": 3
+        }
+      },
+      "synthetic-16": {
+        "byte-scalar": {
+          "median_ns": 7.575428009033203,
+          "min_ns": 7.5004730224609375,
+          "max_ns": 7.581707000732422,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 6.876827239990234,
+          "min_ns": 6.736568450927734,
+          "max_ns": 7.011360168457031,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.00851821899414,
+          "min_ns": 11.004779815673828,
+          "max_ns": 11.153881072998047,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 146.80695343017578,
+          "min_ns": 143.82971572875977,
+          "max_ns": 153.86434173583984,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 7.751766204833984,
+          "min_ns": 7.720409393310547,
+          "max_ns": 7.9677581787109375,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 15.925518035888672,
+          "min_ns": 15.778358459472656,
+          "max_ns": 15.927692413330078,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 111.14682388305664,
+          "min_ns": 111.00912475585938,
+          "max_ns": 113.50145721435547,
+          "samples": 3
+        }
+      },
+      "synthetic-17": {
+        "byte-scalar": {
+          "median_ns": 7.562686920166016,
+          "min_ns": 7.540218353271484,
+          "max_ns": 7.701148986816406,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.548458099365234,
+          "min_ns": 7.370750427246094,
+          "max_ns": 8.440299987792969,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.292728424072266,
+          "min_ns": 10.972892761230469,
+          "max_ns": 12.357818603515625,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 143.36394500732422,
+          "min_ns": 142.23423767089844,
+          "max_ns": 148.14667892456055,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.873722076416016,
+          "min_ns": 10.785568237304688,
+          "max_ns": 11.137939453125,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 15.93307113647461,
+          "min_ns": 15.803306579589844,
+          "max_ns": 18.704322814941406,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 66.9870491027832,
+          "min_ns": 65.85112762451172,
+          "max_ns": 67.6048583984375,
+          "samples": 3
+        }
+      },
+      "synthetic-24": {
+        "byte-scalar": {
+          "median_ns": 7.595478057861328,
+          "min_ns": 7.375019073486328,
+          "max_ns": 7.660144805908203,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.291084289550781,
+          "min_ns": 7.228626251220703,
+          "max_ns": 8.621673583984375,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.122753143310547,
+          "min_ns": 11.041515350341797,
+          "max_ns": 11.325836181640625,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 142.58874893188477,
+          "min_ns": 140.77184295654297,
+          "max_ns": 142.65820693969727,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.9100341796875,
+          "min_ns": 10.758026123046875,
+          "max_ns": 10.986927032470703,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 15.907779693603516,
+          "min_ns": 15.884204864501953,
+          "max_ns": 16.00363540649414,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 110.46101760864258,
+          "min_ns": 110.37123107910156,
+          "max_ns": 111.69321823120117,
+          "samples": 3
+        }
+      },
+      "synthetic-25": {
+        "byte-scalar": {
+          "median_ns": 7.464694976806641,
+          "min_ns": 7.404277801513672,
+          "max_ns": 7.600791931152344,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.1741943359375,
+          "min_ns": 7.137348175048828,
+          "max_ns": 7.311244964599609,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.006725311279297,
+          "min_ns": 10.988571166992188,
+          "max_ns": 11.12112045288086,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 144.313720703125,
+          "min_ns": 142.5745620727539,
+          "max_ns": 148.55378341674805,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.07977294921875,
+          "min_ns": 10.83156967163086,
+          "max_ns": 11.147590637207031,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 17.127811431884766,
+          "min_ns": 16.84341049194336,
+          "max_ns": 18.007556915283203,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 109.96129989624023,
+          "min_ns": 109.23294067382812,
+          "max_ns": 111.52549743652344,
+          "samples": 3
+        }
+      },
+      "synthetic-31": {
+        "byte-scalar": {
+          "median_ns": 7.420421600341797,
+          "min_ns": 7.361518859863281,
+          "max_ns": 7.433238983154297,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.126865386962891,
+          "min_ns": 7.104400634765625,
+          "max_ns": 7.3590087890625,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 10.931655883789062,
+          "min_ns": 10.869670867919922,
+          "max_ns": 11.168563842773438,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 144.2470474243164,
+          "min_ns": 142.85963439941406,
+          "max_ns": 145.1709747314453,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.868721008300781,
+          "min_ns": 10.864288330078125,
+          "max_ns": 10.989288330078125,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 16.996593475341797,
+          "min_ns": 16.957378387451172,
+          "max_ns": 17.097789764404297,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 109.47599029541016,
+          "min_ns": 108.8726692199707,
+          "max_ns": 111.65657043457031,
+          "samples": 3
+        }
+      },
+      "synthetic-32": {
+        "byte-scalar": {
+          "median_ns": 7.380947113037109,
+          "min_ns": 7.3786163330078125,
+          "max_ns": 7.524482727050781,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.111148834228516,
+          "min_ns": 7.040431976318359,
+          "max_ns": 7.384071350097656,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 10.97372817993164,
+          "min_ns": 10.882984161376953,
+          "max_ns": 11.051044464111328,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 140.49463272094727,
+          "min_ns": 140.42051315307617,
+          "max_ns": 142.1877670288086,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 7.654319763183594,
+          "min_ns": 7.582187652587891,
+          "max_ns": 8.166633605957031,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 16.714439392089844,
+          "min_ns": 16.428207397460938,
+          "max_ns": 16.874568939208984,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 67.38239669799805,
+          "min_ns": 66.40937805175781,
+          "max_ns": 69.43244552612305,
+          "samples": 3
+        }
+      },
+      "synthetic-33": {
+        "byte-scalar": {
+          "median_ns": 8.12429428100586,
+          "min_ns": 7.724430084228516,
+          "max_ns": 10.836410522460938,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.993995666503906,
+          "min_ns": 7.575664520263672,
+          "max_ns": 10.705421447753906,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.151786804199219,
+          "min_ns": 10.96499252319336,
+          "max_ns": 14.610721588134766,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 143.20422744750977,
+          "min_ns": 141.33189010620117,
+          "max_ns": 148.47340393066406,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.034988403320312,
+          "min_ns": 10.841178894042969,
+          "max_ns": 11.285404205322266,
+          "samples": 3
+        }
+      },
+      "synthetic-48": {
+        "byte-scalar": {
+          "median_ns": 8.35190200805664,
+          "min_ns": 7.757728576660156,
+          "max_ns": 8.680931091308594,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 9.390560150146484,
+          "min_ns": 7.859920501708984,
+          "max_ns": 10.290645599365234,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 12.281951904296875,
+          "min_ns": 10.919181823730469,
+          "max_ns": 13.853790283203125,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 148.0298309326172,
+          "min_ns": 142.26447296142578,
+          "max_ns": 149.16339111328125,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.93539047241211,
+          "min_ns": 10.85696792602539,
+          "max_ns": 10.951412200927734,
+          "samples": 3
+        }
+      },
+      "synthetic-63": {
+        "byte-scalar": {
+          "median_ns": 7.703426361083984,
+          "min_ns": 7.697010040283203,
+          "max_ns": 7.7363128662109375,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.8654632568359375,
+          "min_ns": 7.722118377685547,
+          "max_ns": 8.002632141113281,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 13.95761489868164,
+          "min_ns": 13.890045166015625,
+          "max_ns": 14.0472412109375,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 283.3798522949219,
+          "min_ns": 274.4840965270996,
+          "max_ns": 306.0701484680176,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 13.916961669921875,
+          "min_ns": 13.700565338134766,
+          "max_ns": 13.930835723876953,
+          "samples": 3
+        }
+      },
+      "synthetic-64": {
+        "byte-scalar": {
+          "median_ns": 10.854450225830078,
+          "min_ns": 7.6626434326171875,
+          "max_ns": 10.889175415039062,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.654899597167969,
+          "min_ns": 7.838459014892578,
+          "max_ns": 10.696720123291016,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 16.986629486083984,
+          "min_ns": 14.47515869140625,
+          "max_ns": 18.40285873413086,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 263.11048889160156,
+          "min_ns": 260.2157173156738,
+          "max_ns": 283.0944480895996,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 9.326614379882812,
+          "min_ns": 8.84139633178711,
+          "max_ns": 9.349395751953125,
+          "samples": 3
+        }
+      },
+      "synthetic-65": {
+        "byte-scalar": {
+          "median_ns": 8.647418975830078,
+          "min_ns": 8.602893829345703,
+          "max_ns": 8.741622924804688,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 9.269763946533203,
+          "min_ns": 8.744606018066406,
+          "max_ns": 9.386520385742188,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 13.987236022949219,
+          "min_ns": 13.921985626220703,
+          "max_ns": 14.02126693725586,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 267.91003036499023,
+          "min_ns": 265.24174880981445,
+          "max_ns": 276.0082130432129,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 13.906272888183594,
+          "min_ns": 13.77642822265625,
+          "max_ns": 14.09811019897461,
+          "samples": 3
+        }
+      },
+      "synthetic-96": {
+        "byte-scalar": {
+          "median_ns": 8.728500366210938,
+          "min_ns": 8.69607162475586,
+          "max_ns": 8.790119171142578,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.849262237548828,
+          "min_ns": 8.836708068847656,
+          "max_ns": 8.89138412475586,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 14.359928131103516,
+          "min_ns": 13.820953369140625,
+          "max_ns": 14.836372375488281,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 274.5718002319336,
+          "min_ns": 268.8735542297363,
+          "max_ns": 299.5488166809082,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 13.994407653808594,
+          "min_ns": 13.826946258544922,
+          "max_ns": 14.292243957519531,
+          "samples": 3
+        }
+      },
+      "synthetic-127": {
+        "byte-scalar": {
+          "median_ns": 8.648834228515625,
+          "min_ns": 8.589157104492188,
+          "max_ns": 8.70980453491211,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.78704833984375,
+          "min_ns": 8.757915496826172,
+          "max_ns": 9.001079559326172,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 15.999332427978516,
+          "min_ns": 15.96976089477539,
+          "max_ns": 17.857955932617188,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 394.165771484375,
+          "min_ns": 393.5642547607422,
+          "max_ns": 414.0213432312012,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 16.133220672607422,
+          "min_ns": 16.008258819580078,
+          "max_ns": 22.041282653808594,
+          "samples": 3
+        }
+      },
+      "synthetic-128": {
+        "byte-scalar": {
+          "median_ns": 11.19852066040039,
+          "min_ns": 9.467803955078125,
+          "max_ns": 13.071022033691406,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 12.572830200195312,
+          "min_ns": 9.046611785888672,
+          "max_ns": 12.949760437011719,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 16.952842712402344,
+          "min_ns": 14.913566589355469,
+          "max_ns": 20.73379135131836,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 275.16101455688477,
+          "min_ns": 274.4201202392578,
+          "max_ns": 300.97015380859375,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 9.359256744384766,
+          "min_ns": 9.325870513916016,
+          "max_ns": 9.452926635742188,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v4": {
+        "byte-scalar": {
+          "median_ns": 42.22956466674805,
+          "min_ns": 41.618534088134766,
+          "max_ns": 47.1446533203125,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 16.46649169921875,
+          "min_ns": 16.285144805908203,
+          "max_ns": 16.519493103027344,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 21.529129028320312,
+          "min_ns": 17.60073471069336,
+          "max_ns": 21.64997100830078,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 168.09425735473633,
+          "min_ns": 160.6357765197754,
+          "max_ns": 169.62234497070312,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 22.529926300048828,
+          "min_ns": 20.55841827392578,
+          "max_ns": 28.80834197998047,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 29.46249771118164,
+          "min_ns": 29.448322296142578,
+          "max_ns": 29.481037139892578,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 111.10697937011719,
+          "min_ns": 109.03126907348633,
+          "max_ns": 116.94448471069336,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v4/u32": {
+        "byte-scalar": {
+          "median_ns": 38.22486114501953,
+          "min_ns": 36.3257942199707,
+          "max_ns": 43.47890853881836,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 15.978717803955078,
+          "min_ns": 14.724662780761719,
+          "max_ns": 17.082202911376953,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 17.661483764648438,
+          "min_ns": 17.070262908935547,
+          "max_ns": 18.569915771484375,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 162.36455535888672,
+          "min_ns": 159.17046356201172,
+          "max_ns": 169.4982452392578,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 21.211864471435547,
+          "min_ns": 19.41704559326172,
+          "max_ns": 21.61276626586914,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 27.79003143310547,
+          "min_ns": 27.216678619384766,
+          "max_ns": 28.010379791259766,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 118.21337890625,
+          "min_ns": 108.68435668945312,
+          "max_ns": 118.26648712158203,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v6": {
+        "byte-scalar": {
+          "median_ns": 49.81486511230469,
+          "min_ns": 48.944515228271484,
+          "max_ns": 50.541038513183594,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 27.7547607421875,
+          "min_ns": 26.33450698852539,
+          "max_ns": 27.99433135986328,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 21.446327209472656,
+          "min_ns": 21.221935272216797,
+          "max_ns": 21.505508422851562,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 178.5290069580078,
+          "min_ns": 177.39277267456055,
+          "max_ns": 232.57997512817383,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 26.934459686279297,
+          "min_ns": 23.831008911132812,
+          "max_ns": 28.22640609741211,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v6/u32": {
+        "byte-scalar": {
+          "median_ns": 45.48539733886719,
+          "min_ns": 44.87477493286133,
+          "max_ns": 47.163848876953125,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 18.460742950439453,
+          "min_ns": 16.8558349609375,
+          "max_ns": 20.031627655029297,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 18.202239990234375,
+          "min_ns": 17.13223648071289,
+          "max_ns": 18.603519439697266,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 170.69606399536133,
+          "min_ns": 168.43365478515625,
+          "max_ns": 172.0477294921875,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 25.48218536376953,
+          "min_ns": 22.957073211669922,
+          "max_ns": 28.34488296508789,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 30.06678009033203,
+          "min_ns": 28.717063903808594,
+          "max_ns": 45.59685516357422,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 109.06412887573242,
+          "min_ns": 108.47624206542969,
+          "max_ns": 109.67749786376953,
+          "samples": 3
+        }
+      }
+    },
+    "portable-control": {
+      "synthetic-8": {
+        "byte-scalar": {
+          "median_ns": 8.00857925415039,
+          "min_ns": 7.5875396728515625,
+          "max_ns": 8.08620834350586,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 6.869594573974609,
+          "min_ns": 6.761238098144531,
+          "max_ns": 7.654438018798828,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.199317932128906,
+          "min_ns": 10.893310546875,
+          "max_ns": 12.433357238769531,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 179.69518280029297,
+          "min_ns": 179.12084197998047,
+          "max_ns": 185.4411506652832,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 6.637123107910156,
+          "min_ns": 6.596134185791016,
+          "max_ns": 6.647846221923828,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 16.74358367919922,
+          "min_ns": 16.6881103515625,
+          "max_ns": 16.799232482910156,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1201.680274963379,
+          "min_ns": 1172.5297622680664,
+          "max_ns": 1209.3300514221191,
+          "samples": 3
+        }
+      },
+      "synthetic-9": {
+        "byte-scalar": {
+          "median_ns": 10.307723999023438,
+          "min_ns": 7.526325225830078,
+          "max_ns": 11.480262756347656,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.948650360107422,
+          "min_ns": 7.673236846923828,
+          "max_ns": 11.103343963623047,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 13.498329162597656,
+          "min_ns": 10.875450134277344,
+          "max_ns": 15.838977813720703,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 223.05041885375977,
+          "min_ns": 182.5694465637207,
+          "max_ns": 225.1730194091797,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.341278076171875,
+          "min_ns": 10.966117858886719,
+          "max_ns": 13.380851745605469,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 23.334457397460938,
+          "min_ns": 22.543075561523438,
+          "max_ns": 26.649311065673828,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1196.8399696350098,
+          "min_ns": 1182.5494079589844,
+          "max_ns": 1354.0344886779785,
+          "samples": 3
+        }
+      },
+      "synthetic-12": {
+        "byte-scalar": {
+          "median_ns": 11.036876678466797,
+          "min_ns": 10.708564758300781,
+          "max_ns": 15.36855697631836,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 11.730888366699219,
+          "min_ns": 10.837654113769531,
+          "max_ns": 11.740432739257812,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 15.671253204345703,
+          "min_ns": 14.966197967529297,
+          "max_ns": 16.01375961303711,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 269.9533157348633,
+          "min_ns": 242.78590393066406,
+          "max_ns": 351.4686088562012,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 15.012672424316406,
+          "min_ns": 14.998065948486328,
+          "max_ns": 15.581256866455078,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 26.216060638427734,
+          "min_ns": 25.134109497070312,
+          "max_ns": 29.118690490722656,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1461.8928451538086,
+          "min_ns": 1374.6199760437012,
+          "max_ns": 1615.3965454101562,
+          "samples": 3
+        }
+      },
+      "synthetic-15": {
+        "byte-scalar": {
+          "median_ns": 8.78042221069336,
+          "min_ns": 7.961082458496094,
+          "max_ns": 11.305679321289062,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 9.375602722167969,
+          "min_ns": 8.802963256835938,
+          "max_ns": 11.76590347290039,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 13.925804138183594,
+          "min_ns": 11.320484161376953,
+          "max_ns": 14.461536407470703,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 234.58034133911133,
+          "min_ns": 222.84657669067383,
+          "max_ns": 246.1540870666504,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 14.375926971435547,
+          "min_ns": 12.83355712890625,
+          "max_ns": 15.097209930419922,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 22.403141021728516,
+          "min_ns": 20.124271392822266,
+          "max_ns": 25.178668975830078,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1256.6865768432617,
+          "min_ns": 1222.5061569213867,
+          "max_ns": 1307.9144287109375,
+          "samples": 3
+        }
+      },
+      "synthetic-16": {
+        "byte-scalar": {
+          "median_ns": 7.990306854248047,
+          "min_ns": 7.295711517333984,
+          "max_ns": 8.996700286865234,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.9264678955078125,
+          "min_ns": 7.626667022705078,
+          "max_ns": 11.134883880615234,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 12.919017791748047,
+          "min_ns": 10.984443664550781,
+          "max_ns": 15.72884750366211,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 227.250732421875,
+          "min_ns": 186.3208236694336,
+          "max_ns": 232.40778732299805,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.205398559570312,
+          "min_ns": 7.716239929199219,
+          "max_ns": 11.23055648803711,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 20.09638214111328,
+          "min_ns": 17.000404357910156,
+          "max_ns": 25.723636627197266,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1233.47412109375,
+          "min_ns": 1227.1044921875,
+          "max_ns": 1252.7077178955078,
+          "samples": 3
+        }
+      },
+      "synthetic-17": {
+        "byte-scalar": {
+          "median_ns": 10.682697296142578,
+          "min_ns": 10.497856140136719,
+          "max_ns": 11.036476135253906,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 11.08197021484375,
+          "min_ns": 10.172222137451172,
+          "max_ns": 11.114192962646484,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 15.488994598388672,
+          "min_ns": 12.258163452148438,
+          "max_ns": 15.508705139160156,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 236.5380401611328,
+          "min_ns": 220.46630477905273,
+          "max_ns": 241.01362991333008,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 13.046222686767578,
+          "min_ns": 11.369430541992188,
+          "max_ns": 15.910228729248047,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 22.168323516845703,
+          "min_ns": 19.043930053710938,
+          "max_ns": 29.086910247802734,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1254.5106010437012,
+          "min_ns": 1252.9087829589844,
+          "max_ns": 1274.5539054870605,
+          "samples": 3
+        }
+      },
+      "synthetic-24": {
+        "byte-scalar": {
+          "median_ns": 7.656162261962891,
+          "min_ns": 7.609180450439453,
+          "max_ns": 7.714817047119141,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.789031982421875,
+          "min_ns": 7.638507843017578,
+          "max_ns": 7.799175262451172,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.29922866821289,
+          "min_ns": 11.241344451904297,
+          "max_ns": 11.418254852294922,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 199.0507926940918,
+          "min_ns": 196.44956588745117,
+          "max_ns": 225.69219970703125,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.093177795410156,
+          "min_ns": 10.945255279541016,
+          "max_ns": 15.163368225097656,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 18.202564239501953,
+          "min_ns": 17.9423828125,
+          "max_ns": 49.41415786743164,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1252.4878120422363,
+          "min_ns": 1243.002456665039,
+          "max_ns": 1285.071620941162,
+          "samples": 3
+        }
+      },
+      "synthetic-25": {
+        "byte-scalar": {
+          "median_ns": 8.292930603027344,
+          "min_ns": 7.745380401611328,
+          "max_ns": 9.97390365600586,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.9420166015625,
+          "min_ns": 7.774501800537109,
+          "max_ns": 11.85067367553711,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 15.03359603881836,
+          "min_ns": 11.176544189453125,
+          "max_ns": 15.292743682861328,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 201.2897720336914,
+          "min_ns": 190.8232192993164,
+          "max_ns": 221.79834365844727,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.858604431152344,
+          "min_ns": 11.079116821289062,
+          "max_ns": 11.94045639038086,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 19.62249755859375,
+          "min_ns": 18.76711654663086,
+          "max_ns": 20.102005004882812,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1226.353141784668,
+          "min_ns": 1210.3999099731445,
+          "max_ns": 1247.2788887023926,
+          "samples": 3
+        }
+      },
+      "synthetic-31": {
+        "byte-scalar": {
+          "median_ns": 7.737789154052734,
+          "min_ns": 7.516971588134766,
+          "max_ns": 8.437774658203125,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 7.698429107666016,
+          "min_ns": 7.684642791748047,
+          "max_ns": 8.437885284423828,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.091552734375,
+          "min_ns": 11.028362274169922,
+          "max_ns": 14.238189697265625,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 192.68166732788086,
+          "min_ns": 190.54565048217773,
+          "max_ns": 203.72676849365234,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.93747329711914,
+          "min_ns": 10.893924713134766,
+          "max_ns": 11.802005767822266,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 18.378395080566406,
+          "min_ns": 17.82863998413086,
+          "max_ns": 18.43963623046875,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1205.1435585021973,
+          "min_ns": 1196.1973762512207,
+          "max_ns": 1227.910987854004,
+          "samples": 3
+        }
+      },
+      "synthetic-32": {
+        "byte-scalar": {
+          "median_ns": 9.999908447265625,
+          "min_ns": 7.420024871826172,
+          "max_ns": 11.228874206542969,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.235069274902344,
+          "min_ns": 7.719062805175781,
+          "max_ns": 20.319549560546875,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 21.0439453125,
+          "min_ns": 11.641693115234375,
+          "max_ns": 25.94382095336914,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 220.7422332763672,
+          "min_ns": 190.9942970275879,
+          "max_ns": 281.68188095092773,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 9.557693481445312,
+          "min_ns": 7.671390533447266,
+          "max_ns": 10.333122253417969,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 20.906517028808594,
+          "min_ns": 17.29898452758789,
+          "max_ns": 27.1778564453125,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1197.508617401123,
+          "min_ns": 1194.5914306640625,
+          "max_ns": 1370.0294380187988,
+          "samples": 3
+        }
+      },
+      "synthetic-33": {
+        "byte-scalar": {
+          "median_ns": 7.7853240966796875,
+          "min_ns": 7.691196441650391,
+          "max_ns": 10.759483337402344,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.372077941894531,
+          "min_ns": 8.291088104248047,
+          "max_ns": 9.93484115600586,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 11.19283676147461,
+          "min_ns": 11.075428009033203,
+          "max_ns": 11.82989501953125,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 216.57130432128906,
+          "min_ns": 184.7782859802246,
+          "max_ns": 235.73093032836914,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 13.48348617553711,
+          "min_ns": 10.867534637451172,
+          "max_ns": 14.192073822021484,
+          "samples": 3
+        }
+      },
+      "synthetic-48": {
+        "byte-scalar": {
+          "median_ns": 7.594631195068359,
+          "min_ns": 7.522853851318359,
+          "max_ns": 8.455928802490234,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.17117691040039,
+          "min_ns": 8.003787994384766,
+          "max_ns": 9.875720977783203,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 10.882102966308594,
+          "min_ns": 10.810783386230469,
+          "max_ns": 10.898845672607422,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 190.96993255615234,
+          "min_ns": 186.19987869262695,
+          "max_ns": 195.24036026000977,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 10.75265884399414,
+          "min_ns": 10.60769271850586,
+          "max_ns": 10.811695098876953,
+          "samples": 3
+        }
+      },
+      "synthetic-63": {
+        "byte-scalar": {
+          "median_ns": 7.591388702392578,
+          "min_ns": 7.520793914794922,
+          "max_ns": 7.653785705566406,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.239219665527344,
+          "min_ns": 8.111221313476562,
+          "max_ns": 8.256336212158203,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 13.43917465209961,
+          "min_ns": 13.382991790771484,
+          "max_ns": 15.276371002197266,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 278.07383728027344,
+          "min_ns": 265.95615005493164,
+          "max_ns": 281.03285217285156,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 13.958091735839844,
+          "min_ns": 13.806529998779297,
+          "max_ns": 15.020034790039062,
+          "samples": 3
+        }
+      },
+      "synthetic-64": {
+        "byte-scalar": {
+          "median_ns": 7.549053192138672,
+          "min_ns": 7.511753082275391,
+          "max_ns": 7.593177795410156,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.17361831665039,
+          "min_ns": 7.8823089599609375,
+          "max_ns": 8.345623016357422,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 13.383377075195312,
+          "min_ns": 13.31491470336914,
+          "max_ns": 14.372467041015625,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 262.9425163269043,
+          "min_ns": 253.97502899169922,
+          "max_ns": 283.67273712158203,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 8.365760803222656,
+          "min_ns": 8.31759262084961,
+          "max_ns": 10.16054916381836,
+          "samples": 3
+        }
+      },
+      "synthetic-65": {
+        "byte-scalar": {
+          "median_ns": 11.894710540771484,
+          "min_ns": 10.829010009765625,
+          "max_ns": 22.463115692138672,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 14.65716552734375,
+          "min_ns": 10.831146240234375,
+          "max_ns": 16.306015014648438,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 19.507476806640625,
+          "min_ns": 19.056640625,
+          "max_ns": 22.62961196899414,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 387.6012649536133,
+          "min_ns": 323.27327728271484,
+          "max_ns": 538.9930458068848,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 18.325313568115234,
+          "min_ns": 14.657390594482422,
+          "max_ns": 18.954959869384766,
+          "samples": 3
+        }
+      },
+      "synthetic-96": {
+        "byte-scalar": {
+          "median_ns": 10.171142578125,
+          "min_ns": 8.892135620117188,
+          "max_ns": 10.86410140991211,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 9.859466552734375,
+          "min_ns": 9.209033966064453,
+          "max_ns": 10.493873596191406,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 17.386436462402344,
+          "min_ns": 14.11859130859375,
+          "max_ns": 17.931480407714844,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 284.03302001953125,
+          "min_ns": 267.9478416442871,
+          "max_ns": 391.87286376953125,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 13.532806396484375,
+          "min_ns": 13.489933013916016,
+          "max_ns": 16.995899200439453,
+          "samples": 3
+        }
+      },
+      "synthetic-127": {
+        "byte-scalar": {
+          "median_ns": 8.4302978515625,
+          "min_ns": 8.417484283447266,
+          "max_ns": 9.13180160522461,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 8.747810363769531,
+          "min_ns": 8.697505950927734,
+          "max_ns": 9.344924926757812,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 15.654476165771484,
+          "min_ns": 15.198589324951172,
+          "max_ns": 21.91181182861328,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 430.7602424621582,
+          "min_ns": 392.0863494873047,
+          "max_ns": 513.2756080627441,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 19.410236358642578,
+          "min_ns": 15.771369934082031,
+          "max_ns": 20.37112045288086,
+          "samples": 3
+        }
+      },
+      "synthetic-128": {
+        "byte-scalar": {
+          "median_ns": 10.003616333007812,
+          "min_ns": 8.610588073730469,
+          "max_ns": 10.162715911865234,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 10.165138244628906,
+          "min_ns": 9.62423324584961,
+          "max_ns": 11.505367279052734,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 13.705860137939453,
+          "min_ns": 13.683563232421875,
+          "max_ns": 16.206775665283203,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 330.61955642700195,
+          "min_ns": 316.7374801635742,
+          "max_ns": 351.75170516967773,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 11.84189224243164,
+          "min_ns": 9.747089385986328,
+          "max_ns": 13.499309539794922,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v4": {
+        "byte-scalar": {
+          "median_ns": 45.21466827392578,
+          "min_ns": 39.426780700683594,
+          "max_ns": 46.48183822631836,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 21.77727508544922,
+          "min_ns": 19.583805084228516,
+          "max_ns": 22.86248016357422,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 22.689746856689453,
+          "min_ns": 20.34946060180664,
+          "max_ns": 29.948917388916016,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 226.70664978027344,
+          "min_ns": 224.36815643310547,
+          "max_ns": 230.83116149902344,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 29.983612060546875,
+          "min_ns": 20.509693145751953,
+          "max_ns": 32.14836120605469,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 35.549556732177734,
+          "min_ns": 30.127941131591797,
+          "max_ns": 38.65285873413086,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1231.0124816894531,
+          "min_ns": 1216.6409339904785,
+          "max_ns": 1256.9146614074707,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v4/u32": {
+        "byte-scalar": {
+          "median_ns": 39.14604187011719,
+          "min_ns": 37.85144805908203,
+          "max_ns": 39.39472961425781,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 17.603256225585938,
+          "min_ns": 15.57662582397461,
+          "max_ns": 18.21923065185547,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 21.445892333984375,
+          "min_ns": 19.09610366821289,
+          "max_ns": 23.07884979248047,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 203.33974075317383,
+          "min_ns": 203.30087661743164,
+          "max_ns": 208.63531494140625,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 22.41353988647461,
+          "min_ns": 19.65523910522461,
+          "max_ns": 27.118728637695312,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 31.56957244873047,
+          "min_ns": 31.170509338378906,
+          "max_ns": 32.910003662109375,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1236.6875915527344,
+          "min_ns": 1212.055263519287,
+          "max_ns": 1243.789421081543,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v6": {
+        "byte-scalar": {
+          "median_ns": 51.8238410949707,
+          "min_ns": 49.12744903564453,
+          "max_ns": 56.87980270385742,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 22.580596923828125,
+          "min_ns": 22.49591827392578,
+          "max_ns": 24.926959991455078,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 22.332595825195312,
+          "min_ns": 22.103927612304688,
+          "max_ns": 23.278003692626953,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 216.08797073364258,
+          "min_ns": 199.44464111328125,
+          "max_ns": 219.69104385375977,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 28.25961685180664,
+          "min_ns": 27.159770965576172,
+          "max_ns": 37.791873931884766,
+          "samples": 3
+        }
+      },
+      "/root/.cache/netindex-disk-cache/canonical.nidx/v6/u32": {
+        "byte-scalar": {
+          "median_ns": 41.203819274902344,
+          "min_ns": 38.921329498291016,
+          "max_ns": 48.79881286621094,
+          "samples": 3
+        },
+        "byte-detected": {
+          "median_ns": 17.39002227783203,
+          "min_ns": 16.91765594482422,
+          "max_ns": 22.4586181640625,
+          "samples": 3
+        },
+        "bit-direct": {
+          "median_ns": 22.131240844726562,
+          "min_ns": 21.24414825439453,
+          "max_ns": 25.196704864501953,
+          "samples": 3
+        },
+        "bit-decode": {
+          "median_ns": 202.3633918762207,
+          "min_ns": 197.9834442138672,
+          "max_ns": 233.10899353027344,
+          "samples": 3
+        },
+        "hybrid-direct": {
+          "median_ns": 26.796825408935547,
+          "min_ns": 26.39670181274414,
+          "max_ns": 29.04227066040039,
+          "samples": 3
+        },
+        "simd8-decode": {
+          "median_ns": 32.80167770385742,
+          "min_ns": 31.533828735351562,
+          "max_ns": 34.12635040283203,
+          "samples": 3
+        },
+        "simd8-delta-decode": {
+          "median_ns": 1262.301856994629,
+          "min_ns": 1244.1881294250488,
+          "max_ns": 1268.8823890686035,
+          "samples": 3
+        }
+      }
+    }
+  },
+  "counters": {
+    "city/control": {
+      "task-clock": 6980.58,
+      "cycles": 35038834694.0,
+      "instructions": 115453391796.0
+    },
+    "city/final": {
+      "task-clock": 6086.26,
+      "cycles": 31370503210.0,
+      "instructions": 107900030331.0
+    },
+    "city/compact": {
+      "task-clock": 10110.13,
+      "cycles": 44812346965.0,
+      "instructions": 131037511488.0
+    },
+    "canonical/control": {
+      "task-clock": 3336.84,
+      "cycles": 12582123538.0,
+      "instructions": 33141199760.0
+    },
+    "canonical/final": {
+      "task-clock": 3102.33,
+      "cycles": 11534631719.0,
+      "instructions": 31015773989.0
+    },
+    "canonical/compact": {
+      "task-clock": 3433.17,
+      "cycles": 13944349935.0,
+      "instructions": 37527298904.0
+    },
+    "asn/control": {
+      "task-clock": 716.81,
+      "cycles": 3178116569.0,
+      "instructions": 7247554753.0
+    },
+    "asn/final": {
+      "task-clock": 644.03,
+      "cycles": 2921034188.0,
+      "instructions": 7161600881.0
+    },
+    "asn/compact": {
+      "task-clock": 631.31,
+      "cycles": 2841993474.0,
+      "instructions": 7161610523.0
+    }
+  },
+  "compiled_source_sha256": {
+    "src/lib.rs": "fef35a392821ebebc6b0aaac1806dd1716ea5524fe5261ba1966cf4a82b1c7d2",
+    "src/mmdb.rs": "21ee1f012baa1bef96c66f4060c5d6d37b9cb6e3f5283145626e4c538f7b4852",
+    "src/coverage.rs": "df254824a5dd4fc2b0058a8dc0a631ffa9c02ab63cdcd59d44fa41c1fe11da95",
+    "src/values.rs": "d42fdef38f253673aefe54f81d5e4ba526b735f60ca2cb166886c12bcd8a701a",
+    "src/builder.rs": "45b96901258b01a82cbf9acb132e47cb72ec0b8dd87804e970c3fff61bfc9df2",
+    "src/routing.rs": "b03592061760cb29e2af976a23afbf5ac9934d361b3c84d5dd31192627cae0de",
+    "src/search.rs": "de332a1b206329045b41dbd052a3d5ff14dfd75c9cf065470a717da2ade374c2",
+    "src/mmap.rs": "e9bd07df627fbcb1e83bf0452f8db371146788e71b1108ee5c4d0ce42a53842c",
+    "src/payload.rs": "801bf45efed10deb8377f4a068f532ce45bdc77f542583826a1aae311327f589",
+    "src/packed.rs": "b5ab4a254ef03242c23b21896be55ede95fa1959369ef46f47657f4e85df81e4",
+    "src/aliases.rs": "c7bc01d471a28cc9f03229bbc044ae78d3628da2f722b10ef85999d6b1410b15",
+    "src/target.rs": "557bf305a791d5bd392344197697baf9f5eddeba64b30c3c540a2154e7cc908b",
+    "src/reader.rs": "54c7ede248b5393272e0913d4ee277d989a0a527a0f65fb2752dd768e5364782",
+    "src/reader_set.rs": "83aaf562445033e4a8a50eaae13dd10a1fe90e5761b41765a7fd5b3d1605b733",
+    "src/layout.rs": "17774c1663b1c16f2c148bcf0b2c4b65188e83baabfbfca8021ecbe8773d9c39",
+    "src/codec.rs": "f408bae0e1399fb0ad84bbed687fa925e8d4bc8395790fb3849e993b961f1a78",
+    "src/packed/bitpacking.rs": "d848ab26a09c232d75dac5fcd3d92c60ebffb0a88596fac4bd01ebfad3c2af29",
+    "src/external/encode.rs": "c29b4d997695181c11f0a92e560917497d50268a0a0333fbacb781216f4c252b",
+    "src/external/positioned.rs": "14bd6893e4bf80694d65e897cd48ca6871cffe450f09b679ec897efa1089aeec",
+    "src/external/partitioned.rs": "4951ca304e9dff3bd0e01516d60aca401f3eebff2d513f0916ba8ddbef4d96c6",
+    "src/external/dedup.rs": "631cba09a4c194a7e3a0196691bca9120524af4969d3b73b7cda141706e08392",
+    "src/external/runs.rs": "b29408500ff71970268186cab65b24a447ad939faa2cd08e294c133618cd2330",
+    "src/external/mod.rs": "e3c6ce4ccd87f3594fd5e6449859dd0db026992851113d384eb355e2e18ca814"
+  }
+}

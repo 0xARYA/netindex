@@ -1,0 +1,15 @@
+{"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":164.75831399999998,"phase":"reader-open","round":0}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":272.773285,"phase":"reader-visit","round":0}
+{"checksum":375090013938,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":27.934082,"phase":"reader-lookup","queries":131072,"round":0}
+{"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":211.191555,"phase":"reader-open","round":1}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":298.40457399999997,"phase":"reader-visit","round":1}
+{"checksum":375090013938,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":44.662381,"phase":"reader-lookup","queries":131072,"round":1}
+{"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":193.800779,"phase":"reader-open","round":2}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":347.193319,"phase":"reader-visit","round":2}
+{"checksum":375090013938,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":34.226949,"phase":"reader-lookup","queries":131072,"round":2}
+{"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":238.285701,"phase":"reader-open","round":3}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":338.571757,"phase":"reader-visit","round":3}
+{"checksum":375090013938,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":33.920545000000004,"phase":"reader-lookup","queries":131072,"round":3}
+{"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":188.724289,"phase":"reader-open","round":4}
+{"checksum":16386415437385,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":278.15673400000003,"phase":"reader-visit","round":4}
+{"checksum":375090013938,"input":"/root/.cache/netindex-bitpacking/outputs/canonical-v2.nidx","ms":40.570228,"phase":"reader-lookup","queries":131072,"round":4}

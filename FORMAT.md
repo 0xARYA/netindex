@@ -7,7 +7,7 @@ uses the header and encoded contents.
 
 All integers are little-endian. Offsets and lengths are unsigned; target addresses
 are numeric IP values, independent of host byte order. No native Rust structs or
-pointers are serialized. A format-3 or format-4 file contains an 80-byte header
+pointers are serialized. A format-3, format-4 or format-6 file contains an 80-byte header
 followed immediately by metadata, IPv4 section, IPv6 section, ASN rows, payload
 slots, and payload bytes.
 Empty sections consume no bytes; trailing data is rejected.
@@ -15,7 +15,7 @@ Empty sections consume no bytes; trailing data is rejected.
 | Header offset | Width | Field |
 | ---: | ---: | --- |
 | 0 | 8 | ASCII `NETINDEX` |
-| 8 | 4 | Format identifier: 3 or 4 |
+| 8 | 4 | Format identifier: 3, 4 or 6 |
 | 12 | 4 | Flags: bit 0 packed IPv4, bit 1 packed IPv6, bit 2 compact payload slots, bit 3 fixed-length payload references, bit 4 indexed payload references |
 | 16 | 8 | Total assertion count |
 | 24 | 8 | IPv4 row count |
@@ -119,8 +119,8 @@ by default; `Builder::into_legacy_bytes`, `Builder::write_legacy_to`, and
 
 ## Shared IPv4 aliases (format 5)
 
-Format 5 is an opt-in envelope around one complete, unmodified format-3 or
-format-4 file. It starts with ASCII `NETINDEX`, version `5` as `u32`, then the
+Format 5 is an opt-in envelope around one complete format-3, format-4 or
+format-6 file. It starts with ASCII `NETINDEX`, version `5` as `u32`, then the
 descriptor count as `u32` (1 through 64). The descriptors follow immediately;
 each is 24 bytes:
 
@@ -200,6 +200,42 @@ section length, prefix alignment, address-family bounds, unique IDs, and strict
 disjoint ordering. Lookup searches block bases then the selected delta column
 for a predecessor and checks its inclusive endpoint. AVX2 and scalar readers use
 identical bytes; SIMD is runtime dispatched and needs no global CPU build flag.
+
+## Exact-bit delta columns (format 6)
+
+Format 6 retains the 80-byte header, flags and section order above. Payload
+references follow the same rules as formats 3/4; bit 4 may be set or clear.
+Packed sections may mix ordinary byte columns with exact-bit columns. Ordinary
+builders still emit formats 3/4. `Reader::write_bitpacked_to` is an opt-in
+postprocessing writer usable with either builder's output. It copies the source
+unchanged if there is no total size reduction. Assertions, IDs, metadata, payloads,
+interval sections, ASN rows and alias descriptors are preserved.
+
+An exact-bit block uses zero in the descriptor's low five width bits; all other
+width/shift flags keep their meaning. The low nine bits of the `u16` count field
+hold the row count (1-256), and its high seven bits hold a bit width (0-127).
+Ordinary blocks keep their original width/count representation. Formats 3/4
+reject exact-bit blocks. A 128-bit value retains an ordinary 16-byte column.
+
+Exact-bit deltas are concatenated in row order, least-significant bit first,
+using `ceil(count * bits / 8)` bytes. Unused high bits in the final byte must be
+zero. Sixteen zero padding bytes follow the delta column, before the existing
+prefix, optional kind and optional ID columns. Padding permits bounded unaligned
+word reads without accessing a later column. Zero-bit deltas are all zero.
+Block offsets and contiguous lengths include this padding. The writer selects
+exact-bit storage only when its column including padding is strictly smaller
+than the existing byte column. It retains block bases and shifts.
+
+Validation checks padding, tail bits, the zero first delta, complete block bounds,
+all existing target/ID/order rules and exact section lengths. Lookup reads the
+required bits directly during predecessor search; it does not decode or cache
+an entire block. Reader memory does not grow with the number of bitpacked values.
+
+Compatibility decision (P1-16): deploy a format-6 reader before opting into this
+writer. Readers without format-6 support reject these files, including a
+format-6 base inside a format-5 alias envelope. Existing format-3/4 and format-5
+files remain readable, and ordinary/legacy writer defaults are unchanged. No
+registry release is performed by this change.
 
 ## Optional shared values
 

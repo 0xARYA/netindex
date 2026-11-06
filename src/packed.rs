@@ -7,6 +7,9 @@ use crate::{
     target::Entry,
 };
 
+mod bitpacking;
+pub(crate) use bitpacking::{compacted_size, write_compacted};
+
 pub(crate) const BLOCK: usize = 256;
 pub(crate) const FENCE: usize = 32;
 
@@ -14,7 +17,7 @@ pub(crate) const FENCE: usize = 32;
 struct Block {
     base: u128,
     offset: usize,
-    width: u8,
+    width: Width,
     shift: u8,
     count: usize,
     first_id: Option<u32>,
@@ -22,9 +25,54 @@ struct Block {
     kind: u8,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Width {
+    Bytes(u8),
+    Bits(u8),
+}
+
+impl Width {
+    fn bytes(self) -> u8 {
+        match self {
+            Self::Bytes(width) => width,
+            Self::Bits(bits) => {
+                if bits <= 8 {
+                    1
+                } else if bits <= 16 {
+                    2
+                } else if bits <= 32 {
+                    4
+                } else if bits <= 64 {
+                    8
+                } else {
+                    16
+                }
+            }
+        }
+    }
+    fn bits(self) -> Option<u8> {
+        match self {
+            Self::Bytes(_) => None,
+            Self::Bits(bits) => Some(bits),
+        }
+    }
+}
+
 impl Block {
+    fn delta_bytes(self) -> usize {
+        match self.width {
+            Width::Bytes(width) => self.count * usize::from(width),
+            Width::Bits(bits) => (self.count * usize::from(bits)).div_ceil(8) + 16,
+        }
+    }
+
+    fn data_bytes(self) -> usize {
+        self.delta_bytes()
+            + self.count
+                * (1 + usize::from(self.kind > 1) + if self.first_id.is_some() { 0 } else { 4 })
+    }
     fn row_width(self) -> usize {
-        usize::from(self.width)
+        usize::from(self.width.bytes())
             + 1
             + usize::from(self.kind > 1)
             + if self.first_id.is_some() { 0 } else { 4 }
@@ -59,7 +107,7 @@ pub(crate) fn write<N: Copy + Into<u128>>(
 
     for rows in entries.chunks(BLOCK) {
         let block = describe(rows, offset);
-        let width = block.width
+        let width = block.width.bytes()
             | if block.first_id.is_some() { 0x80 } else { 0 }
             | if block.id_step == 2 { 0x20 } else { 0 }
             | if block.kind == 1 { 0x40 } else { 0 };
@@ -78,7 +126,11 @@ pub(crate) fn write<N: Copy + Into<u128>>(
 
         for entry in rows {
             let delta = (entry.start.into() - block.base) >> block.shift;
-            output.write_all(slice(&delta.to_le_bytes(), 0, usize::from(block.width))?)?;
+            output.write_all(slice(
+                &delta.to_le_bytes(),
+                0,
+                usize::from(block.width.bytes()),
+            )?)?;
         }
 
         for entry in rows {
@@ -125,12 +177,47 @@ pub(crate) fn visit_entries<E: From<Error>>(
 ) -> Result<(), E> {
     for index in 0..count.div_ceil(BLOCK) {
         let block = read_block(bytes, count, index)?;
-
-        for local in 0..block.count {
-            emit(block_entry(bytes, block, local, ipv6)?)?;
+        if block.width.bits().is_some() {
+            for local in 0..block.count {
+                emit(block_entry(bytes, block, local, ipv6)?)?;
+            }
+            continue;
+        }
+        match block.width.bytes() {
+            1 => visit_block::<1, E>(bytes, block, ipv6, &mut emit)?,
+            2 => visit_block::<2, E>(bytes, block, ipv6, &mut emit)?,
+            4 => visit_block::<4, E>(bytes, block, ipv6, &mut emit)?,
+            8 => visit_block::<8, E>(bytes, block, ipv6, &mut emit)?,
+            16 => visit_block::<16, E>(bytes, block, ipv6, &mut emit)?,
+            _ => return Err(Error::Invalid("packed integer width").into()),
         }
     }
 
+    Ok(())
+}
+
+fn visit_block<const WIDTH: usize, E: From<Error>>(
+    bytes: &[u8],
+    block: Block,
+    ipv6: bool,
+    emit: &mut impl FnMut(Entry) -> Result<(), E>,
+) -> Result<(), E> {
+    let column = slice(bytes, block.offset, block.count * WIDTH)?;
+    let (values, _) = column.as_chunks::<WIDTH>();
+    for (local, value) in values.iter().enumerate() {
+        let mut delta = [0; 16];
+        delta
+            .get_mut(..WIDTH)
+            .ok_or(Error::Invalid("packed integer width"))?
+            .copy_from_slice(value);
+        emit(block_entry_delta(
+            bytes,
+            block,
+            local,
+            ipv6,
+            u128::from_le_bytes(delta),
+        )?)?;
+    }
     Ok(())
 }
 
@@ -214,11 +301,18 @@ pub(crate) fn lookup(
     };
 
     let block = read_block(bytes, count, block_index)?;
-    let deltas = slice(bytes, block.offset, block.count * usize::from(block.width))?;
+    let deltas = slice(bytes, block.offset, block.delta_bytes())?;
     let delta = query
         .checked_sub(block.base)
         .ok_or(Error::Invalid("packed search base"))?;
-    let upper = search.upper_bound(deltas, usize::from(block.width), delta >> block.shift)?;
+    let upper = match block.width.bits() {
+        Some(bits) => bitpacking::upper_bound(deltas, block.count, bits, delta >> block.shift)?,
+        None => search.upper_bound(
+            deltas,
+            usize::from(block.width.bytes()),
+            delta >> block.shift,
+        )?,
+    };
 
     let Some(local) = upper.checked_sub(1) else {
         return Ok(None);
@@ -229,11 +323,25 @@ pub(crate) fn lookup(
     Ok((query <= entry.end).then_some(entry))
 }
 
-pub(crate) fn validate(bytes: &[u8], count: usize) -> Result<(), Error> {
+pub(crate) fn validate(bytes: &[u8], count: usize, allow_bits: bool) -> Result<(), Error> {
     let mut offset = count.div_ceil(BLOCK) * FENCE;
 
     for index in 0..count.div_ceil(BLOCK) {
         let block = read_block(bytes, count, index)?;
+        if let Some(bits) = block.width.bits() {
+            if !allow_bits {
+                return Err(Error::Invalid("bitpacked block version"));
+            }
+            let used = (block.count * usize::from(bits)).div_ceil(8);
+            let column = slice(bytes, block.offset, block.delta_bytes())?;
+            if slice(column, used, 16)?.iter().any(|&v| v != 0) {
+                return Err(Error::Invalid("bitpacked padding"));
+            }
+            let remainder = (block.count * usize::from(bits)) % 8;
+            if remainder != 0 && column.get(used - 1).is_some_and(|v| *v >> remainder != 0) {
+                return Err(Error::Invalid("bitpacked tail bits"));
+            }
+        }
         if block.first_id.is_some_and(|first| {
             first
                 .checked_add((block.count - 1) as u32 * block.id_step)
@@ -242,12 +350,11 @@ pub(crate) fn validate(bytes: &[u8], count: usize) -> Result<(), Error> {
             return Err(Error::Invalid("packed record ID"));
         }
 
-        if block.offset != offset || integer(slice(bytes, offset, usize::from(block.width))?)? != 0
-        {
+        if block.offset != offset || block_delta(bytes, block, 0)? != 0 {
             return Err(Error::Invalid("packed block offset or base delta"));
         }
 
-        offset += block.count * block.row_width();
+        offset += block.data_bytes();
         slice(bytes, block.offset, offset - block.offset)?;
     }
 
@@ -274,12 +381,33 @@ pub(crate) fn integer(bytes: &[u8]) -> Result<u128, Error> {
 }
 
 fn block_entry(bytes: &[u8], block: Block, local: usize, ipv6: bool) -> Result<Entry, Error> {
-    let delta = integer(slice(
-        bytes,
-        block.offset + local * usize::from(block.width),
-        usize::from(block.width),
-    )?)?;
+    let delta = block_delta(bytes, block, local)?;
 
+    block_entry_delta(bytes, block, local, ipv6, delta)
+}
+
+fn block_delta(bytes: &[u8], block: Block, local: usize) -> Result<u128, Error> {
+    match block.width.bits() {
+        Some(bits) => bitpacking::integer(
+            slice(bytes, block.offset, block.delta_bytes())?,
+            local,
+            bits,
+        ),
+        None => integer(slice(
+            bytes,
+            block.offset + local * usize::from(block.width.bytes()),
+            usize::from(block.width.bytes()),
+        )?),
+    }
+}
+
+fn block_entry_delta(
+    bytes: &[u8],
+    block: Block,
+    local: usize,
+    ipv6: bool,
+    delta: u128,
+) -> Result<Entry, Error> {
     let shifted = delta
         .checked_shl(u32::from(block.shift))
         .ok_or(Error::Invalid("packed delta shift"))?;
@@ -292,7 +420,7 @@ fn block_entry(bytes: &[u8], block: Block, local: usize, ipv6: bool) -> Result<E
         .checked_add(shifted)
         .ok_or(Error::Invalid("packed address overflow"))?;
 
-    let columns = block.offset + block.count * usize::from(block.width);
+    let columns = block.offset + block.delta_bytes();
     let prefix = *bytes
         .get(columns + local)
         .ok_or(Error::Invalid("packed prefix"))?;
@@ -394,7 +522,7 @@ fn describe<N: Copy + Into<u128>>(entries: &[Entry<N>], offset: usize) -> Block 
     Block {
         base,
         offset,
-        width: width as u8,
+        width: Width::Bytes(width as u8),
         shift: shift as u8,
         count: entries.len(),
         first_id,
@@ -410,7 +538,7 @@ fn read_block(bytes: &[u8], count: usize, index: usize) -> Result<Block, Error> 
 
     let row = slice(bytes, index * FENCE, FENCE)?;
     let flags = *row.get(24).ok_or(Error::Invalid("packed width"))?;
-    let width = usize::from(flags & 0x1f);
+    let encoded_width = flags & 0x1f;
     let id_step = if flags & 0x20 != 0 { 2 } else { 1 };
     let first_id = if flags & 0x80 != 0 {
         Some(u32_at(row, 28)?)
@@ -424,11 +552,24 @@ fn read_block(bytes: &[u8], count: usize, index: usize) -> Result<Block, Error> 
     } else {
         2
     };
-    let rows = u16::from_le_bytes(
+    let encoded_rows = u16::from_le_bytes(
         slice(row, 26, 2)?
             .try_into()
             .map_err(|_| Error::Invalid("packed count"))?,
-    ) as usize;
+    );
+    let bits = (encoded_width == 0).then_some((encoded_rows >> 9) as u8);
+    let rows = if bits.is_some() {
+        usize::from(encoded_rows & 511)
+    } else {
+        usize::from(encoded_rows)
+    };
+    let width = match bits {
+        Some(bits) => [1usize, 2, 4, 8, 16]
+            .into_iter()
+            .find(|width| usize::from(bits) <= width * 8)
+            .ok_or(Error::Invalid("packed bit width"))?,
+        None => usize::from(encoded_width),
+    };
 
     if !matches!(width, 1 | 2 | 4 | 8 | 16)
         || (first_id.is_none() && id_step != 1)
@@ -444,14 +585,14 @@ fn read_block(bytes: &[u8], count: usize, index: usize) -> Result<Block, Error> 
     let block = Block {
         base: u128_at(row, 0)?,
         offset,
-        width: width as u8,
+        width: bits.map_or(Width::Bytes(width as u8), Width::Bits),
         shift: shift as u8,
         count: rows,
         first_id,
         id_step,
         kind,
     };
-    slice(bytes, offset, rows * block.row_width())?;
+    slice(bytes, offset, block.data_bytes())?;
 
     Ok(block)
 }

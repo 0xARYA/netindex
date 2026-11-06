@@ -76,6 +76,8 @@ jobs:
         run: |
           mkdir -p fuzz/corpus/read
           cp tests/fixtures/*.nidx fuzz/corpus/read/
+          mkdir -p fuzz/corpus/encode
+          cp tests/fixtures/bitpacking-encode.bin fuzz/corpus/encode/
           mkdir -p fuzz/corpus/codec
           cp tests/fixtures/codec.bin fuzz/corpus/codec/
       - name: Fuzz reading and lookup

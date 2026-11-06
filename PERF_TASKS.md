@@ -8,7 +8,7 @@ experiment alone does not complete an implementation task.
 
 Historical P1-01 through P1-08 completions record qualification, not shipped
 features. Their source is [archived](benches/ARCHIVE.md); their measurements and
-decisions remain below. P1-14 adds opt-in partitioned builds; P1-15 is next.
+decisions remain below. P1-15 adds opt-in bitpacking; next is P2-01 batch API.
 
 Statuses: `[ ]` queued; `[-]` active; `[x]` completed; `[!]` waiting on a named
 dependency. Existing 2.1.0 results are in [PERFORMANCE.md](PERFORMANCE.md); they do
@@ -112,9 +112,14 @@ not complete the broader experiments below.
   Native Windows uncached IPtoASN median: 2,399.49 to 1,078.17 ms; cached controls
   show no consistent general win. Extra temporary disk is explicit.
   [Measurements and scope](benches/partitioned_dedup/README.md).
-- [ ] **P1-15 Bitpacking.** Measure block decoding versus direct packed access.
-- [ ] **P1-16 Compatibility.** Record format and migration decisions before
-  adopting encoding changes; required by P1-10, P1-11 and P1-15 if layout changes.
+- [x] **P1-15 Bitpacking.** Opt-in format-6 direct bit access saves 19.71 MiB
+  materialized City / 5.48 MiB canonical or shared-alias City. Warm lookup and
+  validation cost more; ordinary byte columns keep runtime SIMD and faster scans.
+  Scalar/SIMD full-block decoding rejected for single-query use after portable
+  and native-CPU qualification. [Results](benches/bitpacking/RESULTS.md).
+- [x] **P1-16 Compatibility.** Format-4 default, format-5 aliases and opt-in
+  format-6 compaction have explicit reader-first migration decisions in FORMAT.md.
+  Legacy and ordinary writer policies remain documented; 3.0.0 is unpublished.
 
 ## P2: query capabilities
 
@@ -1144,3 +1149,40 @@ checks passed, including ignored tests and local package verification.
 [raw receipt](benches/results/2026-11-05-partitioned-dedup.json).
 Next priority: **P1-15 bitpacking**, retaining explicit format/migration review
 if an encoding change is proposed.
+
+
+### P1-15 bitpacking and P1-16 compatibility - 2026-11-05
+
+Implemented `Reader::write_bitpacked_to` as a bounded-scratch postprocessing writer
+for in-memory, ordinary external and partitioned output, including shared aliases.
+Format 6 retains ordinary columns when padded exact-bit columns would be larger.
+No new production dependency or decoded-block cache. Ordinary builders retain
+formats 3/4; deploy new readers before opting into format 6.
+
+Retained City bytes: 164,836,510 -> 144,169,068 (12.54% smaller). Canonical base:
+62,361,502 -> 56,617,042 (9.21%). Shared-alias City: 62,361,614 -> 56,617,154.
+IPtoASN stayed byte-identical. Four complete assertion/metadata/payload/ID replays
+plus 100,005 queries each passed. Final outputs also matched the initial artifacts;
+unit tests require idempotence and both alias/compaction orders to agree.
+
+On warm WSL reads, compacted vs ordinary files in the new reader had City/canonical
+lookup medians +4.8%/+23.8%, opening +36.2%/+65.7%, visiting +27.8%/+44.7%.
+Storage savings therefore remain opt-in. Serial reader measurements have 15 samples
+per cell and substantial unrelated load; ranges and unchanged IPtoASN controls are
+retained. Width-specialized ordinary scans reduced process instruction counts
+6.5%/6.4%; compact files used about 21% more instructions than the new ordinary
+reader. These are aggregate process counts, not isolated lookup counters.
+
+Linked assembly exposed out-of-line intrinsic calls in the tested portable
+BP8x differential decoder. A native-CPU control was also qualified; full-block
+scalar/SIMD decoding still lost for one query per decode. No SIMD decoder was
+added to production. Batch locality, PGO and cold-file behavior remain unmeasured.
+
+All seven repository checks passed. Linux ASAN passed 29 unit/four integration
+tests; 61-second read/encode fuzz runs completed 11,461,224/12,808 inputs with no
+findings. Independent IPv4/IPv6 fixtures, all bit widths, malformed input, aliases,
+I/O errors and builder parity are covered. FORMAT.md, README, CHANGELOG and fuzz
+CI now describe/test the opt-in path. [Raw measurements and reproduction](benches/bitpacking/RESULTS.md).
+
+Next priority: **P2-01 batch API**, defining ordering, ownership and partial-failure
+semantics before using the qualified cross-query techniques.

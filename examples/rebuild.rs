@@ -1,5 +1,5 @@
 //! Replay an immutable index through the external builder, retaining every assertion.
-//! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|partitioned|memory|memory-legacy] [CACHE_BYTES_OR_PARTITIONS]. Files must remain immutable while mapped.
+//! Usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|partitioned|bitpacked|memory|memory-legacy] [CACHE_BYTES_OR_PARTITIONS]. Files must remain immutable while mapped.
 
 #[cfg(all(feature = "external-sort", feature = "mmap"))]
 #[expect(
@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let arguments: Vec<_> = env::args_os().skip(1).collect();
     let [input, output, temporary, ..] = arguments.as_slice() else {
-        return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|partitioned|memory|memory-legacy] [CACHE_BYTES_OR_PARTITIONS]".into());
+        return Err("usage: rebuild INPUT OUTPUT TEMP_DIRECTORY [external|external-legacy|partitioned|bitpacked|memory|memory-legacy] [CACHE_BYTES_OR_PARTITIONS]".into());
     };
     let mode = arguments
         .get(3)
@@ -38,7 +38,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         || (disk_budget != 0 && !mode.starts_with("external") && mode != "partitioned")
         || !matches!(
             mode,
-            "external" | "external-legacy" | "partitioned" | "memory" | "memory-legacy"
+            "external"
+                | "external-legacy"
+                | "partitioned"
+                | "bitpacked"
+                | "memory"
+                | "memory-legacy"
         )
     {
         return Err("invalid build mode".into());
@@ -101,6 +106,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             Some(builder.write_to(&mut output_file, original.metadata()?)?),
             reserved,
         )
+    } else if mode == "bitpacked" {
+        original.write_bitpacked_to(&mut output_file)?;
+        (None, 0)
     } else {
         let mut builder = Builder::new(limits);
         for row in &assertions {
