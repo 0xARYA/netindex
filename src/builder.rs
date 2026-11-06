@@ -2,14 +2,14 @@ use std::{
     collections::hash_map::RandomState,
     fmt,
     hash::BuildHasher,
-    io::{self, BufWriter, Cursor, Write},
+    io::{self, BufWriter, Write},
 };
 
 use hashbrown::HashTable;
 
 use crate::{
     Error, Limits, Target,
-    layout::{Layout, slice},
+    layout::{Layout, interval, slice},
     packed,
     payload::{SlotWriter, Slots},
     target::Entry,
@@ -157,11 +157,11 @@ impl Builder {
         )?;
 
         if packed_v4.is_none() {
-            augment(&mut self.v4);
+            interval::augment_maxima(&mut self.v4);
         }
 
         if packed_v6.is_none() {
-            augment(&mut self.v6);
+            interval::augment_maxima(&mut self.v6);
         }
 
         let mut output = BufWriter::new(output);
@@ -173,7 +173,7 @@ impl Builder {
             packed::write(&self.v4, &mut output)?;
         } else {
             for entry in &self.v4 {
-                write_entry(&mut output, &entry.map(u128::from), false)?;
+                interval::write_row(&mut output, &entry.map(u128::from), false)?;
             }
         }
 
@@ -181,7 +181,7 @@ impl Builder {
             packed::write(&self.v6, &mut output)?;
         } else {
             for entry in &self.v6 {
-                write_entry(&mut output, entry, true)?;
+                interval::write_row(&mut output, entry, true)?;
             }
         }
 
@@ -321,39 +321,6 @@ impl Write for MemoryWriter {
     fn flush(&mut self) -> io::Result<()> {
         Ok(())
     }
-}
-
-pub(crate) fn augment<N: Copy + Ord + Default>(entries: &mut [Entry<N>]) -> N {
-    let mid = entries.len() / 2;
-    let (left, rest) = entries.split_at_mut(mid);
-
-    let Some((entry, right)) = rest.split_first_mut() else {
-        return N::default();
-    };
-
-    entry.maximum = entry.end.max(augment(left)).max(augment(right));
-
-    entry.maximum
-}
-
-pub(crate) fn write_entry(output: &mut impl Write, entry: &Entry, ipv6: bool) -> Result<(), Error> {
-    let mut bytes = [0; 56];
-    let mut row = Cursor::new(bytes.as_mut_slice());
-
-    for value in [entry.start, entry.end, entry.maximum] {
-        if ipv6 {
-            row.write_all(&value.to_le_bytes())?;
-        } else {
-            row.write_all(&(value as u32).to_le_bytes())?;
-        }
-    }
-
-    row.write_all(&entry.id.to_le_bytes())?;
-    row.write_all(&[entry.prefix, entry.kind, 0, 0])?;
-
-    output.write_all(slice(&bytes, 0, if ipv6 { 56 } else { 20 })?)?;
-
-    Ok(())
 }
 
 #[cfg(test)]

@@ -1,5 +1,6 @@
 use crate::{
     Error, Reader,
+    broad_routes::BroadRoutes,
     layout::{Encoding, Section, slice, u32_at},
     packed,
     payload::Slots,
@@ -115,7 +116,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
         if bytes.len() != self.layout.bytes {
             return Err(Error::Invalid("inspection backing length"));
         }
-        let base = self.layout.v4.offset - self.layout.metadata - crate::layout::HEADER;
+        let base = self.layout.header_offset();
         Ok(Inspection {
             format: u32_at(bytes, 8)?,
             base_format: u32_at(bytes, base + 8)?,
@@ -152,7 +153,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
             broad_route_heap_bytes: self
                 .broad_routes
                 .as_ref()
-                .map_or(0, crate::routing::BroadRoutes::heap_bytes),
+                .map_or(0, BroadRoutes::heap_bytes),
             alias_heap_bytes: self
                 .aliases
                 .as_ref()

@@ -5,8 +5,7 @@ use std::{
 
 use crate::{
     Error,
-    builder::{augment, write_entry},
-    layout::slice,
+    layout::{interval, slice},
     packed::{self, BLOCK, FENCE},
     target::Entry,
 };
@@ -149,10 +148,10 @@ fn write_interval(
 ) -> Result<u128, Error> {
     if count <= BLOCK {
         let mut rows = block(input, count, family)?;
-        let maximum = augment(&mut rows);
+        let maximum = interval::augment_maxima(&mut rows);
 
         for entry in &rows {
-            write_entry(output, entry, family == 1)?;
+            interval::write_row(output, entry, family == 1)?;
         }
 
         return Ok(maximum);
@@ -162,14 +161,14 @@ fn write_interval(
     let mut root = next(input, family)?;
     let position = output.stream_position()?;
 
-    write_entry(output, &root, family == 1)?;
+    interval::write_row(output, &root, family == 1)?;
 
     let right = write_interval(input, output, count - count / 2 - 1, family)?;
     root.maximum = root.end.max(left).max(right);
 
     let end = output.stream_position()?;
     output.seek(SeekFrom::Start(position))?;
-    write_entry(output, &root, family == 1)?;
+    interval::write_row(output, &root, family == 1)?;
     output.seek(SeekFrom::Start(end))?;
 
     Ok(root.maximum)

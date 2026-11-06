@@ -5,13 +5,12 @@ use std::{
 
 use crate::{
     Error, Limits, Match, Target,
-    layout::{Layout, MAGIC, add, slice, u32_at, u128_at},
-    packed,
+    layout::{Layout, MAGIC, add, multiply, slice, u32_at, u128_at},
 };
 
 pub(crate) const VERSION: u32 = 5;
-const HEADER: usize = 16;
-const ROW: usize = 24;
+const HEADER_BYTES: usize = 16;
+const DESCRIPTOR_BYTES: usize = 24;
 const MAX_WINDOWS: usize = 64;
 
 /// An IPv6 prefix that shares the complete IPv4 section of an index.
@@ -32,30 +31,15 @@ pub struct SharedAlias {
 }
 
 impl SharedAlias {
-    pub(crate) fn mask(self) -> u128 {
-        u128::MAX.checked_shr(u32::from(self.prefix)).unwrap_or(0)
-    }
-
-    pub(crate) fn start(self) -> u128 {
-        u128::from(self.address)
-    }
-
-    pub(crate) fn end(self) -> u128 {
-        self.start() | self.mask()
-    }
-
-    pub(crate) fn query(self, value: u128) -> Ipv4Addr {
-        Ipv4Addr::from((value >> (96 - self.prefix)) as u32)
-    }
-
     /// Project a source IPv4 network into this window.
     ///
     /// # Errors
     /// Fails for a malformed window or a target other than a canonical IPv4 network.
     pub fn project(self, target: Target) -> Result<Target, Error> {
-        if self.prefix > 96 || self.start() & self.mask() != 0 {
+        if !self.is_canonical() {
             return Err(Error::Invalid("shared alias window"));
         }
+
         let Target::Network {
             address: IpAddr::V4(address),
             prefix,
@@ -64,7 +48,44 @@ impl SharedAlias {
             return Err(Error::Invalid("shared alias source network"));
         };
         target.entry(0)?;
+
         Ok(self.project_network(address, prefix))
+    }
+
+    pub(crate) fn start(self) -> u128 {
+        u128::from(self.address)
+    }
+
+    pub(crate) fn end(self) -> u128 {
+        self.start() | self.host_mask()
+    }
+
+    pub(crate) fn source_address(self, value: u128) -> Ipv4Addr {
+        Ipv4Addr::from((value >> (96 - self.prefix)) as u32)
+    }
+
+    pub(crate) fn matched(self, row: Match<'_>) -> Result<Match<'_>, Error> {
+        let Target::Network {
+            address: IpAddr::V4(address),
+            prefix,
+        } = row.target
+        else {
+            return Err(Error::Invalid("shared alias source network"));
+        };
+
+        Ok(Match {
+            id: self.first_id + row.id * if self.interleaved { 2 } else { 1 },
+            target: self.project_network(address, prefix),
+            payload: row.payload,
+        })
+    }
+
+    fn is_canonical(self) -> bool {
+        self.prefix <= 96 && self.start() & self.host_mask() == 0
+    }
+
+    fn host_mask(self) -> u128 {
+        u128::MAX.checked_shr(u32::from(self.prefix)).unwrap_or(0)
     }
 
     fn project_network(self, address: Ipv4Addr, prefix: u8) -> Target {
@@ -76,28 +97,13 @@ impl SharedAlias {
             prefix: self.prefix + prefix,
         }
     }
-
-    pub(crate) fn matched(self, row: Match<'_>) -> Result<Match<'_>, Error> {
-        let Target::Network {
-            address: IpAddr::V4(address),
-            prefix,
-        } = row.target
-        else {
-            return Err(Error::Invalid("shared alias source network"));
-        };
-        Ok(Match {
-            id: self.first_id + row.id * if self.interleaved { 2 } else { 1 },
-            target: self.project_network(address, prefix),
-            payload: row.payload,
-        })
-    }
 }
 
 #[derive(Debug)]
 pub(crate) struct Aliases {
     pub(crate) windows: Vec<SharedAlias>,
-    blocks: Vec<usize>,
-    source: usize,
+    block_starts: Vec<usize>,
+    source_count: usize,
     interleaved: bool,
     pub(crate) records: usize,
 }
@@ -108,9 +114,12 @@ impl Aliases {
         if !(1..=MAX_WINDOWS).contains(&count) {
             return Err(Error::Invalid("shared alias count"));
         }
+
+        let length = count * DESCRIPTOR_BYTES;
         let mut windows = Vec::new();
         windows.try_reserve_exact(count)?;
-        let (rows, _) = slice(bytes, HEADER, count * ROW)?.as_chunks::<ROW>();
+
+        let (rows, _) = slice(bytes, HEADER_BYTES, length)?.as_chunks::<DESCRIPTOR_BYTES>();
         for row in rows {
             let [prefix, stride, zero_a, zero_b] = slice(row, 20, 4)? else {
                 return Err(Error::Invalid("shared alias descriptor"));
@@ -118,6 +127,7 @@ impl Aliases {
             if !matches!(stride, 1 | 2) || *zero_a != 0 || *zero_b != 0 {
                 return Err(Error::Invalid("shared alias descriptor"));
             }
+
             windows.push(SharedAlias {
                 address: u128_at(row, 0)?.into(),
                 first_id: u32_at(row, 16)?,
@@ -125,7 +135,8 @@ impl Aliases {
                 interleaved: *stride == 2,
             });
         }
-        Ok((windows, HEADER + count * ROW))
+
+        Ok((windows, HEADER_BYTES + length))
     }
 
     pub(crate) fn validate(
@@ -134,57 +145,28 @@ impl Aliases {
         layout: Layout,
         limits: Limits,
     ) -> Result<Self, Error> {
-        let source = layout.v4.count;
-        if source == 0 || !(1..=MAX_WINDOWS).contains(&windows.len()) {
+        let source_count = layout.v4.count;
+        if source_count == 0 || !(1..=MAX_WINDOWS).contains(&windows.len()) {
             return Err(Error::Invalid("shared alias count or source"));
         }
-        let records = add(
-            layout.records,
-            crate::layout::multiply(source, windows.len())?,
-        )?;
+
+        let records = add(layout.records, multiply(source_count, windows.len())?)?;
         if records > limits.records || records > u32::MAX as usize {
             return Err(Error::Limit("records"));
         }
 
-        let mut blocks = Vec::new();
-        blocks.try_reserve_exact(windows.len())?;
-        let mut previous = None;
-        let mut interleaved = false;
-        for &window in windows {
-            if window.prefix > 96
-                || window.start() & window.mask() != 0
-                || previous.is_some_and(|end| end >= window.start())
-            {
-                return Err(Error::Invalid("shared alias windows"));
-            }
-            previous = Some(window.end());
-            if window.interleaved {
-                if interleaved || window.first_id != 1 {
-                    return Err(Error::Invalid("shared alias interleaved IDs"));
-                }
-                interleaved = true;
-            } else {
-                blocks.push(window.first_id as usize);
-            }
-        }
-        blocks.sort_unstable();
-        let mut end = source * (1 + usize::from(interleaved));
-        for &start in &blocks {
-            if start < end || start > records - source {
-                return Err(Error::Invalid("shared alias ID blocks"));
-            }
-            end = start + source;
-        }
+        let (block_starts, interleaved) = validate_windows(windows, source_count, records)?;
 
         let mut position = 0;
-        visit(layout.v4, data, |entry| {
+        layout.v4.visit_entries(data, |entry| {
             if entry.id as usize != position || entry.kind != 1 {
                 return Err(Error::Invalid("shared alias IPv4 order or kind"));
             }
             position += 1;
             Ok(())
         })?;
-        visit(layout.v6, data, |entry| {
+
+        layout.v6.visit_entries(data, |entry| {
             let at = windows.partition_point(|window| window.end() < entry.start);
             if windows
                 .get(at)
@@ -200,8 +182,8 @@ impl Aliases {
         owned.extend_from_slice(windows);
         Ok(Self {
             windows: owned,
-            blocks,
-            source,
+            block_starts,
+            source_count,
             interleaved,
             records,
         })
@@ -209,20 +191,21 @@ impl Aliases {
 
     pub(crate) fn heap_bytes(&self) -> usize {
         self.windows.capacity() * size_of::<SharedAlias>()
-            + self.blocks.capacity() * size_of::<usize>()
+            + self.block_starts.capacity() * size_of::<usize>()
     }
 
-    pub(crate) fn logical(&self, id: u32) -> u32 {
+    pub(crate) fn logical_id(&self, id: u32) -> u32 {
         let mut id = id as usize;
-        if id < self.source {
+        if id < self.source_count {
             return id as u32 * (1 + u32::from(self.interleaved));
         }
-        id += self.source * usize::from(self.interleaved);
-        for &start in &self.blocks {
+
+        id += self.source_count * usize::from(self.interleaved);
+        for &start in &self.block_starts {
             if id < start {
                 break;
             }
-            id += self.source;
+            id += self.source_count;
         }
         id as u32
     }
@@ -255,28 +238,46 @@ impl Aliases {
 
     pub(crate) fn total_bytes(windows: &[SharedAlias], base: usize) -> Result<usize, Error> {
         add(
-            add(HEADER, crate::layout::multiply(windows.len(), ROW)?)?,
+            add(HEADER_BYTES, multiply(windows.len(), DESCRIPTOR_BYTES)?)?,
             base,
         )
     }
 }
 
-pub(crate) fn visit<E: From<Error>>(
-    section: crate::layout::Section,
-    bytes: &[u8],
-    mut emit: impl FnMut(crate::target::Entry) -> Result<(), E>,
-) -> Result<(), E> {
-    if section.encoding == crate::layout::Encoding::Packed {
-        packed::visit_entries(
-            slice(bytes, section.offset, section.length)?,
-            section.count,
-            section.ipv6,
-            &mut emit,
-        )?;
-    } else {
-        for position in 0..section.count {
-            emit(section.entry(bytes, position)?)?;
+fn validate_windows(
+    windows: &[SharedAlias],
+    source_count: usize,
+    records: usize,
+) -> Result<(Vec<usize>, bool), Error> {
+    let mut block_starts = Vec::new();
+    block_starts.try_reserve_exact(windows.len())?;
+    let mut previous_end = None;
+    let mut interleaved = false;
+
+    for &window in windows {
+        if !window.is_canonical() || previous_end.is_some_and(|end| end >= window.start()) {
+            return Err(Error::Invalid("shared alias windows"));
+        }
+        previous_end = Some(window.end());
+
+        if window.interleaved {
+            if interleaved || window.first_id != 1 {
+                return Err(Error::Invalid("shared alias interleaved IDs"));
+            }
+            interleaved = true;
+        } else {
+            block_starts.push(window.first_id as usize);
         }
     }
-    Ok(())
+
+    block_starts.sort_unstable();
+    let mut end = source_count * (1 + usize::from(interleaved));
+    for &start in &block_starts {
+        if start < end || start > records - source_count {
+            return Err(Error::Invalid("shared alias ID blocks"));
+        }
+        end = start + source_count;
+    }
+
+    Ok((block_starts, interleaved))
 }

@@ -10,7 +10,12 @@ use tempfile::NamedTempFile;
 
 use crate::{Error, layout::Layout};
 
-use super::{DiskBudget, ExternalBuilder, dedup::DiskTable, positioned, temporary, write_slot};
+use super::{
+    DiskBudget, ExternalBuilder,
+    dedup::DiskTable,
+    payload_spill::{PayloadSpan, slot_bytes, write_slot},
+    positioned, temporary,
+};
 
 pub(super) struct Partitioned {
     parts: Vec<Spill>,
@@ -60,36 +65,6 @@ struct Processed {
     references: NamedTempFile,
     reference_bytes: u64,
     spans: Spill,
-}
-
-#[derive(Clone, Copy)]
-struct Span {
-    offset: u64,
-    length: u64,
-    ordinal: u32,
-}
-
-impl Span {
-    fn decode(bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self {
-            offset: u64_at(bytes, 0)?,
-            length: u64_at(bytes, 8)?,
-            ordinal: crate::layout::u32_at(bytes, 16)?,
-        })
-    }
-
-    fn write(self, output: &mut impl Write) -> Result<(), Error> {
-        output
-            .write_all(&self.offset.to_le_bytes())
-            .map_err(temporary("write partition span"))?;
-        output
-            .write_all(&self.length.to_le_bytes())
-            .map_err(temporary("write partition span"))?;
-        output
-            .write_all(&self.ordinal.to_le_bytes())
-            .map_err(temporary("write partition span"))?;
-        Ok(())
-    }
 }
 
 impl Partitioned {
@@ -198,7 +173,7 @@ fn process(
         .map_err(temporary("open partition comparison"))?;
     let mut references = Spill::new(directory)?;
     let mut table = DiskTable::with_references();
-    let mut keys = HashMap::<Vec<u8>, Span>::new();
+    let mut keys = HashMap::<Vec<u8>, PayloadSpan>::new();
     let mut charged = 0usize;
     let mut end = 0u64;
     let mut position = 0u64;
@@ -225,27 +200,15 @@ fn process(
                 .map_err(temporary("read partition payload"))?;
             match keys.get(payload as &[u8]).copied() {
                 Some(span) => Some(span),
-                None => table
-                    .find_reference(hash, payload, &mut output, &comparison, end)?
-                    .map(|(offset, length, ordinal)| Span {
-                        offset,
-                        length,
-                        ordinal,
-                    }),
+                None => table.find_reference(hash, payload, &mut output, &comparison, end)?,
             }
         } else {
-            table
-                .find_file_reference(
-                    hash,
-                    (&source, position, length),
-                    &mut output,
-                    (&comparison, end),
-                )?
-                .map(|(offset, length, ordinal)| Span {
-                    offset,
-                    length,
-                    ordinal,
-                })
+            table.find_file_reference(
+                hash,
+                (&source, position, length),
+                &mut output,
+                (&comparison, end),
+            )?
         };
         let span = if let Some(span) = existing {
             if length > scratch.len() as u64 {
@@ -258,7 +221,7 @@ fn process(
             let offset = end
                 .checked_add(12)
                 .ok_or(Error::Limit("partition values"))?;
-            let span = Span {
+            let span = PayloadSpan {
                 offset,
                 length,
                 ordinal: unique,
@@ -292,21 +255,11 @@ fn process(
                     keys.insert(key, span);
                     charged += charge;
                 } else {
-                    table.insert_reference(
-                        hash,
-                        (offset, length, unique),
-                        directory,
-                        &mut builder.budget,
-                    )?;
+                    table.insert_reference(hash, span, directory, &mut builder.budget)?;
                 }
             } else {
                 copy_bytes(&mut input, &mut output, length)?;
-                table.insert_reference(
-                    hash,
-                    (offset, length, unique),
-                    directory,
-                    &mut builder.budget,
-                )?;
+                table.insert_reference(hash, span, directory, &mut builder.budget)?;
             }
             unique = unique
                 .checked_add(1)
@@ -378,7 +331,7 @@ fn merge_values(parts: &mut [Processed], builder: &mut ExternalBuilder) -> Resul
             .checked_add(usize::try_from(length).map_err(|_| Error::Limit("payload bytes"))?)
             .ok_or(Error::Limit("payload bytes"))?;
         Layout::new(builder.counts, 0, end, builder.limits)?;
-        let span = Span {
+        let span = PayloadSpan {
             offset: builder.payload_bytes as u64,
             length,
             ordinal,
@@ -388,10 +341,10 @@ fn merge_values(parts: &mut [Processed], builder: &mut ExternalBuilder) -> Resul
             .reserve(length + if builder.references.is_some() { 16 } else { 0 })?;
         copy_bytes(input, &mut builder.payloads, length)?;
         if let Some(references) = &mut builder.references {
-            references.push((span.offset, length, ordinal), true)?;
+            references.record_new_span(span)?;
         }
         spans.reserve(20, &mut builder.budget)?;
-        span.write(&mut spans.output)?;
+        write_resolved_span(span, &mut spans.output)?;
         builder.payload_bytes = end;
         ordinal = ordinal
             .checked_add(1)
@@ -415,14 +368,14 @@ fn resolve(part: Processed, builder: &mut ExternalBuilder) -> Result<(NamedTempF
     let (spans, span_bytes) = part.spans.finish()?;
     let count = span_bytes / 20;
     let mut cached = Vec::new();
-    if count <= (builder.options.payload_cache_bytes / size_of::<Span>()) as u64 {
+    if count <= (builder.options.payload_cache_bytes / size_of::<PayloadSpan>()) as u64 {
         cached.try_reserve_exact(count as usize)?;
-        if cached.capacity() > builder.options.payload_cache_bytes / size_of::<Span>() {
+        if cached.capacity() > builder.options.payload_cache_bytes / size_of::<PayloadSpan>() {
             return Err(Error::Limit("partition span cache bytes"));
         }
         let mut reader = BufReader::new(spans.reopen().map_err(temporary("open partition spans"))?);
         for _ in 0..count {
-            cached.push(Span::decode(
+            cached.push(read_resolved_span(
                 &read_header::<20>(&mut reader)?.ok_or(Error::Invalid("partition span count"))?,
             )?);
         }
@@ -447,14 +400,14 @@ fn resolve(part: Processed, builder: &mut ExternalBuilder) -> Result<(NamedTempF
             let mut bytes = [0; 20];
             positioned::read_exact(&span_reader, &mut bytes, local as u64 * 20)
                 .map_err(temporary("read partition span"))?;
-            Span::decode(&bytes)?
+            read_resolved_span(&bytes)?
         };
         output.reserve(24, &mut builder.budget)?;
         output
             .output
             .write_all(&id.to_le_bytes())
             .map_err(temporary("write resolved reference"))?;
-        span.write(&mut output.output)?;
+        write_resolved_span(span, &mut output.output)?;
     }
     drop(input);
     reference_file
@@ -490,24 +443,16 @@ fn merge_references(
         if id as usize != count {
             return Err(Error::Invalid("partition insertion IDs"));
         }
-        let span = Span::decode(
+        let span = read_resolved_span(
             header
                 .get(4..)
                 .ok_or(Error::Invalid("resolved reference"))?,
         )?;
-        let compact = builder.references.is_some();
-        builder.budget.reserve(
-            16 + if compact && span.length >= u64::from(u32::MAX) {
-                8
-            } else {
-                0
-            },
-        )?;
-        write_slot(
-            &mut builder.slots,
-            (span.offset, span.length, span.ordinal),
-            compact,
-        )?;
+        let with_ordinals = builder.references.is_some();
+        builder
+            .budget
+            .reserve(slot_bytes(span.length, with_ordinals))?;
+        write_slot(&mut builder.slots, span, with_ordinals)?;
         count += 1;
         let input = readers
             .get_mut(index)
@@ -525,6 +470,28 @@ fn merge_references(
             .map_err(temporary("remove resolved references"))?;
         builder.budget.release(bytes)?;
     }
+    Ok(())
+}
+
+fn read_resolved_span(bytes: &[u8]) -> Result<PayloadSpan, Error> {
+    Ok(PayloadSpan {
+        offset: u64_at(bytes, 0)?,
+        length: u64_at(bytes, 8)?,
+        ordinal: crate::layout::u32_at(bytes, 16)?,
+    })
+}
+
+fn write_resolved_span(span: PayloadSpan, output: &mut impl Write) -> Result<(), Error> {
+    output
+        .write_all(&span.offset.to_le_bytes())
+        .map_err(temporary("write partition span"))?;
+    output
+        .write_all(&span.length.to_le_bytes())
+        .map_err(temporary("write partition span"))?;
+    output
+        .write_all(&span.ordinal.to_le_bytes())
+        .map_err(temporary("write partition span"))?;
+
     Ok(())
 }
 

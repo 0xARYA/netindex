@@ -1,7 +1,7 @@
 use crate::{Error, target::Entry};
 
-const BITS: u8 = 12;
-const BUCKETS: usize = 1 << BITS;
+const PREFIX_BITS: u8 = 12;
+const BUCKETS: usize = 1 << PREFIX_BITS;
 const PRESENT: u64 = 1 << 63;
 
 #[derive(Debug)]
@@ -26,7 +26,7 @@ impl BroadRoutes {
 
     // The caller admits entries only from a validated disjoint packed section.
     pub(crate) fn insert(&mut self, entry: Entry, ipv6: bool) -> Result<(), Error> {
-        if entry.kind != 1 || entry.prefix > BITS {
+        if entry.kind != 1 || entry.prefix > PREFIX_BITS {
             return Ok(());
         }
 
@@ -42,10 +42,14 @@ impl BroadRoutes {
         }
 
         let routes = family.as_mut().ok_or(Error::Invalid("broad route table"))?;
-        let shift = if ipv6 { 128 - BITS } else { 32 - BITS };
+        let shift = if ipv6 {
+            128 - PREFIX_BITS
+        } else {
+            32 - PREFIX_BITS
+        };
         let first = usize::try_from(entry.start >> shift)
             .map_err(|_| Error::Invalid("broad route bucket"))?;
-        let count = 1usize << (BITS - entry.prefix);
+        let count = 1usize << (PREFIX_BITS - entry.prefix);
         let end = first
             .checked_add(count)
             .ok_or(Error::Invalid("broad route bucket"))?;
@@ -76,7 +80,11 @@ impl BroadRoutes {
             return Ok(None);
         };
 
-        let shift = if ipv6 { 128 - BITS } else { 32 - BITS };
+        let shift = if ipv6 {
+            128 - PREFIX_BITS
+        } else {
+            32 - PREFIX_BITS
+        };
         let bucket =
             usize::try_from(query >> shift).map_err(|_| Error::Invalid("broad route query"))?;
         let route = *routes

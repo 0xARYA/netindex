@@ -4,74 +4,6 @@
 
 use netindex::{Builder, Error, Limits, Match, Reader, SharedAlias, Target};
 
-fn network(address: &str, prefix: u8) -> Target {
-    Target::Network {
-        address: address.parse().unwrap(),
-        prefix,
-    }
-}
-
-fn windows() -> [SharedAlias; 2] {
-    [
-        SharedAlias {
-            address: "::".parse().unwrap(),
-            prefix: 96,
-            first_id: 1,
-            interleaved: true,
-        },
-        SharedAlias {
-            address: "2002::".parse().unwrap(),
-            prefix: 16,
-            first_id: 7,
-            interleaved: false,
-        },
-    ]
-}
-
-fn sources() -> [(Target, &'static [u8]); 3] {
-    [
-        (network("0.0.0.0", 0), b"broad"),
-        (network("192.0.2.0", 24), b""),
-        (network("192.0.2.0", 24), b"duplicate"),
-    ]
-}
-
-fn base() -> Vec<u8> {
-    let mut builder = Builder::new(Limits::default());
-    for (target, payload) in sources() {
-        builder.push(target, payload).unwrap();
-    }
-    builder.push(network("2001:db8::", 32), b"native").unwrap();
-    builder.push(Target::Asn(42), b"asn").unwrap();
-    builder.into_bytes(b"meta").unwrap()
-}
-
-fn envelope(base: &[u8]) -> Vec<u8> {
-    // Independent framing with two format-5 descriptors.
-    let mut bytes = b"NETINDEX".to_vec();
-    bytes.extend(5u32.to_le_bytes());
-    bytes.extend(2u32.to_le_bytes());
-    bytes.extend(0u128.to_le_bytes());
-    bytes.extend(1u32.to_le_bytes());
-    bytes.extend([96, 2, 0, 0]);
-    bytes.extend((0x2002u128 << 112).to_le_bytes());
-    bytes.extend(7u32.to_le_bytes());
-    bytes.extend([16, 1, 0, 0]);
-    bytes.extend(base);
-    bytes
-}
-
-fn all<B: AsRef<[u8]>>(reader: &Reader<B>) -> Vec<Match<'_>> {
-    let mut out = Vec::new();
-    reader
-        .visit_all(|row| {
-            out.push(row);
-            Ok::<_, Error>(())
-        })
-        .unwrap();
-    out
-}
-
 #[test]
 fn shared_and_materialized_outputs_match_including_duplicates_overlaps_and_order() {
     let limits = Limits::default();
@@ -256,4 +188,72 @@ fn independent_format5_fixture_maps_only_its_declared_window() {
             .unwrap()
             .is_empty()
     );
+}
+
+fn network(address: &str, prefix: u8) -> Target {
+    Target::Network {
+        address: address.parse().unwrap(),
+        prefix,
+    }
+}
+
+fn windows() -> [SharedAlias; 2] {
+    [
+        SharedAlias {
+            address: "::".parse().unwrap(),
+            prefix: 96,
+            first_id: 1,
+            interleaved: true,
+        },
+        SharedAlias {
+            address: "2002::".parse().unwrap(),
+            prefix: 16,
+            first_id: 7,
+            interleaved: false,
+        },
+    ]
+}
+
+fn sources() -> [(Target, &'static [u8]); 3] {
+    [
+        (network("0.0.0.0", 0), b"broad"),
+        (network("192.0.2.0", 24), b""),
+        (network("192.0.2.0", 24), b"duplicate"),
+    ]
+}
+
+fn base() -> Vec<u8> {
+    let mut builder = Builder::new(Limits::default());
+    for (target, payload) in sources() {
+        builder.push(target, payload).unwrap();
+    }
+    builder.push(network("2001:db8::", 32), b"native").unwrap();
+    builder.push(Target::Asn(42), b"asn").unwrap();
+    builder.into_bytes(b"meta").unwrap()
+}
+
+fn envelope(base: &[u8]) -> Vec<u8> {
+    // Independent framing with two format-5 descriptors.
+    let mut bytes = b"NETINDEX".to_vec();
+    bytes.extend(5u32.to_le_bytes());
+    bytes.extend(2u32.to_le_bytes());
+    bytes.extend(0u128.to_le_bytes());
+    bytes.extend(1u32.to_le_bytes());
+    bytes.extend([96, 2, 0, 0]);
+    bytes.extend((0x2002u128 << 112).to_le_bytes());
+    bytes.extend(7u32.to_le_bytes());
+    bytes.extend([16, 1, 0, 0]);
+    bytes.extend(base);
+    bytes
+}
+
+fn all<B: AsRef<[u8]>>(reader: &Reader<B>) -> Vec<Match<'_>> {
+    let mut out = Vec::new();
+    reader
+        .visit_all(|row| {
+            out.push(row);
+            Ok::<_, Error>(())
+        })
+        .unwrap();
+    out
 }

@@ -1,10 +1,10 @@
 use std::{fmt, net::IpAddr, ops::ControlFlow};
 
 use crate::{
-    Error, Match, Reader, Target,
-    layout::{Encoding, Section},
+    Error, Match, Reader, SharedAlias, Target,
+    layout::{Encoding, Section, slice},
     packed,
-    target::number,
+    target::{Entry, number},
 };
 
 use super::asn_key;
@@ -144,16 +144,18 @@ impl<B: AsRef<[u8]>> Reader<B> {
                 .as_ref()
                 .and_then(|aliases| aliases.lookup(ip.into()))
         {
-            window.query(ip.into()).into()
+            window.source_address(ip.into()).into()
         } else {
             address
         };
+
         let ipv6 = address.is_ipv6();
         let query = number(address);
         let (first, last) = if ipv6 { self.bounds[1] } else { self.bounds[0] };
         if query < first || query > last {
             return Ok(false);
         }
+
         let section = if ipv6 { self.layout.v6 } else { self.layout.v4 };
         let bytes = self.bytes.as_ref();
         if section.encoding == Encoding::Packed {
@@ -163,6 +165,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
             }
             return Ok(false);
         }
+
         contains_interval(section, bytes, 0, section.count, query)
     }
 
@@ -201,6 +204,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
             .into_iter()
             .flat_map(|aliases| aliases.windows.iter())
             .peekable();
+
         self.intersect_physical(section, query.start, query.end, ipv6, &mut |row| {
             if ipv6 {
                 let (entry, _) = row.target.entry(0)?;
@@ -215,11 +219,13 @@ impl<B: AsRef<[u8]>> Reader<B> {
             }
             emit(row)
         })?;
+
         if ipv6 {
             for &window in windows {
                 self.intersect_alias(window, query.start, query.end, &mut emit)?;
             }
         }
+
         Ok(())
     }
 
@@ -237,7 +243,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
 
     fn intersect_alias<'a, E: From<Error>>(
         &'a self,
-        window: crate::SharedAlias,
+        window: SharedAlias,
         first: u128,
         last: u128,
         emit: &mut impl FnMut(Match<'a>) -> Result<(), E>,
@@ -245,12 +251,13 @@ impl<B: AsRef<[u8]>> Reader<B> {
         if first > window.end() || last < window.start() {
             return Ok(());
         }
+
         self.intersect_entries(
             self.layout.v4,
             0,
             self.layout.v4.count,
-            number(window.query(first.max(window.start())).into()),
-            number(window.query(last.min(window.end())).into()),
+            number(window.source_address(first.max(window.start())).into()),
+            number(window.source_address(last.min(window.end())).into()),
             false,
             &mut |entry| {
                 emit(window.matched(Match {
@@ -287,11 +294,11 @@ impl<B: AsRef<[u8]>> Reader<B> {
         first: u128,
         last: u128,
         ipv6: bool,
-        emit: &mut impl FnMut(crate::target::Entry) -> Result<(), E>,
+        emit: &mut impl FnMut(Entry) -> Result<(), E>,
     ) -> Result<(), E> {
         if section.encoding == Encoding::Packed {
             return packed::visit_intersecting(
-                crate::layout::slice(self.bytes.as_ref(), section.offset, section.length)?,
+                slice(self.bytes.as_ref(), section.offset, section.length)?,
                 section.count,
                 first,
                 last,
@@ -300,22 +307,28 @@ impl<B: AsRef<[u8]>> Reader<B> {
                 emit,
             );
         }
+
         if low == high {
             return Ok(());
         }
+
         let bytes = self.bytes.as_ref();
         let mid = low + (high - low) / 2;
         if section.maximum(bytes, mid)? < first || section.start(bytes, low)? > last {
             return Ok(());
         }
+
         self.intersect_entries(section, low, mid, first, last, ipv6, emit)?;
+
         if section.start(bytes, mid)? > last {
             return Ok(());
         }
+
         let entry = section.entry(bytes, mid)?;
         if entry.end >= first {
             emit(entry)?;
         }
+
         self.intersect_entries(section, mid + 1, high, first, last, ipv6, emit)
     }
 }
@@ -330,21 +343,26 @@ fn contains_interval(
     if low == high {
         return Ok(false);
     }
+
     let mid = low + (high - low) / 2;
     if section.maximum(bytes, mid)? < query || section.start(bytes, low)? > query {
         return Ok(false);
     }
+
     if contains_interval(section, bytes, low, mid, query)? {
         return Ok(true);
     }
+
     if section.start(bytes, mid)? > query {
         return Ok(false);
     }
+
     let entry = section.entry(bytes, mid)?;
     if entry.end >= query {
         entry.validate(section.ipv6)?;
         return Ok(true);
     }
+
     contains_interval(section, bytes, mid + 1, high, query)
 }
 

@@ -7,8 +7,9 @@ use crate::{
     target::Entry,
 };
 
-mod bitpacking;
 pub(crate) use bitpacking::{compacted_size, write_compacted};
+
+mod bitpacking;
 
 pub(crate) const BLOCK: usize = 256;
 pub(crate) const FENCE: usize = 32;
@@ -417,7 +418,7 @@ pub(crate) fn validate(bytes: &[u8], count: usize, allow_bits: bool) -> Result<(
     Ok(())
 }
 
-pub(crate) fn integer(bytes: &[u8]) -> Result<u128, Error> {
+fn read_integer(bytes: &[u8]) -> Result<u128, Error> {
     match bytes.len() {
         1 => bytes
             .first()
@@ -445,7 +446,7 @@ fn block_delta(bytes: &[u8], block: Block, local: usize) -> Result<u128, Error> 
             local,
             bits,
         ),
-        None => integer(slice(
+        None => read_integer(slice(
             bytes,
             block.offset + local * usize::from(block.width.bytes()),
             usize::from(block.width.bytes()),

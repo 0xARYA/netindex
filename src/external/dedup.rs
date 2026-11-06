@@ -10,7 +10,7 @@ use tempfile::NamedTempFile;
 
 use crate::Error;
 
-use super::{DiskBudget, positioned, temporary};
+use super::{DiskBudget, payload_spill::PayloadSpan, positioned, temporary};
 
 const CELL_BYTES: u64 = 24;
 const PAGE_CELLS: u64 = 16;
@@ -69,7 +69,7 @@ impl DiskTable {
     ) -> Result<Option<(u64, u64)>, Error> {
         Ok(self
             .find_reference(hash, payload, pool, reader, end)?
-            .map(|(offset, length, _)| (offset, length)))
+            .map(|span| (span.offset, span.length)))
     }
 
     pub(super) fn find_reference(
@@ -79,7 +79,7 @@ impl DiskTable {
         pool: &mut BufWriter<File>,
         reader: &File,
         end: u64,
-    ) -> Result<Option<(u64, u64, u32)>, Error> {
+    ) -> Result<Option<PayloadSpan>, Error> {
         let Some(file) = self.file.as_mut() else {
             return Ok(None);
         };
@@ -97,7 +97,11 @@ impl DiskTable {
                 && length == payload.len() as u64
                 && equals(pool, reader, end, cell.offset, payload)?
             {
-                return Ok(Some((cell.offset, length, cell.ordinal as u32)));
+                return Ok(Some(PayloadSpan {
+                    offset: cell.offset,
+                    length,
+                    ordinal: cell.ordinal as u32,
+                }));
             }
             position = (position + 1) & (self.capacity - 1);
         }
@@ -111,7 +115,7 @@ impl DiskTable {
         source: (&File, u64, u64),
         pool: &mut BufWriter<File>,
         reader: (&File, u64),
-    ) -> Result<Option<(u64, u64, u32)>, Error> {
+    ) -> Result<Option<PayloadSpan>, Error> {
         let Some(file) = self.file.as_mut() else {
             return Ok(None);
         };
@@ -128,7 +132,11 @@ impl DiskTable {
                     .filter(|&end| end <= reader.1)
                     .ok_or(Error::Invalid("partition comparison span"))?;
                 if file_equals(source, reader.0, cell.offset)? {
-                    return Ok(Some((cell.offset, source.2, cell.ordinal as u32)));
+                    return Ok(Some(PayloadSpan {
+                        offset: cell.offset,
+                        length: source.2,
+                        ordinal: cell.ordinal as u32,
+                    }));
                 }
             }
             position = (position + 1) & (self.capacity - 1);
@@ -144,13 +152,22 @@ impl DiskTable {
         directory: &Path,
         budget: &mut DiskBudget,
     ) -> Result<(), Error> {
-        self.insert_reference(hash, (span.0, span.1, 0), directory, budget)
+        self.insert_reference(
+            hash,
+            PayloadSpan {
+                offset: span.0,
+                length: span.1,
+                ordinal: 0,
+            },
+            directory,
+            budget,
+        )
     }
 
     pub(super) fn insert_reference(
         &mut self,
         hash: u64,
-        span: (u64, u64, u32),
+        span: PayloadSpan,
         directory: &Path,
         budget: &mut DiskBudget,
     ) -> Result<(), Error> {
@@ -159,10 +176,10 @@ impl DiskTable {
         }
         let cell = Cell {
             hash,
-            ordinal: u64::from(span.2),
-            offset: span.0,
+            ordinal: u64::from(span.ordinal),
+            offset: span.offset,
             length_plus_one: span
-                .1
+                .length
                 .checked_add(1)
                 .ok_or(Error::Limit("payload length"))?,
         };
@@ -634,7 +651,11 @@ mod tests {
             table
                 .insert_reference(
                     7,
-                    (u64::from(id) * 4, 4, id * 3),
+                    PayloadSpan {
+                        offset: u64::from(id) * 4,
+                        length: 4,
+                        ordinal: id * 3,
+                    },
                     directory.path(),
                     &mut budget,
                 )
@@ -646,7 +667,11 @@ mod tests {
                 table
                     .find_reference(7, &id.to_le_bytes(), &mut pool, &reader, 640)
                     .unwrap(),
-                Some((u64::from(id) * 4, 4, id * 3))
+                Some(PayloadSpan {
+                    offset: u64::from(id) * 4,
+                    length: 4,
+                    ordinal: id * 3
+                })
             );
         }
         assert_eq!(budget.used, 512 * 32);

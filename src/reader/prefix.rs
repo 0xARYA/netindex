@@ -40,7 +40,10 @@ impl<B: AsRef<[u8]>> Reader<B> {
             IpAddr::V6(ip) => self.aliases.as_ref().and_then(|a| a.lookup(u128::from(ip))),
             IpAddr::V4(_) => None,
         };
-        let source = window.map_or(address, |window| window.query(number(address)).into());
+
+        let source = window.map_or(address, |window| {
+            window.source_address(number(address)).into()
+        });
         let ipv6 = source.is_ipv6();
         let section = if ipv6 { self.layout.v6 } else { self.layout.v4 };
         if section.encoding == Encoding::Packed {
@@ -52,6 +55,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
                 ControlFlow::Continue(()) => Ok(None),
             };
         }
+
         let query = number(source);
         let (first, last) = if ipv6 { self.bounds[1] } else { self.bounds[0] };
         if query < first || query > last {
@@ -60,13 +64,15 @@ impl<B: AsRef<[u8]>> Reader<B> {
 
         let bytes = self.bytes.as_ref();
         let mut best = None;
-        seek(section, bytes, 0, section.count, query, &mut best)?;
+        seek_interval_prefix(section, bytes, 0, section.count, query, &mut best)?;
+
         let Some(entry) = best else { return Ok(None) };
         let row = Match {
             id: entry.id,
             target: entry.target(ipv6)?,
             payload: self.layout.payload(bytes, entry.id)?,
         };
+
         if let Some(window) = window {
             Ok(Some(window.matched(row)?))
         } else {
@@ -78,7 +84,7 @@ impl<B: AsRef<[u8]>> Reader<B> {
     }
 }
 
-fn seek(
+fn seek_interval_prefix(
     section: Section,
     bytes: &[u8],
     low: usize,
@@ -89,21 +95,25 @@ fn seek(
     if low == high {
         return Ok(());
     }
+
     let mid = low + (high - low) / 2;
     if section.maximum(bytes, mid)? < query {
         return Ok(());
     }
+
     let entry = section.entry(bytes, mid)?;
     if entry.start > query {
-        return seek(section, bytes, low, mid, query, best);
+        return seek_interval_prefix(section, bytes, low, mid, query, best);
     }
 
-    seek(section, bytes, mid + 1, high, query, best)?;
+    seek_interval_prefix(section, bytes, mid + 1, high, query, best)?;
+
     // Containing CIDRs are nested. A prefix starting earlier than the winner
     // cannot be as specific; equal starts still require end and ID comparison.
     if best.is_some_and(|winner| entry.start < winner.start) {
         return Ok(());
     }
+
     if entry.kind != 2
         && entry.end >= query
         && best.is_none_or(|winner| {
@@ -112,5 +122,6 @@ fn seek(
     {
         *best = Some(entry);
     }
-    seek(section, bytes, low, mid, query, best)
+
+    seek_interval_prefix(section, bytes, low, mid, query, best)
 }

@@ -15,6 +15,7 @@ pub use reader_set::ReaderSet;
 pub use target::Target;
 
 mod aliases;
+mod broad_routes;
 mod builder;
 #[cfg(feature = "codec")]
 pub mod codec;
@@ -28,7 +29,6 @@ mod packed;
 mod payload;
 mod reader;
 mod reader_set;
-mod routing;
 mod search;
 mod target;
 #[cfg(feature = "shared-values")]

@@ -2,7 +2,9 @@ use std::net::IpAddr;
 
 use crate::{Error, target::number};
 
-const BUCKETS: usize = 4096;
+pub(crate) const MAX_READERS: usize = u64::BITS as usize;
+const PREFIX_BITS: u32 = 12;
+const BUCKETS: usize = 1 << PREFIX_BITS;
 const WORDS: usize = BUCKETS / 64;
 
 /// Conservative IP coverage of one immutable reader, using 12 address bits.
@@ -34,7 +36,7 @@ impl Coverage {
     }
 
     pub(crate) fn insert(&mut self, start: u128, end: u128, ipv6: bool) {
-        let shift = if ipv6 { 116 } else { 20 };
+        let shift = bucket_shift(ipv6);
         let first = (start >> shift) as usize;
         let last = (end >> shift) as usize;
         let words = if ipv6 { &mut self.v6 } else { &mut self.v4 };
@@ -68,7 +70,7 @@ impl CoverageRouter {
     /// # Errors
     /// Fails beyond 64 readers or if a memory reservation fails.
     pub fn new(coverage: &[Coverage]) -> Result<Self, Error> {
-        if coverage.len() > 64 {
+        if coverage.len() > MAX_READERS {
             return Err(Error::Limit("routed readers"));
         }
 
@@ -124,7 +126,10 @@ pub(crate) fn candidates(mut mask: u64) -> impl Iterator<Item = usize> {
 
 fn bucket(address: IpAddr) -> (bool, usize) {
     let ipv6 = address.is_ipv6();
-    let shift = if ipv6 { 116 } else { 20 };
 
-    (ipv6, (number(address) >> shift) as usize)
+    (ipv6, (number(address) >> bucket_shift(ipv6)) as usize)
+}
+
+fn bucket_shift(ipv6: bool) -> u32 {
+    (if ipv6 { 128 } else { 32 }) - PREFIX_BITS
 }

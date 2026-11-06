@@ -1,8 +1,14 @@
 use std::{fmt, net::IpAddr, sync::Arc};
 
-use crate::{CoverageRouter, Error, Match, Reader};
+use crate::{
+    CoverageRouter, Error, Match, Reader,
+    coverage::{MAX_READERS, candidates},
+    target::number,
+};
 
 mod query;
+
+const FINE_BUCKETS_PER_FAMILY: usize = 1 << 16;
 
 /// An immutable ordered set of at most 64 readers with IP coverage routing.
 ///
@@ -27,17 +33,11 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
     /// # Errors
     /// Returns allocation or reader-count limit errors.
     pub fn new(readers: Vec<Arc<Reader<B>>>) -> Result<Self, Error> {
-        if readers.len() > 64 {
+        if readers.len() > MAX_READERS {
             return Err(Error::Limit("routed readers"));
         }
 
-        let mut coverage = Vec::new();
-        coverage.try_reserve_exact(readers.len())?;
-        for reader in &readers {
-            coverage.push(reader.coverage());
-        }
-
-        let router = Routing::Coarse(CoverageRouter::new(&coverage)?);
+        let router = Routing::Coarse(coarse_router(&readers)?);
 
         Ok(Self { readers, router })
     }
@@ -50,7 +50,7 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
     /// # Errors
     /// Returns coverage-validation, allocation or reader-count limit errors.
     pub fn with_fine_routing(readers: Vec<Arc<Reader<B>>>) -> Result<Self, Error> {
-        if readers.len() > 64 {
+        if readers.len() > MAX_READERS {
             return Err(Error::Limit("routed readers"));
         }
 
@@ -91,7 +91,7 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
         address: IpAddr,
         mut emit: impl FnMut(usize, Match<'a>) -> Result<(), E>,
     ) -> Result<(), E> {
-        for position in crate::coverage::candidates(self.router.mask(address)) {
+        for position in candidates(self.router.mask(address)) {
             let reader = self
                 .readers
                 .get(position)
@@ -145,13 +145,7 @@ impl<B: AsRef<[u8]>> ReaderSet<B> {
         }));
 
         let router = match &self.router {
-            Routing::Coarse(_) => {
-                let mut coverage = Vec::new();
-                coverage.try_reserve_exact(self.len())?;
-                coverage.extend(readers.iter().map(|reader| reader.coverage()));
-
-                Routing::Coarse(CoverageRouter::new(&coverage)?)
-            }
+            Routing::Coarse(_) => Routing::Coarse(coarse_router(&readers)?),
             Routing::Fine(existing) => {
                 let mut router = FineRouter::empty()?;
                 let keep = !(1u64 << position);
@@ -189,7 +183,7 @@ impl Routing {
         match self {
             Self::Coarse(router) => router.mask(address),
             Self::Fine(router) => {
-                let bucket = fine_bucket(crate::target::number(address), address.is_ipv6());
+                let bucket = fine_bucket(number(address), address.is_ipv6());
                 router.masks.get(bucket).copied().unwrap_or(u64::MAX)
             }
         }
@@ -203,8 +197,8 @@ struct FineRouter {
 impl FineRouter {
     fn empty() -> Result<Self, Error> {
         let mut masks = Vec::new();
-        masks.try_reserve_exact(2 * 65536)?;
-        masks.resize(2 * 65536, 0);
+        masks.try_reserve_exact(2 * FINE_BUCKETS_PER_FAMILY)?;
+        masks.resize(2 * FINE_BUCKETS_PER_FAMILY, 0);
 
         Ok(Self { masks })
     }
@@ -233,5 +227,13 @@ impl FineRouter {
 }
 
 fn fine_bucket(address: u128, ipv6: bool) -> usize {
-    usize::from(ipv6) * 65536 + (address >> if ipv6 { 112 } else { 16 }) as usize
+    usize::from(ipv6) * FINE_BUCKETS_PER_FAMILY + (address >> if ipv6 { 112 } else { 16 }) as usize
+}
+
+fn coarse_router<B: AsRef<[u8]>>(readers: &[Arc<Reader<B>>]) -> Result<CoverageRouter, Error> {
+    let mut coverage = Vec::new();
+    coverage.try_reserve_exact(readers.len())?;
+    coverage.extend(readers.iter().map(|reader| reader.coverage()));
+
+    CoverageRouter::new(&coverage)
 }

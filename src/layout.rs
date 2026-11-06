@@ -2,9 +2,14 @@ use std::io::Write;
 
 use crate::{Error, Limits, packed, payload::Slots, target::Entry};
 
+pub(crate) mod interval;
+
 pub(crate) const HEADER: usize = 80;
 pub(crate) const MAGIC: &[u8; 8] = b"NETINDEX";
 pub(crate) const VERSION: u32 = 3;
+const BITPACKED_VERSION: u32 = 6;
+const VERSION_OFFSET: usize = 8;
+const PACKED_LENGTHS_OFFSET: usize = 64;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Encoding {
@@ -50,7 +55,7 @@ impl Section {
         }
 
         let row = self.row(bytes, position)?;
-        let (start, end, maximum, id, prefix_offset) = if self.width == 20 {
+        let (start, end, maximum, id, prefix_offset) = if self.width == interval::IPV4_ROW_BYTES {
             (
                 u128::from(u32_at(row, 0)?),
                 u128::from(u32_at(row, 4)?),
@@ -83,6 +88,27 @@ impl Section {
             prefix: byte_at(row, prefix_offset)?,
             kind: byte_at(row, prefix_offset + 1)?,
         })
+    }
+
+    pub(crate) fn visit_entries<E: From<Error>>(
+        self,
+        bytes: &[u8],
+        mut emit: impl FnMut(Entry) -> Result<(), E>,
+    ) -> Result<(), E> {
+        if self.encoding == Encoding::Packed {
+            return packed::visit_entries(
+                slice(bytes, self.offset, self.length)?,
+                self.count,
+                self.ipv6,
+                &mut emit,
+            );
+        }
+
+        for position in 0..self.count {
+            emit(self.entry(bytes, position)?)?;
+        }
+
+        Ok(())
     }
 
     pub(crate) fn start(self, bytes: &[u8], position: usize) -> Result<u128, Error> {
@@ -163,10 +189,10 @@ impl Layout {
         let v4 = Section {
             offset: add(HEADER, metadata)?,
             count: v4,
-            width: 20,
+            width: interval::IPV4_ROW_BYTES,
             length: match packed_v4 {
                 Some(length) => length,
-                None => multiply(v4, 20)?,
+                None => multiply(v4, interval::IPV4_ROW_BYTES)?,
             },
             ipv6: false,
             encoding: if packed_v4.is_some() {
@@ -178,10 +204,10 @@ impl Layout {
         let v6 = Section {
             offset: v4.end()?,
             count: v6,
-            width: 56,
+            width: interval::IPV6_ROW_BYTES,
             length: match packed_v6 {
                 Some(length) => length,
-                None => multiply(v6, 56)?,
+                None => multiply(v6, interval::IPV6_ROW_BYTES)?,
             },
             ipv6: true,
             encoding: if packed_v6.is_some() {
@@ -236,7 +262,7 @@ impl Layout {
 
         output.write_all(MAGIC)?;
         let version = if self.bitpacking {
-            6
+            BITPACKED_VERSION
         } else if matches!(self.slot_encoding, Slots::Indexed { .. }) {
             4
         } else {
@@ -270,8 +296,8 @@ impl Layout {
             return Err(Error::Invalid("index magic"));
         }
 
-        let version = u32_at(bytes, 8)?;
-        if version != VERSION && version != 4 && version != 6 {
+        let version = u32_at(bytes, VERSION_OFFSET)?;
+        if version != VERSION && version != 4 && version != BITPACKED_VERSION {
             return Err(Error::Version(version));
         }
 
@@ -287,7 +313,7 @@ impl Layout {
         let mut packed = [None, None];
 
         for (index, value) in packed.iter_mut().enumerate() {
-            let length = usize_at(bytes, 64 + index * 8)?;
+            let length = usize_at(bytes, PACKED_LENGTHS_OFFSET + index * 8)?;
             if flags & (1 << index) != 0 {
                 if length == 0 {
                     return Err(Error::Invalid("packed section length"));
@@ -310,11 +336,11 @@ impl Layout {
             let start = add(HEADER, metadata)?;
             let v4 = match packed[0] {
                 Some(length) => length,
-                None => multiply(counts[0], 20)?,
+                None => multiply(counts[0], interval::IPV4_ROW_BYTES)?,
             };
             let v6 = match packed[1] {
                 Some(length) => length,
-                None => multiply(counts[1], 56)?,
+                None => multiply(counts[1], interval::IPV6_ROW_BYTES)?,
             };
             let start = add(start, v4)?;
             let start = add(start, v6)?;
@@ -340,7 +366,7 @@ impl Layout {
 
         let mut layout =
             Self::with_packed(counts, metadata, payloads, limits, packed, slot_encoding)?;
-        layout.bitpacking = version == 6;
+        layout.bitpacking = version == BITPACKED_VERSION;
 
         if usize_at(bytes, 16)? != layout.records || bytes.len() != layout.bytes {
             return Err(Error::Invalid("artifact length or record count"));
@@ -357,6 +383,43 @@ impl Layout {
         self.slots += offset;
         self.payloads += offset;
         self.bytes += offset;
+    }
+
+    pub(crate) fn metadata_offset(self) -> usize {
+        self.v4.offset - self.metadata
+    }
+
+    pub(crate) fn header_offset(self) -> usize {
+        self.metadata_offset() - HEADER
+    }
+
+    pub(crate) fn bitpacked_header(
+        self,
+        bytes: &[u8],
+        section_lengths: [usize; 2],
+    ) -> Result<[u8; HEADER], Error> {
+        let mut header = [0; HEADER];
+        header.copy_from_slice(slice(bytes, self.header_offset(), HEADER)?);
+        header
+            .get_mut(VERSION_OFFSET..VERSION_OFFSET + 4)
+            .ok_or(Error::Invalid("bitpacking header"))?
+            .copy_from_slice(&BITPACKED_VERSION.to_le_bytes());
+
+        for (index, (section, length)) in [self.v4, self.v6]
+            .into_iter()
+            .zip(section_lengths)
+            .enumerate()
+        {
+            if section.encoding == Encoding::Packed {
+                let offset = PACKED_LENGTHS_OFFSET + index * 8;
+                header
+                    .get_mut(offset..offset + 8)
+                    .ok_or(Error::Invalid("bitpacking header"))?
+                    .copy_from_slice(&(length as u64).to_le_bytes());
+            }
+        }
+
+        Ok(header)
     }
 
     pub(crate) fn payload<'a>(&self, bytes: &'a [u8], id: u32) -> Result<&'a [u8], Error> {
