@@ -1,0 +1,47 @@
+name: Packed search on native Arm64
+on:
+  push:
+    branches: [codex/p3-arm-qualification]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  arm64:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Check native NEON against the scalar oracle
+        run: NETINDEX_REQUIRE_NEON=1 cargo +1.95.0 test --locked --all-features --lib search::tests
+      - name: Measure native point lookups and membership
+        run: |
+          set -eu
+          out="$RUNNER_TEMP/qualification"
+          mkdir -p "$out"
+          lscpu > "$out/cpu.txt"
+          rustc +1.95.0 -vV > "$out/rustc.txt"
+          manifest=benches/query_capabilities/Cargo.toml
+          for mode in scalar neon; do
+            features=new-api
+            if [ "$mode" = neon ]; then features=new-api,simd; fi
+            CARGO_TARGET_DIR="$RUNNER_TEMP/$mode" cargo +1.95.0 build --locked --release --manifest-path "$manifest" --no-default-features --features "$features"
+            bin="$RUNNER_TEMP/$mode/release/netindex-query-study"
+            sha256sum "$bin" >> "$out/binaries.txt"
+            if [ "$mode" = neon ]; then objdump -dC "$bin" > "$out/neon-asm.txt"; fi
+          done
+          for round in 0 1 2; do
+            order="scalar neon"
+            if [ "$round" = 1 ]; then order="neon scalar"; fi
+            for mode in $order; do
+              taskset -c 3 "$RUNNER_TEMP/$mode/release/netindex-query-study" membership packed-w1 packed-v4 packed-w4 packed-w8 packed-v6 bitpacked-v6 overlaps aliases mixed > "$out/$mode-$round.jsonl"
+            done
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arm64-packed-search
+          path: ${{ runner.temp }}/qualification
+          retention-days: 30

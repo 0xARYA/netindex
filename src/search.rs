@@ -1,3 +1,5 @@
+#[cfg(all(feature = "simd", target_arch = "aarch64", target_endian = "little"))]
+use std::arch::aarch64::*;
 #[cfg(all(feature = "simd", target_arch = "x86_64"))]
 use std::arch::x86_64::*;
 
@@ -7,6 +9,8 @@ use crate::Error;
 pub(crate) struct Search {
     #[cfg(all(feature = "simd", target_arch = "x86_64"))]
     avx2: bool,
+    #[cfg(all(feature = "simd", target_arch = "aarch64", target_endian = "little"))]
+    neon: bool,
 }
 
 impl Search {
@@ -14,6 +18,8 @@ impl Search {
         Self {
             #[cfg(all(feature = "simd", target_arch = "x86_64"))]
             avx2: std::is_x86_feature_detected!("avx2"),
+            #[cfg(all(feature = "simd", target_arch = "aarch64", target_endian = "little"))]
+            neon: std::arch::is_aarch64_feature_detected!("neon"),
         }
     }
 
@@ -42,6 +48,21 @@ impl Search {
                     2 => avx2_tail::<2>(bytes, target),
                     4 => avx2_tail::<4>(bytes, target),
                     8 => avx2_tail::<8>(bytes, target),
+                    _ => binary(bytes, width, target),
+                }
+            };
+        }
+
+        #[cfg(all(feature = "simd", target_arch = "aarch64", target_endian = "little"))]
+        if self.neon && width <= 8 && bytes.len() >= 16 {
+            // SAFETY: detect() established NEON support and upper_bound
+            // validated the complete column and the minimum load length.
+            return unsafe {
+                match width {
+                    1 => neon_tail::<1>(bytes, target),
+                    2 => neon_tail::<2>(bytes, target),
+                    4 => neon_tail::<4>(bytes, target),
+                    8 => neon_tail::<8>(bytes, target),
                     _ => binary(bytes, width, target),
                 }
             };
@@ -151,15 +172,77 @@ unsafe fn avx2_tail<const WIDTH: usize>(bytes: &[u8], target: u128) -> Result<us
     Ok(start + mask.trailing_zeros() as usize / WIDTH)
 }
 
+#[cfg(all(feature = "simd", target_arch = "aarch64", target_endian = "little"))]
+#[target_feature(enable = "neon")]
+unsafe fn neon_tail<const WIDTH: usize>(bytes: &[u8], target: u128) -> Result<usize, Error> {
+    let lanes = 16 / WIDTH;
+    let (column, _) = bytes.as_chunks::<WIDTH>();
+    let count = column.len();
+    let target = target as u64;
+    let (mut low, mut high) = (0, count);
+
+    while high - low > lanes {
+        let mid = low + (high - low) / 2;
+        let row = column
+            .get(mid)
+            .ok_or(Error::Invalid("packed search column"))?;
+        let mut value = [0; 8];
+        value
+            .get_mut(..WIDTH)
+            .ok_or(Error::Invalid("packed integer width"))?
+            .copy_from_slice(row);
+        if u64::from_le_bytes(value) <= target {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    let start = low.min(count - lanes);
+
+    // SAFETY: start <= count - lanes and lanes * WIDTH == 16.
+    let values = unsafe { vld1q_u8(bytes.as_ptr().add(start * WIDTH)) };
+
+    let greater = match WIDTH {
+        1 => vcgtq_u8(values, vdupq_n_u8(target as u8)),
+        2 => vreinterpretq_u8_u16(vcgtq_u16(
+            vreinterpretq_u16_u8(values),
+            vdupq_n_u16(target as u16),
+        )),
+        4 => vreinterpretq_u8_u32(vcgtq_u32(
+            vreinterpretq_u32_u8(values),
+            vdupq_n_u32(target as u32),
+        )),
+        8 => vreinterpretq_u8_u64(vcgtq_u64(vreinterpretq_u64_u8(values), vdupq_n_u64(target))),
+        _ => return Err(Error::Invalid("packed integer width")),
+    };
+    // Narrow each all-one or all-zero byte into four bits in lane order.
+    // A zero mask yields the one-past-vector index.
+    let mask = vget_lane_u64::<0>(vreinterpret_u64_u8(vshrn_n_u16::<4>(vreinterpretq_u16_u8(
+        greater,
+    ))));
+    Ok(start + mask.trailing_zeros() as usize / (4 * WIDTH))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(all(feature = "simd", target_arch = "aarch64", target_endian = "little"))]
+    #[test]
+    fn detected_neon_on_qualification_runner() {
+        if std::env::var_os("NETINDEX_REQUIRE_NEON").is_some() {
+            assert!(Search::detect().neon);
+        }
+    }
 
     #[test]
     fn randomized_columns_match_scalar_and_detected_search_at_every_alignment() {
         let scalar = Search {
             #[cfg(all(feature = "simd", target_arch = "x86_64"))]
             avx2: false,
+            #[cfg(all(feature = "simd", target_arch = "aarch64", target_endian = "little"))]
+            neon: false,
         };
         let mut state = 0x2026_1006_ef24_u64;
 
@@ -237,6 +320,12 @@ mod tests {
                     let scalar = Search {
                         #[cfg(all(feature = "simd", target_arch = "x86_64"))]
                         avx2: false,
+                        #[cfg(all(
+                            feature = "simd",
+                            target_arch = "aarch64",
+                            target_endian = "little"
+                        ))]
+                        neon: false,
                     };
                     for search in [scalar, Search::detect()] {
                         assert_eq!(

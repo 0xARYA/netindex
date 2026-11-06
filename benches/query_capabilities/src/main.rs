@@ -93,6 +93,11 @@ fn synthetic(name: &str) -> Result<Vec<u8>, Error> {
                 address: Ipv4Addr::from(i * 17).into(),
                 prefix: 32,
             },
+            "packed-w1" => Target::Address(Ipv4Addr::from(i).into()),
+            "packed-w4" => Target::Address(Ipv4Addr::from(i * 65537).into()),
+            "packed-w8" => {
+                Target::Address(Ipv6Addr::from(u128::from(i) * ((1u128 << 32) + 17)).into())
+            }
             "packed-v6" | "bitpacked-v6" => {
                 Target::Address(Ipv6Addr::from(u128::from(i) * ((1u128 << 96) + 17)).into())
             }
