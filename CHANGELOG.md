@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.1 - 2026-11-06
+
+Slice each bitpacked delta column once per block during sequential traversal.
+This reduces work during open-time validation and full visits without changing
+the API, file format, or validation rules.
+
 ## 3.0.0 - 2026-11-06
 
 Choose indexed shared-payload references by default when they reduce artifact

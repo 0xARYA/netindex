@@ -117,3 +117,8 @@ reload it primes the old file and verifies that a distinct, byte-identical
 replacement has zero resident pages; the adapter retains both readers.
 Keep the trace private and delete it from the benchmark directory when done.
 The receipt contains aggregate timings and counts only.
+
+Pass `--baseline PATH_TO_ADAPTER` to alternate baseline and candidate
+processes for each converted layout on the same trace and artifacts. Native
+MMDB is measured once per condition and trial. Both builds must pass
+normalized parity before the timings start.

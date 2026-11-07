@@ -136,3 +136,147 @@ startup gap was much smaller than the gap between formats, so profile
 validation before pursuing another storage encoding. Keep bitpacking optional.
 
 [Reproduction](README.md) · [Aggregate samples](../results/2026-11-06-p3-city-deployment.json)
+
+## Validation follow-up
+
+The follow-up compared netindex 3.0.0 at `19ac3e9` with the same netindex
+revision in both builds. The only functional difference was in Byway's
+native component loader, based on Byway `824205c3`. The original loader
+decodes and validates every logical assertion, including aliases and shared
+payloads. The candidate uses a temporary cache bounded to 65,536 entries
+(1 MiB on these hosts). A hit requires the same immutable slice, including
+its length. Network family, ordering, overlaps, and record count are still
+checked for every row. Payloads with a network override are revalidated for
+every target. A collision or allocation failure only causes more validation.
+Neither file format nor lookup changed.
+
+On Windows, pinned to CPU 20 of the Ryzen 9 9950X3D2, fresh processes
+alternated baseline and candidate with already-read files. The medians
+below cover three samples per cell with identical Rust 1.95.0 release
+settings. The phase timers were placed around netindex's mapped open,
+Byway metadata validation, and the logical record visit in both builds.
+
+| Phase | Shared baseline | Shared candidate | Bitpacked baseline | Bitpacked candidate |
+| --- | ---: | ---: | ---: | ---: |
+| netindex mapped open and structure, ms | 140.67 | 140.09 | 181.25 | 183.07 |
+| Byway metadata, ms | 1.16 | 1.15 | 1.18 | 1.14 |
+| Byway logical record validation, ms | 3,341.68 | 983.66 | 3,568.03 | 1,153.90 |
+| Total open, ms | 3,483.68 | 1,123.82 | 3,751.07 | 1,338.48 |
+
+In a separate WSL2 baseline profile with frame pointers, `perf record`
+sampled user CPU time during a bitpacked open followed by the standard
+lookup workload. Flat samples put 22.68% in compact text decoding,
+10.72% in UTF-8 validation, and 10.10% in the compact payload decoder
+itself. Those are exclusive samples from one process, not elapsed phase
+percentages. On Windows, both candidate artifacts matched native MMDB on
+108,123 normalized lookups each.
+
+On the same Ryzen host under Ubuntu 24.04 WSL2, both builds used identical
+release flags and immutable copies on the Linux filesystem. Each cell is
+the median of three fresh processes pinned to CPU 20, alternating the two
+builds. The cold trials verified zero resident Linux file pages. Reload
+kept the old reader alive and opened a distinct, hash-verified cold copy.
+Host and device caches were not controlled.
+
+| Measurement | Native MMDB | Shared baseline → candidate | Bitpacked baseline → candidate |
+| --- | ---: | ---: | ---: |
+| Warm open and validate, s | 2.64 | 3.71 → 1.18 | 3.96 → 1.34 |
+| Cold open and validate, s | 2.68 | 3.78 → 1.18 | 3.88 → 1.35 |
+| Cold replacement reload, s | 2.67 | 3.80 → 1.24 | 3.95 → 1.40 |
+| Peak reload RSS, MiB | 120.1 | 126.4 → 126.8 | 115.4 → 115.8 |
+
+Both candidates again matched all 108,123 normalized answers. In this
+local benchmark, the change cut netindex cold validation and reload
+time by 65–69% and put both layouts ahead of native MMDB at those
+boundaries. This uses the fixed qualification corpus, not the private
+production trace or deployment host; it does not establish whole-service
+restart or rollout performance.
+
+[Samples, cache checks, and provenance](../results/2026-11-06-city-validation.json).
+
+### Reducing work in the record walk
+
+With the payload cache in place, a second WSL2 sample showed that packed
+delta reconstruction and target projection were also hot. Two changes
+preserve the existing checks and artifact bytes:
+
+- Byway compares the canonical network start against the prior network's
+  saved end as a same-family integer, computing each end once.
+- netindex slices each exact-bit delta column once per block when visiting
+  entries, rather than taking the same checked slice for every row. Point
+  lookup still uses its existing search path.
+
+In three paired Windows runs per layout, keeping the previous 1 MiB cache,
+a Byway prototype using `IpAddr` comparisons reduced median warm open from
+1.121 to 0.977 s (shared) and 1.332 to 1.159 s (bitpacked). A separate
+comparison of just the netindex
+change reduced bitpacked warm open from 1.327 to 1.242 s; the structural
+validation phase went from 181.5 to 138.2 ms. A 4 MiB cache alone was about
+as fast as the Byway change, but did not consistently help when combined
+with it. Keep the 1 MiB limit.
+
+The `IpAddr` comparison did not consistently improve the Linux runs.
+The final Byway code compares IPv4 as `u32` and IPv6 as `u128`.
+In a focused Linux check with the earlier Byway code held constant,
+slicing the column once reduced the bitpacked structural phase from
+171 to 135 ms and total warm open from 1.373 to 1.297 s (five paired
+processes on CPU 6). With the same-family integer comparison and the
+column change together, a separate three-pair check on CPU 4 took
+1.198 s versus 1.332 s for the original cached loader. These two
+focused checks use different CPU affinities and cannot be subtracted
+to estimate each change's contribution.
+
+The final pair used the same Linux cache checks, files, CPU 20, and three
+fresh processes per cell as the validation comparison above. Its baseline
+already includes the 1 MiB Byway cache.
+
+| Measurement | Native MMDB | Shared cached → final | Bitpacked cached → final |
+| --- | ---: | ---: | ---: |
+| Warm open and validate, s | 2.80 | 1.22 → 1.16 | 1.36 → 1.25 |
+| Cold open and validate, s | 2.72 | 1.19 → 1.16 | 1.43 → 1.29 |
+| Cold replacement reload, s | 2.77 | 1.24 → 1.17 | 1.43 → 1.31 |
+
+The shared cold-open change was small in this run (2%); bitpacked cold
+open improved by 10%. Both layouts matched native MMDB on all 108,123
+queries each. An earlier prototype run was excluded when the required
+cold cache check failed. The final run used a new Linux directory and
+verified residency before all 45 trials.
+
+## Collector host validation follow-up
+
+On November 6, 2026, the standalone adapter compared released netindex
+3.0.0 plus the original Byway loader against the netindex 3.0.1 code
+change plus Byway's cache and overlap validation changes. Both builds
+used the same Byway source revision as the local validation follow-up
+and the same three artifact hashes as the earlier deployment qualification.
+This measures the combined changes. The isolated netindex result is
+reported in [Reducing work in the record walk](#reducing-work-in-the-record-walk).
+
+The original trace file was deleted after its run. Requerying the same
+production session window returned 1,965 eligible sessions (802 distinct
+peers, 1,347 IPv4 queries), versus 3,278 originally. Both builds replayed
+the same reconstructed trace, in order, preserving repeat addresses.
+The addresses stayed on the collector host. The running collector service
+did not load the test artifacts.
+
+| Median on collector host | Native MMDB | Shared baseline → candidate | Bitpacked baseline → candidate |
+| --- | ---: | ---: | ---: |
+| Warm open and validate, s | 5.480 | 7.618 → 2.246 | 7.884 → 2.509 |
+| Cold open and validate, s | 5.496 | 7.594 → 2.388 | 7.952 → 2.535 |
+| Cold replacement reload, s | 5.562 | 7.715 → 2.349 | 7.953 → 2.508 |
+| Warm trace lookup p95 / p99, µs | 2.72 / 3.45 | 2.23 / 2.67 → 2.22 / 2.64 | 2.25 / 2.71 → 2.18 / 2.60 |
+
+Each cell is the median of three fresh processes on CPU 3 of the Xeon
+Gold 5315Y host, at nice +10. The runner alternated converted builds
+and verified Linux page residency before all 45 trials. Reload retained
+the old reader while opening a distinct, byte-identical cold replacement.
+Both builds and both layouts matched all 1,965 trace results and 8,118
+additional alias and boundary queries. All trace lookups hit, so the
+latencies do not establish miss or service-level performance.
+
+The candidate reduced cold open and reload time by 68–70% compared with
+the original converted loader, and finished both phases ahead of native
+MMDB on this host. Most of the gain comes from the Byway changes; upgrading
+the netindex crate alone will not deliver the combined result.
+
+[Aggregate samples and provenance](../results/2026-11-06-city-validation-collector.json).

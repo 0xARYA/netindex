@@ -178,9 +178,11 @@ pub(crate) fn visit_entries<E: From<Error>>(
 ) -> Result<(), E> {
     for index in 0..count.div_ceil(BLOCK) {
         let block = read_block(bytes, count, index)?;
-        if block.width.bits().is_some() {
+        if let Some(bits) = block.width.bits() {
+            let column = slice(bytes, block.offset, block.delta_bytes())?;
             for local in 0..block.count {
-                emit(block_entry(bytes, block, local, ipv6)?)?;
+                let delta = bitpacking::integer(column, local, bits)?;
+                emit(block_entry_delta(bytes, block, local, ipv6, delta)?)?;
             }
             continue;
         }

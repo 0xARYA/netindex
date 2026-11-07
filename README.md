@@ -29,7 +29,7 @@ Add netindex to your project:
 netindex = "3"
 ```
 
-See the [3.0 API documentation](https://docs.rs/netindex/3.0.0/netindex/)
+See the [3.0 API documentation](https://docs.rs/netindex/3.0.1/netindex/)
 or the [2.1 API documentation](https://docs.rs/netindex/2.1.0/netindex/).
 See [upgrading from 2.x](#upgrading-from-2x) before replacing deployed readers
 or rebuilding files.
