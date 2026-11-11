@@ -1,26 +1,40 @@
 # Examples and artifact tools
 
-Start with the [README quick start](../README.md) for building and querying
-an index. The Tokio and compio examples show how to share one validated
-reader with blocking workers while keeping at most two batches outstanding:
+Run these commands from the repository root. No downloads or input files are
+needed for the first three examples.
+
+- [README quick start](../README.md#quick-start): build an index in memory and
+  retrieve both records that match the same IP.
+- [Mapped file](mapped.rs): write a temporary `.nidx`, map it, and query an IP
+  range and an exact ASN. It prints `203.0.113.42: maintenance` and removes the
+  temporary file on exit.
+- [Tokio](tokio.rs) and [compio](compio.rs): open and query off the async
+  executor, share one reader, and finish every started batch before returning
+  an error. Each example allows two outstanding jobs and exits silently on
+  success.
 
 ```sh
+cargo run --locked --features mmap --example mapped
 cargo run --locked --example tokio
 cargo run --locked --example compio
 ```
 
-The other Cargo examples are reproducible artifact tools. They use release
-builds for measurement and print JSON to standard output.
+## Artifact tools
 
-| Tool | Required features | Purpose |
-| --- | --- | --- |
-| `dedup` | `external-sort` | Compare external and in-memory output for synthetic duplicate payloads. |
-| `rebuild` | `external-sort,mmap` | Replay an index and check metadata, assertions, and sampled queries. |
-| `reference_lookup` | `mmap` | Measure validated opening and warm lookup for sampled targets and uniform IPs. |
-| `share_aliases` | `mmap` | Fold declared, fully materialized IPv6 alias windows and verify the result. |
+These commands use only synthetic inputs or checked-in fixtures. They print
+JSON with timings and verification results. Use release builds for measurements.
 
-For example, run `cargo run --locked --release --features mmap --example
-reference_lookup -- INPUT.nidx`. Keep files immutable while mapped; use
-private, stable copies. Rebuild and alias folding require a new output
-path. See [BENCHMARKS.md](../BENCHMARKS.md) and the
-[alias study](../benches/shared_aliases/README.md) for measurement commands.
+```sh
+cargo run --locked --release --features external-sort --example dedup
+cargo run --locked --release --features mmap --example reference_lookup -- tests/fixtures/interval.nidx
+mkdir -p target/example-artifacts
+cargo run --locked --release --features 'external-sort,mmap' --example rebuild -- tests/fixtures/shared-alias.nidx target/example-artifacts/materialized.nidx target/example-artifacts
+cargo run --locked --release --features mmap --example share_aliases -- target/example-artifacts/materialized.nidx target/example-artifacts/shared.nidx '2002::/16,1,1'
+```
+
+In PowerShell, use `New-Item -ItemType Directory -Force target/example-artifacts`
+in place of `mkdir -p`. Both output paths must be new; choose fresh names on a
+second run. Keep input and output files unchanged while the tools map them.
+The last two commands expand the fixture's IPv6 aliases and fold them back
+into a shared window. The tiny fixtures demonstrate the tools; use the
+[benchmark reports](../benches/BASELINES.md) for representative measurements.

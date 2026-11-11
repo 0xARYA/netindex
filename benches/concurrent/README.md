@@ -15,10 +15,10 @@ python3 benches/concurrent/run_replacement.py /tmp/netindex-concurrent/release/r
 ```
 
 Generate the 1M/20M `target/traffic-fixtures/` inputs with the traffic benchmark
-first, as documented in [BENCHMARKS.md](../../BENCHMARKS.md). Scaling copies them
-into a fresh private Linux filesystem directory, verifies hashes, validates and
-warms the mapping, then shares an immutable reader. Every timed query is checked
-before measurement against its independent ID/target/payload oracle; checksums
+first, following the [traffic benchmark instructions](../BASELINES.md#traffic-shapes-and-caller-batches-2026-11-04).
+Scaling copies them into a fresh private Linux filesystem directory, verifies
+hashes, validates and warms the mapping, then shares an immutable reader. Every
+timed query is checked against its independent ID/target/payload oracle; checksums
 are checked afterward. Each worker executes two million mixed hit/miss queries
 over a rotating corpus. Two trials reverse the order of 1/2/4/8/16 workers.
 Sampled query latency includes clock overhead; histograms and clock controls

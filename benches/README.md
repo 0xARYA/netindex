@@ -2,7 +2,8 @@
 
 Production benchmarks remain active: `index`, `search`, `scale`, `traffic`,
 `shapes` and optional `codec`. Run them through the root Cargo manifest as
-described in [BENCHMARKS.md](../BENCHMARKS.md).
+described in [benchmark reports and reproduction](BASELINES.md). For a
+workload comparison, start with the [benchmark guide](../BENCHMARKS.md).
 
 | Supporting tools | Purpose |
 | --- | --- |

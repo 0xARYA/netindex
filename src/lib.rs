@@ -34,6 +34,10 @@ mod target;
 #[cfg(feature = "shared-values")]
 pub mod values;
 
+#[cfg(doctest)]
+#[doc = include_str!("../GUIDE.md")]
+mod guide_doctests {}
+
 /// A validated file-backed reader; requires the mmap feature.
 #[cfg(feature = "mmap")]
 pub type MappedReader = Reader<memmap2::Mmap>;

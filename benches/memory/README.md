@@ -3,7 +3,8 @@
 This separate package adds no runtime dependency to netindex. Use Rust 1.95.0
 on Linux with cgroup-v2 memory already enabled, root access, and a private ext4
 work directory. Do not use a host-mounted WSL filesystem for the work copies.
-Generate the 20M `traffic` fixtures first (see `BENCHMARKS.md`).
+Generate the 20M `traffic` fixtures first using the
+[traffic benchmark instructions](../BASELINES.md#traffic-shapes-and-caller-batches-2026-11-04).
 
 ```sh
 CARGO_TARGET_DIR=/root/.cache/netindex-perf-20261104/target \

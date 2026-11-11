@@ -57,8 +57,8 @@ cargo +1.95.0 package --locked --all-features
 Set `RUSTDOCFLAGS="-D warnings"` when checking documentation. Packaging requires
 a clean working tree; use `--allow-dirty` only for local verification.
 
-Feature-dependent README examples use hidden feature guards. Ordinary
-all-feature doctests exercise them; the mapped-file example is compiled without
+Feature-dependent [usage guide](GUIDE.md) examples use hidden feature guards.
+Ordinary all-feature doctests exercise them; the mapped-file example is compiled without
 opening a local file. When publishing a new major version, update the README
 quick start and its versioned documentation link with the release.
 
@@ -77,7 +77,8 @@ The [fuzz package](fuzz/README.md) runs on Linux with AddressSanitizer.
 
 ## Benchmarks
 
-See [benchmarks](BENCHMARKS.md) for workloads and reproduction.
+See the [benchmark guide](BENCHMARKS.md) for workload comparisons and the
+[benchmark reports](benches/BASELINES.md) for reproduction.
 The Criterion harness below tracks changes within netindex:
 
 ```sh

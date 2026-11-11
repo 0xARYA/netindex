@@ -36,11 +36,11 @@ For new experiments, record:
 
 | Evidence | Reproduction/source | Main boundary |
 | --- | --- | --- |
-| [City replay](results/2026-11-04-city-replay.json) | [rebuild example](../examples/rebuild.rs), [instructions](../BENCHMARKS.md) | Exact opaque assertions through released external builders; complete assertion parity |
+| [City replay](results/2026-11-04-city-replay.json) | [rebuild example](../examples/rebuild.rs), [instructions](BASELINES.md#city-replay-and-size-scaling-2026-11-04) | Exact opaque assertions through released external builders; complete assertion parity |
 | [Native City](results/2026-11-04-native-city.json) | [adapter](native_city/README.md) | External application schema, normalization, complete native conversion, owned-record serving and sampled query parity |
-| [Scale](results/2026-11-04-scale.json) | [scale.rs](scale.rs), [instructions](../BENCHMARKS.md) | Four sizes, three key families, small fixed warm corpus |
-| [Traffic](results/2026-11-04-traffic.json) | [traffic.rs](traffic.rs), [instructions](../BENCHMARKS.md) | Hit/miss/skew/locality distributions at 1M/20M assertions |
-| [Shapes and batches](results/2026-11-04-shapes-batches.json) | [shapes.rs](shapes.rs), [instructions](../BENCHMARKS.md) | Independent original-target scans; duplicates/overlaps; caller batches |
+| [Scale](results/2026-11-04-scale.json) | [scale.rs](scale.rs), [instructions](BASELINES.md#city-replay-and-size-scaling-2026-11-04) | Four sizes, three key families, small fixed warm corpus |
+| [Traffic](results/2026-11-04-traffic.json) | [traffic.rs](traffic.rs), [instructions](BASELINES.md#traffic-shapes-and-caller-batches-2026-11-04) | Hit/miss/skew/locality distributions at 1M/20M assertions |
+| [Shapes and batches](results/2026-11-04-shapes-batches.json) | [shapes.rs](shapes.rs), [instructions](BASELINES.md#traffic-shapes-and-caller-batches-2026-11-04) | Independent original-target scans; duplicates/overlaps; caller batches |
 | [Memory](results/2026-11-04-memory.json) | [Linux harness](memory/README.md) | Guest residency and cgroup pressure, including zero-residency controls; host device cache uncontrolled |
 | [Concurrency](results/2026-11-04-concurrent.json) | [Linux harness](concurrent/README.md) | Shared warm reader, per-worker pinning, full timed-corpus prechecks and sampled query latency |
 | [Replacement](results/2026-11-04-replacement.json) | [Linux harness](concurrent/README.md) | Exact results, borrowed lifetimes, failed candidates, generation coherence and mapping reclamation |

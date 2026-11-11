@@ -49,6 +49,8 @@ jobs:
         run: |
           cargo +1.95.0 bench --locked --features simd --bench traffic -- --test
           cargo +1.95.0 bench --locked --features simd --bench shapes -- --test
+      - name: Run mapped file example
+        run: cargo +1.95.0 run --locked --features mmap --example mapped
       - name: Run Tokio example
         run: cargo +1.95.0 run --locked --example tokio
       - name: Run compio example

@@ -44,6 +44,10 @@ name = "dedup"
 required-features = ["external-sort"]
 
 [[example]]
+name = "mapped"
+required-features = ["mmap"]
+
+[[example]]
 name = "rebuild"
 required-features = ["external-sort", "mmap"]
 
