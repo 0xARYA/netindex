@@ -131,24 +131,31 @@ use netindex::{Builder, Error, Limits, Query, Reader, Target};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let address = Ipv4Addr::new(203, 0, 113, 42).into();
+
     let mut builder = Builder::new(Limits::default());
     builder.push(Target::Address(address), b"example")?;
+
     let reader = Reader::open(builder.into_bytes(b"")?, Limits::default())?;
     let queries = [Query::Ip(address), Query::Intersecting(Target::Network {
         address: Ipv4Addr::new(203, 0, 113, 0).into(), prefix: 24,
     })];
+
     let mut results = Vec::new();
     reader.visit_batch(&queries, |query, row| {
         results.push((query, row));
         Ok::<_, Error>(())
     })?;
+
     assert_eq!(results.len(), 2);
     assert!(reader.contains_ip(address)?);
+
     let first = reader.try_visit_ip(address, |row| {
         Ok::<_, Error>(ControlFlow::Break(row.id))
     })?;
+
     assert_eq!(first, ControlFlow::Break(0));
     assert_eq!(reader.inspect()?.records, 1);
+
     Ok(())
 }
 ```
