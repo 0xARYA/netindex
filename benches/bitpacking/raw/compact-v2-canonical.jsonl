@@ -1,3 +1,0 @@
-{"input_open_ms":247.92961799999998,"payload_cache_bytes":4194304,"phase":"prepared","prepare_ms":693.596961,"records":5724698,"run_records":16384,"temporary_limit_bytes":8589934592}
-{"artifact_bytes":56617042,"build_ms":76.235023,"disk_cache_budget":0,"disk_cache_bytes":0,"mode":"bitpacked","partitions":null,"payload_cache_bytes":null,"phase":"built","records":5724698,"temporary_peak_bytes":null}
-{"assertions":5724698,"output_open_ms":179.808485,"phase":"verified","queries":100005,"scope":"opaque assertion replay; full ID/target/payload/metadata identity and sampled all-match query ordering; excludes native conversion and fsync","verification_ms":733.565084}

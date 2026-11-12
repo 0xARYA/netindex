@@ -1,4 +1,5 @@
 /target/
+/benches/**/target/
 /benchmarks/
 /fuzz/target/
 /fuzz/corpus/

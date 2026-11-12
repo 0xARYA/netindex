@@ -1,23 +1,34 @@
-# Benchmarks and performance evidence
+# Benchmarks
 
-Production benchmarks remain active: `index`, `search`, `scale`, `traffic`,
-`shapes` and optional `codec`. Run them through the root Cargo manifest as
-described in [benchmark reports and reproduction](BASELINES.md). For a
-workload comparison, start with the [benchmark guide](../BENCHMARKS.md).
+Two Criterion targets cover the routine regressions. Both generate their own
+inputs and check complete results before timing.
 
-| Supporting tools | Purpose |
+| Target | Workload |
 | --- | --- |
-| `competitors/` | Matched-contract external baselines |
-| `concurrent/` | Reader concurrency and snapshot behavior |
-| `memory/` | Memory-pressure and working-set qualification |
-| `native_city/` | Application-owned native/conversion comparison |
-| [Payload distribution](payload_distribution/README.md) | Evidence and verification for compact-reference implementation |
-| [Compact references](compact_references/README.md) | Production format-4 qualification, independent verification and migration tradeoffs |
-| [Shared aliases](shared_aliases/README.md) | Exact City replay and warm format-5 qualification |
-| [Disk-table cache](disk_table_cache/README.md) | Bounded external-build cache, byte-exact replays and syscall counts |
-| [Grouped metadata](grouped_metadata/README.md) | Rejected resident filters, measured tradeoffs and archived source |
-| `results/` | Immutable measurement and verification receipts |
+| `index` | Warm exact lookup and validation for IPv4, wide IPv6 and ASN; one in-memory IPv4 build |
+| `queries` | Membership, longest prefix, intersection and mixed batch queries over overlapping prefixes and ranges, duplicate targets, exact ASNs and misses |
 
-The completed P1-01–P1-08 prototype code is [archived](ARCHIVE.md). Their report
-directories remain as evidence and recovery pointers; their harnesses are not
-part of the current maintained tree. No production code depends on them.
+```sh
+cargo +1.95.0 bench --locked --bench index --bench queries -- --test
+cargo +1.95.0 bench --locked --bench index --bench queries -- --save-baseline before
+# After the change, use the same machine and build flags:
+cargo +1.95.0 bench --locked --bench index --bench queries -- --baseline before
+```
+
+CI runs the correctness command with default features and with `--features simd`.
+To measure one operation, pass a name filter after `--`, for example
+`cargo +1.95.0 bench --locked --bench index -- lookup`.
+
+Pin to the same logical CPU on a quiet host. Keep inputs, feature flags, and
+toolchain fixed, and repeat separate processes before calling a small change a
+regression. Lookup throughput counts input queries, including misses.
+Validation starts with bytes in memory; build includes dropping the encoded
+artifact. Warm throughput does not measure per-query tails or cold startup.
+See Criterion's [timing loops](https://bheisler.github.io/criterion.rs/book/user_guide/timing_loops.html)
+for setup and teardown boundaries.
+
+The optional [competitor harness](competitors/README.md) checks identical
+longest-prefix or Boolean membership answers against a trie or bitmap. The
+[public benchmark guide](../BENCHMARKS.md) explains the measured tradeoffs.
+Larger studies, dataset-dependent harnesses and raw receipts are recoverable
+from the [historical benchmark snapshot](https://github.com/0xARYA/netindex/tree/1ea02fa6852bf3ab2f299278fdc2faf05d7e3b47/benches).

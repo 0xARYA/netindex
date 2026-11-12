@@ -2,6 +2,7 @@ param(
     [Parameter(Mandatory)][string]$Executable,
     [Parameter(Mandatory)][string]$Output,
     [Parameter(Mandatory)][string[]]$BenchmarkArguments,
+    [Parameter(Mandatory)][long]$AffinityMask,
     [switch]$TextOutput
 )
 $ErrorActionPreference = 'Stop'
@@ -14,7 +15,7 @@ $process.StartInfo.RedirectStandardError = $true
 foreach ($argument in $BenchmarkArguments) { $process.StartInfo.ArgumentList.Add($argument) }
 $timer = [System.Diagnostics.Stopwatch]::StartNew()
 if (-not $process.Start()) { throw 'benchmark did not start' }
-$process.ProcessorAffinity = [IntPtr]1048576
+$process.ProcessorAffinity = [IntPtr]$AffinityMask
 $stdout = $process.StandardOutput.ReadToEndAsync()
 $stderr = $process.StandardError.ReadToEndAsync()
 $peak = 0L
@@ -38,7 +39,7 @@ $receipt = [ordered]@{
     executable = $process.StartInfo.FileName
     executable_sha256 = (Get-FileHash -LiteralPath $Executable -Algorithm SHA256).Hash.ToLowerInvariant()
     arguments = $BenchmarkArguments
-    affinity_mask = 1048576
+    affinity_mask = $AffinityMask
     wall_ms = $timer.Elapsed.TotalMilliseconds
     peak_working_set_bytes = $peak
     exit_code = $process.ExitCode

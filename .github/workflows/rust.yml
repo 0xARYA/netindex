@@ -34,21 +34,9 @@ jobs:
       - name: Test all features in release mode
         run: cargo +1.95.0 test --locked --release --all-features -- --test-threads=1 --include-ignored
       - name: Check benchmark correctness
-        run: cargo +1.95.0 bench --locked --bench index -- --test
-      - name: Check every packed search width
-        run: cargo +1.95.0 bench --locked --bench search -- --test
-      - name: Check every packed search width with SIMD dispatch
-        run: cargo +1.95.0 bench --locked --features simd --bench search -- --test
-      - name: Check scale benchmark correctness
-        run: cargo +1.95.0 bench --locked --bench scale -- --test
-      - name: Check traffic benchmark correctness
-        run: cargo +1.95.0 bench --locked --bench traffic -- --test
-      - name: Check shapes and batch correctness
-        run: cargo +1.95.0 bench --locked --bench shapes -- --test
-      - name: Check traffic and shapes with SIMD dispatch
         run: |
-          cargo +1.95.0 bench --locked --features simd --bench traffic -- --test
-          cargo +1.95.0 bench --locked --features simd --bench shapes -- --test
+          cargo +1.95.0 bench --locked --bench index --bench queries -- --test
+          cargo +1.95.0 bench --locked --features simd --bench index --bench queries -- --test
       - name: Run mapped file example
         run: cargo +1.95.0 run --locked --features mmap --example mapped
       - name: Run Tokio example

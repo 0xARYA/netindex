@@ -35,7 +35,6 @@ fn main() -> Result<(), Failure> {
     if !(1_000..=1_000_000).contains(&records) {
         return Err("records must be in 1000..=1000000".into());
     }
-    pin()?;
     let mut clock = Vec::new();
     for _ in 0..10_000 {
         let start = Instant::now();
@@ -451,18 +450,4 @@ fn limits() -> Limits {
         records: 2_000_000,
         bytes: 128 * 1024 * 1024,
     }
-}
-
-fn pin() -> std::io::Result<()> {
-    #[cfg(target_os = "linux")]
-    // SAFETY: CPU 20 fits the initialized mask; PID zero selects only this thread.
-    unsafe {
-        let mut set: libc::cpu_set_t = std::mem::zeroed();
-        libc::CPU_ZERO(&mut set);
-        libc::CPU_SET(20, &mut set);
-        if libc::sched_setaffinity(0, std::mem::size_of_val(&set), &set) != 0 {
-            return Err(std::io::Error::last_os_error());
-        }
-    }
-    Ok(())
 }

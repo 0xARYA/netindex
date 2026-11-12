@@ -37,4 +37,4 @@ in place of `mkdir -p`. Both output paths must be new; choose fresh names on a
 second run. Keep input and output files unchanged while the tools map them.
 The last two commands expand the fixture's IPv6 aliases and fold them back
 into a shared window. The tiny fixtures demonstrate the tools; use the
-[benchmark reports](../benches/BASELINES.md) for representative measurements.
+[benchmark guide](../BENCHMARKS.md) for representative measurements.

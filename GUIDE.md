@@ -205,7 +205,7 @@ sequential passes and temporary disk can make this slower than the ordinary
 builder; measure both. Fixed I/O buffers and open-file counts grow with the
 partition count outside the key budget. Nonzero table caches are unsupported,
 and cumulative artifact-byte limits can fail during finalization before output.
-See [partitioned-build measurements](https://github.com/0xARYA/netindex/blob/main/benches/partitioned_dedup/README.md).
+See [partitioned-build measurements](https://github.com/0xARYA/netindex/blob/1ea02fa6852bf3ab2f299278fdc2faf05d7e3b47/benches/partitioned_dedup/README.md).
 
 The external writer requires empty, seekable output at position zero. Either
 writer can leave partial output on failure. Stage output, check success, and
@@ -224,7 +224,7 @@ Upgrade readers before using this output: readers without format-6 support
 reject it, including inside alias envelopes. Exact-bit access trades some
 validation and lookup work for smaller files; measure your workload. See
 [FORMAT.md](https://github.com/0xARYA/netindex/blob/main/FORMAT.md) and
-[bitpacking measurements](https://github.com/0xARYA/netindex/blob/main/benches/bitpacking/RESULTS.md).
+[bitpacking measurements](https://github.com/0xARYA/netindex/blob/1ea02fa6852bf3ab2f299278fdc2faf05d7e3b47/benches/bitpacking/RESULTS.md).
 Stage output and check success before publishing; output errors can leave partial
 bytes.
 

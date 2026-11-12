@@ -9,7 +9,7 @@ repository = "https://github.com/0xARYA/netindex"
 license = "MIT OR Apache-2.0"
 keywords = ["ip", "cidr", "asn", "index"]
 categories = ["data-structures", "network-programming"]
-exclude = ["/benches/results/"]
+exclude = ["/benches/competitors/"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -64,30 +64,8 @@ name = "index"
 harness = false
 
 [[bench]]
-name = "search"
+name = "queries"
 harness = false
-
-[[bench]]
-name = "scale"
-harness = false
-
-[[bench]]
-name = "traffic"
-harness = false
-
-[[bench]]
-name = "shapes"
-harness = false
-
-[[bench]]
-name = "mmdb"
-harness = false
-required-features = ["codec", "mmdb", "mmap", "external-sort"]
-
-[[bench]]
-name = "codec"
-harness = false
-required-features = ["codec", "mmdb", "mmap"]
 
 [lints]
 workspace = true

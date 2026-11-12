@@ -1,4 +1,0 @@
-de3d79c453a5d0f6dc9b3707e21bd43b75b6ebb040d9c5a4feed47d755a46a31  /root/.cache/netindex-bitpacking/baseline-study
-348b657507936b6b8953eb8bc83dcf2e5147c220c7c685da9a734d2d7a1717dd  /root/.cache/netindex-compact-20261105/outputs/city-external-r4.nidx
-1fc75070b34d5c3e8050e19c189371fee77582ba3b3dbe73ea4d4da5bc2f8917  /root/.cache/netindex-disk-cache/canonical.nidx
-7e5095968be43d8537ca76a9039fede4227c48fd7ec215e55d31f9f921cb9acf  /root/.cache/netindex-compact-20261105/outputs/asn-external-r4.nidx

@@ -1,6 +1,0 @@
-# started on Thu Nov  5 18:03:45 2026
-
-5558586580,,branches,1533239052,100.00,,
-7051737,,branch-misses,1533239052,100.00,0.13,of all branches
-75272801,,cache-references,1533239052,100.00,,
-7188933,,cache-misses,1533239052,100.00,9.55,of all cache refs

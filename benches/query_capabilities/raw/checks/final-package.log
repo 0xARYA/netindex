@@ -1,6 +1,0 @@
-   Packaging netindex v3.0.0 (C:\code\0xARYA\netindex)
-    Updating crates.io index
-    Packaged 200 files, 12.9MiB (1.3MiB compressed)
-   Verifying netindex v3.0.0 (C:\code\0xARYA\netindex)
-   Compiling netindex v3.0.0 (C:\code\0xARYA\netindex\target\package\netindex-3.0.0)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.47s

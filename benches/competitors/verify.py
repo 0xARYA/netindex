@@ -23,11 +23,12 @@ for name, expected in result['source_sha256'].items():
     if digest(source) != expected:
         assert normalized[name] == result.get('source_lf_sha256', {}).get(name), name
 ast.parse((here / 'run.py').read_text())
-assert len(result['runs']) == 42
+assert len(result['runs']) == 14
 observed = set()
 total = 0
 for run in result['runs']:
     coordinate = (run['family'], run['shape'], run['records'], run['profile'])
+    assert run['records'] == 100_000
     assert coordinate not in observed
     observed.add(coordinate)
     assert run['exit_code'] == 0
@@ -56,14 +57,12 @@ for run in result['runs']:
         for percentile in [50, 95, 99]:
             assert row[f'p{percentile}_ns'] == samples[len(samples) * percentile // 100]
     total += len(measured)
-assert total == 1224
-geography = here.parents[1] / result['geography_evidence']['path']
-assert digest(geography) == result['geography_evidence']['sha256']
+assert total == 408
 result['source_lf_sha256'] = normalized
 result['text_hash_scope'] = 'source_sha256 hashes measured working-copy bytes; source_lf_sha256 normalizes CRLF to LF for Git checkout comparisons. Binary inputs and executables always use raw byte hashes.'
 result['verifier_sha256'] = digest(pathlib.Path(__file__))
-result['verification'] = dict(processes=42, measurements=total, sources=True,
+result['verification'] = dict(processes=len(observed), measurements=total, sources=True,
                               executables=True, inputs=True, raw_logs=True,
                               trial_coordinates=True, histograms=True)
 receipt.write_text(json.dumps(result, indent=2) + '\n')
-print('Verified 42 processes, 1224 measurements, sources, binaries, fixtures, logs and histograms')
+print(f'Verified {len(observed)} processes and {total} measurements, including inputs and logs')

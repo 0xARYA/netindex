@@ -1,13 +1,16 @@
 # Performance audit: 2026-11-04
 
+This is a historical report. To run its commands, use the matching source
+revision from the receipts. For current benchmarks, see the [suite guide](benches/README.md).
+
 Positioned temporary-file I/O reduced the complete-deduplication builder's median
 time by 25.5% on the measured fixture, without changing output bytes or logical
 resource usage. Width-specialized AVX2 kernels improved the optional packed-search
 path, but scalar search still generally won. PGO substantially improved synthetic
 opening/validation; it remains a consuming-application choice.
 
-[Measurements, confidence intervals, hashes, and provenance](benches/results/2026-11-04-performance-audit.json).
-The earlier [deduplication size study](benches/results/2026-11-04-external-dedup.json)
+[Measurements, confidence intervals, hashes, and provenance](https://github.com/0xARYA/netindex/blob/1ea02fa6852bf3ab2f299278fdc2faf05d7e3b47/benches/results/2026-11-04-performance-audit.json).
+The earlier [deduplication size study](https://github.com/0xARYA/netindex/blob/1ea02fa6852bf3ab2f299278fdc2faf05d7e3b47/benches/results/2026-11-04-external-dedup.json)
 compares against the cache-only implementation and answers a different question.
 
 ## Method and limits

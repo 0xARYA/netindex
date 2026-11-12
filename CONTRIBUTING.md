@@ -32,9 +32,7 @@ independent expectations, including failure paths.
   Split files when they mix responsibilities, rather than by line count.
 - Put public contract tests in `tests/`, private unit tests beside the code, and
   independent encoded fixtures in `tests/fixtures/`. Examples demonstrate public
-  use; benchmark harnesses and dated evidence live in `benches/`. Raw result
-  receipts under `benches/results/` stay in Git and are excluded from the crate
-  package.
+  use; maintained benchmarks live in `benches/`.
 
 Review an ordinary call and a failure end to end. Check who validates, owns
 resources, and reports errors. Look for repeated logic and unnecessary layers;
@@ -77,31 +75,9 @@ The [fuzz package](fuzz/README.md) runs on Linux with AddressSanitizer.
 
 ## Benchmarks
 
-See the [benchmark guide](BENCHMARKS.md) for workload comparisons and the
-[benchmark reports](benches/BASELINES.md) for reproduction.
-The Criterion harness below tracks changes within netindex:
-
-```sh
-cargo bench --bench index -- --save-baseline NAME
-cargo bench --bench index -- --baseline NAME
-cargo bench --bench index -- --test
-```
-
-`--test` runs the correctness prechecks and each benchmark once; CI uses it
-without collecting timings.
-
-Capture the baseline before editing. The harness measures warm lookup, complete
-validation, and building, including IPv6 deltas requiring 16 bytes. It uses
-65,536 assertions per scenario and 1,024 queries
-per lookup batch. `lookup-json` includes lookup, decoding each eight-byte scalar
-payload, allocating all matching records, and serializing `{id, value}` objects
-with serde_json. It includes misses and overlaps, but excludes HTTP and networking;
-the schema is a benchmark fixture, not a library codec.
-
-Run comparisons serially on a fixed CPU core with consistent
-build settings and machine load. Record input hashes, executable, toolchain,
-hardware, and measurement scope. Warm library timings do not establish HTTP
-capacity or cold-file behavior.
+Use the [suite guide](benches/README.md) to choose the smallest workload that
+exercises the change. Compare unchanged inputs and results on the same
+machine and record conditions before interpreting timing differences.
 
 ## Format changes
 
